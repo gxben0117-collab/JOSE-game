@@ -87,6 +87,76 @@ var BattleEngine = (function () {
   }
 
   return {
+    // 暴露給 BattleState 使用
+    buildCombatant: buildCombatant,
+    buildEnemy: buildEnemy,
+    applyPassives: applyPassives,
+    pickPlayerTarget: pickPlayerTarget,
+    pickEnemyTarget: pickEnemyTarget,
+    calcDamage: calcDamage,
+    elementBonus: elementBonus,
+    allDead: allDead,
+
+    // 執行單個寵物行動
+    executePetAction: function (pet, target, skillIndex, enemyFront, enemyBack) {
+      if (!pet || pet.hp <= 0) return null;
+
+      var usedSkill = false;
+      var result = null;
+
+      // 使用技能
+      if (skillIndex !== undefined && skillIndex >= 0 && pet.skills && pet.skills[skillIndex]) {
+        var sk = pet.skills[skillIndex];
+        if (sk.type === 'active' && pet.cooldowns[skillIndex] <= 0) {
+          pet.cooldowns[skillIndex] = sk.cooldown;
+
+          if (sk.effect === 'damage_all') {
+            var hits = [];
+            enemyFront.concat(enemyBack).forEach(function (e) {
+              if (e.hp <= 0) return;
+              var bon = elementBonus(pet.element, e.element);
+              var dmg = calcDamage(pet.atk, e.def, sk.multiplier, bon);
+              e.hp = Math.max(0, e.hp - dmg);
+              hits.push({ targetId: e.id, name: e.name, dmg: dmg, hp: e.hp, maxHp: e.maxHp });
+            });
+            result = { type: 'skill_all', pet: pet.name, icon: pet.icon, skill: sk.name, hits: hits };
+
+          } else if (sk.effect === 'heal' || sk.effect === 'heal_all') {
+            var healed = Math.floor(pet.maxHp * sk.value);
+            pet.hp = Math.min(pet.maxHp, pet.hp + healed);
+            result = { type: 'heal', pet: pet.name, icon: pet.icon, skill: sk.name, amount: healed, hp: pet.hp, maxHp: pet.maxHp };
+
+          } else if (sk.multiplier) {
+            var bon2 = elementBonus(pet.element, target.element);
+            var dmg2 = calcDamage(pet.atk, target.def, sk.multiplier, bon2);
+            target.hp = Math.max(0, target.hp - dmg2);
+            result = { type: 'skill', pet: pet.name, icon: pet.icon, skill: sk.name, targetId: target.id, target: target.name, dmg: dmg2, hp: target.hp, maxHp: target.maxHp };
+
+          } else {
+            result = { type: 'buff', pet: pet.name, icon: pet.icon, skill: sk.name };
+          }
+          usedSkill = true;
+        }
+      }
+
+      // 普通攻擊
+      if (!usedSkill) {
+        if (!target) {
+          target = pickEnemyTarget(enemyFront, enemyBack);
+        }
+        if (!target) return null;
+
+        var bon3 = elementBonus(pet.element, target.element);
+        var basic = pet.skills ? pet.skills.find(function (s) { return s.type === 'basic'; }) : null;
+        var mult3 = basic ? basic.multiplier : 1.0;
+        var dmg3 = calcDamage(pet.atk, target.def, mult3, bon3);
+        target.hp = Math.max(0, target.hp - dmg3);
+        result = { type: 'attack', pet: pet.name, icon: pet.icon, targetId: target.id, target: target.name, dmg: dmg3, hp: target.hp, maxHp: target.maxHp };
+      }
+
+      return result;
+    },
+
     simulate: function (stageNum, isManualMode) {
       var state    = GameState.get();
 
