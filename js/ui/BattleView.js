@@ -4,6 +4,7 @@ var BattleView = (function () {
   var animTimer     = null;
   var isBattling    = false;
   var petNameToSlot = {};  // stats.name -> slot index 0|1|2
+  var battleMode    = 'auto'; // 'auto' 或 'manual'
 
   /* ─── DOM builders ─── */
 
@@ -288,6 +289,7 @@ var BattleView = (function () {
 
     render: function () {
       var state  = GameState.get();
+      var currentAp = GameState.getAP();
       var stage  = state.currentStage;
       var isBoss = stage % 10 === 0;
       var cfg    = getStageConfig(stage);
@@ -300,6 +302,11 @@ var BattleView = (function () {
             (stage > 1              ? '<button class="btn-sm" onclick="BattleView.changeStage(-1)">◀</button>' : '<span></span>') +
             (stage < state.maxStage ? '<button class="btn-sm" onclick="BattleView.changeStage(1)">▶</button>'  : '<span></span>') +
           '</div>' +
+        '</div>' +
+
+        '<div class="battle-mode-bar">' +
+          '<span>AP: ' + currentAp + '/' + state.maxAp + ' (需要 10)</span>' +
+          '<button class="btn-mode ' + (battleMode === 'auto' ? 'active' : '') + '" onclick="BattleView.toggleMode()">模式: ' + (battleMode === 'auto' ? '自動' : '手動') + '</button>' +
         '</div>' +
 
         '<div class="battle-arena" id="battle-arena">' +
@@ -341,11 +348,16 @@ var BattleView = (function () {
       if (animTimer) clearTimeout(animTimer);
       isBattling   = true;
       logIndex     = 0;
-      battleResult = BattleEngine.simulate(GameState.get().currentStage);
+      battleResult = BattleEngine.simulate(GameState.get().currentStage, battleMode === 'manual');
       document.getElementById('battle-result-overlay').style.display = 'none';
       var btn = document.getElementById('btn-fight');
       if (btn) { btn.disabled = true; btn.textContent = '戰鬥中...'; }
       animateBattle();
+    },
+
+    toggleMode: function () {
+      battleMode = battleMode === 'auto' ? 'manual' : 'auto';
+      this.render();
     },
 
     closeResult: function (advance) {

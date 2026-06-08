@@ -33,8 +33,11 @@ var GameState = (function () {
         exp_small:  3,
         exp_medium: 1,
         exp_large:  0,
-        gacha_ticket: 0
+        gacha_ticket: 10
       },
+      ap:           90,
+      maxAp:        90,
+      lastApRegenTime: Date.now(),
       pullsSinceEpic:      0,
       pullsSinceLegendary: 0,
       totalPulls:          0,
@@ -54,6 +57,10 @@ var GameState = (function () {
         try {
           state = JSON.parse(saved);
           if (state.maxInventory < 1000) state.maxInventory = 1000;
+          // 向下相容：補充 AP 系統
+          if (state.ap === undefined) state.ap = 90;
+          if (state.maxAp === undefined) state.maxAp = 90;
+          if (state.lastApRegenTime === undefined) state.lastApRegenTime = Date.now();
         } catch (e) {
           state = defaultState();
         }
@@ -158,6 +165,43 @@ var GameState = (function () {
       if (stageNum > state.maxStage) {
         state.maxStage = stageNum;
       }
+      this.save();
+    },
+
+    getAP: function () {
+      var now = Date.now();
+      var elapsed = now - state.lastApRegenTime;
+      var hoursElapsed = elapsed / (1000 * 60 * 60);
+      var regenAmount = Math.floor(hoursElapsed * 10);
+      if (regenAmount > 0) {
+        state.ap = Math.min(state.maxAp, state.ap + regenAmount);
+        state.lastApRegenTime = now - (elapsed % (1000 * 60 * 60 / 10));
+        this.save();
+      }
+      return state.ap;
+    },
+
+    spendAP: function (amount) {
+      this.getAP();
+      if (state.ap < amount) return false;
+      state.ap -= amount;
+      this.save();
+      return true;
+    },
+
+    addAP: function (amount) {
+      state.ap = Math.min(state.maxAp, state.ap + amount);
+      this.save();
+    },
+
+    refillAP: function () {
+      state.ap = state.maxAp;
+      this.save();
+    },
+
+    increaseMaxAP: function () {
+      state.maxAp++;
+      state.ap = state.maxAp;
       this.save();
     }
   };

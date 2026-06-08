@@ -59,5 +59,6 @@ var GOLD_SHOP = [
 var DIAMOND_SHOP = [
   { itemId: 'exp_large',      count: 1,  diamondPrice: 50  },
   { itemId: 'revival_potion', count: 10, diamondPrice: 80  },
-  { label: '背包 +10格',      type: 'bag_expand', diamondPrice: 200 }
+  { label: '背包 +10格',      type: 'bag_expand', diamondPrice: 200 },
+  { label: 'AP +50',          type: 'ap_buy',     diamondPrice: 100 }
 ];

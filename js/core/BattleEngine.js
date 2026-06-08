@@ -87,12 +87,19 @@ var BattleEngine = (function () {
   }
 
   return {
-    simulate: function (stageNum) {
+    simulate: function (stageNum, isManualMode) {
       var state    = GameState.get();
+
+      // 檢查 AP
+      if (!GameState.spendAP(10)) {
+        return { win: false, log: [{ type: 'msg', text: 'AP 不足！需要 10 AP 才能戰鬥' }], rewards: null };
+      }
+
       var cfg      = getStageConfig(stageNum);
       var rawPets  = GameState.getActivePets(); // [slot0, slot1, slot2], may have null
 
       if (!rawPets.some(Boolean)) {
+        GameState.addAP(10); // 退還 AP
         return { win: false, log: [{ type: 'msg', text: '請先設定上陣寵物！' }], rewards: null };
       }
 
@@ -176,6 +183,10 @@ var BattleEngine = (function () {
         /* 判斷勝利 */
         if (allDead(enemyFront) && allDead(enemyBack)) {
           var rewards = getStageReward(stageNum, cfg.isBoss);
+          // 手動模式鑽石掉落率提升 10%
+          if (isManualMode && rewards.diamond) {
+            rewards.diamond = Math.floor(rewards.diamond * 1.1);
+          }
           log.push({ type: 'win', rewards: rewards });
           return { win: true, log: log, rewards: rewards };
         }

@@ -22,6 +22,7 @@ var ShopView = (function () {
 
   function diamondShopHtml() {
     var state = GameState.get();
+    var currentAp = GameState.getAP();
     var html  = '<div class="shop-items">';
     DIAMOND_SHOP.forEach(function (row, i) {
       if (row.type === 'bag_expand') {
@@ -30,6 +31,16 @@ var ShopView = (function () {
             '<div class="sc-icon">🎒</div>' +
             '<div class="sc-name">' + row.label + '</div>' +
             '<div class="sc-desc">目前容量: ' + state.maxInventory + ' 格</div>' +
+            '<button class="btn-buy btn-diamond" onclick="ShopView.buyDiamond(' + i + ')">' +
+              '💎 ' + row.diamondPrice + ' 鑽石' +
+            '</button>' +
+          '</div>';
+      } else if (row.type === 'ap_buy') {
+        html +=
+          '<div class="shop-card">' +
+            '<div class="sc-icon">⚡</div>' +
+            '<div class="sc-name">' + row.label + '</div>' +
+            '<div class="sc-desc">目前 AP: ' + currentAp + ' / ' + state.maxAp + '</div>' +
             '<button class="btn-buy btn-diamond" onclick="ShopView.buyDiamond(' + i + ')">' +
               '💎 ' + row.diamondPrice + ' 鑽石' +
             '</button>' +
@@ -91,6 +102,13 @@ var ShopView = (function () {
         GameState.get().maxInventory += 10;
         GameState.save();
         showToast('背包已擴充 +10 格！');
+      } else if (row.type === 'ap_buy') {
+        if (!GameState.spendDiamond(row.diamondPrice)) {
+          showToast('鑽石不足！');
+          return;
+        }
+        GameState.addAP(50);
+        showToast('AP +50！');
       } else {
         var item = ITEM_DATA[row.itemId];
         if (!GameState.spendDiamond(row.diamondPrice)) {

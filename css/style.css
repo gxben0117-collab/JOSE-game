@@ -160,6 +160,35 @@ body {
 .stage-num { font-size: 18px; font-weight: bold; color: var(--gold); }
 .stage-nav  { display: flex; gap: 6px; }
 
+/* Battle Mode Bar */
+.battle-mode-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.btn-mode {
+  background: var(--card);
+  color: var(--text);
+  border: 2px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-mode.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-mode:hover {
+  border-color: var(--accent);
+}
+
 .enemy-preview {
   display: flex;
   gap: 10px;

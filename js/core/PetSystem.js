@@ -53,6 +53,8 @@ var PetSystem = (function () {
           petInstance.exp -= needed;
           petInstance.level++;
           leveled = true;
+          // 升級時 AP 補滿且上限 +1
+          GameState.increaseMaxAP();
         } else {
           break;
         }

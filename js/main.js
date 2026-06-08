@@ -1,9 +1,12 @@
 function updateHUD() {
   var state = GameState.get();
+  var currentAp = GameState.getAP();
   var goldEl    = document.getElementById('hud-gold');
   var diamondEl = document.getElementById('hud-diamond');
+  var apEl      = document.getElementById('hud-ap');
   if (goldEl)    goldEl.textContent    = '💰 ' + state.gold.toLocaleString();
   if (diamondEl) diamondEl.textContent = '💎 ' + state.diamond.toLocaleString();
+  if (apEl)      apEl.textContent      = '⚡ ' + currentAp + '/' + state.maxAp;
 }
 
 function showToast(msg, duration) {
@@ -87,8 +90,6 @@ function checkDailyLogin() {
 
 window.addEventListener('DOMContentLoaded', function () {
   GameState.init();
-  GameState.get().diamond = 9999999;
-  GameState.save();
 
   var income = OfflineSystem.calculate();
   OfflineSystem.apply(income);
