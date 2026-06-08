@@ -30,8 +30,8 @@ var ManualBattle = (function () {
       var battle = BattleState.get();
       if (!battle) return;
 
-      var el = document.getElementById('battle-arena');
-      if (!el) return;
+      var container = document.getElementById('screen-battle');
+      if (!container) return;
 
       // 渲染敵方
       var enemyHtml = this.renderEnemyTeam(battle.enemyFront, battle.enemyBack);
@@ -48,7 +48,7 @@ var ManualBattle = (function () {
         turnInfo = '<div class="turn-info">⚔️ 敵人回合</div>';
       }
 
-      el.innerHTML =
+      container.innerHTML =
         '<div class="manual-battle-container">' +
           '<div class="battle-header">' +
             '<div class="round-counter">第 ' + battle.round + ' 回合</div>' +
@@ -64,7 +64,12 @@ var ManualBattle = (function () {
             '<div class="enemy-side">' + enemyHtml + '</div>' +
           '</div>' +
           '<div class="action-panel">' + this.renderActionPanel() + '</div>' +
-        '</div>';
+          '<div class="bc-status-bar"><div id="bc-status" class="bc-status">手動戰鬥中...</div></div>' +
+          '<div class="fight-wrap">' +
+            '<button class="btn-flee" onclick="BattleView.flee()">🏃 逃跑</button>' +
+          '</div>' +
+        '</div>' +
+        '<div id="battle-result-overlay" class="result-overlay" style="display:none"></div>';
 
       // 如果是敵人回合，自動執行
       if (!battle.isPlayerTurn) {

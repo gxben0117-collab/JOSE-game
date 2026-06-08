@@ -1335,3 +1335,66 @@ body {
   border-color: var(--accent);
   color: #fff;
 }
+
+/* ─── Mobile Optimization ─── */
+@media (max-width: 480px) {
+  .battle-field {
+    flex-direction: column;
+  }
+
+  .battle-header {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .speed-control, .speed-btns {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .skill-buttons {
+    flex-direction: column;
+  }
+
+  .btn-skill {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .battle-card {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .card-icon {
+    font-size: 24px;
+  }
+
+  .mode-controls {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-mode {
+    width: 100%;
+  }
+}
+
+@media (max-width: 360px) {
+  .battle-card {
+    padding: 6px;
+    font-size: 12px;
+  }
+
+  .card-icon {
+    font-size: 20px;
+  }
+
+  .btn-speed, .btn-speed-sm {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+}
