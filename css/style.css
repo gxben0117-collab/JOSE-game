@@ -1035,3 +1035,222 @@ body {
   font-size: 13px;
   font-weight: bold;
 }
+
+/* ─── Manual Battle UI ─── */
+.manual-battle-container {
+  padding: 16px;
+}
+
+.battle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  background: var(--panel);
+  border-radius: 8px;
+}
+
+.round-counter {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--gold);
+}
+
+.speed-control {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-speed {
+  padding: 4px 12px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.btn-speed:hover {
+  border-color: var(--accent);
+}
+
+.btn-speed.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.turn-info {
+  text-align: center;
+  padding: 8px;
+  background: var(--card);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.battle-field {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.player-side,
+.enemy-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.battle-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s;
+}
+
+.battle-card.current-turn {
+  border-color: var(--accent);
+  box-shadow: 0 0 12px rgba(124, 92, 252, 0.3);
+}
+
+.battle-card.dead {
+  opacity: 0.4;
+  filter: grayscale(1);
+}
+
+.enemy-card {
+  cursor: pointer;
+}
+
+.enemy-card:hover:not(.dead) {
+  border-color: var(--accent);
+  transform: translateX(-4px);
+}
+
+.enemy-card.selected {
+  border-color: var(--gold);
+  background: rgba(255, 200, 0, 0.1);
+}
+
+.enemy-card.boss {
+  border-color: var(--red);
+  background: rgba(255, 50, 50, 0.05);
+}
+
+.card-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.card-name {
+  flex: 1;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+.card-hp {
+  min-width: 80px;
+}
+
+.hp-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.hp-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff88, #00cc66);
+  transition: width 0.3s;
+}
+
+.hp-bar.enemy-hp {
+  background: linear-gradient(90deg, #ff4444, #cc0000);
+}
+
+.hp-text {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: right;
+}
+
+.action-panel {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 16px;
+  min-height: 120px;
+}
+
+.action-panel .waiting {
+  text-align: center;
+  color: var(--muted);
+  padding: 40px 0;
+  font-size: 14px;
+}
+
+.skill-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-title {
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--gold);
+}
+
+.skill-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.btn-skill {
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #7c5cfc, #e94560);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.btn-skill:hover:not(.btn-disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 92, 252, 0.4);
+}
+
+.btn-skill.btn-disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.panel-hint {
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.btn-large {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+}

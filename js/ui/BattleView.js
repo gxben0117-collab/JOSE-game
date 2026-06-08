@@ -353,9 +353,26 @@ var BattleView = (function () {
     startFight: function () {
       if (isBattling) return;
       if (animTimer) clearTimeout(animTimer);
+
+      var state = GameState.get();
+
+      // 手動模式
+      if (battleMode === 'manual') {
+        isBattling = true;
+        document.getElementById('battle-result-overlay').style.display = 'none';
+        var btn = document.getElementById('btn-fight');
+        var fleeBtn = document.getElementById('btn-flee');
+        if (btn) btn.style.display = 'none';
+        if (fleeBtn) fleeBtn.style.display = 'block';
+
+        ManualBattle.start(state.currentStage);
+        return;
+      }
+
+      // 自動模式
       isBattling   = true;
       logIndex     = 0;
-      battleResult = BattleEngine.simulate(GameState.get().currentStage, battleMode === 'manual');
+      battleResult = BattleEngine.simulate(GameState.get().currentStage, false);
       document.getElementById('battle-result-overlay').style.display = 'none';
       var btn = document.getElementById('btn-fight');
       var fleeBtn = document.getElementById('btn-flee');
@@ -372,6 +389,9 @@ var BattleView = (function () {
       isBattling = false;
       battleResult = null;
       logIndex = 0;
+
+      // 清空手動戰鬥狀態
+      BattleState.clear();
 
       // 隱藏結果覆蓋層和槽位選單
       var overlay = document.getElementById('battle-result-overlay');
