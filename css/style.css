@@ -1010,3 +1010,28 @@ body {
   text-align: center;
   margin: 6px 0;
 }
+
+/* Player Info in Settings */
+.player-info {
+  background: var(--panel);
+  border-radius: 8px;
+  padding: 12px;
+}
+.pi-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pi-row:last-child {
+  border-bottom: none;
+}
+.pi-label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.pi-value {
+  color: var(--text);
+  font-size: 13px;
+  font-weight: bold;
+}

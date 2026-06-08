@@ -1,12 +1,26 @@
 var SettingsView = (function () {
   return {
     render: function () {
+      var state = GameState.get();
+      var expNeeded = GameState.getPlayerExpNeeded();
+      var expPercent = expNeeded > 0 ? Math.floor((state.playerExp / expNeeded) * 100) : 100;
+
       var el = document.getElementById('screen-settings');
       el.innerHTML =
         '<div class="settings-header">' +
           '<div class="settings-title">⚙️ 設置</div>' +
         '</div>' +
         '<div class="settings-content">' +
+          '<div class="settings-section">' +
+            '<div class="settings-section-title">召喚師資訊</div>' +
+            '<div class="player-info">' +
+              '<div class="pi-row"><span class="pi-label">等級：</span><span class="pi-value">Lv.' + state.playerLevel + '</span></div>' +
+              '<div class="pi-row"><span class="pi-label">經驗：</span><span class="pi-value">' + state.playerExp + ' / ' + expNeeded + ' (' + expPercent + '%)</span></div>' +
+              '<div class="pi-row"><span class="pi-label">AP 上限：</span><span class="pi-value">' + state.maxAp + '</span></div>' +
+              '<div class="pi-row"><span class="pi-label">當前關卡：</span><span class="pi-value">第 ' + state.currentStage + ' 關</span></div>' +
+              '<div class="pi-row"><span class="pi-label">最高關卡：</span><span class="pi-value">第 ' + state.maxStage + ' 關</span></div>' +
+            '</div>' +
+          '</div>' +
           '<div class="settings-section">' +
             '<div class="settings-section-title">存檔管理</div>' +
             '<button class="btn-primary btn-full" onclick="SettingsView.exportSave()">💾 匯出存檔</button>' +
@@ -18,7 +32,7 @@ var SettingsView = (function () {
             '<button class="btn-danger btn-full" onclick="SettingsView.confirmReset()">🔄 重新開局</button>' +
           '</div>' +
           '<div class="settings-section">' +
-            '<div class="settings-info">版本: v1.0</div>' +
+            '<div class="settings-info">版本: v1.1</div>' +
             '<div class="settings-info">JOSE 寵物闖關 RPG</div>' +
           '</div>' +
         '</div>';

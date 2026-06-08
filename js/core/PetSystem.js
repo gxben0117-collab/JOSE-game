@@ -59,7 +59,7 @@ var PetSystem = (function () {
       }
       if (petInstance.level >= 100) petInstance.exp = 0;
 
-      // 如果有升級，觸發 AP 重算和補滿
+      // 寵物升級只記錄，不影響 AP
       if (leveled) {
         GameState.onPetLevelUp();
       }

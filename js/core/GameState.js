@@ -38,6 +38,8 @@ var GameState = (function () {
       ap:           90,
       maxAp:        90,
       lastApRegenTime: Date.now(),
+      playerLevel:  1,
+      playerExp:    0,
       pullsSinceEpic:      0,
       pullsSinceLegendary: 0,
       totalPulls:          0,
@@ -61,6 +63,9 @@ var GameState = (function () {
           if (state.ap === undefined) state.ap = 90;
           if (state.maxAp === undefined) state.maxAp = 90;
           if (state.lastApRegenTime === undefined) state.lastApRegenTime = Date.now();
+          // 向下相容：補充召喚師等級系統
+          if (state.playerLevel === undefined) state.playerLevel = 1;
+          if (state.playerExp === undefined) state.playerExp = 0;
         } catch (e) {
           state = defaultState();
         }
@@ -203,24 +208,46 @@ var GameState = (function () {
       this.save();
     },
 
-    recalcMaxAP: function () {
-      // 根據上陣寵物的最高等級計算 AP 上限
-      var activePets = this.getActivePets().filter(Boolean);
-      if (activePets.length === 0) {
-        state.maxAp = 90;
-      } else {
-        var maxLevel = Math.max.apply(null, activePets.map(function (p) { return p.level; }));
-        state.maxAp = 90 + (maxLevel - 1);
+    addPlayerExp: function (amount) {
+      state.playerExp += amount;
+      var leveled = false;
+
+      // 召喚師升級所需經驗：100 * level^1.5
+      while (state.playerLevel < 100) {
+        var expNeeded = Math.floor(100 * Math.pow(state.playerLevel, 1.5));
+        if (state.playerExp >= expNeeded) {
+          state.playerExp -= expNeeded;
+          state.playerLevel++;
+          leveled = true;
+        } else {
+          break;
+        }
       }
-      // 如果當前 AP 超過上限，調整為上限
+
+      // 召喚師升級時：AP 補滿且上限 +1
+      if (leveled) {
+        state.maxAp = 90 + (state.playerLevel - 1);
+        state.ap = state.maxAp;
+      }
+
+      this.save();
+      return leveled;
+    },
+
+    getPlayerExpNeeded: function () {
+      if (state.playerLevel >= 100) return 0;
+      return Math.floor(100 * Math.pow(state.playerLevel, 1.5));
+    },
+
+    recalcMaxAP: function () {
+      // 根據召喚師等級計算 AP 上限
+      state.maxAp = 90 + (state.playerLevel - 1);
       if (state.ap > state.maxAp) state.ap = state.maxAp;
       this.save();
     },
 
     onPetLevelUp: function () {
-      // 寵物升級時重新計算 AP 上限並補滿
-      this.recalcMaxAP();
-      state.ap = state.maxAp;
+      // 寵物升級不再影響 AP，只有召喚師升級才影響
       this.save();
     }
   };

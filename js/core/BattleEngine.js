@@ -220,6 +220,14 @@ var BattleEngine = (function () {
       (rewards.items || []).forEach(function (drop) {
         GameState.addItem(drop.id, drop.count);
       });
+
+      // 召喚師獲得經驗
+      var playerLeveled = GameState.addPlayerExp(rewards.exp);
+      if (playerLeveled) {
+        showToast('🎉 召喚師升級！AP 上限 +1 並已補滿');
+      }
+
+      // 寵物獲得經驗
       GameState.getActivePets().filter(Boolean).forEach(function (p) {
         PetSystem.addExp(p, rewards.exp);
       });

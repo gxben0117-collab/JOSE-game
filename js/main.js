@@ -1,9 +1,11 @@
 function updateHUD() {
   var state = GameState.get();
   var currentAp = GameState.getAP();
+  var levelEl   = document.getElementById('hud-level');
   var goldEl    = document.getElementById('hud-gold');
   var diamondEl = document.getElementById('hud-diamond');
   var apEl      = document.getElementById('hud-ap');
+  if (levelEl)   levelEl.textContent   = '👤 Lv.' + state.playerLevel;
   if (goldEl)    goldEl.textContent    = '💰 ' + state.gold.toLocaleString();
   if (diamondEl) diamondEl.textContent = '💎 ' + state.diamond.toLocaleString();
   if (apEl)      apEl.textContent      = '⚡ ' + currentAp + '/' + state.maxAp;
