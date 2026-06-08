@@ -123,7 +123,8 @@ var PET_DATA = [
     skills: [
       { name: '葉片投擲', type: 'basic',  effect: 'damage', multiplier: 1.0 },
       { name: '草藥治療', type: 'active', effect: 'heal',   value: 0.25, cooldown: 4 },
-      { name: '森林之心', type: 'passive', effect: 'hp_boost', value: 0.1 }
+      { name: '森林之心', type: 'passive', effect: 'hp_boost', value: 0.1 },
+      { name: '反擊', type: 'active', effect: 'damage', multiplier: 1.5, cooldown: 3 }
     ]
   },
   {
@@ -132,7 +133,8 @@ var PET_DATA = [
     skills: [
       { name: '熊掌',   type: 'basic',  effect: 'damage',     multiplier: 1.0 },
       { name: '大地震擊', type: 'active', effect: 'damage_all', multiplier: 0.7, cooldown: 4 },
-      { name: '厚毛',   type: 'passive', effect: 'def_boost', value: 0.15 }
+      { name: '厚毛',   type: 'passive', effect: 'def_boost', value: 0.15 },
+      { name: '重擊', type: 'active', effect: 'damage', multiplier: 1.8, cooldown: 3 }
     ]
   },
   {
@@ -141,7 +143,8 @@ var PET_DATA = [
     skills: [
       { name: '藤鞭',  type: 'basic',  effect: 'damage', multiplier: 1.1 },
       { name: '毒牙',  type: 'active', effect: 'damage', multiplier: 2.2, cooldown: 3 },
-      { name: '毒氣',  type: 'passive', effect: 'atk_boost', value: 0.1 }
+      { name: '毒氣',  type: 'passive', effect: 'atk_boost', value: 0.1 },
+      { name: '猛攻', type: 'active', effect: 'damage', multiplier: 2.0, cooldown: 3 }
     ]
   },
   {
@@ -150,7 +153,8 @@ var PET_DATA = [
     skills: [
       { name: '羽毛風暴', type: 'basic',  effect: 'damage',    multiplier: 1.2 },
       { name: '翠羽舞',  type: 'active', effect: 'buff_atk',  value: 0.2, cooldown: 4 },
-      { name: '疾翼',   type: 'passive', effect: 'atk_boost', value: 0.12 }
+      { name: '疾翼',   type: 'passive', effect: 'atk_boost', value: 0.12 },
+      { name: '迅襲', type: 'active', effect: 'damage', multiplier: 2.3, cooldown: 3 }
     ]
   },
   {
@@ -159,7 +163,8 @@ var PET_DATA = [
     skills: [
       { name: '龜殼衝撞', type: 'basic',  effect: 'damage',  multiplier: 0.8 },
       { name: '自然護盾', type: 'active', effect: 'shield',  value: 0.2, cooldown: 5 },
-      { name: '遠古龜殼', type: 'passive', effect: 'def_boost', value: 0.25 }
+      { name: '遠古龜殼', type: 'passive', effect: 'def_boost', value: 0.25 },
+      { name: '堅守', type: 'active', effect: 'heal', value: 0.2, cooldown: 4 }
     ]
   },
   {
@@ -168,7 +173,8 @@ var PET_DATA = [
     skills: [
       { name: '鹿角衝擊', type: 'basic',  effect: 'damage',   multiplier: 1.3 },
       { name: '森林祝福', type: 'active', effect: 'heal',     value: 0.2, cooldown: 4 },
-      { name: '自然連結', type: 'passive', effect: 'hp_boost', value: 0.15 }
+      { name: '自然連結', type: 'passive', effect: 'hp_boost', value: 0.15 },
+      { name: '神速突擊', type: 'active', effect: 'damage', multiplier: 2.8, cooldown: 4 }
     ]
   },
   {
@@ -177,7 +183,8 @@ var PET_DATA = [
     skills: [
       { name: '翠息',   type: 'basic',  effect: 'damage',  multiplier: 1.4 },
       { name: '藤蔓束縛', type: 'active', effect: 'damage', multiplier: 2.0, cooldown: 5 },
-      { name: '翠龍鱗', type: 'passive', effect: 'def_boost', value: 0.18 }
+      { name: '翠龍鱗', type: 'passive', effect: 'def_boost', value: 0.18 },
+      { name: '龍之怒吼', type: 'active', effect: 'damage_all', multiplier: 1.5, cooldown: 5 }
     ]
   },
   {
@@ -186,7 +193,8 @@ var PET_DATA = [
     skills: [
       { name: '王者之擊', type: 'basic',  effect: 'damage',     multiplier: 1.5 },
       { name: '森林之怒', type: 'active', effect: 'damage_all', multiplier: 2.0, cooldown: 4 },
-      { name: '森王氣息', type: 'passive', effect: 'hp_boost', value: 0.2 }
+      { name: '森王氣息', type: 'passive', effect: 'hp_boost', value: 0.2 },
+      { name: '自然重生', type: 'active', effect: 'heal_all', value: 0.25, cooldown: 5 }
     ]
   },
   {
@@ -195,7 +203,8 @@ var PET_DATA = [
     skills: [
       { name: '傳說龍牙', type: 'basic',  effect: 'damage',   multiplier: 1.8 },
       { name: '世界樹之力', type: 'active', effect: 'heal',   value: 0.3, cooldown: 5 },
-      { name: '遠古之力', type: 'passive', effect: 'all_boost', value: 0.28 }
+      { name: '遠古之力', type: 'passive', effect: 'all_boost', value: 0.28 },
+      { name: '神龍天滅', type: 'active', effect: 'damage_all', multiplier: 3.5, cooldown: 5 }
     ]
   },
   {
@@ -204,7 +213,8 @@ var PET_DATA = [
     skills: [
       { name: '神之牙',  type: 'basic',  effect: 'damage',     multiplier: 2.0 },
       { name: '自然之怒', type: 'active', effect: 'damage_all', multiplier: 4.0, cooldown: 5 },
-      { name: '神之林',  type: 'passive', effect: 'all_boost', value: 0.22 }
+      { name: '神之林',  type: 'passive', effect: 'all_boost', value: 0.22 },
+      { name: '創世森林', type: 'active', effect: 'heal_all', value: 0.5, cooldown: 6 }
     ]
   },
 
@@ -215,7 +225,8 @@ var PET_DATA = [
     skills: [
       { name: '水花',   type: 'basic',  effect: 'damage', multiplier: 1.0 },
       { name: '泡泡護盾', type: 'active', effect: 'shield', value: 0.2, cooldown: 4 },
-      { name: '海洋之心', type: 'passive', effect: 'hp_boost', value: 0.12 }
+      { name: '海洋之心', type: 'passive', effect: 'hp_boost', value: 0.12 },
+      { name: '水柱衝擊', type: 'active', effect: 'damage', multiplier: 1.6, cooldown: 3 }
     ]
   },
   {
@@ -224,7 +235,8 @@ var PET_DATA = [
     skills: [
       { name: '魚鰭斬', type: 'basic',  effect: 'damage', multiplier: 1.1 },
       { name: '魚群衝鋒', type: 'active', effect: 'damage', multiplier: 2.5, cooldown: 4 },
-      { name: '滑溜',  type: 'passive', effect: 'atk_boost', value: 0.1 }
+      { name: '滑溜',  type: 'passive', effect: 'atk_boost', value: 0.1 },
+      { name: '連擊', type: 'active', effect: 'damage', multiplier: 1.8, cooldown: 3 }
     ]
   },
   {
@@ -233,7 +245,8 @@ var PET_DATA = [
     skills: [
       { name: '星光射線', type: 'basic',  effect: 'damage', multiplier: 1.1 },
       { name: '再生',   type: 'active', effect: 'heal',   value: 0.3, cooldown: 4 },
-      { name: '星力',   type: 'passive', effect: 'hp_boost', value: 0.1 }
+      { name: '星力',   type: 'passive', effect: 'hp_boost', value: 0.1 },
+      { name: '星爆', type: 'active', effect: 'damage', multiplier: 2.0, cooldown: 3 }
     ]
   },
   {
@@ -242,7 +255,8 @@ var PET_DATA = [
     skills: [
       { name: '鯊齒咬擊', type: 'basic',  effect: 'damage', multiplier: 1.3 },
       { name: '冰暴衝擊', type: 'active', effect: 'damage', multiplier: 2.8, cooldown: 4 },
-      { name: '掠食者',  type: 'passive', effect: 'atk_boost', value: 0.15 }
+      { name: '掠食者',  type: 'passive', effect: 'atk_boost', value: 0.15 },
+      { name: '冰封突襲', type: 'active', effect: 'damage', multiplier: 2.4, cooldown: 3 }
     ]
   },
   {
@@ -251,7 +265,8 @@ var PET_DATA = [
     skills: [
       { name: '鉗擊',   type: 'basic',  effect: 'damage',  multiplier: 1.0 },
       { name: '水牆',   type: 'active', effect: 'shield',  value: 0.25, cooldown: 5 },
-      { name: '深海鎧甲', type: 'passive', effect: 'def_boost', value: 0.22 }
+      { name: '深海鎧甲', type: 'passive', effect: 'def_boost', value: 0.22 },
+      { name: '巨鉗粉碎', type: 'active', effect: 'damage', multiplier: 2.0, cooldown: 4 }
     ]
   },
   {
@@ -260,7 +275,8 @@ var PET_DATA = [
     skills: [
       { name: '冰矛',   type: 'basic',  effect: 'damage',     multiplier: 1.3 },
       { name: '暴風雪', type: 'active', effect: 'damage_all', multiplier: 1.3, cooldown: 4 },
-      { name: '冰晶氣場', type: 'passive', effect: 'atk_boost', value: 0.15 }
+      { name: '冰晶氣場', type: 'passive', effect: 'atk_boost', value: 0.15 },
+      { name: '極凍爆破', type: 'active', effect: 'damage', multiplier: 3.0, cooldown: 4 }
     ]
   },
   {
@@ -269,7 +285,8 @@ var PET_DATA = [
     skills: [
       { name: '深淵咬擊', type: 'basic',  effect: 'damage',     multiplier: 1.4 },
       { name: '海嘯',   type: 'active', effect: 'damage_all', multiplier: 1.6, cooldown: 5 },
-      { name: '深淵之力', type: 'passive', effect: 'atk_boost', value: 0.18 }
+      { name: '深淵之力', type: 'passive', effect: 'atk_boost', value: 0.18 },
+      { name: '龍捲水柱', type: 'active', effect: 'damage', multiplier: 2.8, cooldown: 4 }
     ]
   },
   {
@@ -278,7 +295,8 @@ var PET_DATA = [
     skills: [
       { name: '三叉戟', type: 'basic',  effect: 'damage',     multiplier: 1.5 },
       { name: '海洋之怒', type: 'active', effect: 'damage_all', multiplier: 2.2, cooldown: 4 },
-      { name: '海神氣息', type: 'passive', effect: 'all_boost', value: 0.15 }
+      { name: '海神氣息', type: 'passive', effect: 'all_boost', value: 0.15 },
+      { name: '海嘯沖擊', type: 'active', effect: 'damage_all', multiplier: 2.5, cooldown: 5 }
     ]
   },
   {
@@ -287,7 +305,8 @@ var PET_DATA = [
     skills: [
       { name: '傳說龍顎', type: 'basic',  effect: 'damage',     multiplier: 1.8 },
       { name: '虛空海潮', type: 'active', effect: 'damage_all', multiplier: 3.2, cooldown: 5 },
-      { name: '深淵意志', type: 'passive', effect: 'all_boost', value: 0.3 }
+      { name: '深淵意志', type: 'passive', effect: 'all_boost', value: 0.3 },
+      { name: '滅世洪流', type: 'active', effect: 'damage_all', multiplier: 3.5, cooldown: 5 }
     ]
   },
   {
@@ -296,7 +315,8 @@ var PET_DATA = [
     skills: [
       { name: '帝王浪潮', type: 'basic',  effect: 'damage',     multiplier: 2.0 },
       { name: '末日海潮', type: 'active', effect: 'damage_all', multiplier: 4.5, cooldown: 5 },
-      { name: '帝王之海', type: 'passive', effect: 'all_boost', value: 0.23 }
+      { name: '帝王之海', type: 'passive', effect: 'all_boost', value: 0.23 },
+      { name: '創世大洪水', type: 'active', effect: 'damage_all', multiplier: 5.0, cooldown: 6 }
     ]
   }
 ];
