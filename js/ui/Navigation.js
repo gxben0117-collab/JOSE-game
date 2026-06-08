@@ -26,6 +26,7 @@ var Navigation = (function () {
       if (screenId === 'inventory') InventoryView.render();
       if (screenId === 'gacha')     GachaView.render();
       if (screenId === 'shop')      ShopView.render();
+      if (screenId === 'settings')  SettingsView.render();
     },
 
     current: function () { return current; }

@@ -253,6 +253,12 @@ var BattleView = (function () {
     var overlay = document.getElementById('battle-result-overlay');
     if (!overlay) return;
 
+    // 隱藏逃跑按鈕，顯示出戰按鈕
+    var btn = document.getElementById('btn-fight');
+    var fleeBtn = document.getElementById('btn-flee');
+    if (btn) { btn.disabled = false; btn.textContent = '⚔️ 出戰'; btn.style.display = 'block'; }
+    if (fleeBtn) fleeBtn.style.display = 'none';
+
     if (battleResult.win) {
       var r = battleResult.rewards;
       BattleEngine.applyRewards(r);
@@ -328,6 +334,7 @@ var BattleView = (function () {
 
         '<div class="fight-wrap">' +
           '<button class="btn-fight" id="btn-fight" onclick="BattleView.startFight()">⚔️ 出戰</button>' +
+          '<button class="btn-flee" id="btn-flee" onclick="BattleView.flee()" style="display:none">🏃 逃跑</button>' +
         '</div>' +
 
         '<div id="battle-result-overlay" class="result-overlay" style="display:none"></div>' +
@@ -351,8 +358,28 @@ var BattleView = (function () {
       battleResult = BattleEngine.simulate(GameState.get().currentStage, battleMode === 'manual');
       document.getElementById('battle-result-overlay').style.display = 'none';
       var btn = document.getElementById('btn-fight');
-      if (btn) { btn.disabled = true; btn.textContent = '戰鬥中...'; }
+      var fleeBtn = document.getElementById('btn-flee');
+      if (btn) { btn.disabled = true; btn.textContent = '戰鬥中...'; btn.style.display = 'none'; }
+      if (fleeBtn) fleeBtn.style.display = 'block';
       animateBattle();
+    },
+
+    flee: function () {
+      if (!isBattling) return;
+      if (animTimer) clearTimeout(animTimer);
+      isBattling = false;
+      battleResult = null;
+      logIndex = 0;
+      setStatus('💨 已逃跑！AP 退還 5 點');
+      GameState.addAP(5); // 退還一半 AP
+      updateHUD();
+      setTimeout(function () {
+        var btn = document.getElementById('btn-fight');
+        var fleeBtn = document.getElementById('btn-flee');
+        if (btn) { btn.disabled = false; btn.textContent = '⚔️ 出戰'; btn.style.display = 'block'; }
+        if (fleeBtn) fleeBtn.style.display = 'none';
+        BattleView.render();
+      }, 1000);
     },
 
     toggleMode: function () {
