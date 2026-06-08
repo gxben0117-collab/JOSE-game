@@ -5,6 +5,7 @@ var BattleView = (function () {
   var isBattling    = false;
   var petNameToSlot = {};  // stats.name -> slot index 0|1|2
   var battleMode    = 'auto'; // 'auto' 或 'manual'
+  var battleSpeed   = 1; // 1x, 2x, 4x
 
   /* ─── DOM builders ─── */
 
@@ -244,7 +245,7 @@ var BattleView = (function () {
     }
     var entry = battleResult.log[logIndex++];
     var delay = processEntry(entry);
-    animTimer = setTimeout(animateBattle, delay);
+    animTimer = setTimeout(animateBattle, delay / battleSpeed);
   }
 
   /* ─── Result ─── */
@@ -317,7 +318,14 @@ var BattleView = (function () {
 
         '<div class="battle-mode-bar">' +
           '<span>AP: ' + currentAp + '/' + state.maxAp + ' (需要 10)</span>' +
-          '<button class="btn-mode ' + (battleMode === 'auto' ? 'active' : '') + '" onclick="BattleView.toggleMode()" title="' + (battleMode === 'auto' ? '自動戰鬥' : '手動模式：鑽石掉落+10%') + '">模式: ' + (battleMode === 'auto' ? '自動' : '手動💎+10%') + '</button>' +
+          '<div class="mode-controls">' +
+            '<button class="btn-mode ' + (battleMode === 'auto' ? 'active' : '') + '" onclick="BattleView.toggleMode()" title="' + (battleMode === 'auto' ? '自動戰鬥' : '手動模式：鑽石掉落+10%') + '">模式: ' + (battleMode === 'auto' ? '自動' : '手動💎+10%') + '</button>' +
+            '<div class="speed-btns">' +
+              '<button class="btn-speed-sm ' + (battleSpeed === 1 ? 'active' : '') + '" onclick="BattleView.setSpeed(1)">1x</button>' +
+              '<button class="btn-speed-sm ' + (battleSpeed === 2 ? 'active' : '') + '" onclick="BattleView.setSpeed(2)">2x</button>' +
+              '<button class="btn-speed-sm ' + (battleSpeed === 4 ? 'active' : '') + '" onclick="BattleView.setSpeed(4)">4x</button>' +
+            '</div>' +
+          '</div>' +
         '</div>' +
 
         '<div class="battle-arena" id="battle-arena">' +
@@ -419,6 +427,11 @@ var BattleView = (function () {
 
     toggleMode: function () {
       battleMode = battleMode === 'auto' ? 'manual' : 'auto';
+      this.render();
+    },
+
+    setSpeed: function (speed) {
+      battleSpeed = speed;
       this.render();
     },
 

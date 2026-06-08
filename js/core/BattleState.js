@@ -115,6 +115,7 @@ var BattleState = (function () {
 
       currentBattle.round++;
       currentBattle.log.push({ type: 'round', round: currentBattle.round });
+      BattleStats.setRoundCount(currentBattle.round);
 
       var results = [];
 
@@ -125,6 +126,7 @@ var BattleState = (function () {
         if (!pt) return;
         var dmgE = BattleEngine.calcDamage(enemy.atk, pt.def, 1.0, 1.0);
         pt.hp = Math.max(0, pt.hp - dmgE);
+        BattleStats.recordDamageTaken(dmgE);
         var result = {
           type: 'enemy_attack',
           enemyId: enemy.id,

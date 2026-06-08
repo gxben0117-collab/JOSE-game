@@ -131,16 +131,18 @@ var ManualBattle = (function () {
 
       var skillsHtml = currentPet.skills.map(function (skill, idx) {
         var cd = currentPet.cooldowns[idx];
-        var disabled = skill.type !== 'basic' && skill.type !== 'active';
-        var onCooldown = skill.type === 'active' && cd > 0;
+        var isPassive = skill.type === 'passive';
+        var isActive = skill.type === 'active';
+        var onCooldown = isActive && cd > 0;
 
         var label = skill.name;
+        if (isPassive) label += ' (被動)';
         if (onCooldown) label += ' (CD:' + cd + ')';
 
         return '<button class="btn-skill ' +
-               (disabled || onCooldown ? 'btn-disabled' : '') +
+               (isPassive || onCooldown ? 'btn-disabled' : '') +
                '" onclick="ManualBattle.useSkill(' + idx + ')" ' +
-               (disabled || onCooldown ? 'disabled' : '') + '>' +
+               (isPassive || onCooldown ? 'disabled' : '') + '>' +
           label +
         '</button>';
       }).join('');

@@ -1302,3 +1302,36 @@ body {
   font-weight: bold;
   color: var(--accent);
 }
+
+/* ─── Battle Speed Controls ─── */
+.mode-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.speed-btns {
+  display: flex;
+  gap: 4px;
+}
+
+.btn-speed-sm {
+  padding: 4px 8px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+  transition: all 0.2s;
+}
+
+.btn-speed-sm:hover {
+  border-color: var(--accent);
+}
+
+.btn-speed-sm.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}

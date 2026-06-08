@@ -117,23 +117,31 @@ var BattleEngine = (function () {
               var bon = elementBonus(pet.element, e.element);
               var dmg = calcDamage(pet.atk, e.def, sk.multiplier, bon);
               e.hp = Math.max(0, e.hp - dmg);
+              BattleStats.recordDamageDealt(dmg);
+              if (e.hp === 0) BattleStats.recordKill();
               hits.push({ targetId: e.id, name: e.name, dmg: dmg, hp: e.hp, maxHp: e.maxHp });
             });
             result = { type: 'skill_all', pet: pet.name, icon: pet.icon, skill: sk.name, hits: hits };
+            BattleStats.recordSkillUsed();
 
           } else if (sk.effect === 'heal' || sk.effect === 'heal_all') {
             var healed = Math.floor(pet.maxHp * sk.value);
             pet.hp = Math.min(pet.maxHp, pet.hp + healed);
             result = { type: 'heal', pet: pet.name, icon: pet.icon, skill: sk.name, amount: healed, hp: pet.hp, maxHp: pet.maxHp };
+            BattleStats.recordSkillUsed();
 
           } else if (sk.multiplier) {
             var bon2 = elementBonus(pet.element, target.element);
             var dmg2 = calcDamage(pet.atk, target.def, sk.multiplier, bon2);
             target.hp = Math.max(0, target.hp - dmg2);
+            BattleStats.recordDamageDealt(dmg2);
+            if (target.hp === 0) BattleStats.recordKill();
             result = { type: 'skill', pet: pet.name, icon: pet.icon, skill: sk.name, targetId: target.id, target: target.name, dmg: dmg2, hp: target.hp, maxHp: target.maxHp };
+            BattleStats.recordSkillUsed();
 
           } else {
             result = { type: 'buff', pet: pet.name, icon: pet.icon, skill: sk.name };
+            BattleStats.recordSkillUsed();
           }
           usedSkill = true;
         }
@@ -151,6 +159,8 @@ var BattleEngine = (function () {
         var mult3 = basic ? basic.multiplier : 1.0;
         var dmg3 = calcDamage(pet.atk, target.def, mult3, bon3);
         target.hp = Math.max(0, target.hp - dmg3);
+        BattleStats.recordDamageDealt(dmg3);
+        if (target.hp === 0) BattleStats.recordKill();
         result = { type: 'attack', pet: pet.name, icon: pet.icon, targetId: target.id, target: target.name, dmg: dmg3, hp: target.hp, maxHp: target.maxHp };
       }
 
