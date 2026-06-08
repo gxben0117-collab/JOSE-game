@@ -21,7 +21,8 @@ var PET_DATA = [
     skills: [
       { name: '火球', type: 'basic',   effect: 'damage',     multiplier: 1.0 },
       { name: '爆炎', type: 'active',  effect: 'damage_all', multiplier: 0.6, cooldown: 3 },
-      { name: '灼熱', type: 'passive', effect: 'burn',       chance: 0.15, value: 0.05 }
+      { name: '灼熱', type: 'passive', effect: 'burn',       chance: 0.15, value: 0.05 },
+      { name: '火焰反擊', type: 'active', effect: 'damage', multiplier: 1.5, cooldown: 2 }
     ]
   },
   {
@@ -30,7 +31,8 @@ var PET_DATA = [
     skills: [
       { name: '獅爪',   type: 'basic',   effect: 'damage',    multiplier: 1.0 },
       { name: '怒吼',   type: 'active',  effect: 'buff_atk',  value: 0.3, cooldown: 4 },
-      { name: '鬃毛防護', type: 'passive', effect: 'def_boost', value: 0.1 }
+      { name: '鬃毛防護', type: 'passive', effect: 'def_boost', value: 0.1 },
+      { name: '撕咬', type: 'active', effect: 'damage', multiplier: 1.8, cooldown: 2 }
     ]
   },
   {
@@ -39,7 +41,8 @@ var PET_DATA = [
     skills: [
       { name: '鬼火',   type: 'basic',   effect: 'damage', multiplier: 1.1 },
       { name: '九尾亂舞', type: 'active', effect: 'damage', multiplier: 2.5, cooldown: 4 },
-      { name: '靈敏',   type: 'passive', effect: 'atk_boost', value: 0.12 }
+      { name: '靈敏',   type: 'passive', effect: 'atk_boost', value: 0.12 },
+      { name: '猛攻', type: 'active', effect: 'damage', multiplier: 2.0, cooldown: 3 }
     ]
   },
   {
@@ -48,7 +51,8 @@ var PET_DATA = [
     skills: [
       { name: '翼斬',   type: 'basic',  effect: 'damage', multiplier: 1.2 },
       { name: '俯衝轟炸', type: 'active', effect: 'damage', multiplier: 3.0, cooldown: 5 },
-      { name: '空中霸主', type: 'passive', effect: 'atk_boost', value: 0.12 }
+      { name: '空中霸主', type: 'passive', effect: 'atk_boost', value: 0.12 },
+      { name: '疾風斬', type: 'active', effect: 'damage', multiplier: 2.2, cooldown: 3 }
     ]
   },
   {
@@ -57,7 +61,8 @@ var PET_DATA = [
     skills: [
       { name: '蟹鉗',   type: 'basic',  effect: 'damage',  multiplier: 1.0 },
       { name: '熔岩護盾', type: 'active', effect: 'shield',  value: 0.3, cooldown: 5 },
-      { name: '硬殼',   type: 'passive', effect: 'def_boost', value: 0.2 }
+      { name: '硬殼',   type: 'passive', effect: 'def_boost', value: 0.2 },
+      { name: '重擊', type: 'active', effect: 'damage', multiplier: 2.0, cooldown: 3 }
     ]
   },
   {
@@ -66,7 +71,8 @@ var PET_DATA = [
     skills: [
       { name: '靈焰',   type: 'basic',  effect: 'damage',     multiplier: 1.3 },
       { name: '鳳凰之火', type: 'active', effect: 'damage_all', multiplier: 1.2, cooldown: 4 },
-      { name: '靈魂連結', type: 'passive', effect: 'atk_boost', value: 0.15 }
+      { name: '靈魂連結', type: 'passive', effect: 'atk_boost', value: 0.15 },
+      { name: '致命一擊', type: 'active', effect: 'damage', multiplier: 2.5, cooldown: 3 }
     ]
   },
   {
@@ -75,7 +81,8 @@ var PET_DATA = [
     skills: [
       { name: '龍息',  type: 'basic',  effect: 'damage',     multiplier: 1.4 },
       { name: '業火',  type: 'active', effect: 'damage_all', multiplier: 1.5, cooldown: 5 },
-      { name: '龍之傲', type: 'passive', effect: 'atk_boost', value: 0.2 }
+      { name: '龍之傲', type: 'passive', effect: 'atk_boost', value: 0.2 },
+      { name: '龍爪撕裂', type: 'active', effect: 'damage', multiplier: 2.8, cooldown: 3 }
     ]
   },
   {
@@ -84,7 +91,8 @@ var PET_DATA = [
     skills: [
       { name: '神擊',  type: 'basic',  effect: 'damage',     multiplier: 1.5 },
       { name: '神焰',  type: 'active', effect: 'damage_all', multiplier: 2.0, cooldown: 4 },
-      { name: '神之氣息', type: 'passive', effect: 'all_boost', value: 0.15 }
+      { name: '神之氣息', type: 'passive', effect: 'all_boost', value: 0.15 },
+      { name: '終結技', type: 'active', effect: 'damage', multiplier: 3.0, cooldown: 4 }
     ]
   },
   {
@@ -93,7 +101,8 @@ var PET_DATA = [
     skills: [
       { name: '傳說咬擊', type: 'basic',  effect: 'damage',     multiplier: 1.8 },
       { name: '世界之炎', type: 'active', effect: 'damage_all', multiplier: 3.0, cooldown: 5 },
-      { name: '龍皇之威', type: 'passive', effect: 'atk_boost', value: 0.3 }
+      { name: '龍皇之威', type: 'passive', effect: 'atk_boost', value: 0.3 },
+      { name: '屠殺', type: 'active', effect: 'damage', multiplier: 3.5, cooldown: 4 }
     ]
   },
   {
@@ -102,7 +111,8 @@ var PET_DATA = [
     skills: [
       { name: '帝王之擊', type: 'basic',  effect: 'damage',     multiplier: 2.0 },
       { name: '太陽風暴', type: 'active', effect: 'damage_all', multiplier: 4.0, cooldown: 5 },
-      { name: '帝王氣息', type: 'passive', effect: 'all_boost', value: 0.25 }
+      { name: '帝王氣息', type: 'passive', effect: 'all_boost', value: 0.25 },
+      { name: '神罰', type: 'active', effect: 'damage', multiplier: 4.0, cooldown: 5 }
     ]
   },
 
