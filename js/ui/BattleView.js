@@ -268,6 +268,8 @@ var BattleView = (function () {
         return ITEM_DATA[it.id] ? ITEM_DATA[it.id].name + ' ×' + it.count : '';
       }).filter(Boolean).join('、');
 
+      var statsHtml = BattleStats.generateReport();
+
       overlay.innerHTML =
         '<div class="result-box win">' +
         '<div class="result-title">🎉 勝利！</div>' +
@@ -276,14 +278,17 @@ var BattleView = (function () {
           (r.tickets ? '<br>🎫 抽獎券 +' + r.tickets : '') +
           (itemText  ? '<br>📦 ' + itemText : '') +
         '</div>' +
+        statsHtml +
         '<div class="result-btns">' +
           '<button class="btn-primary" onclick="BattleView.closeResult(true)">下一關</button>' +
           '<button class="btn-secondary" onclick="BattleView.closeResult(false)">返回</button>' +
         '</div></div>';
     } else {
+      var statsHtml2 = BattleStats.generateReport();
       overlay.innerHTML =
         '<div class="result-box lose"><div class="result-title">💀 失敗</div>' +
         '<div class="result-sub">強化寵物後再試！</div>' +
+        statsHtml2 +
         '<button class="btn-primary" onclick="BattleView.closeResult(false)">重試</button></div>';
     }
     overlay.style.display = 'flex';

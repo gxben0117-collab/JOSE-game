@@ -11,6 +11,9 @@ var ManualBattle = (function () {
         return false;
       }
 
+      // 初始化統計
+      BattleStats.init();
+
       var result = BattleState.init(stageNum, true);
       if (result.error) {
         GameState.addAP(10);
@@ -205,13 +208,42 @@ var ManualBattle = (function () {
         if (result.win) {
           BattleEngine.applyRewards(result.rewards);
           GameState.unlockStage(BattleState.get().stageNum + 1);
-          showToast('🎉 勝利！');
+
+          // 顯示勝利界面和統計
+          var statsHtml = BattleStats.generateReport();
+          var overlay = document.getElementById('battle-result-overlay');
+          var r = result.rewards;
+          var itemText = (r.items || []).map(function (it) {
+            return ITEM_DATA[it.id] ? ITEM_DATA[it.id].name + ' ×' + it.count : '';
+          }).filter(Boolean).join('、');
+
+          overlay.innerHTML =
+            '<div class="result-box win">' +
+            '<div class="result-title">🎉 勝利！</div>' +
+            '<div class="result-rewards">' +
+              '💰 金幣 +' + r.gold + '<br>💎 鑽石 +' + r.diamond + '<br>⭐ 經驗 +' + r.exp +
+              (r.tickets ? '<br>🎫 抽獎券 +' + r.tickets : '') +
+              (itemText  ? '<br>📦 ' + itemText : '') +
+            '</div>' +
+            statsHtml +
+            '<div class="result-btns">' +
+              '<button class="btn-primary" onclick="ManualBattle.closeResult(true)">下一關</button>' +
+              '<button class="btn-secondary" onclick="ManualBattle.closeResult(false)">返回</button>' +
+            '</div></div>';
+          overlay.style.display = 'flex';
         } else {
-          showToast('💀 失敗！');
+          var statsHtml2 = BattleStats.generateReport();
+          var overlay2 = document.getElementById('battle-result-overlay');
+          overlay2.innerHTML =
+            '<div class="result-box lose">' +
+            '<div class="result-title">💀 失敗</div>' +
+            '<div class="result-sub">強化寵物後再試！</div>' +
+            statsHtml2 +
+            '<button class="btn-primary" onclick="ManualBattle.closeResult(false)">重試</button></div>';
+          overlay2.style.display = 'flex';
         }
 
         BattleState.clear();
-        BattleView.render();
         updateHUD();
       }, 1000 / battleSpeed);
     },
@@ -219,6 +251,18 @@ var ManualBattle = (function () {
     setSpeed: function (speed) {
       battleSpeed = speed;
       this.renderBattleUI();
+    },
+
+    closeResult: function (advance) {
+      document.getElementById('battle-result-overlay').style.display = 'none';
+      if (advance) {
+        var state = GameState.get();
+        if (state.currentStage < 100) {
+          state.currentStage = Math.min(state.maxStage, state.currentStage + 1);
+          GameState.save();
+        }
+      }
+      BattleView.render();
     }
   };
 })();

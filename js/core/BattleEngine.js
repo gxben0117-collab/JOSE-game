@@ -160,6 +160,9 @@ var BattleEngine = (function () {
     simulate: function (stageNum, isManualMode) {
       var state    = GameState.get();
 
+      // 初始化統計
+      BattleStats.init();
+
       // 檢查 AP
       if (!GameState.spendAP(10)) {
         return { win: false, log: [{ type: 'msg', text: 'AP 不足！需要 10 AP 才能戰鬥' }], rewards: null };
@@ -187,6 +190,7 @@ var BattleEngine = (function () {
 
       for (var round = 1; round <= MAX_ROUNDS; round++) {
         log.push({ type: 'round', round: round });
+        BattleStats.setRoundCount(round);
 
         /* ─── 玩家攻擊 ─── */
         playerTeam.forEach(function (pet) {
@@ -211,9 +215,12 @@ var BattleEngine = (function () {
                     var bon = elementBonus(pet.element, e.element);
                     var dmg = calcDamage(pet.atk, e.def, sk.multiplier, bon);
                     e.hp = Math.max(0, e.hp - dmg);
+                    BattleStats.recordDamageDealt(dmg);
+                    if (e.hp === 0) BattleStats.recordKill();
                     hits.push({ targetId: e.id, name: e.name, dmg: dmg, hp: e.hp, maxHp: e.maxHp });
                   });
                   log.push({ type: 'skill_all', pet: pet.name, icon: pet.icon, skill: sk.name, hits: hits });
+                  BattleStats.recordSkillUsed();
 
                 } else if (sk.effect === 'heal' || sk.effect === 'heal_all') {
                   var healed = Math.floor(pet.maxHp * sk.value);
@@ -224,7 +231,10 @@ var BattleEngine = (function () {
                   var bon2 = elementBonus(pet.element, target.element);
                   var dmg2 = calcDamage(pet.atk, target.def, sk.multiplier, bon2);
                   target.hp = Math.max(0, target.hp - dmg2);
+                  BattleStats.recordDamageDealt(dmg2);
+                  if (target.hp === 0) BattleStats.recordKill();
                   log.push({ type: 'skill', pet: pet.name, icon: pet.icon, skill: sk.name, targetId: target.id, target: target.name, dmg: dmg2, hp: target.hp, maxHp: target.maxHp });
+                  BattleStats.recordSkillUsed();
 
                 } else {
                   log.push({ type: 'buff', pet: pet.name, icon: pet.icon, skill: sk.name });
@@ -246,6 +256,8 @@ var BattleEngine = (function () {
             var mult3 = basic ? basic.multiplier : 1.0;
             var dmg3  = calcDamage(pet.atk, t2.def, mult3, bon3);
             t2.hp = Math.max(0, t2.hp - dmg3);
+            BattleStats.recordDamageDealt(dmg3);
+            if (t2.hp === 0) BattleStats.recordKill();
             log.push({ type: 'attack', pet: pet.name, icon: pet.icon, targetId: t2.id, target: t2.name, dmg: dmg3, hp: t2.hp, maxHp: t2.maxHp });
           }
         });
@@ -268,6 +280,7 @@ var BattleEngine = (function () {
           if (!pt) return;
           var dmgE = calcDamage(enemy.atk, pt.def, 1.0, 1.0);
           pt.hp = Math.max(0, pt.hp - dmgE);
+          BattleStats.recordDamageTaken(dmgE);
           log.push({ type: 'enemy_attack', enemyId: enemy.id, enemy: enemy.name, icon: enemy.icon, target: pt.name, dmg: dmgE, hp: pt.hp, maxHp: pt.maxHp });
         });
 
