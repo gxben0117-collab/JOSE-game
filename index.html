@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>寵物闖關 RPG</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="game-container">
+
+    <!-- HUD -->
+    <div id="hud">
+      <div class="hud-currency">
+        <span id="hud-gold">💰 500</span>
+        <span id="hud-diamond">💎 100</span>
+      </div>
+      <div class="hud-stage">🎮 寵物闖關 RPG</div>
+    </div>
+
+    <!-- Battle Screen -->
+    <div id="screen-battle" class="screen active">
+      <div style="padding:20px;color:#666;text-align:center">載入中...</div>
+    </div>
+
+    <!-- Inventory Screen -->
+    <div id="screen-inventory" class="screen"></div>
+
+    <!-- Gacha Screen -->
+    <div id="screen-gacha" class="screen"></div>
+
+    <!-- Shop Screen -->
+    <div id="screen-shop" class="screen"></div>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav">
+      <button class="nav-btn active" data-screen="battle">⚔️<br>闖關</button>
+      <button class="nav-btn" data-screen="inventory">🎒<br>背包</button>
+      <button class="nav-btn" data-screen="gacha">✨<br>抽獎</button>
+      <button class="nav-btn" data-screen="shop">🏪<br>商店</button>
+    </nav>
+
+  </div>
+
+  <!-- Data -->
+  <script src="js/data/pets.js"></script>
+  <script src="js/data/stages.js"></script>
+  <script src="js/data/items.js"></script>
+
+  <!-- Core -->
+  <script src="js/core/GameState.js"></script>
+  <script src="js/core/PetSystem.js"></script>
+  <script src="js/core/BattleEngine.js"></script>
+  <script src="js/core/GachaSystem.js"></script>
+  <script src="js/core/OfflineSystem.js"></script>
+
+  <!-- UI -->
+  <script src="js/ui/Navigation.js"></script>
+  <script src="js/ui/BattleView.js"></script>
+  <script src="js/ui/InventoryView.js"></script>
+  <script src="js/ui/GachaView.js"></script>
+  <script src="js/ui/ShopView.js"></script>
+
+  <!-- Entry -->
+  <script src="js/main.js"></script>
+</body>
+</html>
