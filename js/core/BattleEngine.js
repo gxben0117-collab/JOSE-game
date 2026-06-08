@@ -38,7 +38,7 @@ var BattleEngine = (function () {
       id:      def.id,
       name:    def.name,
       icon:    def.icon,
-      element: 'none',
+      element: def.element || 'none',
       level:   def.level,
       maxHp:   def.maxHp,
       hp:      def.maxHp,

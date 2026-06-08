@@ -24,10 +24,16 @@ var OfflineSystem = (function () {
     apply: function (income) {
       if (!income) return;
       GameState.addGold(income.gold);
+
+      // 召喚師獲得經驗
+      GameState.addPlayerExp(income.exp);
+
+      // 寵物獲得經驗
       var pets = GameState.getActivePets().filter(Boolean);
       pets.forEach(function (p) {
         PetSystem.addExp(p, income.exp);
       });
+
       GameState.save();
     }
   };

@@ -19,6 +19,10 @@ var MONSTER_NAMES = [
 var MINION_NAMES = ['小哥布林','骷髏兵','岩石小怪','蜥蜴小兵','暗影蝙蝠','毒液蟲','火球精靈','冰晶碎片'];
 var MINION_ICONS = ['👹','💀','🪨','🦎','🦇','🐛','🔮','❄️'];
 
+// 怪物屬性對應（根據關卡循環分配）
+var MONSTER_ELEMENTS = ['fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'forest'];
+var MINION_ELEMENTS = ['fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'fire', 'ocean'];
+
 /*
   getStageConfig returns:
   {
@@ -41,14 +45,18 @@ function getStageConfig(stageNum) {
     var mHp     = Math.floor(bossHp  * 0.20);
     var mAtk    = Math.floor(bossAtk * 0.40);
     var mDef    = Math.floor(bossDef * 0.40);
+
+    // Boss 屬性根據關卡循環分配
+    var bossElement = ['fire', 'ocean', 'forest'][(stageNum / 10 - 1) % 3];
+
     return {
       isBoss: true,
       frontRow: [
-        { id: 'ef-0', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef },
-        { id: 'ef-1', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef }
+        { id: 'ef-0', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef, element: bossElement },
+        { id: 'ef-1', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef, element: bossElement }
       ],
       backRow: [
-        { id: 'eb-0', name: boss.name, icon: boss.icon, level: level, maxHp: bossHp, atk: bossAtk, def: bossDef, isBoss: true }
+        { id: 'eb-0', name: boss.name, icon: boss.icon, level: level, maxHp: bossHp, atk: bossAtk, def: bossDef, isBoss: true, element: bossElement }
       ]
     };
   }
@@ -63,14 +71,18 @@ function getStageConfig(stageNum) {
   var mAtk2   = Math.floor(baseAtk * 0.55);
   var mDef2   = Math.floor(baseDef * 0.55);
 
+  // 小怪和敵人屬性
+  var minionElement = MINION_ELEMENTS[mIdx % MINION_ELEMENTS.length];
+  var enemyElement = MONSTER_ELEMENTS[eIdx % MONSTER_ELEMENTS.length];
+
   return {
     isBoss: false,
     frontRow: [
-      { id: 'ef-0', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2 },
-      { id: 'ef-1', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2 }
+      { id: 'ef-0', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2, element: minionElement },
+      { id: 'ef-1', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2, element: minionElement }
     ],
     backRow: [
-      { id: 'eb-0', name: MONSTER_NAMES[eIdx], icon: '👾', level: level, maxHp: baseHp, atk: baseAtk, def: baseDef }
+      { id: 'eb-0', name: MONSTER_NAMES[eIdx], icon: '👾', level: level, maxHp: baseHp, atk: baseAtk, def: baseDef, element: enemyElement }
     ]
   };
 }
