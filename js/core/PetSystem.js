@@ -53,13 +53,17 @@ var PetSystem = (function () {
           petInstance.exp -= needed;
           petInstance.level++;
           leveled = true;
-          // 升級時 AP 補滿且上限 +1
-          GameState.increaseMaxAP();
         } else {
           break;
         }
       }
       if (petInstance.level >= 100) petInstance.exp = 0;
+
+      // 如果有升級，觸發 AP 重算和補滿
+      if (leveled) {
+        GameState.onPetLevelUp();
+      }
+
       GameState.save();
       return leveled;
     },

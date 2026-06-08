@@ -312,7 +312,7 @@ var BattleView = (function () {
 
         '<div class="battle-mode-bar">' +
           '<span>AP: ' + currentAp + '/' + state.maxAp + ' (需要 10)</span>' +
-          '<button class="btn-mode ' + (battleMode === 'auto' ? 'active' : '') + '" onclick="BattleView.toggleMode()">模式: ' + (battleMode === 'auto' ? '自動' : '手動') + '</button>' +
+          '<button class="btn-mode ' + (battleMode === 'auto' ? 'active' : '') + '" onclick="BattleView.toggleMode()" title="' + (battleMode === 'auto' ? '自動戰鬥' : '手動模式：鑽石掉落+10%') + '">模式: ' + (battleMode === 'auto' ? '自動' : '手動💎+10%') + '</button>' +
         '</div>' +
 
         '<div class="battle-arena" id="battle-arena">' +
@@ -367,12 +367,22 @@ var BattleView = (function () {
     flee: function () {
       if (!isBattling) return;
       if (animTimer) clearTimeout(animTimer);
+
+      // 清空戰鬥狀態
       isBattling = false;
       battleResult = null;
       logIndex = 0;
+
+      // 隱藏結果覆蓋層和槽位選單
+      var overlay = document.getElementById('battle-result-overlay');
+      var slotMenu = document.getElementById('slot-menu');
+      if (overlay) overlay.style.display = 'none';
+      if (slotMenu) slotMenu.style.display = 'none';
+
       setStatus('💨 已逃跑！AP 退還 5 點');
       GameState.addAP(5); // 退還一半 AP
       updateHUD();
+
       setTimeout(function () {
         var btn = document.getElementById('btn-fight');
         var fleeBtn = document.getElementById('btn-flee');

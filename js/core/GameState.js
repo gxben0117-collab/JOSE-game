@@ -171,11 +171,15 @@ var GameState = (function () {
     getAP: function () {
       var now = Date.now();
       var elapsed = now - state.lastApRegenTime;
-      var hoursElapsed = elapsed / (1000 * 60 * 60);
-      var regenAmount = Math.floor(hoursElapsed * 10);
+
+      // 每 6 分鐘回復 1 AP (每小時 10 AP)
+      var AP_REGEN_INTERVAL = 6 * 60 * 1000; // 6 分鐘 = 360000 毫秒
+      var regenAmount = Math.floor(elapsed / AP_REGEN_INTERVAL);
+
       if (regenAmount > 0) {
         state.ap = Math.min(state.maxAp, state.ap + regenAmount);
-        state.lastApRegenTime = now - (elapsed % (1000 * 60 * 60 / 10));
+        // 更新時間戳，保留未滿一個間隔的時間
+        state.lastApRegenTime += regenAmount * AP_REGEN_INTERVAL;
         this.save();
       }
       return state.ap;
@@ -199,8 +203,23 @@ var GameState = (function () {
       this.save();
     },
 
-    increaseMaxAP: function () {
-      state.maxAp++;
+    recalcMaxAP: function () {
+      // 根據上陣寵物的最高等級計算 AP 上限
+      var activePets = this.getActivePets().filter(Boolean);
+      if (activePets.length === 0) {
+        state.maxAp = 90;
+      } else {
+        var maxLevel = Math.max.apply(null, activePets.map(function (p) { return p.level; }));
+        state.maxAp = 90 + (maxLevel - 1);
+      }
+      // 如果當前 AP 超過上限，調整為上限
+      if (state.ap > state.maxAp) state.ap = state.maxAp;
+      this.save();
+    },
+
+    onPetLevelUp: function () {
+      // 寵物升級時重新計算 AP 上限並補滿
+      this.recalcMaxAP();
       state.ap = state.maxAp;
       this.save();
     }
