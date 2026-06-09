@@ -74,12 +74,13 @@ var BattleEngine = (function () {
     return back.find(function (e) { return e.hp > 0; }) || null;
   }
 
-  /* 我方目標（敵人攻擊）：前排槽位0,1先；全滅才打後排槽位2 */
+  /* 我方目標（敵人攻擊）：前排槽位0~3先；全滅才打後排槽位4,5 */
   function pickPlayerTarget(team) {
-    var front = team.filter(function (p, i) { return i < 2 && p && p.hp > 0; });
+    var front = team.filter(function (p, i) { return i < 4 && p && p.hp > 0; });
     if (front.length > 0) return front[Math.floor(Math.random() * front.length)];
-    var back = team[2];
-    return (back && back.hp > 0) ? back : null;
+    var back = team.filter(function (p, i) { return i >= 4 && p && p.hp > 0; });
+    if (back.length > 0) return back[Math.floor(Math.random() * back.length)];
+    return null;
   }
 
   function allDead(arr) {

@@ -70,13 +70,19 @@ var GachaSystem = (function () {
   return {
     pull: function (count) {
       count = count || 1;
-      var cost = count === 10 ? 900 : count * 100;
       var state = GameState.get();
 
-      // Check tickets first (only for single pull)
+      // 單抽：優先使用券
       if (count === 1 && state.items.gacha_ticket > 0) {
         if (!GameState.spendItem('gacha_ticket', 1)) return null;
-      } else {
+      }
+      // 10連抽：檢查是否有10張券
+      else if (count === 10 && state.items.gacha_ticket >= 10) {
+        if (!GameState.spendItem('gacha_ticket', 10)) return null;
+      }
+      // 沒券或券不足，用鑽石
+      else {
+        var cost = count === 10 ? 900 : count * 100;
         if (!GameState.spendDiamond(cost)) return null;
       }
 

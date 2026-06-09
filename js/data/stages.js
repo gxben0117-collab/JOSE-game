@@ -14,10 +14,12 @@ var BOSS_DATA = {
 var MONSTER_NAMES = [
   '哥布林','骷髏戰士','岩石怪','毒液蜥','黑影狼','鐵甲蟹',
   '電氣魚','火焰蝙蝠','寒冰熊','毒蘑菇人','石頭巨人','沼澤怪',
-  '暗黑騎士','熔岩蟲','深海章魚','森林妖精'
+  '暗黑騎士','熔岩蟲','深海章魚','森林妖精',
+  '幽靈戰士','雷電獸','冰霜巨人','毒牙蛇','暗影刺客','水晶魔像',
+  '烈焰惡犬','風暴飛龍','腐朽樹人','鋼鐵獨眼'
 ];
-var MINION_NAMES = ['小哥布林','骷髏兵','岩石小怪','蜥蜴小兵','暗影蝙蝠','毒液蟲','火球精靈','冰晶碎片'];
-var MINION_ICONS = ['👹','💀','🪨','🦎','🦇','🐛','🔮','❄️'];
+var MINION_NAMES = ['小哥布林','骷髏兵','岩石小怪','蜥蜴小兵','暗影蝙蝠','毒液蟲','火球精靈','冰晶碎片','雷電史萊姆','毒刺蜂','水元素','風刃鷹','黑暗小鬼'];
+var MINION_ICONS = ['👹','💀','🪨','🦎','🦇','🐛','🔮','❄️','⚡','🐝','💧','🦅','👻'];
 
 // 怪物屬性對應（根據關卡循環分配）
 var MONSTER_ELEMENTS = ['fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'fire', 'forest', 'ocean', 'forest'];
@@ -37,7 +39,26 @@ function getStageConfig(stageNum) {
   var level  = stageNum;
 
   if (isBoss) {
-    var boss    = BOSS_DATA[stageNum] || { name: 'Boss', icon: '💀', minionName: '小兵', minionIcon: '👾', hpMult: 5, atkMult: 2.5, defMult: 2.0 };
+    var boss = BOSS_DATA[stageNum];
+
+    // 超過 100 關後程序生成 Boss
+    if (!boss) {
+      var cycle = Math.floor((stageNum - 100) / 100);
+      var baseBoss = BOSS_DATA[10 + (cycle % 9) * 10] || BOSS_DATA[10];
+      var tier = Math.floor(stageNum / 100);
+      var suffix = ['', '·改', '·真', '·極', '·神', '·帝', '·魔', '·聖', '·創世', '·究極'][Math.min(tier, 9)];
+
+      boss = {
+        name: baseBoss.name + suffix,
+        icon: baseBoss.icon,
+        minionName: baseBoss.minionName,
+        minionIcon: baseBoss.minionIcon,
+        hpMult: 5 + (stageNum - 100) * 0.05,
+        atkMult: 2.5 + (stageNum - 100) * 0.02,
+        defMult: 2.0 + (stageNum - 100) * 0.015
+      };
+    }
+
     var bossHp  = Math.floor(level * 200 * boss.hpMult);
     var bossAtk = Math.floor(level * 25  * boss.atkMult);
     var bossDef = Math.floor(level * 10  * boss.defMult);
@@ -53,7 +74,9 @@ function getStageConfig(stageNum) {
       isBoss: true,
       frontRow: [
         { id: 'ef-0', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef, element: bossElement },
-        { id: 'ef-1', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef, element: bossElement }
+        { id: 'ef-1', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef, element: bossElement },
+        { id: 'ef-2', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef, element: bossElement },
+        { id: 'ef-3', name: boss.minionName, icon: boss.minionIcon, level: mLv, maxHp: mHp, atk: mAtk, def: mDef, element: bossElement }
       ],
       backRow: [
         { id: 'eb-0', name: boss.name, icon: boss.icon, level: level, maxHp: bossHp, atk: bossAtk, def: bossDef, isBoss: true, element: bossElement }
@@ -79,10 +102,13 @@ function getStageConfig(stageNum) {
     isBoss: false,
     frontRow: [
       { id: 'ef-0', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2, element: minionElement },
-      { id: 'ef-1', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2, element: minionElement }
+      { id: 'ef-1', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2, element: minionElement },
+      { id: 'ef-2', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2, element: minionElement },
+      { id: 'ef-3', name: MINION_NAMES[mIdx], icon: MINION_ICONS[mIdx], level: mLv2, maxHp: mHp2, atk: mAtk2, def: mDef2, element: minionElement }
     ],
     backRow: [
-      { id: 'eb-0', name: MONSTER_NAMES[eIdx], icon: '👾', level: level, maxHp: baseHp, atk: baseAtk, def: baseDef, element: enemyElement }
+      { id: 'eb-0', name: MONSTER_NAMES[eIdx], icon: '👾', level: level, maxHp: baseHp, atk: baseAtk, def: baseDef, element: enemyElement },
+      { id: 'eb-1', name: MONSTER_NAMES[(eIdx + 1) % MONSTER_NAMES.length], icon: '👾', level: level, maxHp: baseHp, atk: baseAtk, def: baseDef, element: enemyElement }
     ]
   };
 }

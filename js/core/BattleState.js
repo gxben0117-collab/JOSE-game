@@ -101,7 +101,7 @@ var BattleState = (function () {
       currentBattle.currentPetIndex++;
 
       // 如果所有寵物都行動完，切換到敵人回合
-      if (currentBattle.currentPetIndex >= 3) {
+      if (currentBattle.currentPetIndex >= 6) {
         currentBattle.isPlayerTurn = false;
         currentBattle.currentPetIndex = 0;
       }
@@ -169,7 +169,7 @@ var BattleState = (function () {
     // 獲取當前行動寵物
     getCurrentPet: function () {
       if (!currentBattle) return null;
-      while (currentBattle.currentPetIndex < 3) {
+      while (currentBattle.currentPetIndex < 6) {
         var pet = currentBattle.playerTeam[currentBattle.currentPetIndex];
         if (pet && pet.hp > 0) return pet;
         currentBattle.currentPetIndex++;

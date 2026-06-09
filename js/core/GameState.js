@@ -17,16 +17,23 @@ var GameState = (function () {
     var pet1 = createPetInstance('molten_ball',    3);
     var pet2 = createPetInstance('leaf_ear_rabbit', 3);
     var pet3 = createPetInstance('bubble_whale',   3);
+    var pet4 = createPetInstance('fire_fox',       3);
+    var pet5 = createPetInstance('vine_snake',     3);
+    var pet6 = createPetInstance('starfish_beast', 3);
+
     pet1.isActive = true; pet1.activeSlot = 0;
     pet2.isActive = true; pet2.activeSlot = 1;
     pet3.isActive = true; pet3.activeSlot = 2;
+    pet4.isActive = true; pet4.activeSlot = 3;
+    pet5.isActive = true; pet5.activeSlot = 4;
+    pet6.isActive = true; pet6.activeSlot = 5;
 
     return {
       gold:         500,
       diamond:      100,
       currentStage: 1,
       maxStage:     1,
-      inventory:    [pet1, pet2, pet3],
+      inventory:    [pet1, pet2, pet3, pet4, pet5, pet6],
       maxInventory: 1000,
       items: {
         revival_potion: 2,
@@ -147,7 +154,7 @@ var GameState = (function () {
     },
 
     getActivePets: function () {
-      return [0, 1, 2].map(function (slot) {
+      return [0, 1, 2, 3, 4, 5].map(function (slot) {
         return state.inventory.find(function (p) { return p.isActive && p.activeSlot === slot; }) || null;
       });
     },

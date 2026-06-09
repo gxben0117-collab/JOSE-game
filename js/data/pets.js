@@ -318,5 +318,161 @@ var PET_DATA = [
       { name: '帝王之海', type: 'passive', effect: 'all_boost', value: 0.23 },
       { name: '創世大洪水', type: 'active', effect: 'damage_all', multiplier: 5.0, cooldown: 6 }
     ]
+  },
+
+  // ===== 新增火系寵物 =====
+  {
+    id: 'magma_hound', name: '熔岩獵犬', element: 'fire', quality: 'rare', icon: '🐕',
+    baseHp: 620, baseAtk: 140, baseDef: 50,
+    skills: [
+      { name: '烈焰咬', type: 'basic', effect: 'damage', multiplier: 1.2 },
+      { name: '灼燒追擊', type: 'active', effect: 'damage', multiplier: 2.4, cooldown: 3 },
+      { name: '野性本能', type: 'passive', effect: 'atk_boost', value: 0.13 },
+      { name: '火焰爪擊', type: 'active', effect: 'damage', multiplier: 2.0, cooldown: 2 }
+    ]
+  },
+  {
+    id: 'inferno_bat', name: '地獄火蝠', element: 'fire', quality: 'elite', icon: '🦇',
+    baseHp: 850, baseAtk: 210, baseDef: 95,
+    skills: [
+      { name: '火焰音波', type: 'basic', effect: 'damage', multiplier: 1.3 },
+      { name: '煉獄風暴', type: 'active', effect: 'damage_all', multiplier: 1.4, cooldown: 4 },
+      { name: '燃燒氣息', type: 'passive', effect: 'atk_boost', value: 0.17 },
+      { name: '俯衝焚擊', type: 'active', effect: 'damage', multiplier: 2.6, cooldown: 3 }
+    ]
+  },
+  {
+    id: 'volcanic_titan', name: '火山巨神', element: 'fire', quality: 'epic', icon: '🌋',
+    baseHp: 2100, baseAtk: 470, baseDef: 290,
+    skills: [
+      { name: '巨岩拳', type: 'basic', effect: 'damage', multiplier: 1.5 },
+      { name: '火山爆發', type: 'active', effect: 'damage_all', multiplier: 2.1, cooldown: 4 },
+      { name: '熔岩護體', type: 'passive', effect: 'all_boost', value: 0.16 },
+      { name: '巨神之怒', type: 'active', effect: 'damage', multiplier: 3.2, cooldown: 4 }
+    ]
+  },
+  {
+    id: 'sun_phoenix', name: '烈陽鳳凰', element: 'fire', quality: 'legendary', icon: '🦅',
+    baseHp: 4600, baseAtk: 920, baseDef: 520,
+    skills: [
+      { name: '鳳凰羽擊', type: 'basic', effect: 'damage', multiplier: 1.8 },
+      { name: '涅槃之火', type: 'active', effect: 'heal', value: 0.35, cooldown: 5 },
+      { name: '不死之身', type: 'passive', effect: 'hp_boost', value: 0.25 },
+      { name: '烈陽天降', type: 'active', effect: 'damage_all', multiplier: 3.3, cooldown: 5 }
+    ]
+  },
+  {
+    id: 'crimson_wolf', name: '赤炎狼王', element: 'fire', quality: 'elite', icon: '🐺',
+    baseHp: 1050, baseAtk: 240, baseDef: 110,
+    skills: [
+      { name: '狼牙', type: 'basic', effect: 'damage', multiplier: 1.4 },
+      { name: '狼群之怒', type: 'active', effect: 'damage', multiplier: 2.7, cooldown: 4 },
+      { name: '狼王威壓', type: 'passive', effect: 'atk_boost', value: 0.19 },
+      { name: '火焰衝鋒', type: 'active', effect: 'damage', multiplier: 2.3, cooldown: 3 }
+    ]
+  },
+
+  // ===== 新增森林系寵物 =====
+  {
+    id: 'thorn_boar', name: '荊棘野豬', element: 'forest', quality: 'rare', icon: '🐗',
+    baseHp: 680, baseAtk: 120, baseDef: 90,
+    skills: [
+      { name: '尖刺衝撞', type: 'basic', effect: 'damage', multiplier: 1.1 },
+      { name: '荊棘反擊', type: 'active', effect: 'damage', multiplier: 2.1, cooldown: 3 },
+      { name: '厚皮', type: 'passive', effect: 'def_boost', value: 0.18 },
+      { name: '狂暴突進', type: 'active', effect: 'damage', multiplier: 1.9, cooldown: 3 }
+    ]
+  },
+  {
+    id: 'nature_guardian', name: '自然守護者', element: 'forest', quality: 'elite', icon: '🧙',
+    baseHp: 1000, baseAtk: 200, baseDef: 140,
+    skills: [
+      { name: '自然之杖', type: 'basic', effect: 'damage', multiplier: 1.3 },
+      { name: '生命綻放', type: 'active', effect: 'heal_all', value: 0.2, cooldown: 5 },
+      { name: '自然祝福', type: 'passive', effect: 'hp_boost', value: 0.17 },
+      { name: '藤蔓絞殺', type: 'active', effect: 'damage', multiplier: 2.5, cooldown: 4 }
+    ]
+  },
+  {
+    id: 'ancient_treant', name: '遠古樹人', element: 'forest', quality: 'epic', icon: '🌳',
+    baseHp: 2500, baseAtk: 410, baseDef: 330,
+    skills: [
+      { name: '樹根重擊', type: 'basic', effect: 'damage', multiplier: 1.5 },
+      { name: '森林復甦', type: 'active', effect: 'heal', value: 0.3, cooldown: 5 },
+      { name: '遠古之力', type: 'passive', effect: 'all_boost', value: 0.14 },
+      { name: '自然之怒', type: 'active', effect: 'damage_all', multiplier: 2.0, cooldown: 4 }
+    ]
+  },
+  {
+    id: 'jade_qilin', name: '翠玉麒麟', element: 'forest', quality: 'legendary', icon: '🦌',
+    baseHp: 5200, baseAtk: 880, baseDef: 590,
+    skills: [
+      { name: '聖獸之角', type: 'basic', effect: 'damage', multiplier: 1.8 },
+      { name: '翠玉光環', type: 'active', effect: 'heal_all', value: 0.25, cooldown: 5 },
+      { name: '麒麟之靈', type: 'passive', effect: 'all_boost', value: 0.27 },
+      { name: '神獸天罰', type: 'active', effect: 'damage_all', multiplier: 3.4, cooldown: 5 }
+    ]
+  },
+  {
+    id: 'poison_mantis', name: '毒刃螳螂', element: 'forest', quality: 'rare', icon: '🦗',
+    baseHp: 550, baseAtk: 160, baseDef: 45,
+    skills: [
+      { name: '鐮刀斬', type: 'basic', effect: 'damage', multiplier: 1.2 },
+      { name: '毒刃連擊', type: 'active', effect: 'damage', multiplier: 2.5, cooldown: 3 },
+      { name: '致命毒素', type: 'passive', effect: 'atk_boost', value: 0.14 },
+      { name: '影刺', type: 'active', effect: 'damage', multiplier: 2.2, cooldown: 3 }
+    ]
+  },
+
+  // ===== 新增海洋系寵物 =====
+  {
+    id: 'electric_eel', name: '雷電鰻', element: 'ocean', quality: 'rare', icon: '⚡',
+    baseHp: 600, baseAtk: 135, baseDef: 60,
+    skills: [
+      { name: '電擊', type: 'basic', effect: 'damage', multiplier: 1.2 },
+      { name: '閃電鏈', type: 'active', effect: 'damage_all', multiplier: 1.0, cooldown: 4 },
+      { name: '高壓電流', type: 'passive', effect: 'atk_boost', value: 0.12 },
+      { name: '雷霆一擊', type: 'active', effect: 'damage', multiplier: 2.3, cooldown: 3 }
+    ]
+  },
+  {
+    id: 'kraken_spawn', name: '深海巨妖', element: 'ocean', quality: 'elite', icon: '🐙',
+    baseHp: 1100, baseAtk: 225, baseDef: 125,
+    skills: [
+      { name: '觸手鞭打', type: 'basic', effect: 'damage', multiplier: 1.4 },
+      { name: '漩渦絞殺', type: 'active', effect: 'damage', multiplier: 2.6, cooldown: 4 },
+      { name: '深海之力', type: 'passive', effect: 'atk_boost', value: 0.16 },
+      { name: '觸手風暴', type: 'active', effect: 'damage_all', multiplier: 1.5, cooldown: 5 }
+    ]
+  },
+  {
+    id: 'frost_leviathan', name: '寒冰利維坦', element: 'ocean', quality: 'epic', icon: '🐋',
+    baseHp: 2600, baseAtk: 450, baseDef: 310,
+    skills: [
+      { name: '寒冰重擊', type: 'basic', effect: 'damage', multiplier: 1.5 },
+      { name: '極寒風暴', type: 'active', effect: 'damage_all', multiplier: 2.2, cooldown: 4 },
+      { name: '冰霜鎧甲', type: 'passive', effect: 'def_boost', value: 0.2 },
+      { name: '冰封吐息', type: 'active', effect: 'damage_all', multiplier: 2.4, cooldown: 5 }
+    ]
+  },
+  {
+    id: 'tsunami_dragon', name: '海嘯神龍', element: 'ocean', quality: 'legendary', icon: '🌊',
+    baseHp: 5300, baseAtk: 940, baseDef: 570,
+    skills: [
+      { name: '龍顎碎擊', type: 'basic', effect: 'damage', multiplier: 1.8 },
+      { name: '萬丈狂瀾', type: 'active', effect: 'damage_all', multiplier: 3.3, cooldown: 5 },
+      { name: '海洋霸主', type: 'passive', effect: 'all_boost', value: 0.29 },
+      { name: '滅世海嘯', type: 'active', effect: 'damage_all', multiplier: 3.6, cooldown: 5 }
+    ]
+  },
+  {
+    id: 'crystal_jellyfish', name: '水晶水母', element: 'ocean', quality: 'rare', icon: '🪼',
+    baseHp: 720, baseAtk: 110, baseDef: 95,
+    skills: [
+      { name: '水晶刺', type: 'basic', effect: 'damage', multiplier: 1.0 },
+      { name: '水療', type: 'active', effect: 'heal', value: 0.25, cooldown: 4 },
+      { name: '水晶護盾', type: 'passive', effect: 'def_boost', value: 0.16 },
+      { name: '毒刺陣', type: 'active', effect: 'damage_all', multiplier: 0.9, cooldown: 4 }
+    ]
   }
 ];

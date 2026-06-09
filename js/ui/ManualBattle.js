@@ -2,6 +2,7 @@
 var ManualBattle = (function () {
   var selectedTarget = null;
   var battleSpeed = 1; // 1x, 2x, 4x
+  var isEndingBattle = false; // 防止重複進入結算
 
   return {
     // 開始手動戰鬥
@@ -13,6 +14,9 @@ var ManualBattle = (function () {
 
       // 初始化統計
       BattleStats.init();
+
+      // 重置結算旗標
+      isEndingBattle = false;
 
       var result = BattleState.init(stageNum, true);
       if (result.error) {
@@ -80,25 +84,51 @@ var ManualBattle = (function () {
     },
 
     renderPlayerTeam: function (team) {
-      return team.map(function (pet, idx) {
-        if (!pet) return '<div class="battle-card empty">空位</div>';
+      return '<div class="manual-player-grid">' +
+        '<div class="manual-back-row">' +
+          team.slice(4, 6).map(function (pet, idx) {
+            var actualIdx = idx + 4;
+            if (!pet) return '<div class="battle-card empty">後排空位</div>';
 
-        var hpPercent = Math.floor((pet.hp / pet.maxHp) * 100);
-        var isDead = pet.hp <= 0;
-        var isCurrent = BattleState.getCurrentPet() === pet;
+            var hpPercent = Math.floor((pet.hp / pet.maxHp) * 100);
+            var isDead = pet.hp <= 0;
+            var isCurrent = BattleState.getCurrentPet() === pet;
 
-        return '<div class="battle-card player-card ' +
-               (isDead ? 'dead' : '') +
-               (isCurrent ? ' current-turn' : '') +
-               '" data-pet-index="' + idx + '">' +
-          '<div class="card-icon">' + pet.icon + '</div>' +
-          '<div class="card-name">' + pet.name + '</div>' +
-          '<div class="card-hp">' +
-            '<div class="hp-bar-bg"><div class="hp-bar" style="width:' + hpPercent + '%"></div></div>' +
-            '<div class="hp-text">' + pet.hp + '/' + pet.maxHp + '</div>' +
-          '</div>' +
-        '</div>';
-      }).join('');
+            return '<div class="battle-card player-card ' +
+                   (isDead ? 'dead' : '') +
+                   (isCurrent ? ' current-turn' : '') +
+                   '" data-pet-index="' + actualIdx + '">' +
+              '<div class="card-icon">' + pet.icon + '</div>' +
+              '<div class="card-name">' + pet.name + '</div>' +
+              '<div class="card-hp">' +
+                '<div class="hp-bar-bg"><div class="hp-bar" style="width:' + hpPercent + '%"></div></div>' +
+                '<div class="hp-text">' + pet.hp + '/' + pet.maxHp + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        '<div class="manual-front-row">' +
+          team.slice(0, 4).map(function (pet, idx) {
+            if (!pet) return '<div class="battle-card empty">前排空位</div>';
+
+            var hpPercent = Math.floor((pet.hp / pet.maxHp) * 100);
+            var isDead = pet.hp <= 0;
+            var isCurrent = BattleState.getCurrentPet() === pet;
+
+            return '<div class="battle-card player-card ' +
+                   (isDead ? 'dead' : '') +
+                   (isCurrent ? ' current-turn' : '') +
+                   '" data-pet-index="' + idx + '">' +
+              '<div class="card-icon">' + pet.icon + '</div>' +
+              '<div class="card-name">' + pet.name + '</div>' +
+              '<div class="card-hp">' +
+                '<div class="hp-bar-bg"><div class="hp-bar" style="width:' + hpPercent + '%"></div></div>' +
+                '<div class="hp-text">' + pet.hp + '/' + pet.maxHp + '</div>' +
+              '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+      '</div>';
     },
 
     renderEnemyTeam: function (front, back) {
@@ -211,10 +241,20 @@ var ManualBattle = (function () {
       var result = BattleState.checkBattleEnd();
       if (!result) return;
 
+      // 防止重複進入結算（競爭條件）
+      if (isEndingBattle) return;
+      isEndingBattle = true;
+
+      // 先捕獲 stageNum，避免 setTimeout 內讀取已清空的 state
+      var battle = BattleState.get();
+      var stageNum = battle ? battle.stageNum : null;
+
       setTimeout(function () {
         if (result.win) {
           BattleEngine.applyRewards(result.rewards);
-          GameState.unlockStage(BattleState.get().stageNum + 1);
+          if (stageNum) {
+            GameState.unlockStage(stageNum + 1);
+          }
 
           // 顯示勝利界面和統計
           var statsHtml = BattleStats.generateReport();
@@ -238,6 +278,12 @@ var ManualBattle = (function () {
               '<button class="btn-secondary" onclick="ManualBattle.closeResult(false)">返回</button>' +
             '</div></div>';
           overlay.style.display = 'flex';
+
+          // 2秒後自動進入下一關
+          setTimeout(function () {
+            ManualBattle.closeResult(true);
+          }, 2000);
+
         } else {
           var statsHtml2 = BattleStats.generateReport();
           var overlay2 = document.getElementById('battle-result-overlay');
@@ -248,6 +294,7 @@ var ManualBattle = (function () {
             statsHtml2 +
             '<button class="btn-primary" onclick="ManualBattle.closeResult(false)">重試</button></div>';
           overlay2.style.display = 'flex';
+          // 失敗不自動關閉
         }
 
         BattleState.clear();
@@ -262,9 +309,13 @@ var ManualBattle = (function () {
 
     closeResult: function (advance) {
       document.getElementById('battle-result-overlay').style.display = 'none';
+
+      // 重置戰鬥狀態，允許再次戰鬥
+      isEndingBattle = false;
+
       if (advance) {
         var state = GameState.get();
-        if (state.currentStage < 100) {
+        if (state.currentStage < 999) {
           state.currentStage = Math.min(state.maxStage, state.currentStage + 1);
           GameState.save();
         }

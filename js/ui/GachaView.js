@@ -48,7 +48,7 @@ var GachaView = (function () {
           '</button>' +
           '<button class="btn-gacha btn-gacha-10" onclick="GachaView.pull(10)">' +
             '<div>十連抽 ×10</div>' +
-            '<div class="gacha-cost">💎 900</div>' +
+            '<div class="gacha-cost">💎 900 &nbsp;或&nbsp; 🎫 10張</div>' +
             '<div class="gacha-cost-note">（省 100鑽）</div>' +
           '</button>' +
         '</div>' +

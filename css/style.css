@@ -648,16 +648,18 @@ body {
 .stage-num { font-size: 18px; font-weight: bold; color: var(--gold); }
 .stage-nav { display: flex; gap: 6px; }
 
-/* ─── Arena: horizontal flex ─── */
+/* ─── Arena: vertical flex (敵方上、我方下) ─── */
 .battle-arena {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
-  background: linear-gradient(135deg, #08051e 0%, #0c0e22 50%, #07140a 100%);
+  background: linear-gradient(180deg, #08051e 0%, #0c0e22 50%, #07140a 100%);
   border-bottom: 1px solid var(--border);
   position: relative;
   overflow: hidden;
-  min-height: 260px;
+  min-height: 400px;
+  gap: 12px;
+  padding: 12px 8px;
 }
 
 /* ─── Formation halves ─── */
@@ -678,35 +680,25 @@ body {
 .player-title { color: #6699ff; }
 .enemy-title  { color: #ff6655; }
 
-/* 我方：整體向左靠 */
-.player-formation .formation-inner {
-  justify-content: flex-end;
-  padding-right: 8px;
-}
-/* 敵方：整體向右靠 */
-.enemy-formation .formation-inner {
-  justify-content: flex-start;
-  padding-left: 8px;
-}
-
 .formation-inner {
   flex: 1;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 6px 4px 10px;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 4px;
 }
 
-/* ─── Column containers ─── */
+/* ─── Column containers (改為橫向) ─── */
 .form-front-col,
 .form-back-col {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  gap: 6px;
-  flex: 1;
-  min-width: 0;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* ─── Row tags ─── */
@@ -1398,3 +1390,66 @@ body {
     font-size: 10px;
   }
 }
+
+/* ─── 6v6 陣型調整 ─── */
+/* 前排 4 個卡片，後排 2 個卡片，橫向排列 */
+.form-front-col {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+.form-back-col {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  justify-content: center;
+}
+
+/* 調整卡片尺寸以容納 6 隻 */
+@media (max-width: 480px) {
+  .bc {
+    width: 85px;
+    padding: 8px 6px 6px;
+  }
+
+  .bc-icon {
+    font-size: 28px;
+  }
+
+  .bc-label {
+    font-size: 10px;
+  }
+
+  .bc-lv {
+    font-size: 9px;
+  }
+}
+
+/* 手動戰鬥 6v6 佈局 */
+.manual-player-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.manual-front-row,
+.manual-back-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.manual-back-row {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 480px) {
+  .manual-front-row,
+  .manual-back-row {
+    gap: 6px;
+  }
+}
+

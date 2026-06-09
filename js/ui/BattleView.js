@@ -47,8 +47,8 @@ var BattleView = (function () {
     petNameToSlot = {};
     var slots = GameState.getActivePets();
 
-    // slot 0, 1 = front row  /  slot 2 = back row
-    var frontHtml = [0, 1].map(function (i) {
+    // 後排 2 個在上方
+    var backHtml = [4, 5].map(function (i) {
       var p = slots[i];
       if (!p) {
         return '<div class="bc player-bc empty-bc" id="bc-p-' + i + '" onclick="BattleView.openSlotMenu(' + i + ')">' +
@@ -67,28 +67,29 @@ var BattleView = (function () {
              '</div>';
     }).join('');
 
-    var p2     = slots[2];
-    var back2;
-    if (!p2) {
-      back2 = '<div class="bc player-bc empty-bc" id="bc-p-2" onclick="BattleView.openSlotMenu(2)">' +
-                '<div class="bc-icon add-icon">＋</div>' +
-                '<div class="bc-label">空位</div>' +
-              '</div>';
-    } else {
-      var st2  = PetSystem.getStats(p2);
-      var qc2  = PetSystem.getQualityColor(st2.quality);
-      petNameToSlot[st2.name] = 2;
-      back2 = '<div class="bc player-bc" id="bc-p-2" onclick="BattleView.openSlotMenu(2)" data-pname="' + st2.name + '">' +
-                '<div class="bc-icon">' + st2.icon + '</div>' +
-                '<div class="bc-label" style="color:' + qc2 + '">' + st2.name + '<br>' +
-                  '<span class="bc-lv">Lv.' + p2.level + ' ' + '★'.repeat(p2.stars) + '</span></div>' +
-                hpHtml(st2.maxHp, st2.maxHp) +
-              '</div>';
-    }
+    // 前排 4 個在下方
+    var frontHtml = [0, 1, 2, 3].map(function (i) {
+      var p = slots[i];
+      if (!p) {
+        return '<div class="bc player-bc empty-bc" id="bc-p-' + i + '" onclick="BattleView.openSlotMenu(' + i + ')">' +
+                 '<div class="bc-icon add-icon">＋</div>' +
+                 '<div class="bc-label">空位</div>' +
+               '</div>';
+      }
+      var stats  = PetSystem.getStats(p);
+      var qColor = PetSystem.getQualityColor(stats.quality);
+      petNameToSlot[stats.name] = i;
+      return '<div class="bc player-bc" id="bc-p-' + i + '" onclick="BattleView.openSlotMenu(' + i + ')" data-pname="' + stats.name + '">' +
+               '<div class="bc-icon">' + stats.icon + '</div>' +
+               '<div class="bc-label" style="color:' + qColor + '">' + stats.name + '<br>' +
+                 '<span class="bc-lv">Lv.' + p.level + ' ' + '★'.repeat(p.stars) + '</span></div>' +
+               hpHtml(stats.maxHp, stats.maxHp) +
+             '</div>';
+    }).join('');
 
     return '<div class="form-back-col">' +
              '<div class="row-tag player-tag">後排</div>' +
-             back2 +
+             backHtml +
            '</div>' +
            '<div class="form-front-col">' +
              '<div class="row-tag player-tag">前排</div>' +
@@ -284,6 +285,13 @@ var BattleView = (function () {
           '<button class="btn-primary" onclick="BattleView.closeResult(true)">下一關</button>' +
           '<button class="btn-secondary" onclick="BattleView.closeResult(false)">返回</button>' +
         '</div></div>';
+      overlay.style.display = 'flex';
+
+      // 2秒後自動進入下一關
+      setTimeout(function () {
+        BattleView.closeResult(true);
+      }, 2000);
+
     } else {
       var statsHtml2 = BattleStats.generateReport();
       overlay.innerHTML =
@@ -291,8 +299,9 @@ var BattleView = (function () {
         '<div class="result-sub">強化寵物後再試！</div>' +
         statsHtml2 +
         '<button class="btn-primary" onclick="BattleView.closeResult(false)">重試</button></div>';
+      overlay.style.display = 'flex';
+      // 失敗不自動關閉
     }
-    overlay.style.display = 'flex';
     updateHUD();
   }
 
@@ -329,17 +338,15 @@ var BattleView = (function () {
         '</div>' +
 
         '<div class="battle-arena" id="battle-arena">' +
-          /* 左：我方 */
-          '<div class="formation player-formation">' +
-            '<div class="formation-title player-title">我方</div>' +
-            '<div class="formation-inner">' + buildPlayerSide() + '</div>' +
-          '</div>' +
-          /* 中：分隔 */
-          '<div class="vs-divider"><span>⚔️</span></div>' +
-          /* 右：敵方 */
+          /* 上：敵方 */
           '<div class="formation enemy-formation">' +
             '<div class="formation-title enemy-title">敵方</div>' +
             '<div class="formation-inner">' + buildEnemySide(cfg) + '</div>' +
+          '</div>' +
+          /* 下：我方 */
+          '<div class="formation player-formation">' +
+            '<div class="formation-title player-title">我方</div>' +
+            '<div class="formation-inner">' + buildPlayerSide() + '</div>' +
           '</div>' +
         '</div>' +
 
@@ -439,7 +446,7 @@ var BattleView = (function () {
       document.getElementById('battle-result-overlay').style.display = 'none';
       if (advance && battleResult && battleResult.win) {
         var state = GameState.get();
-        if (state.currentStage < 100) {
+        if (state.currentStage < 999) {
           state.currentStage = Math.min(state.maxStage, state.currentStage + 1);
           GameState.save();
         }
