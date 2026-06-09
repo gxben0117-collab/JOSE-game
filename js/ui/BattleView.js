@@ -15,7 +15,7 @@ var BattleView = (function () {
   }
 
   function buildEnemySide(cfg) {
-    // frontRow left, backRow right  (enemy faces LEFT toward player)
+    // 敵方：後排在上（遠離我方），前排在下（靠近我方）
     var frontHtml = cfg.frontRow.map(function (e) {
       return '<div class="bc enemy-bc minion-bc" id="bc-' + e.id + '">' +
                '<div class="bc-icon">' + e.icon + '</div>' +
@@ -33,13 +33,13 @@ var BattleView = (function () {
              '</div>';
     }).join('');
 
-    return '<div class="form-front-col">' +
-             '<div class="row-tag enemy-tag">前排</div>' +
-             frontHtml +
-           '</div>' +
-           '<div class="form-back-col">' +
+    return '<div class="form-back-col">' +
              '<div class="row-tag enemy-tag">後排</div>' +
              backHtml +
+           '</div>' +
+           '<div class="form-front-col">' +
+             '<div class="row-tag enemy-tag">前排</div>' +
+             frontHtml +
            '</div>';
   }
 
@@ -47,27 +47,7 @@ var BattleView = (function () {
     petNameToSlot = {};
     var slots = GameState.getActivePets();
 
-    // 後排 2 個在上方
-    var backHtml = [4, 5].map(function (i) {
-      var p = slots[i];
-      if (!p) {
-        return '<div class="bc player-bc empty-bc" id="bc-p-' + i + '" onclick="BattleView.openSlotMenu(' + i + ')">' +
-                 '<div class="bc-icon add-icon">＋</div>' +
-                 '<div class="bc-label">空位</div>' +
-               '</div>';
-      }
-      var stats  = PetSystem.getStats(p);
-      var qColor = PetSystem.getQualityColor(stats.quality);
-      petNameToSlot[stats.name] = i;
-      return '<div class="bc player-bc" id="bc-p-' + i + '" onclick="BattleView.openSlotMenu(' + i + ')" data-pname="' + stats.name + '">' +
-               '<div class="bc-icon">' + stats.icon + '</div>' +
-               '<div class="bc-label" style="color:' + qColor + '">' + stats.name + '<br>' +
-                 '<span class="bc-lv">Lv.' + p.level + ' ' + '★'.repeat(p.stars) + '</span></div>' +
-               hpHtml(stats.maxHp, stats.maxHp) +
-             '</div>';
-    }).join('');
-
-    // 前排 4 個在下方
+    // 前排 4 個在上方（靠近敵人）
     var frontHtml = [0, 1, 2, 3].map(function (i) {
       var p = slots[i];
       if (!p) {
@@ -87,13 +67,33 @@ var BattleView = (function () {
              '</div>';
     }).join('');
 
-    return '<div class="form-back-col">' +
-             '<div class="row-tag player-tag">後排</div>' +
-             backHtml +
-           '</div>' +
-           '<div class="form-front-col">' +
+    // 後排 2 個在下方（遠離敵人）
+    var backHtml = [4, 5].map(function (i) {
+      var p = slots[i];
+      if (!p) {
+        return '<div class="bc player-bc empty-bc" id="bc-p-' + i + '" onclick="BattleView.openSlotMenu(' + i + ')">' +
+                 '<div class="bc-icon add-icon">＋</div>' +
+                 '<div class="bc-label">空位</div>' +
+               '</div>';
+      }
+      var stats  = PetSystem.getStats(p);
+      var qColor = PetSystem.getQualityColor(stats.quality);
+      petNameToSlot[stats.name] = i;
+      return '<div class="bc player-bc" id="bc-p-' + i + '" onclick="BattleView.openSlotMenu(' + i + ')" data-pname="' + stats.name + '">' +
+               '<div class="bc-icon">' + stats.icon + '</div>' +
+               '<div class="bc-label" style="color:' + qColor + '">' + stats.name + '<br>' +
+                 '<span class="bc-lv">Lv.' + p.level + ' ' + '★'.repeat(p.stars) + '</span></div>' +
+               hpHtml(stats.maxHp, stats.maxHp) +
+             '</div>';
+    }).join('');
+
+    return '<div class="form-front-col">' +
              '<div class="row-tag player-tag">前排</div>' +
              frontHtml +
+           '</div>' +
+           '<div class="form-back-col">' +
+             '<div class="row-tag player-tag">後排</div>' +
+             backHtml +
            '</div>';
   }
 
