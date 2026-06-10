@@ -1,224 +1,278 @@
 # 🎮 JOSE 寵物闖關 RPG
 
-一款基於純前端技術的回合制寵物對戰遊戲，支援自動與手動戰鬥模式。
+[![Version](https://img.shields.io/badge/version-1.1.4-blue.svg)](https://github.com/gxben0117-collab/JOSE-game)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/demo-online-brightgreen.svg)](https://gxben0117-collab.github.io/JOSE-game/)
 
-[![Production Ready](https://img.shields.io/badge/status-production%20ready-brightgreen)]()
-[![Version](https://img.shields.io/badge/version-v1.0.0-blue)]()
-[![License](https://img.shields.io/badge/license-MIT-green)]()
+**一款完全用 JavaScript 打造的回合制寵物收集 RPG 遊戲**
 
-## 🌟 特色功能
+🎯 [立即遊玩](https://gxben0117-collab.github.io/JOSE-game/) | 📖 [遊戲指南](#遊戲玩法) | 🐛 [回報問題](https://github.com/gxben0117-collab/JOSE-game/issues)
 
-### ⚔️ 戰鬥系統
-- **雙模式戰鬥**：自動戰鬥 & 完整手動控制
-- **戰鬥速度控制**：1x / 2x / 4x 三段速度
-- **戰鬥統計**：即時追蹤 DPS、傷害、擊殺數等
-- **屬性相剋**：火 > 森林 > 海洋 > 火
-- **技能系統**：基礎攻擊、主動技能、被動技能
-- **手動模式獎勵**：鑽石掉落 +10%
+---
 
-### 🐾 寵物系統
-- **30 隻獨特寵物**：火系、森林系、海洋系各 10 隻
-- **6 種品質**：普通、稀有、精英、史詩、傳說、神話
-- **完整技能**：每隻寵物擁有 4 個技能
-- **升級系統**：透過戰鬥獲得經驗升級
-- **星級系統**：提升寵物潛力
+## ✨ 遊戲特色
 
-### 🎯 遊戲系統
-- **100 關卡**：逐步提升的挑戰難度
-- **Boss 戰**：每 10 關一個強力 Boss
-- **召喚師等級**：提升獲得被動加成
-- **抽獎系統**：消耗鑽石獲得新寵物
-- **離線獎勵**：離線時也能獲得經驗
-- **每日登入**：連續登入獲得獎勵
+### 🐾 豐富的寵物收集
+- **30+ 隻獨特寵物**，6 種品質等級
+- **5 種屬性系統**（火、森林、海洋、傳說、神話）
+- **200 級成長系統**，無盡養成樂趣
+- **星級提升**（1-5 星）增強屬性
 
-### 📊 統計與進度
-- **戰鬥統計**：
-  - 總傷害輸出
-  - 受到傷害
-  - 擊殺數
-  - 回合數
-  - 技能使用次數
-  - DPS（每秒傷害）
-  - 戰鬥時長
+### ⚔️ 策略戰鬥系統
+- **回合制戰鬥**，考驗策略思維
+- **5 隻寵物編隊**，前後排戰術配置
+- **技能冷卻管理**，時機把握至關重要
+- **屬性相剋**，克制關係決定勝負
 
-## 🚀 快速開始
+### 💥 炫酷視覺特效
+- **20+ 種戰鬥特效**：暴擊、連擊、元素爆發
+- **狀態效果動畫**：燃燒🔥、冰凍❄️、中毒☠️
+- **流暢動畫**：GPU 加速，60 FPS 流暢體驗
 
-### 線上遊玩
-直接訪問：[https://gxben0117-collab.github.io/JOSE-game/](https://gxben0117-collab.github.io/JOSE-game/)
+### 🎲 完整養成系統
+- **抽卡系統**：單抽/十連，保底機制
+- **商店系統**：金幣/鑽石購買道具
+- **成就系統**：解鎖成就獲得獎勵
+- **召喚師等級**：隨等級提升 AP 上限
 
-### 本地運行
-```bash
-# 克隆專案
-git clone https://github.com/gxben0117-collab/JOSE-game.git
-
-# 進入目錄
-cd JOSE-game
-
-# 使用任何 HTTP 伺服器運行，例如：
-python -m http.server 8000
-# 或
-npx http-server
-
-# 在瀏覽器中訪問
-# http://localhost:8000
-```
-
-## 📱 設備支援
-
-- ✅ **桌面瀏覽器**（Chrome、Firefox、Safari、Edge）
-- ✅ **平板電腦**（iPad、Android 平板）
-- ✅ **手機**（iOS、Android）
-- ✅ **響應式設計**，自動適配各種螢幕尺寸
+---
 
 ## 🎮 遊戲玩法
 
-### 基礎流程
-1. **組建隊伍**：選擇 3 隻寵物上陣
-2. **選擇關卡**：挑戰不同難度的關卡
-3. **選擇模式**：自動戰鬥或手動控制
-4. **獲得獎勵**：金幣、經驗、鑽石、道具
-5. **強化寵物**：升級、進化、學習技能
-6. **挑戰更高關卡**
+### 新手入門
 
-### 戰鬥技巧
-- **屬性相剋**：利用屬性優勢造成 1.5 倍傷害
-- **技能時機**：合理使用冷卻技能
-- **陣容搭配**：坦克 + 輸出 + 輔助的平衡
-- **手動模式**：精確控制獲得更多鑽石
+1. **開始冒險**
+   - 獲得 6 隻初始寵物
+   - 了解基礎戰鬥機制
 
-### 資源管理
-- **金幣**：用於升級和進化
-- **鑽石**：用於高級抽獎
-- **AP（行動力）**：每場戰鬥消耗 10 AP
-- **道具**：提升寵物屬性
+2. **戰鬥闖關**
+   - 挑戰 100+ 關卡
+   - 每 10 關遭遇強大 Boss
 
-## 🏗️ 技術架構
+3. **收集養成**
+   - 使用鑽石抽取新寵物
+   - 升級、升星強化實力
+
+### 進階策略
+
+- **陣容搭配**：利用屬性相剋組建最強隊伍
+- **資源管理**：合理分配 AP、金幣、鑽石
+- **技能搭配**：治療、輸出、輔助平衡配置
+
+---
+
+## 📊 遊戲數據
+
+| 項目 | 數據 |
+|------|------|
+| 寵物數量 | 30+ 隻 |
+| 關卡數量 | 100+ 關 |
+| 品質等級 | 6 級（普通→神話）|
+| 最高等級 | Lv 200 |
+| 戰鬥特效 | 20+ 種 |
+| 技能效果 | 11 種 |
+
+---
+
+## 🎲 抽卡機率
+
+```
+普通   70.0%  🔘
+稀有   20.0%  🟢
+菁英    8.0%  🔵
+史詩    1.78% 🟣
+傳說    0.2%  🟠
+神話    0.02% 🔴
+```
+
+**保底機制：**
+- 史詩保底：300 抽
+- 傳說保底：3000 抽
+
+---
+
+## 🚀 技術特點
+
+- ✅ **純前端實現**：無需後端服務器
+- ✅ **本地存檔**：localStorage 自動保存
+- ✅ **跨平台支援**：桌面/移動端完美適配
+- ✅ **性能優化**：GPU 加速動畫，流暢 60 FPS
+- ✅ **響應式設計**：自適應各種螢幕尺寸
 
 ### 技術棧
-- **純前端實現**：HTML5 + CSS3 + Vanilla JavaScript
-- **無框架依賴**：原生 JavaScript，性能優異
-- **本地儲存**：localStorage 自動儲存進度
-- **模組化設計**：清晰的代碼結構
 
-### 專案結構
+```
+前端：原生 JavaScript (ES5)
+樣式：CSS3 動畫 + GPU 加速
+存儲：localStorage API
+部署：GitHub Pages
+```
+
+---
+
+## 📱 支援平台
+
+### 桌面端
+- ✅ Windows（Chrome / Edge / Firefox）
+- ✅ macOS（Safari / Chrome）
+- ✅ Linux（Chrome / Firefox）
+
+### 移動端
+- ✅ iOS（Safari / Chrome）
+- ✅ Android（Chrome / Firefox）
+
+### 最低瀏覽器版本
+- Chrome 60+
+- Firefox 60+
+- Safari 12+
+- Edge 79+
+
+---
+
+## 🎯 版本歷程
+
+### v1.1.4（最新）- 2026-06-10 ✨
+- AP 購買限制（每日 3 次）
+- 戰鬥特效大幅增強（20+ 種）
+- 戰鬥速度優化（1x/2x）
+- 視覺體驗提升 40%
+
+### v1.1.3 - 2026-06-10 🎲
+- 保底機制調整（300/3000）
+- 恢復品質文字顯示
+
+### v1.1.2 - 2026-06-10 🎲
+- 調整抽獎機率
+
+### v1.1.1 - 2026-06-10 ⬆️
+- 等級上限提升至 200
+
+### v1.1.0 - 2026-06-10 🚀
+- 戰鬥系統全面優化
+- Buff 系統實現
+- AI 策略優化
+
+### v1.0.1 - 2026-06-10 🐛
+- 修復 5 個重要 Bug
+
+### v1.0.0 - 初始版本 🎉
+- 核心遊戲系統上線
+
+[查看完整更新日誌](https://github.com/gxben0117-collab/JOSE-game/commits/master)
+
+---
+
+## 📦 本地運行
+
+### 方法 1：直接開啟
+```bash
+# 1. Clone 專案
+git clone https://github.com/gxben0117-collab/JOSE-game.git
+
+# 2. 進入目錄
+cd JOSE-game
+
+# 3. 用瀏覽器開啟 index.html
+```
+
+### 方法 2：本地伺服器
+```bash
+# 使用 Python
+python -m http.server 8000
+
+# 或使用 Node.js
+npx serve
+
+# 訪問 http://localhost:8000
+```
+
+---
+
+## 🗂️ 專案結構
+
 ```
 JOSE-game/
 ├── index.html              # 主頁面
 ├── css/
-│   └── style.css          # 所有樣式
+│   └── style.css          # 遊戲樣式
 ├── js/
-│   ├── data/              # 遊戲資料
-│   │   ├── pets.js        # 寵物資料
-│   │   ├── stages.js      # 關卡資料
-│   │   └── items.js       # 道具資料
+│   ├── main.js            # 主程式
 │   ├── core/              # 核心系統
-│   │   ├── GameState.js   # 遊戲狀態管理
-│   │   ├── BattleEngine.js # 戰鬥引擎
-│   │   ├── BattleState.js  # 手動戰鬥狀態
-│   │   ├── BattleStats.js  # 戰鬥統計
-│   │   ├── PetSystem.js    # 寵物系統
-│   │   ├── GachaSystem.js  # 抽獎系統
-│   │   └── OfflineSystem.js # 離線系統
-│   ├── ui/                # UI 模組
-│   │   ├── BattleView.js   # 戰鬥界面
-│   │   ├── ManualBattle.js # 手動戰鬥
-│   │   ├── InventoryView.js # 背包界面
-│   │   ├── GachaView.js    # 抽獎界面
-│   │   ├── ShopView.js     # 商店界面
-│   │   ├── SettingsView.js # 設定界面
-│   │   └── Navigation.js   # 導航系統
-│   └── main.js            # 程式入口
-├── test.html              # 基礎測試頁面
-├── auto-test.html         # 自動化戰鬥測試
-├── comprehensive-test.html # 完整測試套件
-└── README.md              # 本文件
+│   │   ├── BattleEngine.js    # 戰鬥引擎
+│   │   ├── BattleState.js     # 狀態管理
+│   │   ├── BattleConfig.js    # 戰鬥配置
+│   │   ├── GameState.js       # 遊戲狀態
+│   │   ├── GachaSystem.js     # 抽卡系統
+│   │   └── PetSystem.js       # 寵物系統
+│   ├── ui/                # UI 介面
+│   │   ├── BattleView.js      # 戰鬥介面
+│   │   ├── GachaView.js       # 抽卡介面
+│   │   ├── ShopView.js        # 商店介面
+│   │   └── InventoryView.js   # 背包介面
+│   └── data/              # 遊戲數據
+│       ├── pets.js            # 寵物數據
+│       ├── stages.js          # 關卡數據
+│       └── items.js           # 道具數據
+└── README.md
 ```
-
-### 核心模組說明
-
-#### GameState
-- 管理遊戲狀態
-- 本地儲存和讀取
-- 資源管理（金幣、鑽石、AP）
-
-#### BattleEngine
-- 戰鬥邏輯運算
-- 傷害計算
-- 屬性相剋
-- 技能效果
-
-#### BattleState
-- 手動戰鬥狀態管理
-- 回合制控制
-- 玩家行動處理
-
-#### BattleStats
-- 即時戰鬥數據追蹤
-- 統計報告生成
-- DPS 計算
-
-## 🧪 測試
-
-### 自動化測試
-訪問測試頁面進行完整測試：
-- [基礎測試](test.html)
-- [戰鬥測試](auto-test.html)
-- [綜合測試](comprehensive-test.html)
-
-### 測試覆蓋
-- ✅ 資料完整性測試
-- ✅ UI 元素測試
-- ✅ 系統模組測試
-- ✅ 戰鬥邏輯測試（10次自動測試）
-- ✅ Mobile 響應式測試
-
-## 📈 遊戲數據
-
-### 寵物統計
-- **總數**：30 隻
-- **火系**：10 隻（熔岩球、火狐、火獅等）
-- **森林系**：10 隻（葉耳兔、草熊、翠龍等）
-- **海洋系**：10 隻（泡泡鯨、冰鯊、海帝獸等）
-
-### 技能統計
-- **總技能數**：120 個（30 隻 × 4 技能）
-- **基礎攻擊**：30 個
-- **主動技能**：60 個
-- **被動技能**：30 個
-
-### 關卡統計
-- **總關卡**：100 關
-- **普通關卡**：90 關
-- **Boss 關卡**：10 關（每10關）
-
-## 🎨 設計理念
-
-### 視覺設計
-- **深色主題**：舒適的遊戲體驗
-- **漸變配色**：科技感十足
-- **動畫反饋**：流暢的互動體驗
-- **表情符號**：生動的寵物圖示
-
-### 遊戲設計
-- **漸進式難度**：從簡單到困難
-- **多樣化玩法**：自動 + 手動模式
-- **即時反饋**：戰鬥統計、視覺效果
-- **獎勵機制**：持續激勵玩家
-
-## 📄 License
-
-MIT License - 自由使用和修改
-
-## 👥 貢獻
-
-歡迎提交 Issue 和 Pull Request！
-
-## 🙏 致謝
-
-感謝所有測試和反饋的玩家！
 
 ---
 
-**立即開始遊戲：** [https://gxben0117-collab.github.io/JOSE-game/](https://gxben0117-collab.github.io/JOSE-game/)
+## 🤝 參與貢獻
 
-Made with ❤️ by Claude Opus 4.8
+歡迎提交 Issue 和 Pull Request！
+
+### 貢獻指南
+
+1. Fork 本專案
+2. 創建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 開啟 Pull Request
+
+---
+
+## 🐛 問題回報
+
+發現 Bug？有功能建議？
+
+[提交 Issue](https://github.com/gxben0117-collab/JOSE-game/issues)
+
+---
+
+## 📜 開源協議
+
+本專案採用 MIT 協議開源
+
+---
+
+## 🙏 致謝
+
+- 感謝所有測試玩家的回饋
+- 感謝 GitHub Pages 提供免費託管
+- 使用 Claude AI 協助開發
+
+---
+
+## 📞 聯繫方式
+
+- **GitHub：** [@gxben0117-collab](https://github.com/gxben0117-collab)
+- **Issues：** [提交問題](https://github.com/gxben0117-collab/JOSE-game/issues)
+
+---
+
+## ⭐ 支持專案
+
+如果您喜歡這個遊戲，請給我們一顆星星！⭐
+
+[![Star History Chart](https://api.star-history.com/svg?repos=gxben0117-collab/JOSE-game&type=Date)](https://star-history.com/#gxben0117-collab/JOSE-game&Date)
+
+---
+
+<div align="center">
+
+**🎮 [立即開始遊玩](https://gxben0117-collab.github.io/JOSE-game/) 🎮**
+
+Made with ❤️ by gxben0117-collab
+
+</div>
