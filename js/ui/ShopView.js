@@ -23,6 +23,7 @@ var ShopView = (function () {
   function diamondShopHtml() {
     var state = GameState.get();
     var currentAp = GameState.getAP();
+    var remainingPurchases = GameState.getRemainingApPurchases();
     var html  = '<div class="shop-items">';
     DIAMOND_SHOP.forEach(function (row, i) {
       if (row.type === 'bag_expand') {
@@ -36,13 +37,17 @@ var ShopView = (function () {
             '</button>' +
           '</div>';
       } else if (row.type === 'ap_buy') {
+        var canBuy = remainingPurchases > 0;
+        var btnClass = canBuy ? 'btn-buy btn-diamond' : 'btn-buy btn-diamond btn-disabled';
+        var btnText = canBuy ? '💎 ' + row.diamondPrice + ' 鑽石' : '今日已售完';
         html +=
           '<div class="shop-card">' +
             '<div class="sc-icon">⚡</div>' +
             '<div class="sc-name">' + row.label + '</div>' +
             '<div class="sc-desc">目前 AP: ' + currentAp + ' / ' + state.maxAp + '</div>' +
-            '<button class="btn-buy btn-diamond" onclick="ShopView.buyDiamond(' + i + ')">' +
-              '💎 ' + row.diamondPrice + ' 鑽石' +
+            '<div class="sc-limit" style="color:#ff9800;font-size:12px;margin:4px 0">每日限購 3 次（剩餘: ' + remainingPurchases + ' 次）</div>' +
+            '<button class="' + btnClass + '" onclick="ShopView.buyDiamond(' + i + ')" ' + (canBuy ? '' : 'disabled') + '>' +
+              btnText +
             '</button>' +
           '</div>';
       } else {
@@ -103,12 +108,18 @@ var ShopView = (function () {
         GameState.save();
         showToast('背包已擴充 +10 格！');
       } else if (row.type === 'ap_buy') {
+        // 檢查每日購買次數
+        if (!GameState.canPurchaseAP()) {
+          showToast('今日 AP 購買次數已用完！（每日限 3 次）');
+          return;
+        }
         if (!GameState.spendDiamond(row.diamondPrice)) {
           showToast('鑽石不足！');
           return;
         }
         GameState.addAP(50);
-        showToast('AP +50！');
+        GameState.recordApPurchase();
+        showToast('AP +50！今日剩餘 ' + GameState.getRemainingApPurchases() + ' 次購買機會');
       } else {
         var item = ITEM_DATA[row.itemId];
         if (!GameState.spendDiamond(row.diamondPrice)) {

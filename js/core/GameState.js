@@ -53,7 +53,9 @@ var GameState = (function () {
       lastSaveTime:        Date.now(),
       lastLoginDate:       null,
       loginStreak:         0,
-      achievements: {}
+      achievements: {},
+      dailyApPurchases:    0,
+      lastApPurchaseDate:  null
     };
   }
 
@@ -73,6 +75,9 @@ var GameState = (function () {
           // 向下相容：補充召喚師等級系統
           if (state.playerLevel === undefined) state.playerLevel = 1;
           if (state.playerExp === undefined) state.playerExp = 0;
+          // 向下相容：補充每日AP購買限制
+          if (state.dailyApPurchases === undefined) state.dailyApPurchases = 0;
+          if (state.lastApPurchaseDate === undefined) state.lastApPurchaseDate = null;
         } catch (e) {
           state = defaultState();
         }
@@ -250,6 +255,35 @@ var GameState = (function () {
       // 根據召喚師等級計算 AP 上限
       state.maxAp = 90 + (state.playerLevel - 1);
       if (state.ap > state.maxAp) state.ap = state.maxAp;
+      this.save();
+    },
+
+    canPurchaseAP: function () {
+      // 檢查今日是否可購買AP（每日限3次）
+      var today = new Date().toDateString();
+      if (state.lastApPurchaseDate !== today) {
+        // 新的一天，重置計數
+        state.dailyApPurchases = 0;
+        state.lastApPurchaseDate = today;
+      }
+      return state.dailyApPurchases < 3;
+    },
+
+    getRemainingApPurchases: function () {
+      var today = new Date().toDateString();
+      if (state.lastApPurchaseDate !== today) {
+        return 3;
+      }
+      return Math.max(0, 3 - state.dailyApPurchases);
+    },
+
+    recordApPurchase: function () {
+      var today = new Date().toDateString();
+      if (state.lastApPurchaseDate !== today) {
+        state.dailyApPurchases = 0;
+        state.lastApPurchaseDate = today;
+      }
+      state.dailyApPurchases++;
       this.save();
     },
 

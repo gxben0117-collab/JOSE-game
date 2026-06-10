@@ -10,7 +10,7 @@ var BATTLE_CONFIG = {
   FLEE_AP_REFUND: 5,
 
   // 戰鬥速度
-  SPEEDS: [1, 2, 4],
+  SPEEDS: [1, 2],
   DEFAULT_SPEED: 1,
 
   // 動畫延遲（毫秒）
