@@ -1,7 +1,7 @@
 var PetSystem = (function () {
   var EXP_TABLE = (function () {
     var table = [0];
-    for (var i = 1; i <= 100; i++) {
+    for (var i = 1; i <= 200; i++) {
       table.push(Math.floor(100 * Math.pow(i, 1.8)));
     }
     return table;
@@ -47,7 +47,7 @@ var PetSystem = (function () {
     addExp: function (petInstance, amount) {
       var leveled = false;
       petInstance.exp += amount;
-      while (petInstance.level < 100) {
+      while (petInstance.level < 200) {
         var needed = this.expForLevel(petInstance.level);
         if (petInstance.exp >= needed) {
           petInstance.exp -= needed;
@@ -57,7 +57,7 @@ var PetSystem = (function () {
           break;
         }
       }
-      if (petInstance.level >= 100) petInstance.exp = 0;
+      if (petInstance.level >= 200) petInstance.exp = 0;
 
       // 寵物升級只記錄，不影響 AP
       if (leveled) {

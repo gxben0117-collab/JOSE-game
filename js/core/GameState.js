@@ -220,7 +220,7 @@ var GameState = (function () {
       var leveled = false;
 
       // 召喚師升級所需經驗：100 * level^1.5
-      while (state.playerLevel < 100) {
+      while (state.playerLevel < 200) {
         var expNeeded = Math.floor(100 * Math.pow(state.playerLevel, 1.5));
         if (state.playerExp >= expNeeded) {
           state.playerExp -= expNeeded;
@@ -242,7 +242,7 @@ var GameState = (function () {
     },
 
     getPlayerExpNeeded: function () {
-      if (state.playerLevel >= 100) return 0;
+      if (state.playerLevel >= 200) return 0;
       return Math.floor(100 * Math.pow(state.playerLevel, 1.5));
     },
 
