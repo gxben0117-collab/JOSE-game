@@ -32,6 +32,14 @@ var GachaView = (function () {
             '<span>距傳說保底: ' + (pity.legPityAt - pity.pullsSinceLegendary) + ' 抽</span>' +
           '</div>' +
         '</div>' +
+        '<div class="gacha-rates">' +
+          '<span style="color:#9e9e9e">普通</span> ' +
+          '<span style="color:#4caf50">稀有</span> ' +
+          '<span style="color:#2196f3">菁英</span> ' +
+          '<span style="color:#9c27b0">史詩</span> ' +
+          '<span style="color:#ff9800">傳說</span> ' +
+          '<span style="color:#f44336">神話</span>' +
+        '</div>' +
         '<div class="gacha-banner">🌟 限時召喚池</div>' +
         '<div class="gacha-actions">' +
           '<button class="btn-gacha" onclick="GachaView.pull(1)">' +

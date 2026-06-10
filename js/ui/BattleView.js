@@ -383,7 +383,7 @@ var BattleView = (function () {
     },
 
     changeStage: function (dir) {
-      // 如果正在战斗中，不允许切换关卡
+      // 如果正在戰鬥中，不允許切換關卡
       if (isBattling) {
         showToast('請先完成當前戰鬥！');
         return;
@@ -393,7 +393,7 @@ var BattleView = (function () {
       var n = state.currentStage + dir;
       if (n < 1 || n > state.maxStage) return;
 
-      // 清理战斗状态
+      // 清理戰鬥狀態
       if (animTimer) clearTimeout(animTimer);
       battleResult = null;
       logIndex = 0;

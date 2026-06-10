@@ -12,16 +12,16 @@ var GachaSystem = (function () {
   function pickQuality(state) {
     var s = state;
 
-    // Pity: 30 pulls -> guaranteed epic+
-    if (s.pullsSinceEpic >= 29) {
+    // Pity: 300 pulls -> guaranteed epic+
+    if (s.pullsSinceEpic >= 299) {
       s.pullsSinceEpic = 0;
       var epicPlus = ['epic', 'legendary', 'mythical'];
       var filtered = RATES.filter(function (r) { return epicPlus.indexOf(r.quality) !== -1; });
       return rollFrom(filtered);
     }
 
-    // Pity: 100 pulls -> guaranteed legendary+
-    if (s.pullsSinceLegendary >= 99) {
+    // Pity: 3000 pulls -> guaranteed legendary+
+    if (s.pullsSinceLegendary >= 2999) {
       s.pullsSinceLegendary = 0;
       s.pullsSinceEpic = 0;
       var legPlus = ['legendary', 'mythical'];
@@ -101,8 +101,8 @@ var GachaSystem = (function () {
       return {
         pullsSinceEpic:      s.pullsSinceEpic,
         pullsSinceLegendary: s.pullsSinceLegendary,
-        epicPityAt:          30,
-        legPityAt:           100,
+        epicPityAt:          300,
+        legPityAt:           3000,
         totalPulls:          s.totalPulls
       };
     }
