@@ -275,14 +275,12 @@ var ManualBattle = (function () {
             statsHtml +
             '<div class="result-btns">' +
               '<button class="btn-primary" onclick="ManualBattle.closeResult(true)">下一關</button>' +
+              '<button class="btn-secondary" onclick="ManualBattle.closeResult(\'retry\')">再打一次</button>' +
               '<button class="btn-secondary" onclick="ManualBattle.closeResult(false)">返回</button>' +
             '</div></div>';
           overlay.style.display = 'flex';
 
-          // 2秒後自動進入下一關
-          setTimeout(function () {
-            ManualBattle.closeResult(true);
-          }, 2000);
+          // 移除自動跳轉，避免與用戶點擊衝突
 
         } else {
           var statsHtml2 = BattleStats.generateReport();
@@ -297,7 +295,7 @@ var ManualBattle = (function () {
           // 失敗不自動關閉
         }
 
-        BattleState.clear();
+        // 延遲清除狀態，確保結算界面可以正常顯示
         updateHUD();
       }, 1000 / battleSpeed);
     },
@@ -310,10 +308,20 @@ var ManualBattle = (function () {
     closeResult: function (advance) {
       document.getElementById('battle-result-overlay').style.display = 'none';
 
+      // 清除戰鬥狀態
+      BattleState.clear();
+
       // 重置戰鬥狀態，允許再次戰鬥
       isEndingBattle = false;
 
-      if (advance) {
+      if (advance === 'retry') {
+        // 再打一次同一關
+        BattleView.render();
+        return;
+      }
+
+      if (advance === true) {
+        // 下一關
         var state = GameState.get();
         if (state.currentStage < 999) {
           state.currentStage = Math.min(state.maxStage, state.currentStage + 1);

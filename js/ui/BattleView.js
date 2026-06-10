@@ -283,14 +283,12 @@ var BattleView = (function () {
         statsHtml +
         '<div class="result-btns">' +
           '<button class="btn-primary" onclick="BattleView.closeResult(true)">下一關</button>' +
+          '<button class="btn-secondary" onclick="BattleView.closeResult(\'retry\')">再打一次</button>' +
           '<button class="btn-secondary" onclick="BattleView.closeResult(false)">返回</button>' +
         '</div></div>';
       overlay.style.display = 'flex';
 
-      // 2秒後自動進入下一關
-      setTimeout(function () {
-        BattleView.closeResult(true);
-      }, 2000);
+      // 移除自動跳轉，避免與用戶點擊衝突
 
     } else {
       var statsHtml2 = BattleStats.generateReport();
@@ -362,9 +360,22 @@ var BattleView = (function () {
     },
 
     changeStage: function (dir) {
+      // 如果正在战斗中，不允许切换关卡
+      if (isBattling) {
+        showToast('請先完成當前戰鬥！');
+        return;
+      }
+
       var state = GameState.get();
       var n = state.currentStage + dir;
       if (n < 1 || n > state.maxStage) return;
+
+      // 清理战斗状态
+      if (animTimer) clearTimeout(animTimer);
+      battleResult = null;
+      logIndex = 0;
+      BattleState.clear();
+
       state.currentStage = n;
       GameState.save();
       this.render();
@@ -444,7 +455,15 @@ var BattleView = (function () {
 
     closeResult: function (advance) {
       document.getElementById('battle-result-overlay').style.display = 'none';
-      if (advance && battleResult && battleResult.win) {
+
+      if (advance === 'retry') {
+        // 再打一次同一關，不改變 currentStage
+        battleResult = null;
+        this.render();
+        return;
+      }
+
+      if (advance === true && battleResult && battleResult.win) {
         var state = GameState.get();
         if (state.currentStage < 999) {
           state.currentStage = Math.min(state.maxStage, state.currentStage + 1);

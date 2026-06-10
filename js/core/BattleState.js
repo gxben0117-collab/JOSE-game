@@ -169,11 +169,25 @@ var BattleState = (function () {
     // 獲取當前行動寵物
     getCurrentPet: function () {
       if (!currentBattle) return null;
-      while (currentBattle.currentPetIndex < 6) {
-        var pet = currentBattle.playerTeam[currentBattle.currentPetIndex];
-        if (pet && pet.hp > 0) return pet;
-        currentBattle.currentPetIndex++;
+
+      // 從當前索引開始向後找活著的寵物
+      for (var i = currentBattle.currentPetIndex; i < 6; i++) {
+        var pet = currentBattle.playerTeam[i];
+        if (pet && pet.hp > 0) {
+          currentBattle.currentPetIndex = i;
+          return pet;
+        }
       }
+
+      // 如果沒找到，從頭開始找（處理治療/復活的情況）
+      for (var i = 0; i < currentBattle.currentPetIndex; i++) {
+        var pet = currentBattle.playerTeam[i];
+        if (pet && pet.hp > 0) {
+          currentBattle.currentPetIndex = i;
+          return pet;
+        }
+      }
+
       return null;
     }
   };
