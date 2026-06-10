@@ -1,11 +1,11 @@
 var GachaSystem = (function () {
   var RATES = [
-    { quality: 'normal',    weight: 600 },
-    { quality: 'rare',      weight: 250 },
-    { quality: 'elite',     weight: 100 },
-    { quality: 'epic',      weight: 35  },
-    { quality: 'legendary', weight: 13  },
-    { quality: 'mythical',  weight: 2   }
+    { quality: 'normal',    weight: 700 },  // 70%
+    { quality: 'rare',      weight: 200 },  // 20%
+    { quality: 'elite',     weight: 80  },  // 8%
+    { quality: 'epic',      weight: 17.8},  // 1.78%
+    { quality: 'legendary', weight: 2   },  // 0.2%
+    { quality: 'mythical',  weight: 0.2 }   // 0.02%
   ];
   var TOTAL_WEIGHT = RATES.reduce(function (s, r) { return s + r.weight; }, 0);
 

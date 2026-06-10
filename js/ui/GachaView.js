@@ -32,13 +32,6 @@ var GachaView = (function () {
             '<span>距傳說保底: ' + (pity.legPityAt - pity.pullsSinceLegendary) + ' 抽</span>' +
           '</div>' +
         '</div>' +
-        '<div class="gacha-rates">' +
-          Object.entries(QUALITY_CONFIG).map(function (entry) {
-            var k = entry[0]; var v = entry[1];
-            var rates = { normal: 60, rare: 25, elite: 10, epic: 3.5, legendary: 1.3, mythical: 0.2 };
-            return '<span style="color:' + v.color + '">' + v.label + ' ' + rates[k] + '%</span>';
-          }).join(' &nbsp; ') +
-        '</div>' +
         '<div class="gacha-banner">🌟 限時召喚池</div>' +
         '<div class="gacha-actions">' +
           '<button class="btn-gacha" onclick="GachaView.pull(1)">' +
