@@ -85,17 +85,28 @@ var BattleState = (function () {
       if (!pet || pet.hp <= 0) return { error: '該寵物無法行動' };
 
       var target = this.findTarget(targetId);
-      if (!target) return { error: '目標不存在' };
+      // 全體技能或治療技能不需要目標
+      var skill = pet.skills && pet.skills[skillIndex];
+      if (skill && (skill.effect === 'damage_all' || skill.effect === 'heal' ||
+                    skill.effect === 'heal_all' || skill.effect === 'buff_atk' ||
+                    skill.effect === 'shield')) {
+        target = null; // 這些技能不需要目標
+      } else if (!target) {
+        return { error: '請先選擇目標' };
+      }
 
       var result = BattleEngine.executePetAction(
         pet,
         target,
         skillIndex,
         currentBattle.enemyFront,
-        currentBattle.enemyBack
+        currentBattle.enemyBack,
+        currentBattle.playerTeam
       );
 
-      currentBattle.log.push(result);
+      if (result) {
+        currentBattle.log.push(result);
+      }
 
       // 移動到下一隻寵物
       currentBattle.currentPetIndex++;
@@ -124,7 +135,8 @@ var BattleState = (function () {
         if (enemy.hp <= 0) return;
         var pt = BattleEngine.pickPlayerTarget(currentBattle.playerTeam);
         if (!pt) return;
-        var dmgE = BattleEngine.calcDamage(enemy.atk, pt.def, 1.0, 1.0);
+        var effectiveDef = BattleEngine.getEffectiveDef(pt);
+        var dmgE = BattleEngine.calcDamage(enemy.atk, effectiveDef, 1.0, 1.0);
         pt.hp = Math.max(0, pt.hp - dmgE);
         BattleStats.recordDamageTaken(dmgE);
         var result = {
@@ -141,17 +153,13 @@ var BattleState = (function () {
         results.push(result);
       });
 
+      // 回合結束：統一遞減冷卻時間和 Buff
+      BattleEngine.decrementCooldowns(currentBattle.playerTeam);
+      BattleEngine.decrementBuffs(currentBattle.playerTeam);
+
       // 切換回玩家回合
       currentBattle.isPlayerTurn = true;
       currentBattle.currentPetIndex = 0;
-
-      // 冷卻時間遞減
-      currentBattle.playerTeam.forEach(function (pet) {
-        if (!pet) return;
-        pet.cooldowns = pet.cooldowns.map(function (cd) {
-          return cd > 0 ? cd - 1 : 0;
-        });
-      });
 
       return results;
     },
@@ -169,6 +177,12 @@ var BattleState = (function () {
     // 獲取當前行動寵物
     getCurrentPet: function () {
       if (!currentBattle) return null;
+
+      // 提前檢查是否所有寵物都死亡
+      var anyAlive = currentBattle.playerTeam.some(function(p) {
+        return p && p.hp > 0;
+      });
+      if (!anyAlive) return null;
 
       // 從當前索引開始向後找活著的寵物
       for (var i = currentBattle.currentPetIndex; i < 6; i++) {

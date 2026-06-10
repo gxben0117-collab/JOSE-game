@@ -3,6 +3,7 @@ var BattleView = (function () {
   var logIndex      = 0;
   var animTimer     = null;
   var isBattling    = false;
+  var isPaused      = false;  // 暫停狀態
   var petNameToSlot = {};  // stats.name -> slot index 0|1|2
   var battleMode    = 'auto'; // 'auto' 或 'manual'
   var battleSpeed   = 1; // 1x, 2x, 4x
@@ -148,11 +149,11 @@ var BattleView = (function () {
 
       case 'start':
         setStatus('⚔️ 戰鬥開始！');
-        return 500;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.START;
 
       case 'round':
         setStatus('─ 第 ' + entry.round + ' 回合 ─');
-        return 200;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.ROUND;
 
       case 'attack':
         pEl = getPetEl(entry.pet);
@@ -163,7 +164,7 @@ var BattleView = (function () {
           floatNum(eEl, entry.dmg, 'df-dmg');
           updateHp(eEl, entry.hp, entry.maxHp);
         });
-        return 620;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.ATTACK;
 
       case 'skill':
         pEl = getPetEl(entry.pet);
@@ -176,7 +177,7 @@ var BattleView = (function () {
             updateHp(eEl, entry.hp, entry.maxHp);
           });
         });
-        return 820;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.SKILL;
 
       case 'skill_all':
         pEl = getPetEl(entry.pet);
@@ -191,7 +192,7 @@ var BattleView = (function () {
             }, hi * 140);
           });
         });
-        return 820;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.SKILL_ALL;
 
       case 'heal':
         pEl = getPetEl(entry.pet);
@@ -199,13 +200,28 @@ var BattleView = (function () {
         runAnim(pEl, 'bc-heal-glow', 600, null);
         floatNum(pEl, entry.amount, 'df-heal');
         updateHp(pEl, entry.hp, entry.maxHp);
-        return 700;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.HEAL;
+
+      case 'heal_all':
+        pEl = getPetEl(entry.pet);
+        setStatus('💚 <b>' + entry.pet + '</b>【' + entry.skill + '】全體回復！');
+        runAnim(pEl, 'bc-skill-glow', 280, function () {
+          (entry.heals || []).forEach(function (h, hi) {
+            setTimeout(function () {
+              var hEl = getPetEl(h.name);
+              runAnim(hEl, 'bc-heal-glow', 400, null);
+              floatNum(hEl, h.amount, 'df-heal');
+              updateHp(hEl, h.hp, h.maxHp);
+            }, hi * 140);
+          });
+        });
+        return BATTLE_CONFIG.ANIMATION_DELAYS.HEAL;
 
       case 'buff':
         pEl = getPetEl(entry.pet);
         setStatus('⚡ <b>' + entry.pet + '</b> 發動【' + entry.skill + '】！');
         runAnim(pEl, 'bc-skill-glow', 600, null);
-        return 600;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.BUFF;
 
       case 'enemy_attack':
         eEl = getEnemyEl(entry.enemyId);
@@ -216,29 +232,35 @@ var BattleView = (function () {
           floatNum(pEl, entry.dmg, 'df-edm');
           updateHp(pEl, entry.hp, entry.maxHp);
         });
-        return 620;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.ENEMY_ATTACK;
 
       case 'win':
         setStatus('<span class="st-win">🎉 勝利！</span>');
         runAnim(document.getElementById('battle-arena'), 'arena-victory', 900, null);
-        return 900;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.WIN;
 
       case 'lose':
         setStatus('<span class="st-lose">💀 戰鬥失敗...</span>');
-        return 800;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.LOSE;
 
       case 'msg':
         setStatus(entry.text);
-        return 500;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.MSG;
 
       default:
-        return 100;
+        return BATTLE_CONFIG.ANIMATION_DELAYS.DEFAULT;
     }
   }
 
   /* ─── Battle loop ─── */
 
   function animateBattle() {
+    if (isPaused) {
+      // 暫停中，稍後再檢查
+      animTimer = setTimeout(animateBattle, 100);
+      return;
+    }
+
     if (!battleResult || logIndex >= battleResult.log.length) {
       isBattling = false;
       finishBattle();
@@ -352,6 +374,7 @@ var BattleView = (function () {
 
         '<div class="fight-wrap">' +
           '<button class="btn-fight" id="btn-fight" onclick="BattleView.startFight()">⚔️ 出戰</button>' +
+          '<button class="btn-pause" id="btn-pause" onclick="BattleView.togglePause()" style="display:none">⏸️ 暫停</button>' +
           '<button class="btn-flee" id="btn-flee" onclick="BattleView.flee()" style="display:none">🏃 逃跑</button>' +
         '</div>' +
 
@@ -390,10 +413,13 @@ var BattleView = (function () {
       // 手動模式
       if (battleMode === 'manual') {
         isBattling = true;
+        isPaused = false;
         document.getElementById('battle-result-overlay').style.display = 'none';
         var btn = document.getElementById('btn-fight');
+        var pauseBtn = document.getElementById('btn-pause');
         var fleeBtn = document.getElementById('btn-flee');
         if (btn) btn.style.display = 'none';
+        if (pauseBtn) pauseBtn.style.display = 'none'; // 手動模式不需要暫停
         if (fleeBtn) fleeBtn.style.display = 'block';
 
         ManualBattle.start(state.currentStage);
@@ -402,12 +428,15 @@ var BattleView = (function () {
 
       // 自動模式
       isBattling   = true;
+      isPaused     = false;
       logIndex     = 0;
       battleResult = BattleEngine.simulate(GameState.get().currentStage, false);
       document.getElementById('battle-result-overlay').style.display = 'none';
       var btn = document.getElementById('btn-fight');
+      var pauseBtn = document.getElementById('btn-pause');
       var fleeBtn = document.getElementById('btn-flee');
       if (btn) { btn.disabled = true; btn.textContent = '戰鬥中...'; btn.style.display = 'none'; }
+      if (pauseBtn) { pauseBtn.style.display = 'inline-block'; pauseBtn.textContent = '⏸️ 暫停'; }
       if (fleeBtn) fleeBtn.style.display = 'block';
       animateBattle();
     },
@@ -430,8 +459,8 @@ var BattleView = (function () {
       if (overlay) overlay.style.display = 'none';
       if (slotMenu) slotMenu.style.display = 'none';
 
-      setStatus('💨 已逃跑！AP 退還 5 點');
-      GameState.addAP(5); // 退還一半 AP
+      setStatus('💨 已逃跑！AP 退還 ' + BATTLE_CONFIG.FLEE_AP_REFUND + ' 點');
+      GameState.addAP(BATTLE_CONFIG.FLEE_AP_REFUND);
       updateHUD();
 
       setTimeout(function () {
@@ -509,6 +538,22 @@ var BattleView = (function () {
       GameState.setActiveSlot(uuid, slot);
       document.getElementById('slot-menu').style.display = 'none';
       this.render();
+    },
+
+    togglePause: function () {
+      if (!isBattling || battleMode === 'manual') return;
+
+      isPaused = !isPaused;
+      var pauseBtn = document.getElementById('btn-pause');
+      if (pauseBtn) {
+        if (isPaused) {
+          pauseBtn.textContent = '▶️ 繼續';
+          setStatus('⏸️ 戰鬥已暫停');
+        } else {
+          pauseBtn.textContent = '⏸️ 暫停';
+          setStatus('▶️ 戰鬥繼續');
+        }
+      }
     }
   };
 })();

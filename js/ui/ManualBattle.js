@@ -7,8 +7,8 @@ var ManualBattle = (function () {
   return {
     // 開始手動戰鬥
     start: function (stageNum) {
-      if (!GameState.spendAP(10)) {
-        showToast('AP 不足！需要 10 AP');
+      if (!GameState.spendAP(BATTLE_CONFIG.AP_COST)) {
+        showToast('AP 不足！需要 ' + BATTLE_CONFIG.AP_COST + ' AP');
         return false;
       }
 
@@ -20,7 +20,7 @@ var ManualBattle = (function () {
 
       var result = BattleState.init(stageNum, true);
       if (result.error) {
-        GameState.addAP(10);
+        GameState.addAP(BATTLE_CONFIG.AP_COST); // 退還 AP
         showToast(result.error);
         return false;
       }
