@@ -1,0 +1,626 @@
+/* ═══════════════════════════════════════════════════════════════
+   EMOJI 图标增强系统
+   为所有 emoji 图标添加精美的视觉效果
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 基础 Emoji 增强 ─── */
+.emoji-enhance {
+  display: inline-block;
+  position: relative;
+  text-shadow:
+    0 0 8px rgba(255, 255, 255, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.5);
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+  transition: all 0.3s ease;
+}
+
+.emoji-enhance:hover {
+  transform: scale(1.15);
+  filter:
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))
+    brightness(1.2);
+}
+
+/* ─── HUD 货币图标增强 ─── */
+#hud-level,
+#hud-gold,
+#hud-diamond,
+#hud-ap {
+  position: relative;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+#hud-level:hover,
+#hud-gold:hover,
+#hud-diamond:hover,
+#hud-ap:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* 等级图标 👤 */
+#hud-level::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(100, 150, 255, 0.2), transparent);
+  pointer-events: none;
+}
+
+/* 金币图标 💰 增强 */
+#hud-gold {
+  animation: gold-shimmer 3s ease-in-out infinite;
+}
+
+@keyframes gold-shimmer {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  }
+}
+
+#hud-gold::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), transparent);
+  pointer-events: none;
+}
+
+/* 钻石图标 💎 增强 */
+#hud-diamond {
+  animation: diamond-sparkle 2s ease-in-out infinite;
+}
+
+@keyframes diamond-sparkle {
+  0%, 100% {
+    box-shadow:
+      0 0 8px rgba(100, 200, 255, 0.4),
+      inset 0 0 8px rgba(100, 200, 255, 0.1);
+  }
+  50% {
+    box-shadow:
+      0 0 20px rgba(100, 200, 255, 0.8),
+      inset 0 0 15px rgba(100, 200, 255, 0.3);
+  }
+}
+
+#hud-diamond::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(100, 200, 255, 0.2), transparent);
+  pointer-events: none;
+}
+
+/* 能量图标 ⚡ 增强 */
+#hud-ap {
+  animation: energy-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes energy-pulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 230, 100, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(255, 230, 100, 0.8);
+  }
+}
+
+#hud-ap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 230, 100, 0.2), transparent);
+  pointer-events: none;
+}
+
+/* ─── 底部导航图标增强 ─── */
+.nav-btn {
+  position: relative;
+  overflow: visible;
+}
+
+/* 为每个导航按钮的 emoji 添加独特效果 */
+.nav-btn[data-screen="battle"]::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 100, 100, 0.2), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav-btn[data-screen="battle"].active::before,
+.nav-btn[data-screen="battle"]:hover::before {
+  opacity: 1;
+  animation: battle-glow 2s ease-in-out infinite;
+}
+
+@keyframes battle-glow {
+  0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.6; }
+  50% { transform: translateX(-50%) scale(1.3); opacity: 1; }
+}
+
+.nav-btn[data-screen="inventory"]::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(150, 100, 50, 0.2), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav-btn[data-screen="inventory"].active::before,
+.nav-btn[data-screen="inventory"]:hover::before {
+  opacity: 1;
+}
+
+.nav-btn[data-screen="gacha"]::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 200, 255, 0.3), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav-btn[data-screen="gacha"].active::before,
+.nav-btn[data-screen="gacha"]:hover::before {
+  opacity: 1;
+  animation: gacha-sparkle 1.5s ease-in-out infinite;
+}
+
+@keyframes gacha-sparkle {
+  0%, 100% { transform: translateX(-50%) scale(1) rotate(0deg); opacity: 0.6; }
+  50% { transform: translateX(-50%) scale(1.4) rotate(180deg); opacity: 1; }
+}
+
+.nav-btn[data-screen="shop"]::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(100, 200, 100, 0.2), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav-btn[data-screen="shop"].active::before,
+.nav-btn[data-screen="shop"]:hover::before {
+  opacity: 1;
+}
+
+.nav-btn[data-screen="settings"]::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(150, 150, 150, 0.2), transparent);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.nav-btn[data-screen="settings"].active::before,
+.nav-btn[data-screen="settings"]:hover::before {
+  opacity: 1;
+  animation: settings-rotate 4s linear infinite;
+}
+
+@keyframes settings-rotate {
+  from { transform: translateX(-50%) rotate(0deg); }
+  to { transform: translateX(-50%) rotate(360deg); }
+}
+
+/* ─── 战斗卡片图标增强 ─── */
+.bc-icon,
+.pet-icon,
+.enemy-icon,
+.pc-icon,
+.gc-icon,
+.sc-icon,
+.card-icon {
+  display: inline-block;
+  position: relative;
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.1));
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 悬停效果 */
+.pet-card:hover .pc-icon,
+.enemy-card:hover .enemy-icon,
+.team-slot:hover .pet-icon,
+.bc:hover .bc-icon {
+  transform: scale(1.1) rotate(5deg);
+  filter:
+    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 15px rgba(255, 255, 255, 0.3))
+    brightness(1.2);
+}
+
+/* 玩家宠物图标发光 */
+.player-bc .bc-icon {
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 8px rgba(100, 150, 255, 0.3));
+}
+
+/* 敌人图标红色发光 */
+.enemy-bc .bc-icon {
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 8px rgba(255, 100, 100, 0.3));
+}
+
+/* Boss 图标特殊效果 */
+.boss-bc .bc-icon {
+  animation: boss-intimidate 3s ease-in-out infinite;
+  filter:
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6))
+    drop-shadow(0 0 15px rgba(255, 50, 50, 0.6))
+    drop-shadow(0 0 30px rgba(255, 0, 0, 0.3));
+}
+
+@keyframes boss-intimidate {
+  0%, 100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.08) rotate(-3deg);
+  }
+  75% {
+    transform: scale(1.08) rotate(3deg);
+  }
+}
+
+/* Leader 图标橙色发光 */
+.leader-bc .bc-icon {
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 10px rgba(255, 180, 50, 0.5));
+  animation: leader-aura 2s ease-in-out infinite;
+}
+
+@keyframes leader-aura {
+  0%, 100% {
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+      drop-shadow(0 0 10px rgba(255, 180, 50, 0.5));
+  }
+  50% {
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+      drop-shadow(0 0 20px rgba(255, 180, 50, 0.8));
+  }
+}
+
+/* ─── 品质颜色增强 ─── */
+/* 普通 - 灰色微光 */
+.pet-card[data-quality="普通"] .pc-icon,
+.gacha-card[data-quality="普通"] .gc-icon {
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 6px rgba(200, 200, 200, 0.3));
+}
+
+/* 稀有 - 蓝色发光 */
+.pet-card[data-quality="稀有"] .pc-icon,
+.gacha-card[data-quality="稀有"] .gc-icon {
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 10px rgba(100, 150, 255, 0.6));
+  animation: quality-blue-pulse 2s ease-in-out infinite;
+}
+
+@keyframes quality-blue-pulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+      drop-shadow(0 0 10px rgba(100, 150, 255, 0.6));
+  }
+  50% {
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+      drop-shadow(0 0 18px rgba(100, 150, 255, 0.9));
+  }
+}
+
+/* 史诗 - 紫色发光 */
+.pet-card[data-quality="史詩"] .pc-icon,
+.gacha-card[data-quality="史詩"] .gc-icon {
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 12px rgba(180, 100, 255, 0.7));
+  animation: quality-purple-pulse 2s ease-in-out infinite;
+}
+
+@keyframes quality-purple-pulse {
+  0%, 100% {
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+      drop-shadow(0 0 12px rgba(180, 100, 255, 0.7));
+  }
+  50% {
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+      drop-shadow(0 0 22px rgba(180, 100, 255, 1));
+  }
+}
+
+/* 传说 - 金色发光 */
+.pet-card[data-quality="傳說"] .pc-icon,
+.gacha-card[data-quality="傳說"] .gc-icon {
+  filter:
+    drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+    drop-shadow(0 0 15px rgba(255, 215, 0, 0.8))
+    drop-shadow(0 0 30px rgba(255, 200, 0, 0.4));
+  animation: quality-gold-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes quality-gold-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4))
+      drop-shadow(0 0 15px rgba(255, 215, 0, 0.8))
+      drop-shadow(0 0 30px rgba(255, 200, 0, 0.4));
+  }
+  50% {
+    transform: scale(1.05);
+    filter:
+      drop-shadow(0 2px 6px rgba(0, 0, 0, 0.5))
+      drop-shadow(0 0 25px rgba(255, 215, 0, 1))
+      drop-shadow(0 0 50px rgba(255, 200, 0, 0.6));
+  }
+}
+
+/* ─── 抽卡动画特效 ─── */
+.gacha-pull-anim {
+  animation: gacha-pull-effect 1.5s ease-in-out infinite;
+}
+
+.gacha-pull-anim::before {
+  content: '✨';
+  position: absolute;
+  font-size: 32px;
+  animation: star-spin 2s linear infinite;
+}
+
+@keyframes gacha-pull-effect {
+  0%, 100% {
+    transform: scale(1);
+    filter:
+      drop-shadow(0 0 20px rgba(255, 215, 0, 0.6))
+      brightness(1);
+  }
+  50% {
+    transform: scale(1.2);
+    filter:
+      drop-shadow(0 0 40px rgba(255, 215, 0, 1))
+      brightness(1.5);
+  }
+}
+
+@keyframes star-spin {
+  from { transform: rotate(0deg) scale(1); opacity: 0.6; }
+  to { transform: rotate(360deg) scale(1.5); opacity: 0.3; }
+}
+
+/* ─── 商店图标增强 ─── */
+.sc-icon {
+  position: relative;
+}
+
+.shop-card:hover .sc-icon {
+  animation: shop-bounce 0.6s ease-in-out;
+}
+
+@keyframes shop-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  25% { transform: translateY(-8px) scale(1.1); }
+  50% { transform: translateY(0) scale(1); }
+  75% { transform: translateY(-4px) scale(1.05); }
+}
+
+/* ─── 合成标签增强 ─── */
+.synth-tag {
+  animation: synth-pulse 2s ease-in-out infinite;
+}
+
+@keyframes synth-pulse {
+  0%, 100% {
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 2px 15px rgba(255, 152, 0, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+/* ─── 收藏标签增强 ─── */
+.favorite-tag {
+  animation: favorite-twinkle 2s ease-in-out infinite;
+}
+
+@keyframes favorite-twinkle {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter:
+      drop-shadow(0 0 8px rgba(255, 215, 0, 0.6))
+      brightness(1);
+  }
+  25% {
+    transform: scale(1.15) rotate(-10deg);
+    filter:
+      drop-shadow(0 0 15px rgba(255, 215, 0, 1))
+      brightness(1.3);
+  }
+  75% {
+    transform: scale(1.15) rotate(10deg);
+    filter:
+      drop-shadow(0 0 15px rgba(255, 215, 0, 1))
+      brightness(1.3);
+  }
+}
+
+/* ─── 活跃标签 ─── */
+.active-tag {
+  animation: active-tag-glow 2s ease-in-out infinite;
+}
+
+@keyframes active-tag-glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(124, 92, 252, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(124, 92, 252, 1);
+  }
+}
+
+/* ─── 结果图标特效 ─── */
+.result-box.win::before {
+  content: '🎉';
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 48px;
+  animation: victory-celebration 1s ease-out infinite;
+}
+
+@keyframes victory-celebration {
+  0% {
+    transform: translateX(-50%) translateY(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) translateY(-30px) scale(1.5) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.result-box.lose::before {
+  content: '💔';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 40px;
+  animation: defeat-fade 2s ease-in-out infinite;
+}
+
+@keyframes defeat-fade {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translateX(-50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+  }
+}
+
+/* ─── 3D 效果增强 ─── */
+.emoji-3d {
+  text-shadow:
+    0 1px 0 rgba(0, 0, 0, 0.3),
+    0 2px 0 rgba(0, 0, 0, 0.2),
+    0 3px 0 rgba(0, 0, 0, 0.15),
+    0 4px 0 rgba(0, 0, 0, 0.1),
+    0 5px 8px rgba(0, 0, 0, 0.4),
+    0 0 12px rgba(255, 255, 255, 0.2);
+}
+
+/* ─── 响应式优化 ─── */
+@media (max-width: 480px) {
+  /* 在小屏幕上减少动画强度 */
+  .bc-icon,
+  .pet-icon,
+  .enemy-icon {
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+  }
+
+  .boss-bc .bc-icon {
+    animation: none;
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))
+      drop-shadow(0 0 10px rgba(255, 50, 50, 0.5));
+  }
+}
+
+/* ─── 可访问性：尊重用户偏好 ─── */
+@media (prefers-reduced-motion: reduce) {
+  /* 为有运动敏感的用户禁用动画 */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .bc-icon,
+  .pet-icon,
+  .enemy-icon,
+  .pc-icon,
+  .gc-icon,
+  .sc-icon {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
+  }
+}
+
+/* ─── 高对比度模式支持 ─── */
+@media (prefers-contrast: high) {
+  .bc-icon,
+  .pet-icon,
+  .enemy-icon,
+  .pc-icon,
+  .gc-icon,
+  .sc-icon {
+    filter:
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 1))
+      contrast(1.3);
+  }
+}

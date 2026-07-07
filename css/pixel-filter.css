@@ -1,0 +1,404 @@
+/* ═══════════════════════════════════════════════════════════════
+   像素風格濾鏡系統 - Emoji 增強版
+   讓戰鬥更華麗的復古像素效果
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 全局像素化基礎 ─── */
+.pixel-mode {
+  image-rendering: -moz-crisp-edges;
+  image-rendering: -webkit-crisp-edges;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+/* ─── 戰鬥圖標像素強化 ─── */
+.bc-icon.pixel-enhanced,
+.pet-icon.pixel-enhanced,
+.enemy-icon.pixel-enhanced {
+  image-rendering: pixelated;
+  filter:
+    contrast(1.3)           /* 增強對比度 */
+    brightness(1.05)        /* 稍微增亮 */
+    saturate(1.4)           /* 增強飽和度 */
+    drop-shadow(0 0 4px rgba(255, 255, 255, 0.3))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  transform: scale(1.1);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 懸停效果增強 */
+.bc:hover .bc-icon.pixel-enhanced,
+.pet-card:hover .pc-icon.pixel-enhanced {
+  filter:
+    contrast(1.4)
+    brightness(1.15)
+    saturate(1.5)
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.5))
+    drop-shadow(0 3px 10px rgba(0, 0, 0, 0.7));
+  transform: scale(1.2) rotate(5deg);
+}
+
+/* ─── 玩家單位像素效果（藍色光暈）─── */
+.player-bc .bc-icon.pixel-enhanced {
+  filter:
+    contrast(1.3)
+    brightness(1.05)
+    saturate(1.4)
+    drop-shadow(0 0 6px rgba(100, 150, 255, 0.8))
+    drop-shadow(0 0 12px rgba(100, 150, 255, 0.4))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+}
+
+/* ─── 敵方單位像素效果（紅色光暈）─── */
+.enemy-bc .bc-icon.pixel-enhanced {
+  filter:
+    contrast(1.35)
+    brightness(1.0)
+    saturate(1.5)
+    drop-shadow(0 0 6px rgba(255, 100, 100, 0.8))
+    drop-shadow(0 0 12px rgba(255, 100, 100, 0.4))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+}
+
+/* ─── Boss 像素效果（強烈紅光）─── */
+.boss-bc .bc-icon.pixel-enhanced {
+  filter:
+    contrast(1.4)
+    brightness(1.1)
+    saturate(1.6)
+    drop-shadow(0 0 10px rgba(255, 50, 50, 1))
+    drop-shadow(0 0 20px rgba(255, 50, 50, 0.6))
+    drop-shadow(0 0 30px rgba(255, 0, 0, 0.3))
+    drop-shadow(0 3px 8px rgba(0, 0, 0, 0.8));
+  animation: boss-pixel-pulse 2s ease-in-out infinite;
+}
+
+@keyframes boss-pixel-pulse {
+  0%, 100% {
+    filter:
+      contrast(1.4)
+      brightness(1.1)
+      saturate(1.6)
+      drop-shadow(0 0 10px rgba(255, 50, 50, 1))
+      drop-shadow(0 0 20px rgba(255, 50, 50, 0.6))
+      drop-shadow(0 3px 8px rgba(0, 0, 0, 0.8));
+  }
+  50% {
+    filter:
+      contrast(1.5)
+      brightness(1.2)
+      saturate(1.7)
+      drop-shadow(0 0 15px rgba(255, 50, 50, 1))
+      drop-shadow(0 0 30px rgba(255, 50, 50, 0.8))
+      drop-shadow(0 3px 10px rgba(0, 0, 0, 0.9));
+  }
+}
+
+/* ─── 隊長像素效果（橙色光暈）─── */
+.leader-bc .bc-icon.pixel-enhanced {
+  filter:
+    contrast(1.35)
+    brightness(1.08)
+    saturate(1.5)
+    drop-shadow(0 0 8px rgba(255, 180, 50, 0.9))
+    drop-shadow(0 0 16px rgba(255, 180, 50, 0.5))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  animation: leader-pixel-glow 2.5s ease-in-out infinite;
+}
+
+@keyframes leader-pixel-glow {
+  0%, 100% {
+    filter:
+      contrast(1.35)
+      brightness(1.08)
+      saturate(1.5)
+      drop-shadow(0 0 8px rgba(255, 180, 50, 0.9))
+      drop-shadow(0 0 16px rgba(255, 180, 50, 0.5))
+      drop-shadow(0 2px 6px rgba(0, 0, 0, 0.6));
+  }
+  50% {
+    filter:
+      contrast(1.4)
+      brightness(1.12)
+      saturate(1.6)
+      drop-shadow(0 0 12px rgba(255, 180, 50, 1))
+      drop-shadow(0 0 24px rgba(255, 180, 50, 0.7))
+      drop-shadow(0 2px 8px rgba(0, 0, 0, 0.7));
+  }
+}
+
+/* ─── 品質等級像素效果 ─── */
+
+/* 稀有 - 藍色像素光 */
+.pet-card[data-quality="稀有"] .pc-icon.pixel-enhanced {
+  filter:
+    contrast(1.3)
+    brightness(1.05)
+    saturate(1.5)
+    drop-shadow(0 0 8px rgba(100, 150, 255, 0.8))
+    drop-shadow(0 0 16px rgba(100, 150, 255, 0.4));
+  animation: quality-pixel-blue 2s ease-in-out infinite;
+}
+
+@keyframes quality-pixel-blue {
+  0%, 100% {
+    filter:
+      contrast(1.3)
+      saturate(1.5)
+      drop-shadow(0 0 8px rgba(100, 150, 255, 0.8))
+      drop-shadow(0 0 16px rgba(100, 150, 255, 0.4));
+  }
+  50% {
+    filter:
+      contrast(1.4)
+      saturate(1.6)
+      drop-shadow(0 0 12px rgba(100, 150, 255, 1))
+      drop-shadow(0 0 24px rgba(100, 150, 255, 0.6));
+  }
+}
+
+/* 史詩 - 紫色像素光 */
+.pet-card[data-quality="史詩"] .pc-icon.pixel-enhanced {
+  filter:
+    contrast(1.35)
+    brightness(1.08)
+    saturate(1.6)
+    drop-shadow(0 0 10px rgba(180, 100, 255, 0.9))
+    drop-shadow(0 0 20px rgba(180, 100, 255, 0.5));
+  animation: quality-pixel-purple 2s ease-in-out infinite;
+}
+
+@keyframes quality-pixel-purple {
+  0%, 100% {
+    filter:
+      contrast(1.35)
+      saturate(1.6)
+      drop-shadow(0 0 10px rgba(180, 100, 255, 0.9))
+      drop-shadow(0 0 20px rgba(180, 100, 255, 0.5));
+  }
+  50% {
+    filter:
+      contrast(1.45)
+      saturate(1.7)
+      drop-shadow(0 0 15px rgba(180, 100, 255, 1))
+      drop-shadow(0 0 30px rgba(180, 100, 255, 0.7));
+  }
+}
+
+/* 傳說 - 金色像素光（最華麗）*/
+.pet-card[data-quality="傳說"] .pc-icon.pixel-enhanced {
+  filter:
+    contrast(1.4)
+    brightness(1.12)
+    saturate(1.7)
+    drop-shadow(0 0 12px rgba(255, 215, 0, 1))
+    drop-shadow(0 0 24px rgba(255, 215, 0, 0.6))
+    drop-shadow(0 0 36px rgba(255, 200, 0, 0.3));
+  animation: quality-pixel-gold 1.5s ease-in-out infinite;
+}
+
+@keyframes quality-pixel-gold {
+  0%, 100% {
+    transform: scale(1);
+    filter:
+      contrast(1.4)
+      brightness(1.12)
+      saturate(1.7)
+      drop-shadow(0 0 12px rgba(255, 215, 0, 1))
+      drop-shadow(0 0 24px rgba(255, 215, 0, 0.6))
+      drop-shadow(0 0 36px rgba(255, 200, 0, 0.3));
+  }
+  50% {
+    transform: scale(1.08);
+    filter:
+      contrast(1.5)
+      brightness(1.18)
+      saturate(1.8)
+      drop-shadow(0 0 18px rgba(255, 215, 0, 1))
+      drop-shadow(0 0 36px rgba(255, 215, 0, 0.8))
+      drop-shadow(0 0 54px rgba(255, 200, 0, 0.5));
+  }
+}
+
+/* ─── 戰鬥特效像素強化 ─── */
+
+/* 攻擊時的像素衝擊 */
+.bc-atk-right.pixel-enhanced,
+.bc-atk-left.pixel-enhanced {
+  filter:
+    contrast(1.5)
+    brightness(1.2)
+    saturate(1.6)
+    drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+/* 受擊時的像素閃光 */
+.bc-hit.pixel-enhanced {
+  filter:
+    contrast(1.6)
+    brightness(1.5)
+    saturate(0.5)
+    drop-shadow(0 0 15px rgba(255, 255, 255, 1));
+}
+
+/* 技能發動像素特效 */
+.bc-skill-glow.pixel-enhanced {
+  filter:
+    contrast(1.5)
+    brightness(1.3)
+    saturate(1.7)
+    drop-shadow(0 0 15px rgba(200, 100, 255, 1))
+    drop-shadow(0 0 30px rgba(200, 100, 255, 0.6));
+}
+
+/* 治療像素特效 */
+.bc-heal-glow.pixel-enhanced {
+  filter:
+    contrast(1.4)
+    brightness(1.25)
+    saturate(1.6)
+    drop-shadow(0 0 15px rgba(100, 255, 150, 1))
+    drop-shadow(0 0 30px rgba(100, 255, 150, 0.6));
+}
+
+/* ─── 戰鬥場景整體氛圍 ─── */
+.battle-arena.pixel-mode {
+  background: linear-gradient(180deg,
+    #0a0814 0%,
+    #0e0c1a 50%,
+    #08120c 100%);
+  filter: contrast(1.1) saturate(1.2);
+}
+
+/* 戰鬥單位卡片像素化背景 */
+.bc.pixel-enhanced {
+  background:
+    linear-gradient(135deg,
+      rgba(255, 255, 255, 0.06) 0%,
+      rgba(255, 255, 255, 0.02) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 4px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* ─── HUD 圖標像素化 ─── */
+#hud-level.pixel-enhanced::before,
+#hud-gold.pixel-enhanced::before,
+#hud-diamond.pixel-enhanced::before,
+#hud-ap.pixel-enhanced::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 20px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1),
+    transparent);
+  pointer-events: none;
+}
+
+/* ─── 像素化切換動畫 ─── */
+@keyframes pixel-mode-activate {
+  0% {
+    filter: blur(4px) contrast(1);
+  }
+  50% {
+    filter: blur(0px) contrast(1.5);
+  }
+  100% {
+    filter: blur(0px) contrast(1.3);
+  }
+}
+
+.pixel-mode-activating {
+  animation: pixel-mode-activate 0.5s ease-out;
+}
+
+/* ─── 像素粒子效果（可選）─── */
+.pixel-particle {
+  image-rendering: pixelated;
+  filter:
+    contrast(1.4)
+    saturate(1.5)
+    drop-shadow(0 0 4px currentColor);
+}
+
+/* ─── 組合技：像素 + 發光 ─── */
+.pixel-glow-combo {
+  image-rendering: pixelated;
+  filter:
+    contrast(1.4)
+    brightness(1.1)
+    saturate(1.6)
+    drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))
+    drop-shadow(0 0 16px var(--glow-color, rgba(255, 255, 255, 0.3)))
+    drop-shadow(0 2px 6px rgba(0, 0, 0, 0.7));
+  animation: pixel-glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes pixel-glow-pulse {
+  0%, 100% {
+    filter:
+      contrast(1.4)
+      brightness(1.1)
+      saturate(1.6)
+      drop-shadow(0 0 8px rgba(255, 255, 255, 0.6))
+      drop-shadow(0 0 16px var(--glow-color, rgba(255, 255, 255, 0.3)));
+  }
+  50% {
+    filter:
+      contrast(1.5)
+      brightness(1.15)
+      saturate(1.7)
+      drop-shadow(0 0 12px rgba(255, 255, 255, 0.8))
+      drop-shadow(0 0 24px var(--glow-color, rgba(255, 255, 255, 0.5)));
+  }
+}
+
+/* ─── 移動端優化 ─── */
+@media (max-width: 480px) {
+  .bc-icon.pixel-enhanced,
+  .pet-icon.pixel-enhanced,
+  .enemy-icon.pixel-enhanced {
+    filter:
+      contrast(1.25)
+      brightness(1.05)
+      saturate(1.3)
+      drop-shadow(0 0 3px rgba(255, 255, 255, 0.2))
+      drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  }
+
+  /* 減少動畫強度 */
+  .boss-bc .bc-icon.pixel-enhanced {
+    animation: boss-pixel-pulse 3s ease-in-out infinite;
+  }
+}
+
+/* ─── 可訪問性：尊重使用者偏好 ─── */
+@media (prefers-reduced-motion: reduce) {
+  .bc-icon.pixel-enhanced,
+  .pet-icon.pixel-enhanced,
+  .enemy-icon.pixel-enhanced {
+    animation: none !important;
+  }
+
+  .boss-bc .bc-icon.pixel-enhanced,
+  .leader-bc .bc-icon.pixel-enhanced,
+  .pet-card[data-quality] .pc-icon.pixel-enhanced {
+    animation: none !important;
+  }
+}
+
+/* ─── 高對比度模式 ─── */
+@media (prefers-contrast: high) {
+  .bc-icon.pixel-enhanced,
+  .pet-icon.pixel-enhanced,
+  .enemy-icon.pixel-enhanced {
+    filter:
+      contrast(1.6)
+      brightness(1.1)
+      saturate(1.5)
+      drop-shadow(0 0 6px rgba(255, 255, 255, 0.8))
+      drop-shadow(0 3px 8px rgba(0, 0, 0, 1));
+  }
+}

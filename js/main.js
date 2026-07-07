@@ -104,5 +104,17 @@ window.addEventListener('DOMContentLoaded', function () {
 
   BattleView.render();
 
+  // 初始化 Emoji 增强系统
+  if (window.emojiEnhancer) {
+    window.emojiEnhancer.init();
+  }
+
+  // 显示新手礼包（在其他弹窗之后）
+  setTimeout(function() {
+    if (typeof NewbieGiftSystem !== 'undefined') {
+      NewbieGiftSystem.show();
+    }
+  }, 1000);
+
   setInterval(function () { GameState.save(); }, 30000);
 });
