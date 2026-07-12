@@ -1,0 +1,18 @@
+const KEY='jose_expedition_v2';
+function uuid(){return 'p-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
+function fresh(pets){let starters=pets.filter((_,i)=>[0,1,10,11,20,21].includes(i)).map((p,i)=>({uuid:uuid(),petId:p.id,level:8+i,exp:0,stars:1,shards:20,affinity:0,skillLevel:1,evolution:0,branch:null}));return {version:2,createdAt:Date.now(),gold:5000,gems:600,energy:90,maxEnergy:90,playerLevel:1,playerExp:0,highestStage:1,stageStars:{},inventory:starters,team:starters.slice(0,3).map(p=>p.uuid),materials:{fire:8,forest:8,ocean:8,light:0,dark:0},tickets:10,towerFloor:1,daily:{date:'',done:[]},settings:{quality:'high',sound:true},base:{training:1,lab:1,hatchery:1}}}
+export class Store{
+ constructor(pets){this.pets=pets;try{this.state=JSON.parse(localStorage.getItem(KEY))||fresh(pets)}catch(e){this.state=fresh(pets)}this.migrate();this.save()}
+ migrate(){let s=this.state;s.version=2;s.stageStars=s.stageStars||{};s.materials=s.materials||{fire:5,forest:5,ocean:5};s.team=s.team||s.inventory.slice(0,3).map(p=>p.uuid);s.daily=s.daily||{date:'',done:[]};s.base=s.base||{training:1,lab:1,hatchery:1};s.settings=s.settings||{quality:'high',sound:true};s.inventory.forEach(p=>{p.shards??=0;p.affinity??=0;p.skillLevel??=1;p.evolution??=0;p.branch??=null})}
+ save(){localStorage.setItem(KEY,JSON.stringify(this.state));window.dispatchEvent(new CustomEvent('statechange'))}
+ pet(uuid){return this.state.inventory.find(p=>p.uuid===uuid)}
+ template(id){return this.pets.find(p=>p.id===id)}
+ addPet(id){let owned=this.state.inventory.find(p=>p.petId===id);if(owned){owned.shards+=20;return {duplicate:true,pet:owned}}let p={uuid:uuid(),petId:id,level:1,exp:0,stars:1,shards:0,affinity:0,skillLevel:1,evolution:0,branch:null};this.state.inventory.push(p);return {duplicate:false,pet:p}}
+ summon(count){let cost=count===10?9:1;if(this.state.tickets<cost&&this.state.gems<cost*100)return null;if(this.state.tickets>=cost)this.state.tickets-=cost;else this.state.gems-=cost*100;let results=[];for(let i=0;i<count;i++){let roll=Math.random(),pool=this.pets.filter(p=>roll<.03?p.quality==='legendary':roll<.15?['epic','elite'].includes(p.quality):['normal','rare','elite'].includes(p.quality));results.push(this.addPet(pool[Math.floor(Math.random()*pool.length)].id))}this.save();return results}
+ levelPet(uuid){let p=this.pet(uuid),cost=p.level*90;if(!p||p.level>=100||this.state.gold<cost)return false;this.state.gold-=cost;p.level++;p.affinity=Math.min(100,p.affinity+1);this.save();return true}
+ starPet(uuid){let p=this.pet(uuid),need=p.stars*20;if(!p||p.stars>=5||p.shards<need)return false;p.shards-=need;p.stars++;this.save();return true}
+ evolve(uuid,branch){let p=this.pet(uuid),t=this.template(p.petId),need=p.evolution?50:20;if(!p||p.level<(p.evolution?50:20)||(this.state.materials[t.element]||0)<need)return false;this.state.materials[t.element]-=need;p.evolution++;if(p.evolution===2)p.branch=branch;this.save();return true}
+ setTeam(uuid){let a=this.state.team,i=a.indexOf(uuid);if(i>=0)a.splice(i,1);else{if(a.length>=3)a.shift();a.push(uuid)}this.save()}
+ completeStage(info,stars){let key=info.id;this.state.stageStars[key]=Math.max(this.state.stageStars[key]||0,stars);this.state.highestStage=Math.max(this.state.highestStage,info.regionIndex*12+info.stage+1);this.state.gold+=info.level*65*(info.boss?4:1);this.state.materials[info.element]=(this.state.materials[info.element]||0)+(info.boss?8:2);this.state.playerExp+=info.level*20;while(this.state.playerExp>=this.state.playerLevel*150){this.state.playerExp-=this.state.playerLevel*150;this.state.playerLevel++;this.state.maxEnergy++}this.save()}
+ reset(){this.state=fresh(this.pets);this.save()}
+}

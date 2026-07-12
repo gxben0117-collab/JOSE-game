@@ -1,84 +1,32 @@
-<!DOCTYPE html>
-<html lang="zh-TW">
+<!doctype html>
+<html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>寵物闖關 RPG</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/emoji-enhance.css">
-  <link rel="stylesheet" href="css/newbie-gift.css">
-  <link rel="stylesheet" href="css/pixel-filter.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#10152d">
+  <title>JOSE：幻獸遠征</title>
+  <link rel="stylesheet" href="css/v2.css">
 </head>
 <body>
-  <div id="game-container">
-
-    <!-- HUD -->
-    <div id="hud">
-      <div class="hud-currency">
-        <span id="hud-level">👤 Lv.1</span>
-        <span id="hud-gold">💰 500</span>
-        <span id="hud-diamond">💎 100</span>
-        <span id="hud-ap">⚡ 90/90</span>
+  <div id="app">
+    <header class="topbar">
+      <button class="brand" data-go="world"><span class="brand-mark">J</span><span><b>JOSE</b><small>幻獸遠征</small></span></button>
+      <div class="resources">
+        <span id="hud-level">Lv.1</span><span id="hud-gold">🪙 0</span><span id="hud-gems">💎 0</span><span id="hud-energy">⚡ 0/0</span>
       </div>
-      <div class="hud-stage">🎮 寵物闖關 RPG</div>
-    </div>
-
-    <!-- Battle Screen -->
-    <div id="screen-battle" class="screen active">
-      <div style="padding:20px;color:#666;text-align:center">載入中...</div>
-    </div>
-
-    <!-- Inventory Screen -->
-    <div id="screen-inventory" class="screen"></div>
-
-    <!-- Gacha Screen -->
-    <div id="screen-gacha" class="screen"></div>
-
-    <!-- Shop Screen -->
-    <div id="screen-shop" class="screen"></div>
-
-    <!-- Settings Screen -->
-    <div id="screen-settings" class="screen"></div>
-
-    <!-- Bottom Navigation -->
-    <nav id="bottom-nav">
-      <button class="nav-btn active" data-screen="battle">⚔️<br>闖關</button>
-      <button class="nav-btn" data-screen="inventory">🎒<br>背包</button>
-      <button class="nav-btn" data-screen="gacha">✨<br>抽獎</button>
-      <button class="nav-btn" data-screen="shop">🏪<br>商店</button>
-      <button class="nav-btn" data-screen="settings">⚙️<br>設置</button>
+    </header>
+    <main id="view" aria-live="polite"><div class="loading"><div class="orb"></div><p>喚醒幻獸世界…</p></div></main>
+    <nav class="dock" aria-label="主要功能">
+      <button data-go="world" class="active"><i>🗺️</i><span>冒險</span></button>
+      <button data-go="pets"><i>🐾</i><span>幻獸</span></button>
+      <button data-go="modes"><i>🏛️</i><span>試煉</span></button>
+      <button data-go="summon"><i>✦</i><span>召喚</span></button>
+      <button data-go="base"><i>🏕️</i><span>基地</span></button>
     </nav>
-
   </div>
-
-  <!-- Data -->
+  <div id="toast" role="status"></div>
+  <div id="modal" class="modal" hidden></div>
   <script src="js/data/pets.js"></script>
-  <script src="js/data/stages.js"></script>
-  <script src="js/data/items.js"></script>
-
-  <!-- Core -->
-  <script src="js/core/BattleConfig.js"></script>
-  <script src="js/core/GameState.js"></script>
-  <script src="js/core/PetSystem.js"></script>
-  <script src="js/core/BattleEngine.js"></script>
-  <script src="js/core/BattleState.js"></script>
-  <script src="js/core/BattleStats.js"></script>
-  <script src="js/core/GachaSystem.js"></script>
-  <script src="js/core/OfflineSystem.js"></script>
-  <script src="js/core/NewbieGiftSystem.js"></script>
-
-  <!-- UI -->
-  <script src="js/ui/Navigation.js"></script>
-  <script src="js/ui/BattleView.js"></script>
-  <script src="js/ui/ManualBattle.js"></script>
-  <script src="js/ui/InventoryView.js"></script>
-  <script src="js/ui/GachaView.js"></script>
-  <script src="js/ui/ShopView.js"></script>
-  <script src="js/ui/SettingsView.js"></script>
-  <script src="js/ui/EmojiEnhancer.js"></script>
-  <script src="js/ui/PixelFilterController.js"></script>
-
-  <!-- Entry -->
-  <script src="js/main.js"></script>
+  <script type="module" src="js/v2/app.js?v=4"></script>
 </body>
 </html>
