@@ -14,6 +14,7 @@ var TACTICAL_ROLE_BY_ID = {
 function tacticalProfile(pet, index) {
   var role = TACTICAL_ROLE_BY_ID[pet.id] || 'allrounder';
   var style = role === 'defender' ? 'melee' : role === 'healer' || role === 'support' ? 'support' : (pet.id.indexOf('bird') >= 0 || pet.id.indexOf('fish') >= 0 || pet.id.indexOf('spirit') >= 0 || pet.id.indexOf('jelly') >= 0 || pet.id.indexOf('eel') >= 0) ? 'ranged' : 'melee';
+  var basicStyle = style === 'melee' ? 'melee' : 'ranged';
   var hp = Math.round(pet.baseHp * (role === 'defender' ? 1.18 : role === 'attacker' ? .93 : 1));
   var power = Math.round(pet.baseAtk * (style === 'melee' ? 1.12 : .86));
   var magic = Math.round(pet.baseAtk * (style === 'ranged' || style === 'support' ? 1.18 : .72));
@@ -22,7 +23,7 @@ function tacticalProfile(pet, index) {
   return {
     id: pet.id, name: pet.name, element: pet.element, rarity: pet.quality, role: role, roleLabel: TACTICAL_ROLES[role], attackStyle: style,
     stats: { health: hp, power: power, magic: magic, defense: defense, speed: speed }, move: role === 'attacker' ? 3 : role === 'defender' ? 2 : 3,
-    skills: pet.skills.map(function(skill, skillIndex) { return { name: skill.name, kind: skillIndex === 0 ? 'normal' : skillIndex === 3 ? 'ultimate' : 'active', effect: skill.effect, multiplier: skill.multiplier || 0, range: style === 'melee' ? 1 : style === 'ranged' ? 4 : 3, attackStyle: skill.effect === 'heal' || skill.effect === 'shield' || skill.effect === 'buff_atk' ? 'support' : skill.effect === 'damage_all' ? 'area' : style, cooldown: skill.cooldown || 0, vfxKey: pet.id + '-' + skillIndex, vfxVariant: (index * 7 + skillIndex * 3) % 5, vfxHue: (index * 47 + skillIndex * 29 + 12) % 360 }; }),
+    skills: [{ name:'基本攻擊', kind:'basic', effect:'damage', multiplier:.82, range:basicStyle === 'melee' ? 1 : 3, attackStyle:basicStyle, cooldown:0, vfxKey:pet.id + '-basic', vfxVariant:index % 5, vfxHue:(index * 47 + 12) % 360 }].concat(pet.skills.map(function(skill, skillIndex) { return { name: skill.name, kind: skillIndex === 3 ? 'ultimate' : 'active', effect: skill.effect, multiplier: skill.multiplier || 0, range: style === 'melee' ? 1 : style === 'ranged' ? 4 : 3, attackStyle: skill.effect === 'heal' || skill.effect === 'shield' || skill.effect === 'buff_atk' ? 'support' : skill.effect === 'damage_all' ? 'area' : style, cooldown: skill.cooldown || 0, vfxKey: pet.id + '-' + skillIndex, vfxVariant: (index * 7 + skillIndex * 3) % 5, vfxHue: (index * 47 + skillIndex * 29 + 12) % 360 }; })),
     evolution: [1,2,3].map(function(stage) { return { stage: stage, label: stage === 1 ? '\u5e7c\u9ad4' : stage === 2 ? '\u6210\u9577\u9ad4' : '\u6700\u7d42\u578b', portrait: 'assets/pets/' + pet.id + '/evolution/stage_' + stage + '.png', motion: 'assets/pets/' + pet.id + '/stage_' + stage + '/battle/motion.png', vfx: 'assets/pets/' + pet.id + '/stage_' + stage + '/vfx/skill.png' }; }),
     sourceSheet: 'assets/sprites/pets/' + pet.id + '-sheet.png'
   };

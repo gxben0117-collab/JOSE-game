@@ -1,7 +1,7 @@
-/* JOSE 戰棋模式：純前端、六乘五棋盤。所有可見文字均使用繁體中文。 */
+/* JOSE 戰棋模式：純前端、十二乘十棋盤。所有可見文字均使用繁體中文。 */
 (function () {
   'use strict';
-  var COLS = 6, ROWS = 5, SAVE_KEY = 'jose-tactics-progression-v1';
+  var COLS = 12, ROWS = 10, SAVE_KEY = 'jose-tactics-progression-v1';
   var DEFAULT_PARTY = ['fire_fox', 'forest_deer', 'abyss_dragon'];
   var partyIds = DEFAULT_PARTY.slice();
   var enemyIds = ['lava_crab', 'thorn_boar', 'ice_shark', 'magma_hound'];
@@ -40,12 +40,12 @@
   function renderProgress(){medals.textContent='🏅 '+progress.medals+' 戰術徽章';}
   function clone(id, team, x, y) {
     var p = profile(id), s = p.stats;
-    return { id:id, key:team + '-' + id, team:team, p:p, x:x, y:y, hp:s.health, maxHp:s.health, moved:false, acted:false, evolution:1, cooldowns:[0,0,0,0] };
+    return { id:id, key:team + '-' + id, team:team, p:p, x:x, y:y, hp:s.health, maxHp:s.health, moved:false, acted:false, evolution:1, cooldowns:p.skills.map(function(){return 0;}) };
   }
   function reset() {
     stopAuto();
     state = { round:1, phase:'player', selected:null, mode:'move', skill:0, over:false, animating:false, autoEnding:false,
-      stats:{damage:0,healing:0}, units:[clone(partyIds[0],'ally',0,4), clone(partyIds[1],'ally',1,4), clone(partyIds[2],'ally',0,3), clone(enemyIds[0],'enemy',5,0), clone(enemyIds[1],'enemy',4,0), clone(enemyIds[2],'enemy',5,1), clone(enemyIds[3],'enemy',4,1)] };
+      stats:{damage:0,healing:0}, units:[clone(partyIds[0],'ally',1,4), clone(partyIds[1],'ally',2,5), clone(partyIds[2],'ally',1,6), clone(enemyIds[0],'enemy',10,3), clone(enemyIds[1],'enemy',9,4), clone(enemyIds[2],'enemy',10,5), clone(enemyIds[3],'enemy',9,6)] };
     note('戰棋開始：先選取我方幻獸，再移動或施放技能。'); renderProgress(); render();
   }
   function alive(team) { return state.units.filter(function (u) { return u.team === team && u.hp > 0; }); }
@@ -116,8 +116,9 @@
   }
   function unitEl(u){
     var el=document.createElement('div'); el.className='unit '+u.team+(state.selected===u.key?' active':''); el.dataset.key=u.key;
-    el.innerHTML='<span class="unit-name">'+u.p.name+'</span><span class="unit-health"><i style="width:'+(100*u.hp/u.maxHp)+'%"></i></span><span class="portrait" role="img" aria-label="'+u.p.name+'" style="background-image:url(\''+portrait(u)+'\')"></span><span class="unit-hp">'+u.hp+'/'+u.maxHp+'</span>';
-    el.addEventListener('click',function(e){e.stopPropagation(); if(u.team==='ally'&&state.phase==='player'&&!state.over&&!state.animating&&!state.autoEnding){state.selected=u.key;state.mode='move';note('已選取「'+unitName(u)+'」：先移動，或選擇技能後點選目標。');render();}});
+    el.setAttribute('aria-label',u.p.name+'，生命 '+u.hp+'／'+u.maxHp);
+    el.innerHTML='<span class="portrait" role="img" aria-label="'+u.p.name+'" style="background-image:url(\''+portrait(u)+'\')"></span><span class="unit-info"><span class="unit-name">'+u.p.name+'</span><span class="unit-health" title="生命 '+u.hp+'／'+u.maxHp+'"><i style="width:'+(100*u.hp/u.maxHp)+'%"></i></span></span>';
+    el.addEventListener('click',function(e){e.stopPropagation();if(state.mode==='skill'&&selected()&&canTarget(selected(),u)){clickCell(u.x,u.y);return;}if(u.team==='ally'&&state.phase==='player'&&!state.over&&!state.animating&&!state.autoEnding){state.selected=u.key;state.mode='move';note('已選取「'+unitName(u)+'」：先移動，或選擇技能後點選目標。');render();}});
     return el;
   }
   function clickCell(x,y){
@@ -164,7 +165,7 @@
   function renderTrait(){var trait=traitFor('ally');teamTrait.innerHTML='<b>✦ '+trait.label+'</b><span>'+trait.copy+'</span>';}
   function renderDetail(){ var u=selected(); buttons.innerHTML=''; evolutionButtons.innerHTML=''; if(!u){detail.textContent='點選我方幻獸查看能力。';return;} var st=u.p.stats, mult=evolutionMultiplier(u);detail.innerHTML='<strong>'+u.p.name+'｜'+u.p.roleLabel+'｜'+u.p.evolution[u.evolution-1].label+'</strong><br>攻擊方式：'+(u.p.attackStyle==='melee'?'近戰（會移至目標相鄰格）':u.p.attackStyle==='ranged'?'遠攻（原地施放）':'輔助（原地施放）')+'<div class="stat-grid"><span>力量 '+Math.round(st.power*mult)+'</span><span>魔力 '+Math.round(st.magic*mult)+'</span><span>防衛 '+Math.round(st.defense*mult)+'</span><span>速度 '+st.speed+'</span><span>血量 '+u.hp+'/'+u.maxHp+'</span><span>移動 '+u.p.move+' 格</span></div>';
     u.p.evolution.forEach(function(e){var b=document.createElement('button'),unlocked=evolutionUnlocked(u.id,e.stage),cost=evolutionCost(e.stage);b.className='evolution-btn'+(u.evolution===e.stage?' active':'');b.disabled=u.acted||state.phase!=='player'||state.over||state.animating||state.autoEnding;b.textContent=e.stage+'．'+e.label+(unlocked?'':' 🔒'+cost);b.onclick=function(){setEvolution(u,e.stage);};evolutionButtons.appendChild(b);});
-    u.p.skills.slice(0,3).forEach(function(s,i){var b=document.createElement('button'),cd=u.cooldowns[i]||0;b.className='skill'+(state.mode==='skill'&&state.skill===i?' active':'');b.disabled=u.acted||cd>0||state.phase!=='player'||state.over||state.animating||state.autoEnding;b.textContent=(i+1)+'．'+s.name+'｜'+(s.attackStyle==='support'?'輔助':'射程 '+s.range)+(cd?'（冷卻 '+cd+'）':'');b.onclick=function(){state.selected=u.key;state.mode='skill';state.skill=i;note('已選擇「'+s.name+'」，請點選可作用的'+(s.attackStyle==='support'?'我方':'敵方')+'目標。');render();};buttons.appendChild(b);}); }
+    u.p.skills.forEach(function(s,i){var b=document.createElement('button'),cd=u.cooldowns[i]||0;b.className='skill'+(state.mode==='skill'&&state.skill===i?' active':'');b.disabled=u.acted||cd>0||state.phase!=='player'||state.over||state.animating||state.autoEnding;b.textContent=(i+1)+'．'+s.name+'｜'+(s.attackStyle==='support'?'輔助':'射程 '+s.range)+(cd?'（冷卻 '+cd+'）':'');b.onclick=function(){state.selected=u.key;state.mode='skill';state.skill=i;note('已選擇「'+s.name+'」，請直接點選可作用的'+(s.attackStyle==='support'?'我方':'敵方')+'角色或目標格。');render();};buttons.appendChild(b);}); }
   function setEvolution(u, stage){if(u.evolution===stage)return;if(!evolutionUnlocked(u.id,stage)){var cost=evolutionCost(stage);if(progress.medals<cost){note('需要 '+cost+' 枚戰術徽章才能解鎖'+u.p.evolution[stage-1].label+'。');return;}progress.medals-=cost;progress.evolution[u.id]=stage;saveProgress();renderProgress();note(unitName(u)+' 解鎖了'+u.p.evolution[stage-1].label+'！');}var ratio=u.maxHp?u.hp/u.maxHp:1;u.evolution=stage;u.maxHp=Math.round(u.p.stats.health*evolutionMultiplier(u));u.hp=Math.max(1,Math.min(u.maxHp,Math.round(u.maxHp*ratio)));note(unitName(u)+' 轉換為'+u.p.evolution[stage-1].label+'，能力值已更新。');render();}
   function renderTurnOrder(){var units=alive('ally').concat(alive('enemy')).sort(function(a,b){return b.p.stats.speed-a.p.stats.speed;});turnOrder.innerHTML='<b>速度行動序列</b><span>'+units.map(function(u,index){return '<i class="timeline-token '+u.team+'">'+(index+1)+'</i>'+u.p.name+' '+u.p.stats.speed;}).join('　')+'</span>';}
   function showResult(win){var aliveCount=alive('ally').length;resultIcon.textContent=win?'🏆':'🌙';resultTitle.textContent=win?'試煉勝利':'本次撤退';resultCopy.textContent=win?'獲得 4 枚戰術徽章；可繼續解鎖出戰幻獸的進化階段。':'調整隊伍、善用射程與技能冷卻後再次挑戰。';resultStats.innerHTML='<span><b>'+state.round+'</b>回合</span><span><b>'+state.stats.damage+'</b>傷害</span><span><b>'+aliveCount+'/3</b>存活</span>';resultModal.hidden=false;}

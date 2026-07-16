@@ -3,20 +3,20 @@
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#121a2f"><title>JOSE｜幻獸戰棋試煉</title>
-  <link rel="stylesheet" href="css/tactics.css?v=1"><link rel="stylesheet" href="css/tactics-fix.css?v=2">
+  <link rel="stylesheet" href="css/tactics.css?v=1"><link rel="stylesheet" href="css/tactics-fix.css?v=3">
 </head>
 <body>
   <main class="tactics-app idle-arena">
     <header class="topbar"><a href="index.html" class="brand">JOSE <small>幻獸戰棋</small></a><div class="status-stack"><span id="medals" class="medals">🏅 0 戰術徽章</span><div id="round-status" class="round-status">準備部署</div></div></header>
-    <section class="intro"><div><p class="eyebrow">部署策略 × 自動戰鬥</p><h1>熔火裂谷：戰棋試煉</h1><p>先依定位、元素與速度配置隊伍；可手動指揮，也可開啟觀戰自動戰鬥。近戰會衝至相鄰格，遠攻與輔助會留在原地施法。</p></div><div class="legend"><span class="ally-dot">我方</span><span class="enemy-dot">敵方</span><span class="terrain-dot">地形</span></div></section>
+    <section class="intro"><div><p class="eyebrow">12 × 10 戰場 × 左右對陣</p><h1>熔火裂谷：戰棋試煉</h1><p>雙方從左右部署區出發。先選取幻獸移動，再選擇技能並直接點擊目標格或角色；所有幻獸都有可反擊的基本攻擊。</p></div><div class="legend"><span class="ally-dot">我方</span><span class="enemy-dot">敵方</span><span class="terrain-dot">地形</span></div></section>
     <section class="battle-layout">
       <aside class="side-panel"><h2>我方隊伍</h2><div id="party-list" class="party-list"></div><div id="team-trait" class="team-trait" aria-live="polite"></div><button id="deploy" class="secondary">調整出戰隊伍</button><button id="restart" class="secondary">重新開始戰棋</button><a class="secondary link-button" href="index.html">返回戰棋首頁</a></aside>
-      <section class="board-wrap"><div class="battle-hud"><span class="battle-side ally-label">◆ 幻獸小隊</span><div id="turn-banner" class="turn-banner"></div><span class="battle-side enemy-label">裂谷魔物 ◆</span></div><div id="board" class="board" aria-label="六乘五戰棋棋盤"></div><div id="combat-log" class="combat-log" aria-live="polite"></div></section>
+      <section class="board-wrap"><div class="battle-hud"><span class="battle-side ally-label">◆ 左側｜幻獸小隊</span><div id="turn-banner" class="turn-banner"></div><span class="battle-side enemy-label">裂谷魔物｜右側 ◆</span></div><div class="board-scroll"><div id="board" class="board" aria-label="十二欄乘十列戰棋棋盤"></div></div><div id="combat-log" class="combat-log" aria-live="polite"></div></section>
       <aside class="side-panel detail"><h2>行動資訊</h2><div id="turn-order" class="turn-order" aria-live="polite"></div><div id="unit-detail" class="unit-detail">點選我方幻獸查看能力。</div><div id="evolution-buttons" class="evolution-buttons" aria-label="進化階段"></div><div id="skill-buttons" class="skill-buttons"></div><button id="auto-turn" class="auto-button">🤖 觀戰自動戰鬥：關</button><button id="battle-speed" class="speed-button">⚡ 戰鬥速度：1×</button><button id="end-turn" class="primary">結束本回合</button></aside>
     </section>
   </main>
   <div id="deploy-modal" class="deploy-modal" hidden><section class="deploy-dialog" role="dialog" aria-modal="true" aria-labelledby="deploy-title"><div class="deploy-head"><div><p class="eyebrow">戰前部署</p><h2 id="deploy-title">選擇三隻出戰幻獸</h2></div><button id="close-deploy" class="close-deploy" aria-label="關閉部署視窗">×</button></div><p id="deploy-help">可依定位、元素與速度組合隊伍。</p><div id="deploy-grid" class="deploy-grid"></div><div class="deploy-actions"><button id="cancel-deploy" class="secondary">取消</button><button id="confirm-deploy" class="primary">確認部署</button></div></section></div>
   <div id="result-modal" class="deploy-modal" hidden><section class="result-dialog" role="dialog" aria-modal="true" aria-labelledby="result-title"><div id="result-icon" class="result-icon">🏆</div><p class="eyebrow">熔火裂谷戰棋試煉</p><h2 id="result-title">戰鬥結算</h2><p id="result-copy"></p><div id="result-stats" class="result-stats"></div><div class="deploy-actions"><button id="result-deploy" class="secondary">調整隊伍</button><button id="result-retry" class="primary">再次挑戰</button></div></section></div>
-  <script src="js/data/pets.js"></script><script src="js/data/tactical-pets.js"></script><script src="js/tactics.js?v=6"></script>
+  <script src="js/data/pets.js"></script><script src="js/data/tactical-pets.js?v=2"></script><script src="js/tactics.js?v=7"></script>
 </body>
 </html>
