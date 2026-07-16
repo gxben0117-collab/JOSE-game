@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#260b0a"><title>JOSE | &#x7194;&#x706B;&#x88C2;&#x8C37;</title><link rel="stylesheet" href="css/adventure.css?v=1"><link rel="stylesheet" href="css/adventure-combat-v2.css?v=2"></head>
+<body>
+  <main id="app" class="app-shell">
+    <header class="topbar"><a href="index.html" class="brand">JOSE <small>&#x7194;&#x706B;&#x88C2;&#x8C37;</small></a><div class="resources"><span id="gold">0 &#x91D1;&#x5E63;</span><span id="embers">0 &#x9918;&#x71FC;</span><button id="reset" class="text-button">&#x91CD;&#x65B0;&#x958B;&#x5C40;</button></div></header>
+    <section id="setup-screen" class="screen setup-screen">
+      <p class="eyebrow">&#x53EF;&#x73A9;&#x6E2C;&#x8A66;&#x7248;</p><h1>&#x7194;&#x706B;&#x88C2;&#x8C37;&#x9060;&#x5F81;</h1><p class="lead">&#x9078;&#x64C7;&#x4E09;&#x96BB;&#x706B;&#x7CFB;&#x5E7B;&#x7378;&#xFF0C;&#x7A7F;&#x8D8A;&#x516B;&#x500B;&#x8DEF;&#x7DDA;&#x7BC0;&#x9EDE;&#xFF0C;&#x64CA;&#x6557;&#x88C2;&#x8C37;&#x5B88;&#x885B;&#x8005;&#x3002;</p>
+      <div id="roster" class="roster" aria-label="Fire monster roster"></div>
+      <div class="party-summary"><span>&#x4F60;&#x7684;&#x968A;&#x4F0D;</span><div id="party-picks"></div><button id="start-run" class="primary" disabled>&#x958B;&#x59CB;&#x9060;&#x5F81;</button></div>
+    </section>
+    <section id="game-screen" class="screen game-screen" hidden>
+      <section class="map-panel"><div class="map-copy"><p class="eyebrow">&#x5340;&#x57DF; 01</p><h2>&#x7194;&#x706B;&#x88C2;&#x8C37;</h2><p id="map-status">&#x9078;&#x64C7;&#x4E0B;&#x4E00;&#x500B;&#x8DEF;&#x7DDA;&#x7BC0;&#x9EDE;&#x3002;</p></div><div id="route" class="route" aria-label="&#x9060;&#x5F81;&#x8DEF;&#x7DDA;"></div></section>
+      <section id="event-panel" class="event-panel"><div class="event-empty"><span>◆</span><h2>&#x8DEF;&#x7DDA;&#x5DF2;&#x5C31;&#x7DD2;</h2><p>&#x5728;&#x9762;&#x5C0D;&#x9996;&#x9818;&#x524D;&#x7A7F;&#x8D8A;&#x88C2;&#x8C37;&#xFF0C;&#x5F37;&#x5316;&#x4F60;&#x7684;&#x968A;&#x4F0D;&#x3002;</p></div></section>
+    </section>
+  </main>
+  <template id="battle-template"><section class="battle"><div class="battle-top"><div><p class="eyebrow">&#x6230;&#x9B25;</p><h2 id="encounter-name">&#x88C2;&#x8C37;&#x906D;&#x9047;&#x6230;</h2></div><div class="turn-label" id="turn-label">&#x6211;&#x65B9;&#x884C;&#x52D5;</div></div><div class="arena"><div id="enemy-field" class="field enemy-field"></div><div id="effect-layer" class="effect-layer"></div><div id="ally-field" class="field ally-field"></div></div><div id="battle-log" class="battle-log"></div><div id="actions" class="actions"></div></section></template>
+  <script src="js/data/pets.js"></script><script src="js/adventure.js?v=5"></script><script src="js/adventure-zh.js?v=2"></script>
+</body></html>

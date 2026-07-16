@@ -1,0 +1,7 @@
+/* Compact battle silhouettes: 40% smaller than the original prototype. */
+.unit{max-width:112px;min-width:70px}
+.unit-icon{height:48px;font-size:2rem}
+.ally-field .unit.attack-run{z-index:8;animation:ally-dash 640ms cubic-bezier(.25,.75,.25,1) both}
+.ally-field .unit.attack-run .unit-icon{filter:drop-shadow(0 0 10px rgba(255,183,78,.9));}
+@keyframes ally-dash{0%{transform:translateY(0) scale(1)}42%{transform:translateY(-165px) scale(1.12)}58%{transform:translateY(-165px) scale(1.12)}100%{transform:translateY(0) scale(1)}}
+@media(max-width:760px){.unit-icon{font-size:1.8rem}.ally-field .unit.attack-run{animation-name:ally-dash-mobile}@keyframes ally-dash-mobile{0%{transform:translateY(0) scale(1)}42%{transform:translateY(-125px) scale(1.1)}58%{transform:translateY(-125px) scale(1.1)}100%{transform:translateY(0) scale(1)}}}
