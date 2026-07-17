@@ -13,7 +13,7 @@ const pets = context.TACTICAL_PET_DATA;
 const enemies = context.TACTICAL_ENEMY_DATA;
 const profiles = pets.concat(enemies);
 const content = context.TACTICAL_CONTENT;
-if (pets.length !== 115 || enemies.length !== 42 || content.stages.length !== 150) throw new Error('戰棋資料或關卡資料不完整');
+if (pets.length !== 115 || enemies.length !== 52 || content.stages.length !== 150) throw new Error('戰棋資料或關卡資料不完整');
 
 const profile = id => profiles.find(pet => pet.id === id);
 const strong = { fire: 'forest', forest: 'ocean', ocean: 'fire' };

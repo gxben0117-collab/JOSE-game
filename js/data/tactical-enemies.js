@@ -155,60 +155,100 @@
     enemy('leviathan_brood', '利維坦之裔', 'dark', 'defender', '首領親衛', { health: 1120, power: 130, magic: 62, defense: 142, speed: 4 }, 2, [
       skill('巨鰭橫掃', { kind: 'basic', multiplier: 0.95 }),
       skill('深淵壓潰', { multiplier: 1.18, cooldown: 2, push: 2 })
+    ]),
+    enemy('crown_cinderling', '燼冠餘燼靈', 'fire', 'attacker', '首領親衛', { health: 520, power: 128, magic: 118, defense: 52, speed: 8 }, 3, [
+      skill('燼冠火星', { kind: 'basic', multiplier: 0.85, range: 3, attackStyle: 'ranged' }),
+      skill('王冠燃爆', { multiplier: 1.15, range: 4, attackStyle: 'ranged', cooldown: 2, status: 'burn', statusTurns: 2 })
+    ]),
+    enemy('slag_hound', '熔渣獵犬', 'fire', 'attacker', '首領親衛', { health: 590, power: 140, magic: 62, defense: 60, speed: 9 }, 4, [
+      skill('熔渣咬', { kind: 'basic', multiplier: 0.95 }),
+      skill('雷渣衝鋒', { multiplier: 1.25, cooldown: 2, push: 1 })
+    ]),
+    enemy('rotcap_rootling', '腐菌根靈', 'forest', 'healer', '首領親衛', { health: 520, power: 52, magic: 158, defense: 56, speed: 5 }, 3, [
+      skill('孢子彈', { kind: 'basic', multiplier: 0.78, range: 3, attackStyle: 'ranged' }),
+      skill('菌絲再生', { effect: 'heal', multiplier: 1.0, range: 4, attackStyle: 'support', cooldown: 1 })
+    ]),
+    enemy('thorn_pollen_drone', '荊棘花粉蜂', 'forest', 'controller', '首領親衛', { health: 500, power: 60, magic: 148, defense: 52, speed: 9 }, 4, [
+      skill('毒粉針', { kind: 'basic', multiplier: 0.82, range: 3, attackStyle: 'ranged' }),
+      skill('麻痺花粉', { multiplier: 0.95, range: 4, attackStyle: 'ranged', cooldown: 3, status: 'poison', statusTurns: 3 })
+    ]),
+    enemy('pearl_lantern_fry', '珠燈稚魚', 'ocean', 'healer', '首領親衛', { health: 500, power: 50, magic: 160, defense: 52, speed: 7 }, 3, [
+      skill('珠光彈', { kind: 'basic', multiplier: 0.78, range: 3, attackStyle: 'ranged' }),
+      skill('珠燈潮癒', { effect: 'heal', multiplier: 1.05, range: 4, attackStyle: 'support', cooldown: 1 })
+    ]),
+    enemy('glacier_shellcrab', '冰川殼蟹', 'ocean', 'defender', '首領親衛', { health: 1100, power: 120, magic: 56, defense: 148, speed: 3 }, 2, [
+      skill('冰殼鉗', { kind: 'basic', multiplier: 0.9 }),
+      skill('寒霜重鉗', { multiplier: 1.1, cooldown: 3, status: 'freeze', statusTurns: 1 })
+    ]),
+    enemy('prism_wing_cub', '稜翼幼獸', 'light', 'support', '首領親衛', { health: 540, power: 58, magic: 150, defense: 56, speed: 8 }, 4, [
+      skill('稜光羽', { kind: 'basic', multiplier: 0.8, range: 3, attackStyle: 'ranged' }),
+      skill('稜光庇護', { effect: 'shield', value: 0.85, range: 4, attackStyle: 'support', cooldown: 3 })
+    ]),
+    enemy('rosewindow_sentinel', '彩窗哨兵', 'light', 'defender', '首領親衛', { health: 1080, power: 122, magic: 88, defense: 140, speed: 4 }, 2, [
+      skill('聖窗衝擊', { kind: 'basic', multiplier: 0.92 }),
+      skill('聖光反射', { effect: 'shield', value: 0.9, range: 0, attackStyle: 'support', cooldown: 3 })
+    ]),
+    enemy('crescent_rib_whelp', '月肋幼龍', 'dark', 'attacker', '首領親衛', { health: 620, power: 148, magic: 84, defense: 62, speed: 9 }, 4, [
+      skill('月骨爪', { kind: 'basic', multiplier: 0.95 }),
+      skill('蝕月突襲', { multiplier: 1.3, cooldown: 2, status: 'poison', statusTurns: 2 })
+    ]),
+    enemy('singularity_mite', '奇點蟎', 'dark', 'controller', '首領親衛', { health: 520, power: 60, magic: 158, defense: 54, speed: 8 }, 3, [
+      skill('引力刺', { kind: 'basic', multiplier: 0.82, range: 3, attackStyle: 'ranged' }),
+      skill('奇點吸引', { multiplier: 0.95, range: 4, attackStyle: 'ranged', cooldown: 2, pull: 3 })
     ])
   ];
 
   var BOSSES = [
-    enemy('infernal_overlord', '炎獄魔龍王', 'fire', 'allrounder', '章節首領', { health: 3300, power: 470, magic: 350, defense: 240, speed: 8 }, 3, [
-      skill('魔龍爪', { kind: 'basic', multiplier: 0.9 }),
-      skill('烈焰風暴', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'burn', statusTurns: 2 }),
-      skill('滅世衝擊', { kind: 'ultimate', multiplier: 1.5, cooldown: 4, push: 2 })
-    ], { boss: true, passives: [{ name: '炎獄餘燼', effect: 'burn', value: 0.05, chance: 0.3 }] }),
-    enemy('rotwood_colossus', '腐木巨像', 'forest', 'defender', '章節首領', { health: 4400, power: 400, magic: 300, defense: 360, speed: 5 }, 2, [
-      skill('巨木重擊', { kind: 'basic', multiplier: 0.9 }),
-      skill('腐化孢子', { kind: 'active', multiplier: 0.85, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 3 }),
+    enemy('ash_crown_tyrant', '燼冠暴君', 'fire', 'attacker', '章節首領', { health: 3300, power: 470, magic: 350, defense: 240, speed: 8 }, 3, [
+      skill('燼冠爪', { kind: 'basic', multiplier: 0.9 }),
+      skill('王冠烈焰', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'burn', statusTurns: 2 }),
+      skill('焚世加冕', { kind: 'ultimate', multiplier: 1.5, cooldown: 4, push: 2 })
+    ], { boss: true, passives: [{ name: '燼冠餘熱', effect: 'burn', value: 0.05, chance: 0.3 }] }),
+    enemy('furnace_colossus', '熔爐巨神', 'fire', 'defender', '章節首領', { health: 4300, power: 445, magic: 300, defense: 385, speed: 4 }, 2, [
+      skill('熔爐重錘', { kind: 'basic', multiplier: 0.95 }),
+      skill('雷熔震盪', { kind: 'active', multiplier: 0.9, range: 3, radius: 2, attackStyle: 'area', cooldown: 3 }),
+      skill('巨神崩擊', { kind: 'ultimate', multiplier: 1.55, cooldown: 4, push: 3 })
+    ], { boss: true }),
+    enemy('blightwood_sovereign', '腐菌樹王', 'forest', 'defender', '章節首領', { health: 4400, power: 400, magic: 300, defense: 360, speed: 5 }, 2, [
+      skill('腐木重擊', { kind: 'basic', multiplier: 0.9 }),
+      skill('腐菌孢雨', { kind: 'active', multiplier: 0.85, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 3 }),
       skill('根鬚牽引', { kind: 'ultimate', multiplier: 1.25, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4 })
     ], { boss: true }),
-    enemy('abyssal_tide_king', '冰淵潮王', 'ocean', 'allrounder', '章節首領', { health: 3900, power: 430, magic: 460, defense: 290, speed: 6 }, 3, [
-      skill('潮汐斬', { kind: 'basic', multiplier: 0.9, range: 3, attackStyle: 'ranged' }),
-      skill('極寒領域', { kind: 'active', multiplier: 0.9, range: 4, radius: 2, attackStyle: 'area', cooldown: 4, status: 'freeze', statusTurns: 1 }),
-      skill('深淵洪流', { kind: 'ultimate', multiplier: 1.55, range: 5, attackStyle: 'ranged', cooldown: 4 })
+    enemy('thorn_hive_queen', '荊棘蜂后', 'forest', 'controller', '章節首領', { health: 3500, power: 420, magic: 430, defense: 260, speed: 8 }, 3, [
+      skill('棘刺螫', { kind: 'basic', multiplier: 0.9, range: 3, attackStyle: 'ranged' }),
+      skill('蜂群風暴', { kind: 'active', multiplier: 0.88, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 3 }),
+      skill('女王號令', { kind: 'ultimate', multiplier: 1.3, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4 })
     ], { boss: true }),
-    enemy('rift_devourer', '裂隙吞噬者', 'ocean', 'allrounder', '終局首領', { health: 4700, power: 540, magic: 500, defense: 330, speed: 7 }, 3, [
-      skill('裂隙撕咬', { kind: 'basic', multiplier: 0.95 }),
-      skill('虛空吐息', { kind: 'active', multiplier: 1.0, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
-      skill('湮滅牽引', { kind: 'ultimate', multiplier: 1.4, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4, status: 'freeze', statusTurns: 1 })
-    ], { boss: true, size: 3 }),
-    enemy('mist_sovereign', '迷霧妖龍', 'forest', 'controller', '章節首領', { health: 3500, power: 420, magic: 430, defense: 260, speed: 7 }, 3, [
-      skill('霧鞭', { kind: 'basic', multiplier: 0.9, range: 3, attackStyle: 'ranged' }),
-      skill('瘴霧瀰漫', { kind: 'active', multiplier: 0.88, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 3 }),
-      skill('霧影纏拉', { kind: 'ultimate', multiplier: 1.3, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4 })
-    ], { boss: true }),
-    enemy('ancient_golem', '古城魔像', 'fire', 'defender', '章節首領', { health: 4300, power: 440, magic: 300, defense: 380, speed: 4 }, 2, [
-      skill('巨拳崩擊', { kind: 'basic', multiplier: 0.95 }),
-      skill('崩城震盪', { kind: 'active', multiplier: 0.9, range: 3, radius: 2, attackStyle: 'area', cooldown: 3 }),
-      skill('魔像轟擊', { kind: 'ultimate', multiplier: 1.55, cooldown: 4, push: 3 })
-    ], { boss: true }),
-    enemy('thunder_tyrant', '雷鳴暴龍', 'ocean', 'attacker', '章節首領', { health: 3700, power: 500, magic: 470, defense: 270, speed: 9 }, 3, [
-      skill('雷爪', { kind: 'basic', multiplier: 0.95 }),
-      skill('萬雷奔騰', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'freeze', statusTurns: 1 }),
-      skill('滅世雷霆', { kind: 'ultimate', multiplier: 1.6, range: 5, attackStyle: 'ranged', cooldown: 4 })
-    ], { boss: true }),
-    enemy('deep_ancient_god', '沉海古神', 'ocean', 'allrounder', '章節首領', { health: 4200, power: 460, magic: 480, defense: 310, speed: 6 }, 3, [
-      skill('古神潮擊', { kind: 'basic', multiplier: 0.95, range: 3, attackStyle: 'ranged' }),
+    enemy('abyssal_kraken_emperor', '深淵克拉肯皇', 'ocean', 'allrounder', '章節首領', { health: 4200, power: 460, magic: 480, defense: 310, speed: 6 }, 3, [
+      skill('觸腕橫掃', { kind: 'basic', multiplier: 0.95 }),
       skill('滅頂漩渦', { kind: 'active', multiplier: 0.92, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, pull: 2 }),
       skill('深淵海嘯', { kind: 'ultimate', multiplier: 1.55, range: 5, attackStyle: 'ranged', cooldown: 4, status: 'freeze', statusTurns: 1 })
     ], { boss: true }),
-    enemy('radiant_seraph', '熾光神翼', 'light', 'healer', '章節首領', { health: 4000, power: 430, magic: 520, defense: 290, speed: 8 }, 3, [
-      skill('聖光羽刃', { kind: 'basic', multiplier: 0.95, range: 3, attackStyle: 'ranged' }),
-      skill('神翼聖焰', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'burn', statusTurns: 2 }),
+    enemy('glacier_leviathan', '冰川利維坦', 'ocean', 'defender', '章節首領', { health: 3900, power: 430, magic: 460, defense: 300, speed: 6 }, 3, [
+      skill('冰川潮擊', { kind: 'basic', multiplier: 0.9, range: 3, attackStyle: 'ranged' }),
+      skill('極寒領域', { kind: 'active', multiplier: 0.9, range: 4, radius: 2, attackStyle: 'area', cooldown: 4, status: 'freeze', statusTurns: 1 }),
+      skill('冰洋巨浪', { kind: 'ultimate', multiplier: 1.55, range: 5, attackStyle: 'ranged', cooldown: 4 })
+    ], { boss: true }),
+    enemy('solar_seraph_chimera', '日輝奇美拉', 'light', 'healer', '章節首領', { health: 4000, power: 430, magic: 520, defense: 290, speed: 8 }, 3, [
+      skill('日輝爪', { kind: 'basic', multiplier: 0.95 }),
+      skill('聖翼烈焰', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'burn', statusTurns: 2 }),
       skill('聖光重生', { kind: 'ultimate', effect: 'heal', multiplier: 1.1, range: 5, attackStyle: 'support', cooldown: 4 })
     ], { boss: true }),
-    enemy('void_wolf_king', '暗獄狼王', 'dark', 'attacker', '章節首領', { health: 4100, power: 540, magic: 460, defense: 300, speed: 10 }, 4, [
-      skill('暗獄撕咬', { kind: 'basic', multiplier: 1.0 }),
-      skill('影狼群嚎', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
-      skill('噬魂突襲', { kind: 'ultimate', multiplier: 1.65, cooldown: 4, push: 2 })
-    ], { boss: true })
+    enemy('cathedral_titan', '聖堂泰坦', 'light', 'defender', '章節首領', { health: 4400, power: 440, magic: 320, defense: 390, speed: 4 }, 2, [
+      skill('聖堂踏擊', { kind: 'basic', multiplier: 0.95 }),
+      skill('彩窗聖震', { kind: 'active', multiplier: 0.9, range: 3, radius: 2, attackStyle: 'area', cooldown: 3 }),
+      skill('神殿崩落', { kind: 'ultimate', multiplier: 1.5, cooldown: 4, push: 3 })
+    ], { boss: true }),
+    enemy('eclipse_bone_wyrm', '蝕月骨龍', 'dark', 'attacker', '章節首領', { health: 4100, power: 540, magic: 460, defense: 300, speed: 10 }, 4, [
+      skill('骨龍撕咬', { kind: 'basic', multiplier: 1.0 }),
+      skill('蝕月吐息', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
+      skill('月蝕獵殺', { kind: 'ultimate', multiplier: 1.65, cooldown: 4, push: 2 })
+    ], { boss: true }),
+    enemy('void_devourer', '虛空吞噬者', 'dark', 'allrounder', '終局首領', { health: 4700, power: 540, magic: 500, defense: 330, speed: 7 }, 3, [
+      skill('吞噬之口', { kind: 'basic', multiplier: 0.95 }),
+      skill('虛空亂流', { kind: 'active', multiplier: 1.0, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
+      skill('奇點湮滅', { kind: 'ultimate', multiplier: 1.4, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4, status: 'freeze', statusTurns: 1 })
+    ], { boss: true, size: 3 })
   ];
 
   global.TACTICAL_ENEMY_DATA = MINIONS.concat(BOSSES);

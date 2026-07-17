@@ -4,21 +4,21 @@
   'use strict';
 
   var chapters = [
-    { id: 'c1', name: '幻獸初醒', icon: '🌱', element: 'forest', theme: 'verdant', boss: 'rotwood_colossus', minions: ['dryad_thorn', 'ent_sapling', 'blight_boar', 'venom_mantis'], description: '幻獸甦醒之地，森林魔物在苔光小徑間集結。' },
-    { id: 'c2', name: '迷霧森林', icon: '🌫️', element: 'forest', theme: 'verdant', boss: 'mist_sovereign', minions: ['mist_banshee', 'fog_wisp', 'thorn_creeper', 'gloom_turtle'], description: '瘴霧瀰漫的深林，迷霧妖龍潛伏其中。' },
-    { id: 'c3', name: '赤炎火山', icon: '🌋', element: 'fire', theme: 'ember', boss: 'infernal_overlord', minions: ['salamander_fiend', 'surtr_spawn', 'ember_imp', 'cinder_bat'], description: '熔岩橫流的火山口，炎獄魔龍王的領地。' },
-    { id: 'c4', name: '沉睡古城', icon: '🏛️', element: 'mixed', theme: 'rift', boss: 'ancient_golem', minions: ['gargoyle_watcher', 'golem_sentinel', 'ash_hound', 'tide_spawn'], description: '被遺忘的古城遺跡，魔像在斷垣間甦醒。' },
-    { id: 'c5', name: '冰封雪原', icon: '❄️', element: 'ocean', theme: 'tide', boss: 'abyssal_tide_king', minions: ['jotunn_frost', 'selkie_hunter', 'frost_shell', 'murk_fish'], description: '極寒冰原，冰淵潮王凍結了一切。' },
-    { id: 'c6', name: '雷鳴高原', icon: '⚡', element: 'mixed', theme: 'rift', boss: 'thunder_tyrant', minions: ['thunderbird_kin', 'raiju_beast', 'void_eel', 'cinder_bat'], description: '雷雲翻騰的高原，雷鳴暴龍呼喚萬雷。' },
-    { id: 'c7', name: '失落海域', icon: '🌊', element: 'ocean', theme: 'tide', boss: 'deep_ancient_god', minions: ['siren_lure', 'kraken_tentacle', 'tide_spawn', 'frost_shell'], description: '沉沒文明的海域，古神自深淵中凝視。' },
-    { id: 'c8', name: '天空遺跡', icon: '☀️', element: 'light', theme: 'rift', boss: 'radiant_seraph', minions: ['cherub_guard', 'bennu_acolyte', 'flame_wisp', 'ember_imp'], description: '漂浮天際的聖光遺跡，神翼守護著光之精華。' },
-    { id: 'c9', name: '魔界裂縫', icon: '🌑', element: 'dark', theme: 'rift', boss: 'void_wolf_king', minions: ['cerberus_whelp', 'mara_fiend', 'ash_hound', 'void_eel'], description: '暗之魔力湧出的裂縫，暗獄狼王率群狼盤據。' },
-    { id: 'c10', name: '遠古幻獸之門', icon: '🐲', element: 'mixed', theme: 'rift', boss: 'rift_devourer', minions: ['chimera_spawn', 'leviathan_brood', 'salamander_fiend', 'mara_fiend'], description: '連接三界與光暗的遠古之門，最終試煉在此。' }
+    { id: 'c1', name: '幻獸初醒', icon: '🌱', element: 'forest', theme: 'verdant', boss: 'blightwood_sovereign', minions: ['rotcap_rootling', 'dryad_thorn', 'ent_sapling', 'venom_mantis'], description: '幻獸甦醒之地，森林魔物在苔光小徑間集結。' },
+    { id: 'c2', name: '迷霧森林', icon: '🌫️', element: 'forest', theme: 'verdant', boss: 'thorn_hive_queen', minions: ['thorn_pollen_drone', 'mist_banshee', 'fog_wisp', 'gloom_turtle'], description: '瘴霧瀰漫的深林，迷霧妖龍潛伏其中。' },
+    { id: 'c3', name: '赤炎火山', icon: '🌋', element: 'fire', theme: 'ember', boss: 'ash_crown_tyrant', minions: ['crown_cinderling', 'salamander_fiend', 'surtr_spawn', 'ember_imp'], description: '熔岩橫流的火山口，炎獄魔龍王的領地。' },
+    { id: 'c4', name: '沉睡古城', icon: '🏛️', element: 'mixed', theme: 'rift', boss: 'cathedral_titan', minions: ['rosewindow_sentinel', 'gargoyle_watcher', 'golem_sentinel', 'ash_hound'], description: '被遺忘的古城遺跡，魔像在斷垣間甦醒。' },
+    { id: 'c5', name: '冰封雪原', icon: '❄️', element: 'ocean', theme: 'tide', boss: 'glacier_leviathan', minions: ['glacier_shellcrab', 'jotunn_frost', 'selkie_hunter', 'murk_fish'], description: '極寒冰原，冰淵潮王凍結了一切。' },
+    { id: 'c6', name: '雷鳴高原', icon: '⚡', element: 'mixed', theme: 'rift', boss: 'furnace_colossus', minions: ['slag_hound', 'thunderbird_kin', 'raiju_beast', 'void_eel'], description: '雷雲翻騰的高原，雷鳴暴龍呼喚萬雷。' },
+    { id: 'c7', name: '失落海域', icon: '🌊', element: 'ocean', theme: 'tide', boss: 'abyssal_kraken_emperor', minions: ['pearl_lantern_fry', 'siren_lure', 'kraken_tentacle', 'tide_spawn'], description: '沉沒文明的海域，古神自深淵中凝視。' },
+    { id: 'c8', name: '天空遺跡', icon: '☀️', element: 'light', theme: 'rift', boss: 'solar_seraph_chimera', minions: ['prism_wing_cub', 'cherub_guard', 'bennu_acolyte', 'flame_wisp'], description: '漂浮天際的聖光遺跡，神翼守護著光之精華。' },
+    { id: 'c9', name: '魔界裂縫', icon: '🌑', element: 'dark', theme: 'rift', boss: 'eclipse_bone_wyrm', minions: ['crescent_rib_whelp', 'cerberus_whelp', 'mara_fiend', 'void_eel'], description: '暗之魔力湧出的裂縫，暗獄狼王率群狼盤據。' },
+    { id: 'c10', name: '遠古幻獸之門', icon: '🐲', element: 'mixed', theme: 'rift', boss: 'void_devourer', minions: ['singularity_mite', 'chimera_spawn', 'leviathan_brood', 'mara_fiend'], description: '連接三界與光暗的遠古之門，最終試煉在此。' }
   ];
 
   var STAGE_NAMES = ['前哨戰', '外圍掃蕩', '斥候遭遇', '荒徑伏擊', '補給爭奪', '斷橋突破', '險地推進', '要塞攻堅', '親衛精銳', '決戰前夕'];
   var HARD_NAMES = ['魔物狂潮', '精銳試煉', '無盡包圍', '極限挑戰'];
-  var BOSS_NAMES = { rotwood_colossus: '腐木巨像', mist_sovereign: '迷霧妖龍', infernal_overlord: '炎獄魔龍王', ancient_golem: '古城魔像', abyssal_tide_king: '冰淵潮王', thunder_tyrant: '雷鳴暴龍', deep_ancient_god: '沉海古神', radiant_seraph: '熾光神翼', void_wolf_king: '暗獄狼王', rift_devourer: '裂隙吞噬者' };
+  var BOSS_NAMES = { blightwood_sovereign: '腐菌樹王', thorn_hive_queen: '荊棘蜂后', ash_crown_tyrant: '燼冠暴君', cathedral_titan: '聖堂泰坦', glacier_leviathan: '冰川利維坦', furnace_colossus: '熔爐巨神', abyssal_kraken_emperor: '深淵克拉肯皇', solar_seraph_chimera: '日輝奇美拉', eclipse_bone_wyrm: '蝕月骨龍', void_devourer: '虛空吞噬者' };
 
   function round2(value) { return Math.round(value * 100) / 100; }
 

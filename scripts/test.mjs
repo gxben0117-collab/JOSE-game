@@ -26,7 +26,7 @@ test('範圍技能具有有效半徑', () => assert.ok(profiles.flatMap(pet => p
 test('每個戰棋技能皆有資料驅動特效識別', () => assert.ok(profiles.every(pet => pet.skills.every(skill => skill.vfxKey && Number.isInteger(skill.vfxVariant) && skill.vfxHue >= 0 && skill.vfxHue < 360))));
 test('所有戰棋頭像與三階透明立繪存在', () => assert.ok(tactical.every(pet => existsSync(join(root, pet.sourceSheet)) && pet.evolution.every(stage => existsSync(join(root, stage.portrait))))));
 
-test('敵人資料包含 32 種小兵（12 通用 + 20 神話親衛）與 10 隻章節首領', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 32); assert.equal(enemies.filter(enemy => enemy.boss).length, 10); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2)); });
+test('敵人資料包含 42 種小兵（12 通用 + 30 首領親衛）與 10 隻章節首領', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 42); assert.equal(enemies.filter(enemy => enemy.boss).length, 10); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2)); });
 test('小兵只有單一階段且首領有專屬立繪', () => assert.ok(enemies.every(enemy => enemy.evolution.length === 1 && enemy.evolution[0].portrait.startsWith('assets/enemies/'))));
 test('所有敵人圖片檔案存在', () => assert.ok(enemies.every(enemy => existsSync(join(root, enemy.evolution[0].portrait)))));
 test('敵人陣營涵蓋擊退、拉扯、冰凍、中毒控場', () => {
