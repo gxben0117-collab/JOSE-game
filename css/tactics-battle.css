@@ -1,0 +1,140 @@
+/* 戰鬥升級樣式：障礙物、部署區、異常狀態、Boss 演出、爆擊與位移動畫。 */
+
+/* 障礙物 */
+.cell.obstacle{background:linear-gradient(160deg,#2b3350,#141a2e 70%);box-shadow:inset 0 2px 6px #00000088,inset 0 0 0 1px #46538044;cursor:not-allowed}
+.obstacle-icon{display:grid;place-items:center;width:100%;height:100%;font-size:1.3rem;filter:drop-shadow(0 3px 4px #000c);opacity:.92}
+.map-ember .cell.obstacle{background:linear-gradient(160deg,#3d2430,#1c1017 70%)}
+.map-verdant .cell.obstacle{background:linear-gradient(160deg,#22371f,#101a0e 70%)}
+.map-tide .cell.obstacle{background:linear-gradient(160deg,#1d3148,#0d1727 70%)}
+.map-rift .cell.obstacle{background:linear-gradient(160deg,#332448,#170f26 70%)}
+
+/* 部署區 */
+.idle-arena .cell.deploy-zone,.idle-arena .cell:nth-child(odd).deploy-zone{background:linear-gradient(180deg,#1d3050cc,#16233dcc);box-shadow:inset 0 0 0 1px #4d79c866;animation:deploy-pulse 1.6s ease-in-out infinite}
+@keyframes deploy-pulse{0%,100%{box-shadow:inset 0 0 0 1px #4d79c855}50%{box-shadow:inset 0 0 0 1px #7fb1ffaa,inset 0 0 14px #4d79c855}}
+
+/* 異常狀態外觀 */
+.unit.frozen{filter:saturate(.45) brightness(1.12)}
+.unit.frozen::after{content:'';position:absolute;inset:0;border-radius:inherit;background:linear-gradient(150deg,#bfeaff66,#5ba8ff33 55%,#bfeaff55);box-shadow:inset 0 0 0 1px #b9e6ffaa;pointer-events:none}
+.unit.poisoned .portrait{filter:hue-rotate(38deg) saturate(1.15)}
+.status-label{position:absolute;left:50%;top:6%;transform:translateX(-50%);z-index:7;padding:2px 8px;border-radius:999px;background:#0d1426ee;border:1px solid #5f79b8;color:#eaf3ff;font-size:.72rem;font-weight:800;white-space:nowrap;animation:status-pop calc(.76s*var(--battle-rate,1)) ease-out forwards;pointer-events:none}
+@keyframes status-pop{0%{opacity:0;transform:translate(-50%,8px) scale(.7)}18%{opacity:1;transform:translate(-50%,0) scale(1.06)}70%{opacity:1}100%{opacity:0;transform:translate(-50%,-14px) scale(.96)}}
+
+/* 位移（擊退／拉扯）動畫：沿用 walk 變數但更快更硬 */
+.unit.knocked{animation:knocked calc(.14s*var(--battle-rate,1)) cubic-bezier(.2,.9,.3,1.2)}
+@keyframes knocked{from{translate:var(--walk-x,0) var(--walk-y,0)}to{translate:0 0}}
+
+/* 爆擊數字與強震動 */
+.damage-number.crit{font-size:1.05rem;color:#ffd76a;text-shadow:0 0 10px #ff9d2f,0 2px 2px #000;animation-duration:calc(.72s*var(--battle-rate,1))}
+.shake-hard{animation:shake-hard calc(.4s*var(--battle-rate,1)) ease-in-out}
+@keyframes shake-hard{0%,100%{transform:translate(0,0)}15%{transform:translate(-7px,3px)}35%{transform:translate(6px,-4px)}55%{transform:translate(-5px,-2px)}75%{transform:translate(4px,3px)}}
+
+/* 陣亡演出 */
+.unit.defeated{animation:defeated calc(.5s*var(--battle-rate,1)) ease-in forwards;pointer-events:none}
+@keyframes defeated{0%{opacity:1;filter:none}40%{opacity:.9;filter:brightness(2.2) saturate(0)}100%{opacity:0;transform:scale(.6) rotate(6deg);filter:brightness(0)}}
+
+/* 技能特效變體 */
+.vfx.fx-freeze{background:radial-gradient(circle,#e8fbff 0%,#9fd9ff 34%,#3f8fe600 72%)!important;clip-path:polygon(50% 0,63% 32%,100% 38%,72% 60%,82% 100%,50% 76%,18% 100%,28% 60%,0 38%,37% 32%);animation:fx-freeze calc(.62s*var(--battle-rate,1)) ease-out forwards}
+@keyframes fx-freeze{0%{opacity:0;transform:scale(.3) rotate(-18deg)}30%{opacity:1;transform:scale(1.15) rotate(4deg)}100%{opacity:0;transform:scale(.9) rotate(14deg)}}
+.vfx.fx-poison{background:radial-gradient(circle at 34% 66%,#c8ff90 0%,#6fbf4d 36%,#2c661f00 70%)!important;border-radius:60% 40% 55% 45%/55% 60% 40% 45%;animation:fx-poison calc(.62s*var(--battle-rate,1)) ease-in-out forwards}
+@keyframes fx-poison{0%{opacity:0;transform:translateY(30%) scale(.5)}35%{opacity:.95;transform:translateY(-4%) scale(1.05)}100%{opacity:0;transform:translateY(-30%) scale(1.3)}}
+.vfx.fx-burn{background:radial-gradient(circle at 50% 78%,#fff3b0 0%,#ff9d2f 40%,#e5391900 75%)!important;border-radius:50% 50% 42% 42%/62% 62% 38% 38%;animation:fx-burn calc(.62s*var(--battle-rate,1)) ease-out forwards}
+@keyframes fx-burn{0%{opacity:0;transform:scaleY(.4)}30%{opacity:1;transform:scaleY(1.12)}100%{opacity:0;transform:scaleY(1.35) translateY(-16%)}}
+.vfx.fx-force{background:radial-gradient(circle,#ffffff 0%,var(--vfx,#8fb7ff) 26%,transparent 62%)!important;border-radius:50%;animation:fx-force calc(.5s*var(--battle-rate,1)) ease-out forwards}
+@keyframes fx-force{0%{opacity:.95;transform:scale(.2)}100%{opacity:0;transform:scale(1.9)}}
+
+/* Boss 血條 */
+.boss-bar{display:flex;align-items:center;gap:12px;margin:0 0 10px;padding:9px 14px;border:1px solid #8a4a5a;border-radius:12px;background:linear-gradient(120deg,#301622ee,#1a0e18ee)}
+.boss-bar b{color:#ffd9e2;font-size:.9rem;white-space:nowrap;letter-spacing:.04em}
+.boss-hp{flex:1;height:12px;border-radius:999px;background:#120a12;overflow:hidden;box-shadow:inset 0 0 0 1px #6d3648}
+.boss-hp i{display:block;height:100%;background:linear-gradient(90deg,#ff5d73,#ffb45d);transition:width calc(.4s*var(--battle-rate,1)) ease;border-radius:inherit}
+.boss-bar.boss-low .boss-hp i{background:linear-gradient(90deg,#ff2d4d,#ff7a3c);animation:boss-low 1s ease-in-out infinite}
+@keyframes boss-low{0%,100%{filter:brightness(1)}50%{filter:brightness(1.55)}}
+
+/* Boss 登場 */
+.boss-intro{position:fixed;inset:0;z-index:60;display:grid;place-items:center;text-align:center;background:radial-gradient(circle at 50% 42%,#3a1020e6,#05060cf2 76%);animation:boss-intro-in calc(.45s*var(--battle-rate,1)) ease-out}
+.boss-intro[hidden]{display:none}
+.boss-intro h2{margin:6px 0 8px;font-size:2rem;color:#ffd9e2;letter-spacing:.12em;text-shadow:0 0 18px #ff5d73aa}
+.boss-intro p{margin:0;color:#c8a6b6}
+.boss-intro .eyebrow{color:#ff8ba0;letter-spacing:.3em;font-size:.8rem}
+.boss-intro-art{width:min(46vw,300px);aspect-ratio:3/4;margin:0 auto;background-position:center;background-repeat:no-repeat;background-size:contain;filter:drop-shadow(0 14px 30px #000);animation:boss-art calc(1.4s*var(--battle-rate,1)) ease-out}
+@keyframes boss-intro-in{from{opacity:0}to{opacity:1}}
+@keyframes boss-art{0%{transform:scale(1.35);filter:brightness(3) drop-shadow(0 14px 30px #000)}45%{transform:scale(.98);filter:brightness(1)}60%{transform:scale(1.04)}100%{transform:scale(1)}}
+
+/* Boss 棋盤單位 */
+.unit.boss-unit{box-shadow:0 0 0 2px #ff5d73aa,0 0 18px #ff5d7366}
+.unit.boss-unit .portrait{animation:boss-idle 2.4s ease-in-out infinite}
+@keyframes boss-idle{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+
+/* ══ V0.7.1 戰鬥演出升級 ══ */
+
+/* 粒子爆散 */
+.spark{position:absolute;z-index:9;left:50%;top:50%;width:var(--size,5px);height:var(--size,5px);border-radius:50%;background:var(--spark,#ffd36a);box-shadow:0 0 6px var(--spark,#ffd36a);pointer-events:none;animation:spark-fly calc(.62s*var(--battle-rate,1)) cubic-bezier(.15,.8,.4,1) forwards}
+@keyframes spark-fly{0%{opacity:1;transform:translate(-50%,-50%) scale(1)}70%{opacity:.9}100%{opacity:0;transform:translate(calc(-50% + var(--dx,20px)),calc(-50% + var(--dy,0px))) scale(.2)}}
+.spark.heal{border-radius:40% 60% 55% 45%;animation-timing-function:ease-out;animation-duration:calc(.74s*var(--battle-rate,1))}
+.spark.death{animation-duration:calc(.8s*var(--battle-rate,1));box-shadow:0 0 10px var(--spark,#ffd36a)}
+
+/* 衝擊環 */
+.impact-ring{position:absolute;z-index:7;inset:8%;border:3px solid var(--vfx,#ffd36a);border-radius:50%;pointer-events:none;box-shadow:0 0 14px var(--vfx,#ffd36a),inset 0 0 8px var(--vfx,#ffd36a);animation:impact-ring calc(.5s*var(--battle-rate,1)) ease-out forwards}
+@keyframes impact-ring{0%{opacity:.95;transform:scale(.25)}100%{opacity:0;transform:scale(1.7)}}
+
+/* 範圍技預示 */
+.aoe-mark{position:absolute;z-index:4;inset:6%;border-radius:22%;background:radial-gradient(circle,transparent 40%,var(--vfx,#ff681f) 130%);box-shadow:inset 0 0 0 2px var(--vfx,#ff681f);opacity:0;pointer-events:none;animation:aoe-mark calc(.56s*var(--battle-rate,1)) ease-in-out forwards}
+@keyframes aoe-mark{0%{opacity:0;transform:scale(.7)}35%{opacity:.75;transform:scale(1)}70%{opacity:.55}100%{opacity:0;transform:scale(1.06)}}
+
+/* 終極技演出：畫面微震＋暗角閃光 */
+.board-wrap{position:relative}
+.board-wrap.ult-cast::after{content:'';position:absolute;inset:0;z-index:20;pointer-events:none;border-radius:inherit;background:radial-gradient(circle at 50% 45%,transparent 40%,#ffffff2e 72%,#ffd36a55 100%);animation:ult-flash calc(.62s*var(--battle-rate,1)) ease-out forwards}
+@keyframes ult-flash{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
+
+/* 投射物：朝向目標旋轉＋彗星拖尾 */
+.projectile{transform:rotate(var(--angle,0rad))}
+.projectile::after{content:'';position:absolute;top:50%;right:100%;width:26px;height:3px;transform:translateY(-50%);background:linear-gradient(270deg,var(--projectile,#ffd36a),transparent);border-radius:999px;opacity:.85}
+
+/* 傷害數字：隨機橫向漂移＋爆擊旋轉放大 */
+.damage-number{animation-name:damage-drift}
+@keyframes damage-drift{0%{opacity:0;transform:translate(-50%,10px) scale(.6)}16%{opacity:1;transform:translate(-50%,0) scale(1.14)}100%{opacity:0;transform:translate(calc(-50% + var(--drift,0px)),-30px) scale(.94)}}
+.damage-number.crit{animation-name:damage-crit}
+@keyframes damage-crit{0%{opacity:0;transform:translate(-50%,12px) scale(.5) rotate(-8deg)}14%{opacity:1;transform:translate(-50%,-2px) scale(1.5) rotate(3deg)}30%{transform:translate(-50%,-4px) scale(1.2) rotate(0)}100%{opacity:0;transform:translate(calc(-50% + var(--drift,0px)),-36px) scale(1)}}
+
+/* 近戰突進：先蓄力後撲擊 */
+@keyframes dash{0%{translate:0 0;scale:1}16%{translate:calc(var(--dash-x,0)*-.22) calc(var(--dash-y,0)*-.22);scale:.94 1.05}52%{translate:var(--dash-x,0) var(--dash-y,0);scale:1.1}100%{translate:0 0;scale:1}}
+
+/* ══ 地圖去格子化：整片有機地表＋柔和地形色斑＋極淡格線 ══ */
+
+/* 抹掉棋盤格：交錯色與重複圖樣全部移除，改為透明格＋極淡框線 */
+.idle-arena .cell,.idle-arena .cell:nth-child(odd){background-color:transparent;background-image:none;border:0;box-shadow:inset 0 0 0 1px #ffffff09}
+.idle-arena .cell{overflow:visible}
+
+/* 各章節的整片地表（大面積柔和色斑＋細顆粒） */
+.board{border:3px solid #12203a;box-shadow:inset 0 0 60px #00000066,0 10px 30px #0009;background:#243244}
+body.map-ember .board{background:radial-gradient(circle at 22% 30%,#57342a 0 18%,transparent 42%),radial-gradient(circle at 74% 62%,#5e3423 0 22%,transparent 48%),radial-gradient(circle at 46% 84%,#4a2c26 0 16%,transparent 40%),radial-gradient(circle at 85% 15%,#63402b 0 14%,transparent 36%),linear-gradient(160deg,#4c2f26,#3a241f 55%,#452c22);border-color:#2a1712}
+body.map-verdant .board{background:radial-gradient(circle at 25% 28%,#31513a 0 20%,transparent 46%),radial-gradient(circle at 70% 65%,#2c4a2e 0 22%,transparent 50%),radial-gradient(circle at 50% 90%,#24402f 0 15%,transparent 38%),linear-gradient(160deg,#2c4531,#213526 55%,#294232);border-color:#152317}
+body.map-tide .board{background:radial-gradient(circle at 28% 30%,#274a68 0 20%,transparent 46%),radial-gradient(circle at 72% 60%,#22415f 0 22%,transparent 50%),radial-gradient(circle at 48% 88%,#1d3852 0 16%,transparent 40%),linear-gradient(160deg,#254562,#1a3049 55%,#213d58);border-color:#122031}
+body.map-rift .board{background:radial-gradient(circle at 26% 32%,#453056 0 18%,transparent 44%),radial-gradient(circle at 74% 58%,#3b2a52 0 22%,transparent 50%),radial-gradient(circle at 52% 88%,#32234a 0 15%,transparent 38%),linear-gradient(160deg,#3a2b4e,#281d3a 55%,#332648);border-color:#1d1430}
+.board::after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(45deg,#ffffff05 0 2px,transparent 2px 7px);mix-blend-mode:overlay}
+.board{position:relative}
+
+/* 地形改為柔和有機色斑（不佔滿整格、圓角不規則、發光內暈） */
+.idle-arena .cell.terrain-fire,.idle-arena .cell.terrain-forest,.idle-arena .cell.terrain-water,.idle-arena .cell:nth-child(odd).terrain-fire,.idle-arena .cell:nth-child(odd).terrain-forest,.idle-arena .cell:nth-child(odd).terrain-water{background-color:transparent;background-image:none}
+.cell.terrain-fire::before,.cell.terrain-forest::before,.cell.terrain-water::before{content:'';position:absolute;inset:7%;z-index:0;pointer-events:none;border-radius:58% 42% 50% 50%/48% 55% 45% 52%}
+.cell:nth-child(3n).terrain-fire::before,.cell:nth-child(3n).terrain-forest::before,.cell:nth-child(3n).terrain-water::before{border-radius:44% 56% 60% 40%/55% 44% 56% 45%;transform:rotate(24deg)}
+.cell:nth-child(5n).terrain-fire::before,.cell:nth-child(5n).terrain-forest::before,.cell:nth-child(5n).terrain-water::before{border-radius:52% 48% 40% 60%/42% 58% 46% 54%;transform:rotate(-18deg)}
+.cell.terrain-fire::before{background:radial-gradient(circle at 46% 40%,#ff9a4d66 0 30%,#c2452a55 62%,transparent 78%);box-shadow:inset 0 0 12px #ff7b2e55}
+.cell.terrain-forest::before{background:radial-gradient(circle at 46% 40%,#7ed67d55 0 30%,#2f7a4455 62%,transparent 78%);box-shadow:inset 0 0 12px #55c97a44}
+.cell.terrain-water::before{background:radial-gradient(circle at 46% 40%,#6fc2ff5c 0 30%,#2c68b555 62%,transparent 78%);box-shadow:inset 0 0 12px #55a8ff4d}
+.terrain-hint{position:relative;z-index:1;opacity:.75;filter:drop-shadow(0 1px 2px #000a)}
+
+/* 障礙物改為立體岩塊感 */
+.idle-arena .cell.obstacle,.idle-arena .cell:nth-child(odd).obstacle,.map-ember .idle-arena .cell.obstacle,.map-verdant .idle-arena .cell.obstacle,.map-tide .idle-arena .cell.obstacle,.map-rift .idle-arena .cell.obstacle{background-color:transparent;background-image:none;box-shadow:none;border:0}
+.cell.obstacle::before{content:'';position:absolute;inset:9% 7% 5% 7%;border-radius:38% 46% 42% 40%/46% 40% 48% 42%;background:linear-gradient(150deg,#3d4a68,#1a2338 68%);box-shadow:inset 2px 3px 5px #ffffff22,inset -3px -4px 7px #00000088,0 6px 10px #0009}
+body.map-ember .cell.obstacle::before{background:linear-gradient(150deg,#5a3a30,#241511 68%)}
+body.map-verdant .cell.obstacle::before{background:linear-gradient(150deg,#3c5a35,#15230f 68%)}
+body.map-tide .cell.obstacle::before{background:linear-gradient(150deg,#33506e,#101d2e 68%)}
+body.map-rift .cell.obstacle::before{background:linear-gradient(150deg,#4c3a66,#1c1230 68%)}
+.obstacle-icon{position:relative;z-index:1}
+
+/* 高亮（移動／攻擊／輔助／部署）維持清晰的格子指示 */
+.idle-arena .cell.move-target,.idle-arena .cell.attack-target,.idle-arena .cell.support-target,.idle-arena .cell.deploy-zone{border-radius:14%}
+.idle-arena .cell.move-target,.idle-arena .cell:nth-child(odd).move-target{background:#2c579acc;box-shadow:inset 0 0 0 2px #6fb6ff,inset 0 0 12px #6fb6ff55}
+.idle-arena .cell.attack-target{box-shadow:inset 0 0 0 2px #ff7b82,inset 0 0 12px #ff7b8255}
+.idle-arena .cell.support-target{box-shadow:inset 0 0 0 2px #8ff0bd,inset 0 0 12px #8ff0bd55}

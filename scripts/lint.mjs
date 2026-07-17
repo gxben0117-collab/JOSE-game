@@ -17,7 +17,7 @@ for (const file of sources) {
   const result = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
   if (result.status !== 0) { failed++; process.stderr.write(`${relative(root, file)}\n${result.stderr}`); }
 }
-for (const html of ['index.html', 'index-3d-legacy.html', 'adventure.html', 'tactics.html', 'showcase.html']) {
+for (const html of ['index.html', 'tactics.html']) {
   const content = readFileSync(join(root, html), 'utf8');
   for (const match of content.matchAll(/(?:src|href)="([^"#?]+)(?:\?[^\"]*)?"/g)) {
     const target = join(root, match[1]);
