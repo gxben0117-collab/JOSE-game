@@ -111,17 +111,21 @@
   function mapById(id) { return chapters.find(function (chapter) { return chapter.id === id; }); }
   function stageById(id) { return stages.find(function (stage) { return stage.id === id; }) || stages[0]; }
 
-  /* 決定性障礙物：散布於中央區（8~21 欄），避開左下我方部署角，且每列最多一個。 */
+  /* 決定性障礙群：以三個短牆／岩群形成戰術通道，避免全圖零碎散點。 */
   function obstaclesFor(stage, cols, rows) {
-    cols = cols || 30; rows = rows || 30;
+    cols = cols || 20; rows = rows || 20;
     var result = [], used = {};
-    for (var y = 0; y < rows; y++) {
-      for (var x = 8; x <= cols - 9; x++) {
-        if (x <= 9 && y >= 18) continue;
-        var n = (x * 13 + y * 7 + stage.seed * 17) % 31;
-        if (n < 3 && !used[y] && result.length < 26) { result.push({ x: x, y: y }); used[y] = true; }
-      }
+    function add(baseX, baseY, points) {
+      points.forEach(function (point) {
+        var x = baseX + point[0], y = baseY + point[1], key = x + ',' + y;
+        if (x < 7 || x >= cols - 2 || y < 1 || y >= rows - 1 || used[key]) return;
+        used[key] = true; result.push({ x: x, y: y });
+      });
     }
+    var shift = stage.seed % 3 - 1;
+    add(Math.floor(cols * 0.44) + shift, 2 + stage.seed % 3, [[0,0],[1,0],[2,0],[2,1]]);
+    add(Math.floor(cols * 0.61) - shift, Math.floor(rows * 0.43), [[0,0],[0,1],[0,2],[1,2]]);
+    add(Math.floor(cols * 0.48), rows - 6 - stage.seed % 2, [[0,0],[1,0],[1,1],[2,1]]);
     return result;
   }
 
@@ -135,12 +139,32 @@
     return result;
   }
 
+  function terrainPatch(stage, x, y, salt, radiusX, radiusY) {
+    var centerX = 3 + Math.abs(stage.seed * 17 + salt * 11) % 14;
+    var centerY = 3 + Math.abs(stage.seed * 13 + salt * 19) % 14;
+    var dx = (x - centerX) / radiusX, dy = (y - centerY) / radiusY;
+    var edge = ((x * 11 + y * 7 + stage.seed + salt * 5) % 9 - 4) * 0.025;
+    return dx * dx + dy * dy <= 1 + edge;
+  }
+
+  /* 地形以 3~5 格半徑的大區塊生成，同屬性會自然相連，不再逐格灑點。 */
   function terrainAt(stage, x, y) {
-    var map = mapById(stage.mapId), n = (x * 7 + y * 3 + stage.seed) % 13, theme = map ? map.theme : 'rift';
-    if (theme === 'ember') return n < 3 ? 'fire' : n === 7 ? 'forest' : '';
-    if (theme === 'verdant') return n < 4 ? 'forest' : n === 8 ? 'water' : '';
-    if (theme === 'tide') return n < 4 ? 'water' : n === 9 ? 'forest' : '';
-    return n < 2 ? 'fire' : n < 5 ? 'forest' : n < 8 ? 'water' : '';
+    var map = mapById(stage.mapId), theme = map ? map.theme : 'rift';
+    if (theme === 'ember') {
+      if (terrainPatch(stage, x, y, 1, 5, 4) || terrainPatch(stage, x, y, 2, 4, 5)) return 'fire';
+      return terrainPatch(stage, x, y, 3, 3, 3) ? 'forest' : '';
+    }
+    if (theme === 'verdant') {
+      if (terrainPatch(stage, x, y, 4, 5, 4) || terrainPatch(stage, x, y, 5, 4, 5)) return 'forest';
+      return terrainPatch(stage, x, y, 6, 3, 4) ? 'water' : '';
+    }
+    if (theme === 'tide') {
+      if (terrainPatch(stage, x, y, 7, 5, 4) || terrainPatch(stage, x, y, 8, 4, 5)) return 'water';
+      return terrainPatch(stage, x, y, 9, 3, 3) ? 'forest' : '';
+    }
+    if (terrainPatch(stage, x, y, 10, 4, 4)) return 'fire';
+    if (terrainPatch(stage, x, y, 11, 4, 4)) return 'forest';
+    return terrainPatch(stage, x, y, 12, 4, 4) ? 'water' : '';
   }
 
   global.TACTICAL_CONTENT = Object.freeze({

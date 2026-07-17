@@ -2,9 +2,9 @@
 (function () {
   'use strict';
 
-  var COLS = 30, ROWS = 30, HARD_ROUND_LIMIT = 45, PARTY_SIZE = 10, AGGRO_RANGE = 7;
+  var COLS = 20, ROWS = 20, HARD_ROUND_LIMIT = 45, PARTY_SIZE = 10, AGGRO_RANGE = 7;
   /* 布陣空間預設 5×5：大型（2×2）幻獸佔 4 格，天然限制大型單位的出戰數量。 */
-  var DEPLOY_MIN_X = 2, DEPLOY_MAX_X = 6, DEPLOY_MIN_Y = 21, DEPLOY_MAX_Y = 25;
+  var DEPLOY_MIN_X = 1, DEPLOY_MAX_X = 6, DEPLOY_MIN_Y = 13, DEPLOY_MAX_Y = 18;
   var content = window.TACTICAL_CONTENT;
   var profiles = window.TACTICAL_PET_DATA.concat(window.TACTICAL_ENEMY_DATA || []);
   var progression = new window.TacticalProgression({ profiles: window.TACTICAL_PET_DATA, content: content });
@@ -16,7 +16,7 @@
   var dom = {
     app: document.querySelector('.tactics-app'), board: document.getElementById('board'), list: document.getElementById('party-list'),
     teamTrait: document.getElementById('team-trait'), detail: document.getElementById('unit-detail'), skills: document.getElementById('skill-buttons'),
-    evolution: document.getElementById('evolution-buttons'), turnOrder: document.getElementById('turn-order'), log: document.getElementById('combat-log'),
+    turnOrder: document.getElementById('turn-order'), log: document.getElementById('combat-log'),
     banner: document.getElementById('turn-banner'), roundStatus: document.getElementById('round-status'), medals: document.getElementById('medals'),
     essences: document.getElementById('essences'), fusionCores: document.getElementById('fusion-cores'), sound: document.getElementById('sound-toggle'),
     mapEyebrow: document.getElementById('map-eyebrow'), stageTitle: document.getElementById('stage-title'), stageDescription: document.getElementById('stage-description'),
@@ -147,14 +147,17 @@
         if (free(x, y)) return { x: x, y: y };
       }
     }
+    for (var scanY = 1; scanY < ROWS - size; scanY++) for (var scanX = DEPLOY_MAX_X + 3; scanX < COLS - size; scanX++) {
+      if (free(scanX, scanY)) return { x: scanX, y: scanY };
+    }
     return { x: cx, y: cy };
   }
   function enemyFormation(roster) {
-    var anchors = [[26, 5], [25, 14], [26, 23], [19, 8], [19, 21], [13, 14], [21, 14], [15, 5], [15, 25], [27, 9], [27, 19], [11, 8]];
+    var anchors = [[COLS - 3, 2], [COLS - 4, Math.floor(ROWS / 2)], [COLS - 3, ROWS - 4], [COLS - 8, 3], [COLS - 8, ROWS - 5], [COLS - 10, Math.floor(ROWS / 2)], [COLS - 6, 6], [COLS - 6, ROWS - 7], [COLS - 11, 4], [COLS - 11, ROWS - 6], [COLS - 4, 6], [COLS - 4, ROWS - 7]];
     var result = [], occupied = {}, squads = [], squadSize = roster.length > 20 ? 5 : 4, offset = currentStage.seed % anchors.length;
     for (var index = 0; index < roster.length; index += squadSize) squads.push(roster.slice(index, index + squadSize));
     squads.forEach(function (squad, squadIndex) {
-      var anchor = squadIndex === 0 && currentStage.boss ? [25, 13] : anchors[(offset + squadIndex * 3) % anchors.length];
+      var anchor = squadIndex === 0 && currentStage.boss ? [COLS - 4, Math.floor(ROWS / 2) - 1] : anchors[(offset + squadIndex * 3) % anchors.length];
       squad.forEach(function (id) {
         var size = (profile(id) || {}).size || 1;
         var spot = findFreeSpot(anchor[0], anchor[1], occupied, size);
@@ -182,7 +185,7 @@
   function enterTower(floor) {
     currentStage = towerStageFor(Math.max(1, floor));
     reset(currentStage); setView('battle'); audio.play('boss');
-    focusCamera(4, 24, true);
+    focusDeployZone(true);
   }
 
   function reset(stageId) {
@@ -192,7 +195,7 @@
     if (!currentStage.tower) { progress.currentStage = currentStage.id; progression.save(); }
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055);
     state = { round: 1, phase: 'deploy', selected: null, mode: 'move', skill: 0, over: false, animating: false, autoEnding: false, resultRecorded: false,
-      pendingTarget: null, threatKey: null,
+      threatKey: null,
       enemyScale: scale, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {} };
     state.obstacles = (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
@@ -204,10 +207,10 @@
     dom.board.style.gridTemplateColumns = 'repeat(' + COLS + ', var(--cell))';
     dom.board.style.gridTemplateRows = 'repeat(' + ROWS + ', var(--cell))';
     document.body.className = 'map-' + mapData().theme + ' view-' + currentView;
-    note('部署階段：點選我方幻獸，再點左下角藍色部署格（5×5）調整站位，完成後按「開始戰鬥」。敵軍共 ' + roster.length + ' 隻分小隊散布全圖。' +
+    note('部署階段：點選我方幻獸，再點左下角藍色部署格（6×6）調整站位，完成後按「開始戰鬥」。敵軍共 ' + roster.length + ' 隻分小隊散布全圖。' +
       (benched.length ? '⚠ 布陣空間不足，候補未出戰：' + benched.join('、') + '。' : ''));
     renderProgress(); renderCampaignMeta(); render();
-    focusCamera(4, 24, true);
+    focusDeployZone(true);
   }
 
   async function startBattle() {
@@ -306,7 +309,6 @@
     if (!path || !path.length) return false;
     unit.prevX = unit.x; unit.prevY = unit.y; /* 供「取消移動」還原 */
     state.animating = true; note(unitName(unit) + ' 移動 ' + path.length + ' 格。');
-    focusCamera(x, y, false);
     for (var index = 0; index < path.length; index++) {
       var fromX = unit.x, fromY = unit.y; unit.x = path[index].x; unit.y = path[index].y; render();
       var piece = dom.board.querySelector('[data-key="' + unit.key + '"]');
@@ -349,6 +351,7 @@
   var suppressClickUntil = 0;
   function cameraSuppressed() { return Date.now() < suppressClickUntil; }
   function focusCamera(x, y, instant) {
+    if (state && state.animating) return;
     var scroller = dom.board.parentElement, sample = dom.board.firstChild;
     if (!scroller || !sample || !sample.offsetWidth) return;
     var size = sample.offsetWidth;
@@ -358,7 +361,18 @@
       behavior: instant ? 'auto' : 'smooth'
     });
   }
-  function focusUnit(unit, instant) { if (unit) focusCamera(unit.x, unit.y, instant); }
+  function focusUnit(unit, instant) {
+    if (!unit) return;
+    focusCamera(unit.x + (unitSize(unit) - 1) / 2, unit.y + (unitSize(unit) - 1) / 2, instant);
+    var piece = dom.board.querySelector('[data-key="' + unit.key + '"]');
+    if (piece) {
+      piece.classList.remove('camera-focus');
+      void piece.offsetWidth;
+      piece.classList.add('camera-focus');
+      setTimeout(function () { piece.classList.remove('camera-focus'); }, duration(520));
+    }
+  }
+  function focusDeployZone(instant) { focusCamera((DEPLOY_MIN_X + DEPLOY_MAX_X) / 2, (DEPLOY_MIN_Y + DEPLOY_MAX_Y) / 2, instant); }
   function enableCameraDrag() {
     var scroller = dom.board.parentElement, drag = null;
     scroller.addEventListener('pointerdown', function (event) {
@@ -467,14 +481,18 @@
   }
 
   function addProjectile(caster, target, skill) {
-    if (skill.attackStyle === 'melee' || skill.attackStyle === 'support') return;
-    var cell = cellAt(target.x, target.y); if (!cell) return;
-    var projectile = document.createElement('i'); projectile.className = 'projectile';
+    if (skill.attackStyle === 'melee' || skill.attackStyle === 'support') return 0;
+    var cell = cellAt(target.x, target.y); if (!cell) return 0;
+    var element = caster.p.element || 'arcane';
+    var projectile = document.createElement('i');
+    projectile.className = 'projectile projectile-' + element + (skill.kind === 'basic' ? ' projectile-basic' : ' projectile-skill');
     var deltaX = (caster.x - target.x) * cell.offsetWidth, deltaY = (caster.y - target.y) * cell.offsetHeight;
     projectile.style.setProperty('--projectile', 'hsl(' + skill.vfxHue + ' 92% 68%)');
     projectile.style.setProperty('--from-x', deltaX + 'px'); projectile.style.setProperty('--from-y', deltaY + 'px');
     projectile.style.setProperty('--angle', Math.atan2(-deltaY, -deltaX) + 'rad');
-    cell.appendChild(projectile); setTimeout(function () { projectile.remove(); }, duration(300));
+    projectile.setAttribute('aria-label', skill.name + '的' + ({ fire: '火球', forest: '自然彈', ocean: '水流彈', light: '光矢', dark: '暗影彈' }[element] || '魔法彈'));
+    cell.appendChild(projectile); setTimeout(function () { projectile.remove(); }, duration(420));
+    return 330;
   }
 
   function passiveBurn(attacker, target) {
@@ -526,49 +544,7 @@
     return defender.hp > 0 && attacker.hp > 0 && defender.freeze <= 0 && distance(defender, attacker) <= skillRange(defender, basic) && hasSight(defender, attacker, basic);
   }
 
-  /* ── 戰鬥預測面板（出手前確認，含反擊與擊破預測）── */
-  function forecastDamage(unit, target, skill) {
-    var magic = skill.attackStyle === 'ranged' || skill.attackStyle === 'area';
-    var raw = (magic ? stat(unit, 'magic') : stat(unit, 'power')) * combatMultiplier(unit) * terrainAttackMultiplier(unit) * (skill.multiplier || 1.05);
-    raw *= elementalMultiplier(unit, target);
-    if (unit.atkBuff > 0) raw *= 1.2;
-    if (target.hp / target.maxHp < 0.5) raw *= 1 + (bonuses(unit).execute || 0);
-    if (unit.team === 'enemy') raw *= 1 + state.riftPower;
-    var defense = stat(target, 'defense') * (terrain(target.x, target.y) === 'forest' && target.p.element === 'forest' ? 1.12 : 1);
-    return Math.max(12, Math.round(raw - defense * 0.55));
-  }
-  function forecastHeal(caster, target, skill) {
-    var multiplier = 1 + bonusValue(caster, 'healing');
-    if (terrain(caster.x, caster.y) === 'forest' && caster.p.element === 'forest') multiplier *= 1.2;
-    return Math.min(target.maxHp - target.hp, Math.round(stat(caster, 'magic') * combatMultiplier(caster) * multiplier * (skill.multiplier || 0.8)));
-  }
-  function clearForecast() { state.pendingTarget = null; var panel = document.getElementById('forecast'); if (panel) panel.hidden = true; }
-  function showForecast(unit, target, skill) {
-    var panel = document.getElementById('forecast'); if (!panel) return;
-    var rows = '';
-    if (skill.attackStyle === 'support') {
-      var value = skill.effect === 'shield' ? Math.round(stat(unit, 'magic') * (skill.value || 0.7)) : skill.effect === 'buff_atk' ? 0 : forecastHeal(unit, target, skill);
-      rows = '<span class="fc-good">' + (skill.effect === 'shield' ? '🛡 護盾 +' + value : skill.effect === 'buff_atk' ? '⬆ 攻擊 +20%（3 回合）' : '💚 回復 +' + value) + '</span>';
-    } else {
-      var expected = forecastDamage(unit, target, skill);
-      var splash = skill.attackStyle === 'area' ? alive(target.team).filter(function (entry) { return entry !== target && distance(entry, target) <= (skill.radius || 1); }).length : 0;
-      rows = '<span class="fc-bad">⚔ 預計傷害 ' + expected + (splash ? '（波及 ' + splash + ' 名）' : '') + '</span>';
-      if (expected >= target.hp + target.shield) rows += '<span class="fc-kill">💀 可擊破</span>';
-      else if (canCounter(target, unit)) rows += '<span class="fc-warn">↩ 敵方反擊約 −' + forecastDamage(target, unit, target.p.skills[0]) + '</span>';
-      var extras = (skill.status === 'freeze' ? '❄冰凍 ' : skill.status === 'poison' ? '☠中毒 ' : skill.status === 'burn' ? '🔥灼燒 ' : '') + (skill.push ? '💨擊退 ' : '') + (skill.pull ? '🪝拉扯' : '');
-      if (extras) rows += '<span class="fc-extra">附帶：' + extras + '</span>';
-    }
-    panel.innerHTML =
-      '<div class="fc-side"><span class="fc-face" style="background-image:url(\'' + portrait(unit) + '\')"></span><b>' + unit.p.name + '</b><small>' + skill.name + '</small></div>' +
-      '<div class="fc-mid">' + rows + '<div class="fc-actions"><button id="fc-confirm" class="primary" type="button">✔ 執行</button><button id="fc-cancel" class="secondary" type="button">✖ 取消</button></div></div>' +
-      '<div class="fc-side"><span class="fc-face" style="background-image:url(\'' + portrait(target) + '\')"></span><b>' + target.p.name + '</b><small>HP ' + target.hp + '/' + target.maxHp + '</small></div>';
-    panel.hidden = false;
-    document.getElementById('fc-confirm').onclick = async function () {
-      clearForecast();
-      if (!state.over && !state.animating && unit.hp > 0 && target.hp > 0 && !unit.acted) await act(unit, target, skill, state.skill);
-    };
-    document.getElementById('fc-cancel').onclick = function () { clearForecast(); audio.play('ui'); };
-  }
+  function clearForecast() { /* 相容舊呼叫：現行手動操作點擊目標即施放，不再顯示確認面板。 */ }
 
   /* ── 敵方威脅範圍（點擊敵人顯示移動＋射程圈）── */
   function computeThreat(enemy) {
@@ -597,7 +573,6 @@
   async function act(unit, target, skill, skillIndex, options) {
     options = options || {}; if (!unit || !target || unit.hp <= 0 || target.hp <= 0) return;
     if (!options.nested) state.animating = true;
-    if (!options.counter) focusCamera((unit.x + target.x) / 2, (unit.y + target.y) / 2, false);
     unit.acted = true;
     var actualIndex = skillIndex === undefined ? state.skill : skillIndex;
     if (skill.cooldown > 0) unit.cooldowns[actualIndex] = Math.max(1, skill.cooldown - (bonuses(unit).cooldown || 0));
@@ -608,7 +583,8 @@
     if (skill.attackStyle === 'area') telegraphArea(target, skill.radius || 1, skill.vfxHue);
     if (skill.attackStyle !== 'melee') castCircle(unit, skill.vfxHue); /* 遠程／輔助：腳下魔法陣 */
     else slashFx(target); /* 近戰：目標身上的揮砍弧光 */
-    addProjectile(unit, target, skill);
+    var projectileDelay = addProjectile(unit, target, skill);
+    if (projectileDelay) await pause(projectileDelay);
 
     var message, effects = [], anyCrit = false;
     if (skill.attackStyle === 'support') {
@@ -687,7 +663,7 @@
     return theme === 'ember' ? '🌋' : theme === 'verdant' ? '🌳' : theme === 'tide' ? '🪸' : '🔮';
   }
 
-  var moveTargetMap = null; /* 每次 render 只做一次 BFS，供 900 格查表用 */
+  var moveTargetMap = null; /* 每次 render 只做一次 BFS，供 400 格查表用 */
   function cell(x, y) {
     var element = document.createElement('div'), unit = at(x, y), active = selected(), tile = terrain(x, y); element.className = 'cell';
     if (obstacleAt(x, y)) {
@@ -696,7 +672,12 @@
       element.addEventListener('click', function () { note('障礙物無法通行，也會遮蔽遠程技能的視線。'); });
       return element;
     }
-    if (tile) { element.classList.add('terrain-' + tile); element.title = tile === 'fire' ? '熔岩：火系增傷，非火系每回合受傷' : tile === 'forest' ? '森林：森林系防禦與治療提升' : '水域：海洋系移動與傷害提升'; element.innerHTML = '<span class="terrain-hint terrain-hint-' + tile + '"></span>'; }
+    if (tile) {
+      var terrainCopy = tile === 'fire' ? '熔岩：火系增傷，非火系每回合受傷' : tile === 'forest' ? '森林：森林系防禦與治療提升' : '水域：海洋系移動與傷害提升';
+      var terrainGlyph = tile === 'fire' ? '♨' : tile === 'forest' ? '♣' : '≈';
+      element.classList.add('terrain-' + tile); element.title = terrainCopy;
+      element.innerHTML = (x * 3 + y * 5 + currentStage.seed) % 11 === 0 ? '<span class="terrain-hint terrain-hint-' + tile + '" aria-hidden="true">' + terrainGlyph + '</span>' : '';
+    }
     else element.innerHTML = '';
     if (state.phase === 'deploy' && inDeployZone(x, y) && !unit) element.classList.add('deploy-zone');
     if (threatTileMap && threatTileMap[x + ',' + y]) element.classList.add(threatTileMap[x + ',' + y] === 'move' ? 'threat-move' : 'threat-range');
@@ -720,6 +701,7 @@
     element.addEventListener('click', function (event) {
       event.stopPropagation();
       if (cameraSuppressed()) return;
+      focusUnit(unit, false);
       if (state.mode === 'skill' && selected() && canTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
       if (state.phase === 'deploy' && unit.team === 'ally') { state.selected = unit.key; note('已選擇 ' + unitName(unit) + '，點選左側部署格調整站位。'); render(); return; }
       if (unit.team === 'enemy' && unit.hp > 0 && (state.phase === 'player' || state.phase === 'deploy') && !state.animating) {
@@ -727,7 +709,7 @@
         note(state.threatKey ? unitName(unit) + ' 的威脅範圍：橘色＝可移動、紅色＝射程涵蓋。再點一次取消。' : '已關閉威脅範圍顯示。');
         render(); return;
       }
-      if (unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; clearForecast(); note('已選擇 ' + unitName(unit) + '。藍色格可移動，亦可直接選擇技能。'); render(); }
+      if (unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; clearForecast(); note('已選擇 ' + unitName(unit) + '。藍色格可移動；所有招式冷卻時仍可使用普攻。'); render(); }
     }); return element;
   }
 
@@ -743,10 +725,7 @@
       var threatUnit = state.units.find(function (unit) { return unit.key === state.threatKey && unit.hp > 0; });
       if (threatUnit) threatTileMap = computeThreat(threatUnit); else state.threatKey = null;
     }
-    if (state.pendingTarget) {
-      var pendingUnit = state.units.find(function (unit) { return unit.key === state.pendingTarget && unit.hp > 0; });
-      if (!pendingUnit || !active || active.acted || state.mode !== 'skill' || state.phase !== 'player') clearForecast();
-    } else { var panel = document.getElementById('forecast'); if (panel && !panel.hidden) panel.hidden = true; }
+    dom.board.classList.toggle('is-deploying', state.phase === 'deploy');
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
@@ -773,7 +752,7 @@
     state.units.filter(function (unit) { return unit.team === 'ally'; }).forEach(function (unit) {
       var card = document.createElement('button'); card.type = 'button'; card.className = 'party-card' + (state.selected === unit.key ? ' selected' : '') + (unit.hp <= 0 ? ' dead' : ''); card.disabled = unit.hp <= 0;
       card.innerHTML = '<div class="party-name">' + unit.p.name + (unitSize(unit) > 1 ? ' ⬛2×2' : '') + '</div><div class="party-meta">' + unit.p.roleLabel + '｜★' + progression.starOf(unit.id) + '｜融合 ' + (progress.fusion[unit.id] || 0) + '</div><div class="hpbar"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></div>';
-      card.onclick = function () { if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.mode = 'move'; render(); } }; dom.list.appendChild(card);
+      card.onclick = function () { if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.mode = 'move'; render(); focusUnit(unit, false); } }; dom.list.appendChild(card);
     });
   }
   function renderTrait() { var trait = traitFor('ally'); dom.teamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>'; }
@@ -784,26 +763,22 @@
     }).join('') + '</div>';
   }
   function renderDetail() {
-    var unit = selected(); dom.skills.innerHTML = ''; dom.evolution.innerHTML = '';
-    if (!unit) { dom.detail.textContent = state.phase === 'deploy' ? '點選我方幻獸並選擇部署格。' : '點選我方幻獸查看能力。'; return; }
+    var unit = selected(); dom.skills.innerHTML = '';
+    if (!unit) { dom.detail.textContent = state.phase === 'deploy' ? '點選我方幻獸並選擇部署格。' : '點選任一幻獸查看戰鬥能力。'; return; }
     var passive = unit.p.passives.map(function (entry) { return entry.name; }).join('、') || '無';
     var statusText = [];
     if (unit.freeze > 0) statusText.push('❄ 冰凍 ' + unit.freeze);
     if (unit.poison > 0) statusText.push('☠ 中毒 ' + unit.poison);
     if (unit.burn > 0) statusText.push('🔥 灼燒 ' + unit.burn);
-    dom.detail.innerHTML = '<div class="detail-head"><span class="detail-face" style="background-image:url(\'' + portrait(unit) + '\')"></span><div class="detail-title"><strong>' + unit.p.name + '</strong><small>' + unit.p.roleLabel + '｜' + unit.p.evolution[Math.min(unit.evolution, unit.p.evolution.length) - 1].label + '</small><span class="detail-hp"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></div></div>被動：' + passive + (statusText.length ? '<br>狀態：' + statusText.join('、') : '') + '<div class="stat-grid"><span>力量 ' + Math.round(stat(unit, 'power')) + '</span><span>魔力 ' + Math.round(stat(unit, 'magic')) + '</span><span>防衛 ' + Math.round(stat(unit, 'defense')) + '</span><span>速度 ' + unit.p.stats.speed + '</span><span>血量 ' + unit.hp + '/' + unit.maxHp + '</span><span>移動 ' + moveRange(unit) + ' 格</span></div>';
+    dom.detail.innerHTML = '<div class="detail-head"><span class="detail-face" style="background-image:url(\'' + portrait(unit) + '\')"></span><div class="detail-title"><strong>' + unit.p.name + '</strong><small>' + unit.p.roleLabel + '</small><span class="detail-hp"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></div></div>被動：' + passive + (statusText.length ? '<br>狀態：' + statusText.join('、') : '') + '<div class="stat-grid"><span>力量 ' + Math.round(stat(unit, 'power')) + '</span><span>魔力 ' + Math.round(stat(unit, 'magic')) + '</span><span>防衛 ' + Math.round(stat(unit, 'defense')) + '</span><span>速度 ' + unit.p.stats.speed + '</span><span>血量 ' + unit.hp + '/' + unit.maxHp + '</span><span>移動 ' + moveRange(unit) + ' 格</span></div>';
     if (unit.team !== 'ally') return;
-    unit.p.evolution.forEach(function (entry) {
-      var button = document.createElement('button'), unlocked = progression.evolutionUnlocked(unit.id, entry.stage), cost = progression.evolutionCost(entry.stage);
-      button.className = 'evolution-btn' + (unit.evolution === entry.stage ? ' active' : ''); button.disabled = unit.acted || state.phase === 'enemy' || state.over || state.animating;
-      button.textContent = entry.stage + '．' + entry.label + (unlocked ? '' : ' 🔒' + cost.medals + '🏅'); button.onclick = function () { setEvolution(unit, entry.stage); }; dom.evolution.appendChild(button);
-    });
     unit.p.skills.forEach(function (skill, index) {
-      var button = document.createElement('button'), cooldown = unit.cooldowns[index] || 0; button.className = 'skill' + (state.mode === 'skill' && state.skill === index ? ' active' : '');
+      var button = document.createElement('button'), cooldown = unit.cooldowns[index] || 0;
+      button.className = 'skill' + (skill.kind === 'basic' ? ' basic-skill' : '') + (cooldown ? ' cooling' : ' ready') + (state.mode === 'skill' && state.skill === index ? ' active' : '');
       button.disabled = unit.acted || cooldown > 0 || state.phase !== 'player' || state.over || state.animating;
       var extras = (skill.status === 'freeze' ? '❄' : skill.status === 'poison' ? '☠' : skill.status === 'burn' ? '🔥' : '') + (skill.push ? '💨' : '') + (skill.pull ? '🪝' : '');
-      button.textContent = (index + 1) + '．' + skill.name + extras + '｜' + (skill.attackStyle === 'support' ? '輔助' : skill.attackStyle === 'area' ? '範圍' : '射程 ' + skillRange(unit, skill)) + (cooldown ? '（冷卻 ' + cooldown + '）' : '');
-      button.onclick = function () { state.selected = unit.key; state.mode = 'skill'; state.skill = index; clearForecast(); audio.play('ui'); note('已選擇「' + skill.name + '」，請點選高亮的' + (skill.attackStyle === 'support' ? '我方' : '敵方') + '目標。'); render(); }; dom.skills.appendChild(button);
+      button.textContent = (skill.kind === 'basic' ? '⚔ 普攻．' : (index + 1) + '．') + skill.name + extras + '｜' + (skill.attackStyle === 'support' ? '輔助' : skill.attackStyle === 'area' ? '範圍' : '射程 ' + skillRange(unit, skill)) + (skill.kind === 'basic' ? '｜無冷卻' : cooldown ? '（冷卻 ' + cooldown + '）' : '');
+      button.onclick = function () { state.selected = unit.key; state.mode = 'skill'; state.skill = index; clearForecast(); audio.play('ui'); note('已選擇「' + skill.name + '」，點擊高亮的' + (skill.attackStyle === 'support' ? '我方' : '敵方') + '目標後立即施放。'); render(); }; dom.skills.appendChild(button);
     });
     // 待機／取消移動（參考 SRPG 行動指令）
     if (state.phase === 'player' && !state.over && !unit.acted) {
@@ -825,15 +800,6 @@
     }
   }
 
-  function setEvolution(unit, stage) {
-    if (unit.evolution === stage) return;
-    if (!progression.evolutionUnlocked(unit.id, stage)) {
-      var result = progression.unlockEvolution(unit.p, stage); if (!result.ok) { note(result.reason + '。可在「融合與技能樹」查看材料。'); audio.play('ui'); return; }
-      renderProgress(); audio.play('unlock'); note(unitName(unit) + ' 解鎖了' + unit.p.evolution[stage - 1].label + '！');
-    }
-    var ratio = unit.hp / unit.maxHp; unit.evolution = stage; unit.maxHp = Math.round(unit.p.stats.health * evolutionMultiplier(unit) * (1 + bonusValue(unit, 'health'))); unit.hp = Math.max(1, Math.round(unit.maxHp * ratio)); render();
-  }
-
   async function clickCell(x, y) {
     if (cameraSuppressed()) return;
     var unit = selected(), target = at(x, y);
@@ -844,11 +810,9 @@
     if (!unit || state.phase !== 'player' || state.over || state.animating || state.autoEnding) return;
     if (state.mode === 'move' && !unit.moved && canMove(unit, x, y)) { clearForecast(); await walkUnit(unit, x, y); return; }
     if (state.mode === 'skill' && !unit.acted && target && canTarget(unit, target)) {
-      if (autoTimer) { await act(unit, target, skillOf(unit), state.skill); return; }
-      // 出手確認流程：第一次點目標顯示戰鬥預測，再點一次（或按執行）才施放。
-      if (state.pendingTarget === target.key) { clearForecast(); await act(unit, target, skillOf(unit), state.skill); return; }
-      state.pendingTarget = target.key; audio.play('ui'); showForecast(unit, target, skillOf(unit));
-      note('確認對 ' + unitName(target) + ' 施放「' + skillOf(unit).name + '」？再點一次目標或按「執行」。');
+      clearForecast();
+      await act(unit, target, skillOf(unit), state.skill);
+      return;
     }
   }
 
@@ -987,7 +951,6 @@
       var enemy = enemies[index]; if (enemy.hp <= 0 || state.over) break;
       var targets = alive('ally'); if (!targets.length) break;
       if (!squadActive(enemy, targets)) continue; /* 未進入警戒圈：駐守 */
-      focusUnit(enemy, false);
       if (enemy.freeze > 0) { enemy.freeze--; note(unitName(enemy) + ' 被冰凍，無法行動。'); statusLabel(enemy, '❄ 冰凍中'); render(); await pause(240); continue; }
       var plan = planFor(enemy, 'ally');
       if (plan) await executePlan(enemy, plan);
@@ -1060,7 +1023,7 @@
     dom.questSummary.innerHTML = '<b>遠征任務</b><br>' + (completed ? completed + ' 個獎勵可領取' : '主線 ' + clearedMain + '/' + mainStages.length + ' 關已通過') + '｜勝場 ' + progress.wins;
   }
   function renderCampaignMeta() {
-    var map = mapData(); dom.mapEyebrow.textContent = map.icon + ' ' + map.name + '｜30 × 30 大戰場'; dom.stageTitle.textContent = map.name + '：' + currentStage.name; dom.stageDescription.textContent = map.description;
+    var map = mapData(); dom.mapEyebrow.textContent = map.icon + ' ' + map.name + '｜20 × 20 戰場'; dom.stageTitle.textContent = map.name + '：' + currentStage.name; dom.stageDescription.textContent = map.description;
     dom.stageBadge.textContent = currentStage.difficulty; dom.stageObjective.textContent = '目標：' + currentStage.objective;
     dom.stageProgress.textContent = currentStage.tower ? '無限塔・歷史最高 ' + progress.tower.best + ' 層' : '第 ' + currentStage.chapter + ' 章／10・' + (currentStage.hard ? 'HARD 特別關' : currentStage.boss ? '魔王關' : '第 ' + currentStage.index + ' 關');
     dom.battleStageLabel.textContent = map.icon + ' ' + map.name + '：' + currentStage.name + '｜' + currentStage.difficulty;
@@ -1301,7 +1264,7 @@
   document.getElementById('deploy').onclick = openDeploy; document.getElementById('close-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('cancel-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('confirm-deploy').onclick = confirmDeploy;
   document.querySelectorAll('[data-close]').forEach(function (button) { button.onclick = function () { document.getElementById(button.dataset.close).hidden = true; }; });
   dom.growthPet.onchange = function () { growthPetId = dom.growthPet.value; renderGrowth(); };
-  dom.enterBattle.onclick = function () { audio.unlock(); if (state.over || state.phase !== 'deploy') reset(currentStage.id); setView('battle'); audio.play('ui'); render(); focusCamera(4, 24, true); };
+  dom.enterBattle.onclick = function () { audio.unlock(); if (state.over || state.phase !== 'deploy') reset(currentStage.id); setView('battle'); audio.play('ui'); render(); focusDeployZone(true); };
   function stageRef() { return currentStage.tower ? towerStageFor(currentStage.floor) : currentStage.id; }
   dom.battleExit.onclick = function () { stopAuto(); reset(currentStage.tower ? progress.currentStage : currentStage.id); setView('home'); note('已撤退回遠征準備頁。'); };
   document.getElementById('result-home').onclick = function () { reset(currentStage.tower ? progress.currentStage : currentStage.id); setView('home'); };
@@ -1326,9 +1289,9 @@
   };
 
   enableCameraDrag();
-  var boardZoom = 1, zoomButton = document.getElementById('board-zoom');
+  var boardZoom = 1.5, zoomButton = document.getElementById('board-zoom');
   if (zoomButton) zoomButton.onclick = function () {
-    boardZoom = boardZoom === 1 ? 1.3 : 1;
+    boardZoom = boardZoom === 1.5 ? 2 : 1.5;
     var viewport = dom.board.parentElement.parentElement;
     viewport.style.setProperty('--zoom', boardZoom);
     zoomButton.textContent = '🔍 ' + boardZoom + '×';
@@ -1343,7 +1306,7 @@
   });
 
   reset(currentStage.id);
-  if (/[?&]view=battle/.test(window.location.search)) { setView('battle'); focusCamera(4, 24, true); }
+  if (/[?&]view=battle/.test(window.location.search)) { setView('battle'); focusDeployZone(true); }
   var openMatch = window.location.search.match(/[?&]open=(campaign|dex|gacha|daily|deploy|growth|home|shop|bag)/);
   if (openMatch) ({ campaign: openCampaign, dex: openDex, gacha: openGacha, daily: openDaily, deploy: openDeploy, growth: openGrowth, home: openHome, shop: openShop, bag: openBag })[openMatch[1]]();
 

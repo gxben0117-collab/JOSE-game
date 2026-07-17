@@ -1,8 +1,8 @@
 {
   "name": "jose-phantom-beast-expedition",
-  "version": "0.11.0",
+  "version": "0.13.0",
   "private": true,
-  "description": "Static tactical RPG: 45 evolvable beasts vs 12 minions + 4 bosses, obstacles with line-of-sight, control statuses, free deployment, plan-based AI, campaign progression, fusion and skill trees.",
+  "description": "Static tactical RPG with direct-cast combat, element projectiles, a 20x20 battlefield, user-controlled camera, campaign progression, fusion and skill trees.",
   "scripts": {
     "start": "python -m http.server 4173 --bind 127.0.0.1",
     "build": "node scripts/build.mjs",

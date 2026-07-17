@@ -9,7 +9,8 @@
 .map-rift .cell.obstacle{background:linear-gradient(160deg,#332448,#170f26 70%)}
 
 /* 部署區 */
-.idle-arena .cell.deploy-zone,.idle-arena .cell:nth-child(odd).deploy-zone{background:linear-gradient(180deg,#1d3050cc,#16233dcc);box-shadow:inset 0 0 0 1px #4d79c866;animation:deploy-pulse 1.6s ease-in-out infinite}
+.idle-arena .board.is-deploying .cell.deploy-zone,.idle-arena .board.is-deploying .cell:nth-child(odd).deploy-zone{background:linear-gradient(180deg,#1d3050cc,#16233dcc);box-shadow:inset 0 0 0 1px #4d79c866;animation:deploy-pulse 1.6s ease-in-out infinite}
+.idle-arena .board:not(.is-deploying) .cell.deploy-zone{background-color:transparent;background-image:none;box-shadow:inset 0 0 0 1px #ffffff09;animation:none}
 @keyframes deploy-pulse{0%,100%{box-shadow:inset 0 0 0 1px #4d79c855}50%{box-shadow:inset 0 0 0 1px #7fb1ffaa,inset 0 0 14px #4d79c855}}
 
 /* 異常狀態外觀 */
@@ -86,9 +87,29 @@
 .board-wrap.ult-cast::after{content:'';position:absolute;inset:0;z-index:20;pointer-events:none;border-radius:inherit;background:radial-gradient(circle at 50% 45%,transparent 40%,#ffffff2e 72%,#ffd36a55 100%);animation:ult-flash calc(.62s*var(--battle-rate,1)) ease-out forwards}
 @keyframes ult-flash{0%{opacity:0}22%{opacity:1}100%{opacity:0}}
 
-/* 投射物：朝向目標旋轉＋彗星拖尾 */
-.projectile{transform:rotate(var(--angle,0rad))}
-.projectile::after{content:'';position:absolute;top:50%;right:100%;width:26px;height:3px;transform:translateY(-50%);background:linear-gradient(270deg,var(--projectile,#ffd36a),transparent);border-radius:999px;opacity:.85}
+/* 元素投射物：飛行完成後才結算傷害，形狀與光效可直接辨識屬性。 */
+.projectile{width:20px;height:20px;rotate:var(--angle,0rad);animation-duration:calc(.34s*var(--battle-rate,1));animation-timing-function:cubic-bezier(.18,.72,.28,1);isolation:isolate}
+.projectile::before{content:'';position:absolute;inset:3px;border-radius:inherit;background:radial-gradient(circle at 35% 30%,#fff 0 12%,var(--projectile,#ffd36a) 34%,transparent 72%);filter:brightness(1.15)}
+.projectile::after{content:'';position:absolute;top:50%;right:72%;width:34px;height:8px;transform:translateY(-50%);background:linear-gradient(270deg,var(--projectile,#ffd36a),transparent);border-radius:999px;opacity:.88;filter:blur(1px);z-index:-1}
+.projectile-fire{width:24px;height:24px;background:radial-gradient(circle at 38% 34%,#fff9be 0 11%,#ffb21d 28%,#f04417 55%,#731013 72%,transparent 75%);box-shadow:0 0 10px 4px #ff7a24,0 0 22px #e52f16}
+.projectile-fire::before{inset:-5px;background:conic-gradient(from 20deg,#ffd76100,#ffef8e 18%,#ff5c1f 35%,#ff7a2400 58%,#ffd761 76%,#ff3c1700);clip-path:polygon(50% 0,63% 26%,95% 18%,75% 48%,100% 67%,62% 70%,50% 100%,38% 70%,0 67%,25% 48%,5% 18%,37% 26%);animation:projectile-flicker calc(.13s*var(--battle-rate,1)) steps(2) infinite}
+.projectile-ocean{background:radial-gradient(circle at 34% 28%,#fff 0 12%,#82eeff 24%,#2e92ff 57%,#123d93 73%);box-shadow:0 0 10px 4px #48cfff,0 0 20px #216fe8}
+.projectile-ocean::after{height:10px;background:repeating-linear-gradient(0deg,#9af4ff 0 2px,#278cf0 2px 4px,transparent 4px 6px)}
+.projectile-forest{border-radius:70% 20% 70% 20%;background:linear-gradient(135deg,#e8ff9a,#66d54a 46%,#17763d 72%);box-shadow:0 0 10px 4px #70db58,0 0 20px #2c8b4b}
+.projectile-forest::before{inset:4px;border-radius:0;background:linear-gradient(90deg,transparent 44%,#efffc9 45% 55%,transparent 56%);transform:rotate(-45deg)}
+.projectile-light{border-radius:18%;background:linear-gradient(45deg,transparent 30%,#fffbd1 31% 69%,transparent 70%),linear-gradient(-45deg,transparent 30%,#ffd95a 31% 69%,transparent 70%);box-shadow:0 0 10px 5px #fff2a0,0 0 24px #ffd45f}
+.projectile-dark{background:radial-gradient(circle at 55% 42%,#111 0 18%,#5b218d 38%,#b952e3 62%,#240b3e 75%);box-shadow:0 0 9px 4px #8d37bd,0 0 22px #431465}
+.projectile-dark::after{background:linear-gradient(270deg,#b85ae1,#57147d88,transparent)}
+@keyframes projectile-flicker{50%{transform:rotate(16deg) scale(1.12);filter:brightness(1.45)}}
+
+/* 點選單位時提供短暫焦點回饋；僅點選移鏡，行走與攻擊過程不追鏡。 */
+.unit.camera-focus{animation:camera-focus calc(.5s*var(--battle-rate,1)) ease-out}
+@keyframes camera-focus{0%{filter:brightness(1);outline:0 solid #fff0}35%{filter:brightness(1.35);outline:4px solid #fff6a8;outline-offset:3px}100%{filter:brightness(1);outline:0 solid #fff0;outline-offset:9px}}
+
+.skill-help{margin:10px 0 4px;padding:8px 9px;border-left:3px solid #72b8ff;background:#10233c;color:#bcd5f4;font-size:.74rem;line-height:1.45}
+.skill.basic-skill{border-color:#d5ad55;background:linear-gradient(135deg,#3a2a18,#24334c);color:#fff1c1}
+.skill.basic-skill::after{content:'保底';float:right;padding:1px 5px;border-radius:999px;background:#806027;color:#fff3bc;font-size:.62rem}
+.skill.cooling{border-color:#4f566b;background:#1a1d28}
 
 /* 傷害數字：隨機橫向漂移＋爆擊旋轉放大 */
 .damage-number{animation-name:damage-drift}
@@ -116,12 +137,12 @@ body.map-rift .board{background:radial-gradient(circle at 26% 32%,#453056 0 18%,
 
 /* 地形改為柔和有機色斑（不佔滿整格、圓角不規則、發光內暈） */
 .idle-arena .cell.terrain-fire,.idle-arena .cell.terrain-forest,.idle-arena .cell.terrain-water,.idle-arena .cell:nth-child(odd).terrain-fire,.idle-arena .cell:nth-child(odd).terrain-forest,.idle-arena .cell:nth-child(odd).terrain-water{background-color:transparent;background-image:none}
-.cell.terrain-fire::before,.cell.terrain-forest::before,.cell.terrain-water::before{content:'';position:absolute;inset:7%;z-index:0;pointer-events:none;border-radius:58% 42% 50% 50%/48% 55% 45% 52%}
-.cell:nth-child(3n).terrain-fire::before,.cell:nth-child(3n).terrain-forest::before,.cell:nth-child(3n).terrain-water::before{border-radius:44% 56% 60% 40%/55% 44% 56% 45%;transform:rotate(24deg)}
-.cell:nth-child(5n).terrain-fire::before,.cell:nth-child(5n).terrain-forest::before,.cell:nth-child(5n).terrain-water::before{border-radius:52% 48% 40% 60%/42% 58% 46% 54%;transform:rotate(-18deg)}
-.cell.terrain-fire::before{background:radial-gradient(circle at 46% 40%,#ff9a4d66 0 30%,#c2452a55 62%,transparent 78%);box-shadow:inset 0 0 12px #ff7b2e55}
-.cell.terrain-forest::before{background:radial-gradient(circle at 46% 40%,#7ed67d55 0 30%,#2f7a4455 62%,transparent 78%);box-shadow:inset 0 0 12px #55c97a44}
-.cell.terrain-water::before{background:radial-gradient(circle at 46% 40%,#6fc2ff5c 0 30%,#2c68b555 62%,transparent 78%);box-shadow:inset 0 0 12px #55a8ff4d}
+.cell.terrain-fire::before,.cell.terrain-forest::before,.cell.terrain-water::before{content:'';position:absolute;inset:-1px;z-index:0;pointer-events:none;border-radius:0;transform:none}
+.cell:nth-child(3n).terrain-fire::before,.cell:nth-child(3n).terrain-forest::before,.cell:nth-child(3n).terrain-water::before,
+.cell:nth-child(5n).terrain-fire::before,.cell:nth-child(5n).terrain-forest::before,.cell:nth-child(5n).terrain-water::before{border-radius:0;transform:none}
+.cell.terrain-fire::before{background:radial-gradient(circle at 25% 30%,#ffd27a2e 0 3px,transparent 4px) 0 0/24px 22px,linear-gradient(145deg,#c66a3b3d,#7d302f55);box-shadow:inset 0 0 16px #ff7b2e2f}
+.cell.terrain-forest::before{background:radial-gradient(circle at 28% 35%,#b9e5a527 0 2px,transparent 3px) 0 0/20px 18px,linear-gradient(145deg,#4f9a5f32,#245d3d52);box-shadow:inset 0 0 16px #55c97a26}
+.cell.terrain-water::before{background:repeating-linear-gradient(0deg,transparent 0 9px,#a9dfff1c 10px 11px),linear-gradient(145deg,#4c9ac13d,#275f8b52);box-shadow:inset 0 0 16px #55a8ff2b}
 .terrain-hint{position:relative;z-index:1;opacity:.75;filter:drop-shadow(0 1px 2px #000a)}
 
 /* 障礙物改為立體岩塊感 */

@@ -19,14 +19,14 @@ test('資料庫包含 115 隻幻獸（45 原生 + 20 光暗 + 50 素材包）', 
 test('戰棋資料與主資料數量一致', () => assert.equal(tactical.length, pets.length));
 test('每隻戰棋幻獸皆有三段進化', () => assert.ok(tactical.every(pet => pet.evolution?.length === 3)));
 test('每隻戰棋幻獸皆有可用技能與正數數值', () => assert.ok(tactical.every(pet => pet.skills?.length && Object.values(pet.stats).every(value => value > 0))));
-test('所有幻獸皆以可造成傷害的基本攻擊作為第一技能', () => assert.ok(tactical.every(pet => pet.skills[0]?.kind === 'basic' && pet.skills[0].attackStyle !== 'support' && pet.skills[0].cooldown === 0)));
+test('敵我所有戰棋單位皆以無冷卻傷害普攻作為第一技能', () => assert.ok(profiles.every(pet => pet.skills[0]?.kind === 'basic' && pet.skills[0].attackStyle !== 'support' && pet.skills[0].cooldown === 0 && pet.skills[0].multiplier > 0)));
 test('被動技能不會混入可點擊技能', () => assert.ok(tactical.every(pet => pet.skills.every(skill => !['atk_boost', 'def_boost', 'hp_boost', 'all_boost', 'burn'].includes(skill.effect)))));
 test('輔助技能的效果語意與攻擊型態一致', () => assert.ok(profiles.every(pet => pet.skills.every(skill => skill.attackStyle !== 'support' || ['heal', 'heal_all', 'shield', 'buff_atk'].includes(skill.effect)))));
 test('範圍技能具有有效半徑', () => assert.ok(profiles.flatMap(pet => pet.skills).filter(skill => skill.attackStyle === 'area').every(skill => skill.radius >= 1)));
 test('每個戰棋技能皆有資料驅動特效識別', () => assert.ok(profiles.every(pet => pet.skills.every(skill => skill.vfxKey && Number.isInteger(skill.vfxVariant) && skill.vfxHue >= 0 && skill.vfxHue < 360))));
 test('所有戰棋頭像與三階透明立繪存在', () => assert.ok(tactical.every(pet => existsSync(join(root, pet.sourceSheet)) && pet.evolution.every(stage => existsSync(join(root, stage.portrait))))));
 
-test('敵人資料包含 42 種小兵（12 通用 + 30 首領親衛）與 10 隻章節首領', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 42); assert.equal(enemies.filter(enemy => enemy.boss).length, 10); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2)); });
+test('敵人資料包含 42 種小兵（12 通用 + 30 首領親衛）與 10 隻章節首領', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 42); assert.equal(enemies.filter(enemy => enemy.boss).length, 10); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2 && boss.size <= 3)); });
 test('小兵只有單一階段且首領有專屬立繪', () => assert.ok(enemies.every(enemy => enemy.evolution.length === 1 && enemy.evolution[0].portrait.startsWith('assets/enemies/'))));
 test('所有敵人圖片檔案存在', () => assert.ok(enemies.every(enemy => existsSync(join(root, enemy.evolution[0].portrait)))));
 test('敵人陣營涵蓋擊退、拉扯、冰凍、中毒控場', () => {
@@ -73,14 +73,25 @@ test('關卡難度倍率章節內遞增、章節起點逐章提高', () => {
   const starts = content.maps.map(map => content.stages.find(stage => stage.mapId === map.id).power);
   assert.ok(starts.every((power, index) => index === 0 || power > starts[index - 1]), '章節起點難度未逐章提高');
 });
-test('障礙物配置決定性、落在中央走廊且每列最多一個', () => {
+test('障礙物配置決定性、落在中央走廊且形成相鄰群組', () => {
   for (const stage of content.stages) {
-    const first = content.obstaclesFor(stage, 30, 30), second = content.obstaclesFor(stage, 30, 30);
+    const first = content.obstaclesFor(stage, 20, 20), second = content.obstaclesFor(stage, 20, 20);
     assert.deepEqual(first, second);
-    assert.ok(first.length >= 6 && first.length <= 26);
-    assert.ok(first.every(spot => spot.x >= 8 && spot.x <= 21));
-    const rows = first.map(spot => spot.y);
-    assert.equal(new Set(rows).size, rows.length);
+    assert.ok(first.length >= 9 && first.length <= 12);
+    assert.ok(first.every(spot => spot.x >= 7 && spot.x <= 17 && spot.y >= 1 && spot.y <= 18));
+    assert.ok(first.every(spot => first.some(other => other !== spot && Math.abs(other.x - spot.x) + Math.abs(other.y - spot.y) <= 2)), `${stage.id} 出現孤立障礙物`);
+  }
+});
+test('地形以連續區塊生成而非零碎散點', () => {
+  for (const map of content.maps) {
+    const stage = content.stages.find(entry => entry.mapId === map.id);
+    const cells = [];
+    for (let y = 0; y < 20; y++) for (let x = 0; x < 20; x++) {
+      const terrain = content.terrainAt(stage, x, y);
+      if (terrain) cells.push({ x, y, terrain });
+    }
+    const connected = cells.filter(cell => [[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy]) => content.terrainAt(stage, cell.x + dx, cell.y + dy) === cell.terrain));
+    assert.ok(cells.length > 40 && connected.length / cells.length >= 0.88, `${map.id} 地形仍過度零碎`);
   }
 });
 test('六種定位都有三節點技能樹', () => assert.ok(Object.values(content.skillTrees).every(tree => tree.length === 3 && tree.every(node => node.id && node.bonus))));
@@ -193,11 +204,11 @@ test('技能樹會檢查技能點與前置節點', () => { const { sandbox } = p
 test('最終進化需要成長體、材料與融合', () => { const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content }), pet = tactical[2]; service.state.medals = 30; service.state.essences[pet.element] = 30; assert.equal(service.unlockEvolution(pet, 2).ok, true); assert.equal(service.unlockEvolution(pet, 3).ok, false); service.state.fusion[pet.id] = 1; assert.equal(service.unlockEvolution(pet, 3).ok, true); });
 
 test('主頁只導向唯一戰棋模式', () => { const home = readFileSync(join(root, 'index.html'), 'utf8'); assert.match(home, /url=tactics\.html/); assert.match(home, /href="tactics\.html"/); });
-test('戰棋使用 30×30 大地圖、最多 10 人編隊、路徑搜尋與左下部署', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /COLS = 30, ROWS = 30/); assert.match(source, /PARTY_SIZE = 10/); assert.match(source, /function pathTo/); assert.match(source, /function placeAllies/); assert.match(source, /function canStand/); assert.match(source, /function unitSize/); assert.match(source, /function enemyFormation/); assert.match(source, /function squadActive/); assert.match(source, /function canMove\(unit, x, y\).*pathTo/); });
-test('我方左下站位 10 格不重疊且全在部署區內', () => {
-  const slots = Array.from({ length: 10 }, (_, index) => ({ x: 2 + (index % 3), y: 27 - Math.floor(index / 3) * 2 }));
+test('戰棋使用 20×20 地圖、最多 10 人編隊、路徑搜尋與左下部署', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /COLS = 20, ROWS = 20/); assert.match(source, /PARTY_SIZE = 10/); assert.match(source, /function pathTo/); assert.match(source, /function placeAllies/); assert.match(source, /function canStand/); assert.match(source, /function unitSize/); assert.match(source, /function enemyFormation/); assert.match(source, /function squadActive/); assert.match(source, /function canMove\(unit, x, y\).*pathTo/); });
+test('我方左下站位 10 格不重疊且全在 6×6 部署區內', () => {
+  const slots = Array.from({ length: 10 }, (_, index) => ({ x: 1 + (index % 5), y: 13 + Math.floor(index / 5) * 2 }));
   assert.equal(new Set(slots.map(slot => slot.x + ',' + slot.y)).size, 10);
-  assert.ok(slots.every(slot => slot.x >= 1 && slot.x <= 8 && slot.y >= 19 && slot.y <= 28));
+  assert.ok(slots.every(slot => slot.x >= 1 && slot.x <= 6 && slot.y >= 13 && slot.y <= 18));
 });
 test('敵軍名冊展開為 10~30 隻且首領在首位', () => {
   for (const stage of content.stages) {
@@ -210,18 +221,21 @@ test('敵軍名冊展開為 10~30 隻且首領在首位', () => {
     }
   }
 });
-test('SRPG 介面：戰鬥預測、階段橫幅、威脅範圍、待機與取消移動', () => {
+test('SRPG 介面：點敵即施放、階段橫幅、威脅範圍、待機與取消移動', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
-  assert.match(source, /function showForecast/); assert.match(source, /function clearForecast/);
+  const clickSource = source.slice(source.indexOf('async function clickCell'), source.indexOf('function closest'));
+  assert.match(clickSource, /clearForecast\(\);\s*await act\(unit, target, skillOf\(unit\), state\.skill\)/);
+  assert.doesNotMatch(clickSource, /pendingTarget|showForecast|再點一次|fc-confirm/);
   assert.match(source, /function phaseBanner/); assert.match(source, /function computeThreat/);
   assert.match(source, /'🕒 待機'/); assert.match(source, /'↩ 取消移動'/);
-  assert.match(source, /state\.pendingTarget === target\.key/);
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
-  assert.match(html, /id="forecast"/); assert.match(html, /battle-topbar-tools/);
+  assert.doesNotMatch(html, /id="forecast"/); assert.match(html, /battle-topbar-tools/);
 });
-test('大地圖鏡頭：拖曳平移、鏡頭跟隨與小地圖', () => {
+test('大地圖鏡頭：拖曳平移、點選置中與小地圖', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   assert.match(source, /function focusCamera/); assert.match(source, /function enableCameraDrag/); assert.match(source, /function renderMinimap/);
+  const unitClickSource = source.slice(source.indexOf("element.addEventListener('click', function (event)"), source.indexOf('var threatTileMap'));
+  assert.match(unitClickSource, /focusUnit\(unit, false\)/);
   assert.match(source, /gridTemplateColumns = 'repeat\(' \+ COLS/);
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   assert.match(html, /id="minimap"/); assert.match(html, /id="minimap-view"/);
@@ -246,7 +260,52 @@ test('三畫面架構：準備、戰鬥、結算各自獨立', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   assert.match(source, /function setView\(view\)/);
 });
-test('戰鬥棋盤格子放大（18×9 取景）且支援縮放與體型樣式', () => { const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8'); assert.match(css, /--cell:calc\(clamp/); assert.match(css, /\*var\(--zoom\)/); assert.match(css, /\/18\)/); assert.match(css, /height:calc\(var\(--cell\)\*9/); assert.match(css, /\.unit\.size-2/); assert.match(css, /\.unit\.size-3/); assert.match(css, /boss-unit::before/); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /board-zoom/); });
+test('戰鬥棋盤與單位預設放大 1.5 倍且支援縮放與體型樣式', () => { const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8'); assert.match(css, /--zoom:1\.5/); assert.match(css, /--cell:calc\(clamp/); assert.match(css, /\*var\(--zoom\)/); assert.match(css, /height:calc\(var\(--cell\)\*9/); assert.match(css, /\.unit\.size-2/); assert.match(css, /\.unit\.size-3/); assert.match(css, /boss-unit::before/); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /boardZoom = 1\.5/); });
+
+test('所有幻獸與敵人依資料佔 1×1、2×2 或 3×3，立繪盡量填滿完整佔格', () => {
+  const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  assert.ok(profiles.every(pet => [1, 2, 3].includes(pet.size)));
+  assert.match(css, /\.unit\.size-1[^}]*width:100%[^}]*height:100%/);
+  assert.match(css, /\.unit\.size-2[^}]*width:200%[^}]*height:200%/);
+  assert.match(css, /\.unit\.size-3[^}]*width:300%[^}]*height:300%/);
+  assert.match(css, /\.idle-arena \.unit \.portrait[^}]*inset:0 0 7px[^}]*width:100%/);
+  assert.match(css, /background-position:center bottom/);
+});
+test('遠距技能依施術者屬性產生飛行投射物，並等待飛行完成再結算', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  assert.match(source, /projectile-fire|fire: '火球'/); assert.match(source, /projectileDelay = addProjectile/); assert.match(source, /await pause\(projectileDelay\)/);
+  const css = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
+  ['fire', 'forest', 'ocean', 'light', 'dark'].forEach(element => assert.match(css, new RegExp('projectile-' + element)));
+});
+test('戰鬥側欄只保留戰鬥資訊，不顯示進化解鎖按鈕', () => {
+  const html = readFileSync(join(root, 'tactics.html'), 'utf8');
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const detailSource = source.slice(source.indexOf('function renderDetail'), source.indexOf('async function clickCell'));
+  assert.doesNotMatch(html, /id="evolution-buttons"/); assert.doesNotMatch(source, /dom\.evolution/);
+  assert.doesNotMatch(detailSource, /unit\.p\.evolution|進化階段|成長體|最終型/);
+  assert.match(html, /class="skill-help"/); assert.match(source, /skill\.kind === 'basic' \? '⚔ 普攻/);
+});
+test('鏡頭只在玩家點選時置中，移動、攻擊與敵方行動不自動追鏡', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  assert.match(source, /card\.onclick[\s\S]*focusUnit\(unit, false\)/);
+  assert.match(source, /state\.phase === 'deploy'[\s\S]*focusUnit\(unit, false\)/);
+  assert.doesNotMatch(source, /focusUnit\(enemy/);
+  const walkSource = source.slice(source.indexOf('async function walkUnit'), source.indexOf('function terrainAttackMultiplier'));
+  const actSource = source.slice(source.indexOf('async function act'), source.indexOf('function processRoundEffects'));
+  assert.doesNotMatch(walkSource, /focusCamera|focusUnit/);
+  assert.doesNotMatch(actSource, /focusCamera|focusUnit/);
+});
+
+test('部署藍格僅在部署階段顯示，戰鬥地形具有獨立辨識符號', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const battleCss = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
+  const screenCss = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  assert.match(source, /classList\.toggle\('is-deploying', state\.phase === 'deploy'\)/);
+  assert.match(battleCss, /\.board\.is-deploying \.cell\.deploy-zone/);
+  assert.match(battleCss, /\.board:not\(\.is-deploying\) \.cell\.deploy-zone/);
+  assert.match(source, /terrainGlyph = tile === 'fire' \? '♨' : tile === 'forest' \? '♣' : '≈'/);
+  assert.match(screenCss, /terrain-hint-water/);
+});
 test('內部遊玩 10 場均在硬回合上限內結束', () => { const result = spawnSync(process.execPath, ['scripts/simulate-tactics.mjs'], { cwd: root, encoding: 'utf8' }); assert.equal(result.status, 0, result.stderr || result.stdout); assert.match(result.stdout, /10 場通過/); assert.equal((result.stdout.match(/第 \d+ 場/g) || []).length, 10); });
 
 console.log(`\n${passed}/${total} regression checks passed.`);
