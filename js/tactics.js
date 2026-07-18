@@ -2,10 +2,9 @@
 (function () {
   'use strict';
 
-  var COLS = 21, ROWS = 10, HARD_ROUND_LIMIT = 45, PARTY_SIZE = 6, AGGRO_RANGE = 7;
-  /* 布陣空間預設 5×5：大型（2×2）幻獸佔 4 格，天然限制大型單位的出戰數量。 */
-  /* Chapter 1's open lower plain: deployment block clear of the river and cliffs. */
-  var DEPLOY_MIN_X = 4, DEPLOY_MAX_X = 8, DEPLOY_MIN_Y = 5, DEPLOY_MAX_Y = 8;
+  var COLS = 21, ROWS = 10, HARD_ROUND_LIMIT = 45, DEPLOY_CAPACITY = 25, AGGRO_RANGE = 7;
+  /* 25 格底部部署區：6×4 主區（24 格）+ 右下 1 格，能容納 25 隻 1×1 或 6 隻 2×2 + 1 隻 1×1。 */
+  var DEPLOY_MIN_X = 3, DEPLOY_MAX_X = 9, DEPLOY_MIN_Y = 6, DEPLOY_MAX_Y = 9;
   var content = window.TACTICAL_CONTENT;
   var profiles = window.TACTICAL_PET_DATA.concat(window.TACTICAL_ENEMY_DATA || []);
   var progression = new window.TacticalProgression({ profiles: window.TACTICAL_PET_DATA, content: content });
@@ -33,8 +32,22 @@
     enterBattle: document.getElementById('enter-battle'), battleExit: document.getElementById('battle-exit'), battleStageLabel: document.getElementById('battle-stage-label'),
     battleAllyList: document.getElementById('battle-ally-list'), battleAllyCount: document.getElementById('battle-ally-count'), battleTeamTrait: document.getElementById('battle-team-trait'), battleObjective: document.getElementById('battle-objective'),
     battleEnemyCount: document.getElementById('battle-enemy-count'), battleEnemySummary: document.getElementById('battle-enemy-summary'),
-    auto: document.getElementById('auto-turn'), speed: document.getElementById('battle-speed'), endTurn: document.getElementById('end-turn')
+    auto: document.getElementById('auto-turn'), speed: document.getElementById('battle-speed'), terrainToggle: document.getElementById('terrain-toggle'), endTurn: document.getElementById('end-turn')
   };
+
+  var terrainAlwaysVisible = false;
+  try { terrainAlwaysVisible = localStorage.getItem('jose-terrain-visibility') === 'all'; } catch (error) { terrainAlwaysVisible = false; }
+  function syncTerrainVisibility() {
+    dom.board.classList.toggle('show-terrain', terrainAlwaysVisible);
+    if (!dom.terrainToggle) return;
+    dom.terrainToggle.setAttribute('aria-pressed', terrainAlwaysVisible ? 'true' : 'false');
+    dom.terrainToggle.textContent = terrainAlwaysVisible ? '🗺 地形：全開' : '🗺 地形：自動';
+  }
+  function toggleTerrainVisibility() {
+    terrainAlwaysVisible = !terrainAlwaysVisible;
+    try { localStorage.setItem('jose-terrain-visibility', terrainAlwaysVisible ? 'all' : 'adaptive'); } catch (error) { /* private storage may be unavailable */ }
+    syncTerrainVisibility(); audio.play('ui');
+  }
 
   /* 畫面切換：準備主頁／戰鬥頁／結算頁 三個獨立頁面。 */
   var currentView = 'home';
@@ -53,10 +66,12 @@
   function alive(team) { return state.units.filter(function (unit) { return unit.team === team && unit.hp > 0; }); }
   function selected() { return state.units.find(function (unit) { return unit.key === state.selected; }); }
   function unitSize(unit) { return (unit && unit.p && unit.p.size) || 1; }
+  function deploymentCost(pet) { return progression.deploymentCost(pet && pet.p ? pet.p : pet); }
+  function selectedDeploymentCost(ids) { return progression.partyCost(ids || deploySelection); }
   /* 多格佔位：大型單位以左上角為錨點，footprint 覆蓋 size×size 格。 */
   function at(x, y) {
     return state.units.find(function (unit) {
-      if (unit.hp <= 0) return false;
+      if (unit.hp <= 0 && !unit.defeating) return false;
       var size = unitSize(unit);
       return x >= unit.x && x < unit.x + size && y >= unit.y && y < unit.y + size;
     });
@@ -113,24 +128,32 @@
     return unit;
   }
 
-  /* 我方站位：在 5×5 布陣區內貪婪擺放（大型單位需 2×2 連續空格），放不下的幻獸列為候補。 */
-  function inDeployZone(x, y) { return x >= DEPLOY_MIN_X && x <= DEPLOY_MAX_X && y >= DEPLOY_MIN_Y && y <= DEPLOY_MAX_Y; }
+  /* 25 格主部署區；3×3 幻獸成本依規則只算 3，改在左上大型部署列排列，避免合法編隊被候補。 */
+  function inDeployZone(x, y) { return (x >= 3 && x <= 8 && y >= 6 && y <= 9) || (x === 9 && y === 9); }
+  function inLargeDeployReserve(x, y) { return x >= 0 && x <= 11 && y >= 0 && y <= 5; }
   function deployFits(unit, x, y) {
     var size = unitSize(unit);
     for (var dy = 0; dy < size; dy++) for (var dx = 0; dx < size; dx++) {
-      if (!inDeployZone(x + dx, y + dy)) return false;
+      if (size === 3 ? !inLargeDeployReserve(x + dx, y + dy) : !inDeployZone(x + dx, y + dy)) return false;
     }
     return canStand(unit, x, y);
   }
+  function clearDeploymentObstacles() {
+    var hasSizeThree = partyIds.some(function (id) { return (profile(id) || {}).size === 3; });
+    state.obstacles = state.obstacles.filter(function (spot) { return !inDeployZone(spot.x, spot.y) && !(hasSizeThree && inLargeDeployReserve(spot.x, spot.y)); });
+    state.obstacleMap = {};
+    state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
+  }
   function placeAllies() {
     var benched = [];
-    partyIds.forEach(function (id, index) {
+    var orderedParty = partyIds.slice().sort(function (a, b) { return (profile(b).size || 1) - (profile(a).size || 1); });
+    orderedParty.forEach(function (id, index) {
       var unit = clone(id, 'ally', -9, -9, index), placed = false;
       state.units.push(unit);
-      for (var y = DEPLOY_MIN_Y; y <= DEPLOY_MAX_Y && !placed; y++) for (var x = DEPLOY_MIN_X; x <= DEPLOY_MAX_X && !placed; x++) {
+      for (var y = 0; y < ROWS && !placed; y++) for (var x = 0; x < COLS && !placed; x++) {
         if (deployFits(unit, x, y)) { unit.x = x; unit.y = y; placed = true; }
       }
-      if (!placed) { state.units.pop(); benched.push(unit.p.name + (unitSize(unit) > 1 ? '（2×2）' : '')); }
+      if (!placed) { state.units.pop(); benched.push(unit.p.name + '（' + unitSize(unit) + '×' + unitSize(unit) + '）'); }
     });
     return benched;
   }
@@ -142,7 +165,7 @@
     function free(x, y) {
       for (var dy = 0; dy < size; dy++) for (var dx = 0; dx < size; dx++) {
         var fx = x + dx, fy = y + dy;
-        if (!inBoard(fx, fy) || obstacleAt(fx, fy) || occupied[fx + ',' + fy] || (fx <= DEPLOY_MAX_X + 2 && fy >= DEPLOY_MIN_Y - 2)) return false;
+        if (!inBoard(fx, fy) || obstacleAt(fx, fy) || at(fx, fy) || occupied[fx + ',' + fy] || (fx <= DEPLOY_MAX_X + 2 && fy >= DEPLOY_MIN_Y - 2)) return false;
       }
       return true;
     }
@@ -205,6 +228,7 @@
       enemyScale: scale, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {} };
     state.obstacles = (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
+    clearDeploymentObstacles();
     var benched = placeAllies();
     var roster = content.rosterFor ? content.rosterFor(currentStage) : currentStage.enemies;
     enemyFormation(roster).forEach(function (spot, index) {
@@ -319,15 +343,39 @@
     if (!path || !path.length) return false;
     unit.prevX = unit.x; unit.prevY = unit.y; /* 供「取消移動」還原 */
     state.animating = true; note(unitName(unit) + ' 移動 ' + path.length + ' 格。');
-    for (var index = 0; index < path.length; index++) {
-      var fromX = unit.x, fromY = unit.y;
-      if (path[index].x !== fromX) unit.facing = path[index].x > fromX ? 'right' : 'left';
-      unit.x = path[index].x; unit.y = path[index].y; render();
-      var piece = dom.board.querySelector('[data-key="' + unit.key + '"]');
-      if (piece) { piece.style.setProperty('--walk-x', (fromX - unit.x) * 100 + '%'); piece.style.setProperty('--walk-y', (fromY - unit.y) * 100 + '%'); piece.classList.add('walking'); }
-      audio.play('move'); await pause(135);
-    }
+    await animateWaypoints(unit, path, 'walking', 115);
     unit.moved = true; state.animating = false; note(unitName(unit) + ' 抵達 ' + (unit.x + 1) + '-' + (unit.y + 1) + '。'); render(); maybeAutoEndAfterMoves(); return true;
+  }
+
+  /* 單次 WAAPI 路徑：資料先到終點，畫面沿途連續位移，只在終點重繪。 */
+  async function animateWaypoints(unit, path, motionClass, millisecondsPerCell) {
+    if (!path.length) return;
+    var originX = unit.x, originY = unit.y;
+    var piece = dom.board.querySelector('[data-key="' + unit.key + '"]');
+    var cellWidth = dom.board.clientWidth / COLS, cellHeight = dom.board.clientHeight / ROWS;
+    var totalDuration = duration(millisecondsPerCell * path.length), timers = [];
+    path.forEach(function (point, index) {
+      var fromX = index ? path[index - 1].x : originX;
+      timers.push(setTimeout(function () {
+        if (point.x !== fromX) unit.facing = path[index].x > fromX ? 'right' : 'left';
+        if (piece) {
+          piece.classList.toggle('facing-right', unit.facing === 'right');
+          piece.classList.toggle('facing-left', unit.facing === 'left');
+        }
+        audio.play('move');
+      }, Math.round(totalDuration * index / path.length)));
+    });
+    unit.x = path[path.length - 1].x; unit.y = path[path.length - 1].y;
+    if (piece && typeof piece.animate === 'function' && cellWidth > 0 && cellHeight > 0) {
+      piece.classList.add(motionClass);
+      var keyframes = [{ transform: 'translate(0px, 0px)', offset: 0 }].concat(path.map(function (point, index) {
+        return { transform: 'translate(' + ((point.x - originX) * cellWidth) + 'px, ' + ((point.y - originY) * cellHeight) + 'px)', offset: (index + 1) / path.length };
+      }));
+      var animation = piece.animate(keyframes, { duration: totalDuration, easing: 'linear', fill: 'forwards' });
+      try { await animation.finished; } catch (error) { /* render/navigation cancellation is safe */ }
+      piece.classList.remove(motionClass);
+    } else await pause(millisecondsPerCell * path.length);
+    timers.forEach(clearTimeout);
   }
 
   function damage(attacker, target, skill, options) {
@@ -346,6 +394,7 @@
     if (options.secondary) amount = Math.round(amount * 0.72);
     var absorbed = Math.min(target.shield, amount); target.shield -= absorbed; amount -= absorbed;
     target.hp = Math.max(0, target.hp - amount);
+    if (target.hp <= 0) target.defeating = true;
     if (attacker.team === 'ally') state.stats.damage += amount;
     return { amount: amount, absorbed: absorbed, crit: crit };
   }
@@ -531,24 +580,29 @@
     var dx = target.x - caster.x, dy = target.y - caster.y;
     var stepX = Math.abs(dx) >= Math.abs(dy) ? Math.sign(dx) || 1 : 0, stepY = stepX ? 0 : Math.sign(dy) || 1;
     if (skill.pull) { stepX = -stepX; stepY = -stepY; }
-    var movedTiles = 0;
+    var movedTiles = 0, path = [], plannedX = target.x, plannedY = target.y;
     for (var index = 0; index < tiles; index++) {
-      var nx = target.x + stepX, ny = target.y + stepY;
+      var nx = plannedX + stepX, ny = plannedY + stepY;
       if (skill.pull && Math.abs(nx - caster.x) + Math.abs(ny - caster.y) < 1) break;
       if (!inBoard(nx, ny) || obstacleAt(nx, ny) || at(nx, ny)) {
         var impact = Math.max(10, Math.round(target.maxHp * 0.05 * (tiles - index)));
         target.hp = Math.max(0, target.hp - impact);
+        if (target.hp <= 0) target.defeating = true;
         if (caster.team === 'ally') state.stats.damage += impact;
         statusLabel(target, '💥 撞擊 −' + impact); audio.play('hit');
         break;
       }
-      target.x = nx; target.y = ny; movedTiles++;
-      render();
-      var piece = dom.board.querySelector('[data-key="' + target.key + '"]');
-      if (piece) { piece.style.setProperty('--walk-x', -stepX * 100 + '%'); piece.style.setProperty('--walk-y', -stepY * 100 + '%'); piece.classList.add('knocked'); }
-      await pause(95);
+      plannedX = nx; plannedY = ny; path.push({ x: nx, y: ny }); movedTiles++;
     }
-    if (movedTiles) { statusLabel(target, skill.push ? '💨 擊退' : '🪝 拉扯'); audio.play('push'); render(); }
+    if (movedTiles) { await animateWaypoints(target, path, 'knocked', 100); statusLabel(target, skill.push ? '💨 擊退' : '🪝 拉扯'); audio.play('push'); }
+    if (movedTiles || target.hp <= 0) render();
+    if (target.hp <= 0) {
+      var defeatedPiece = dom.board.querySelector('[data-key="' + target.key + '"]');
+      if (defeatedPiece) defeatedPiece.classList.add('defeated', 'unit-defeated');
+      burst(target, skill.vfxHue, 'death', 14); impactRing(target, skill.vfxHue); combatShake('light');
+      await hitStop(75); await pause(450);
+      target.defeating = false; dom.board.parentElement.parentElement.classList.remove('shake-light'); render();
+    }
   }
 
   function canCounter(defender, attacker) {
@@ -580,6 +634,20 @@
     banner.innerHTML = '<b>' + text + '</b>';
     wrap.appendChild(banner);
     setTimeout(function () { banner.remove(); }, duration(1100));
+  }
+
+  async function hitStop(milliseconds) {
+    dom.board.classList.add('hitstop');
+    await new Promise(function (resolve) { setTimeout(resolve, milliseconds); });
+    dom.board.classList.remove('hitstop');
+  }
+
+  function combatShake(kind) {
+    var viewport = dom.board.parentElement.parentElement;
+    viewport.classList.remove('shake-light', 'shake-crit', 'shake-ultimate');
+    void viewport.offsetWidth;
+    viewport.classList.add('shake-' + kind);
+    return viewport;
   }
 
   async function act(unit, target, skill, skillIndex, options) {
@@ -627,24 +695,30 @@
       audio.play(skill.attackStyle === 'melee' ? 'attack' : 'ranged');
     }
     note(message); render();
+    casterPiece = dom.board.querySelector('[data-key="' + unit.key + '"]');
     if (skill.attackStyle === 'melee' && casterPiece) {
       casterPiece.style.setProperty('--dash-x', (target.x - unit.x) * 42 + 'px'); casterPiece.style.setProperty('--dash-y', (target.y - unit.y) * 42 + 'px'); casterPiece.classList.add('dash');
     }
     await pause(150); effects.forEach(function (effect) { addVisual(effect.target, unit.p.element, skill, effect.amount, effect.healing, effect.absorbed, effect.crit); });
     if (effects.some(function (effect) { return !effect.healing; })) {
-      dom.board.parentElement.parentElement.classList.add(anyCrit ? 'shake-hard' : 'shake'); audio.play(anyCrit ? 'crit' : 'hit');
+      combatShake(skill.kind === 'ultimate' ? 'ultimate' : anyCrit ? 'crit' : 'light');
+      await hitStop(anyCrit ? 120 : skill.kind === 'ultimate' ? 90 : 75);
+      audio.play(anyCrit ? 'crit' : 'hit');
     }
     var defeated = effects.filter(function (effect) { return !effect.healing && effect.target.hp <= 0; });
+    var bossDefeated = defeated.some(function (effect) { return effect.target.boss; });
     defeated.forEach(function (effect) {
       var piece = dom.board.querySelector('[data-key="' + effect.target.key + '"]');
-      if (piece) piece.classList.add('defeated');
+      if (piece) piece.classList.add('defeated', effect.target.boss ? 'boss-defeated' : 'unit-defeated');
       burst(effect.target, skill.vfxHue, 'death', effect.target.boss ? 26 : 14); impactRing(effect.target, skill.vfxHue);
     });
-    await pause(330);
+    if (bossDefeated) dom.board.parentElement.parentElement.classList.add('boss-death-flash');
+    await pause(defeated.length ? 450 : 330);
     if (casterPiece) { casterPiece.classList.remove('cast', 'dash'); }
-    dom.board.parentElement.parentElement.classList.remove('shake', 'shake-hard');
+    dom.board.parentElement.parentElement.classList.remove('shake-light', 'shake-crit', 'shake-ultimate', 'boss-death-flash');
     if ((skill.push || skill.pull) && target.hp > 0) await displace(unit, target, skill);
-    if (defeated.length) await pause(160);
+    defeated.forEach(function (effect) { effect.target.defeating = false; });
+    if (defeated.length) render();
 
     if (!options.counter && skill.attackStyle !== 'support' && target.hp > 0 && canCounter(target, unit) && !state.over) {
       note(unitName(target) + ' 抓住破綻，發動反擊！'); render(); await act(target, unit, target.p.skills[0], 0, { counter: true, nested: true });
@@ -694,12 +768,19 @@
       element.innerHTML = '<span class="terrain-hint terrain-hint-' + tile + '" aria-hidden="true">' + terrainLabel + '</span>';
     }
     else element.innerHTML = '';
-    if (state.phase === 'deploy' && inDeployZone(x, y) && !unit) element.classList.add('deploy-zone');
+    if (state.phase === 'deploy' && !unit && (inDeployZone(x, y) || (active && unitSize(active) === 3 && inLargeDeployReserve(x, y)))) element.classList.add('deploy-zone');
     if (threatTileMap && threatTileMap[x + ',' + y]) element.classList.add(threatTileMap[x + ',' + y] === 'move' ? 'threat-move' : 'threat-range');
     if (active && state.phase === 'deploy' && active.team === 'ally' && !unit && deployFits(active, x, y)) element.classList.add('move-target');
     if (active && state.phase === 'player' && !state.over) {
       if (state.mode === 'move' && !active.moved && moveTargetMap && moveTargetMap[x + ',' + y]) element.classList.add('move-target');
       if (state.mode === 'skill' && unit && !active.acted && canTarget(active, unit)) element.classList.add(skillOf(active).attackStyle === 'support' ? 'support-target' : 'attack-target');
+    }
+    if (tile && active && active.team === 'ally') {
+      var inMoveScope = state.mode === 'move' && moveTargetMap && moveTargetMap[x + ',' + y];
+      var gapX = Math.max(0, x - (active.x + unitSize(active) - 1), active.x - x);
+      var gapY = Math.max(0, y - (active.y + unitSize(active) - 1), active.y - y);
+      var inSkillScope = state.mode === 'skill' && gapX + gapY <= skillRange(active, skillOf(active));
+      if (inMoveScope || inSkillScope || (x === active.x && y === active.y)) element.classList.add('terrain-relevant');
     }
     element.addEventListener('click', function () { clickCell(x, y); });
     if (unit && unit.x === x && unit.y === y) element.appendChild(unitElement(unit));
@@ -708,7 +789,7 @@
   }
 
   function unitElement(unit) {
-    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : ''); element.dataset.key = unit.key;
+    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
     var statuses = (unit.shield > 0 ? '🛡️' : '') + (unit.burn > 0 ? '🔥' : '') + (unit.poison > 0 ? '☠️' : '') + (unit.freeze > 0 ? '❄️' : '') + (unit.atkBuff > 0 ? '⬆️' : '');
     element.title = unit.p.name + '（' + unit.p.roleLabel + '）';
@@ -1178,9 +1259,22 @@
 
   function openDeploy() { if (!state.over && state.phase !== 'deploy' && state.round > 1) { note('進行中的戰鬥不可更換隊伍，請先完成或重新開始。'); return; } deploySelection = partyIds.slice(); renderDeploy(); dom.deployModal.hidden = false; }
   function renderDeploy() {
-    var roster = progression.ownedPets();
-    dom.deployHelp.textContent = '已選 ' + deploySelection.length + '/' + PARTY_SIZE + ' 隻（1〜6 自由編制）｜已擁有 ' + roster.length + '/' + window.TACTICAL_PET_DATA.length + ' 隻，新幻獸可透過 🎰 召喚取得。'; dom.deployGrid.innerHTML = '';
-    roster.forEach(function (pet) { var button = document.createElement('button'), active = deploySelection.indexOf(pet.id) >= 0; button.className = 'deploy-card' + (active ? ' selected' : ''); button.innerHTML = '<span class="deploy-art" style="background-image:url(\'' + pet.evolution[portraitStage(pet.id) - 1].portrait + '\')"></span><b>' + pet.name + (pet.size > 1 ? ' ⬛' : '') + '</b><small>' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + (pet.size > 1 ? '｜2×2 佔 4 格' : '') + '</small>'; button.onclick = function () { var index = deploySelection.indexOf(pet.id); if (index >= 0) deploySelection.splice(index, 1); else if (deploySelection.length < PARTY_SIZE) deploySelection.push(pet.id); else { dom.deployHelp.textContent = '隊伍已滿（6 隻），請先取消一隻幻獸。'; return; } renderDeploy(); }; dom.deployGrid.appendChild(button); });
+    var roster = progression.ownedPets(), used = selectedDeploymentCost();
+    dom.deployHelp.innerHTML = '<b>出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY + '</b>｜已選 ' + deploySelection.length + ' 隻｜1×1＝1、2×2＝4、3×3＝3｜已擁有 ' + roster.length + '/' + window.TACTICAL_PET_DATA.length + ' 隻。'; dom.deployGrid.innerHTML = '';
+    roster.forEach(function (pet) {
+      var button = document.createElement('button'), active = deploySelection.indexOf(pet.id) >= 0, cost = deploymentCost(pet), nextCost = used + cost;
+      button.className = 'deploy-card' + (active ? ' selected' : '') + (!active && nextCost > DEPLOY_CAPACITY ? ' over-capacity' : '');
+      button.innerHTML = '<span class="deploy-art" style="background-image:url(\'' + pet.evolution[portraitStage(pet.id) - 1].portrait + '\')"></span><b>' + pet.name + (pet.size > 1 ? ' ⬛' : '') + '</b><small>' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + '｜' + pet.size + '×' + pet.size + ' 佔 ' + cost + ' 單位</small>';
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      button.onclick = function () {
+        var index = deploySelection.indexOf(pet.id);
+        if (index >= 0) deploySelection.splice(index, 1);
+        else if (selectedDeploymentCost() + cost <= DEPLOY_CAPACITY) deploySelection.push(pet.id);
+        else { dom.deployHelp.innerHTML = '<b>出陣單位不足：</b>目前 ' + selectedDeploymentCost() + '/' + DEPLOY_CAPACITY + '，' + pet.name + ' 需要 ' + cost + ' 單位。'; return; }
+        renderDeploy();
+      };
+      dom.deployGrid.appendChild(button);
+    });
   }
 
   /* ── 圖鑑：收集進度與全帳號加成 ── */
@@ -1322,11 +1416,17 @@
       list.appendChild(card);
     });
   }
-  function confirmDeploy() { if (!deploySelection.length || deploySelection.length > PARTY_SIZE) { dom.deployHelp.textContent = '請選擇 1〜' + PARTY_SIZE + ' 隻幻獸（目前 ' + deploySelection.length + ' 隻）。'; return; } progression.setParty(deploySelection); partyIds = progress.party.slice(); dom.deployModal.hidden = true; reset(currentStage.id); }
+  function confirmDeploy() {
+    var used = selectedDeploymentCost();
+    if (!deploySelection.length || used > DEPLOY_CAPACITY) { dom.deployHelp.textContent = '請選擇至少 1 隻幻獸，且出陣單位不得超過 ' + DEPLOY_CAPACITY + '（目前 ' + used + '）。'; return; }
+    if (!progression.setParty(deploySelection)) { dom.deployHelp.textContent = '編隊資料無效，請確認幻獸擁有狀態與出陣單位。'; return; }
+    partyIds = progress.party.slice(); dom.deployModal.hidden = true; reset(currentStage.id);
+  }
 
   document.addEventListener('pointerdown', function unlockOnce() { audio.unlock(); document.removeEventListener('pointerdown', unlockOnce); }, { once: true });
   document.getElementById('restart').onclick = function () { reset(stageRef()); };
   dom.endTurn.onclick = endTurn; dom.auto.onclick = toggleAuto; dom.speed.onclick = cycleSpeed;
+  if (dom.terrainToggle) dom.terrainToggle.onclick = toggleTerrainVisibility;
   dom.sound.onclick = function () { var enabled = progression.toggleSound(); audio.setEnabled(enabled); renderProgress(); if (enabled) audio.play('ui'); };
   document.getElementById('open-campaign').onclick = openCampaign; document.getElementById('open-growth').onclick = openGrowth;
   document.getElementById('open-dex').onclick = openDex; document.getElementById('open-gacha').onclick = openGacha; document.getElementById('open-daily').onclick = openDaily;
@@ -1385,6 +1485,7 @@
     focusCamera((event.clientX - rect.left) / rect.width * COLS - 0.5, (event.clientY - rect.top) / rect.height * ROWS - 0.5, false);
   });
 
+  syncTerrainVisibility();
   reset(currentStage.id);
   if (/[?&]view=battle/.test(window.location.search)) { setView('battle'); focusDeployZone(true); }
   var openMatch = window.location.search.match(/[?&]open=(campaign|dex|gacha|daily|deploy|growth|home|shop|bag)/);

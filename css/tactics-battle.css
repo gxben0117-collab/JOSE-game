@@ -33,6 +33,28 @@
 .unit.defeated{animation:defeated calc(.5s*var(--battle-rate,1)) ease-in forwards;pointer-events:none}
 @keyframes defeated{0%{opacity:1;filter:none}40%{opacity:.9;filter:brightness(2.2) saturate(0)}100%{opacity:0;transform:scale(.6) rotate(6deg);filter:brightness(0)}}
 
+/* V0.16 adaptive terrain labels and graded combat impact. */
+.cell .terrain-hint{opacity:.25!important;transition:opacity .14s ease,transform .14s ease}
+.cell.terrain-fire .terrain-hint,.cell.obstacle .obstacle-icon{opacity:.55!important}
+.cell.terrain-relevant .terrain-hint,.board.show-terrain .terrain-hint{opacity:.9!important;transform:scale(1.08)}
+.board.show-terrain .cell.obstacle .obstacle-icon{opacity:.9!important}
+.board.hitstop *{animation-play-state:paused!important}
+.unit.walking,.unit.knocked{animation:none!important;will-change:transform}
+.board-viewport.shake-light{animation:impact-shake-light .22s ease-out}
+.board-viewport.shake-crit{animation:impact-shake-crit .34s ease-out}
+.board-viewport.shake-ultimate{animation:impact-shake-ultimate .42s ease-out}
+@keyframes impact-shake-light{0%,100%{transform:none}28%{transform:translate(-2px,1px)}60%{transform:translate(2px,-1px)}}
+@keyframes impact-shake-crit{0%,100%{transform:none}16%{transform:translate(-5px,2px)}38%{transform:translate(5px,-3px)}62%{transform:translate(-4px,-1px)}82%{transform:translate(3px,2px)}}
+@keyframes impact-shake-ultimate{0%,100%{transform:none}12%{transform:translate(-8px,3px)}28%{transform:translate(8px,-5px)}46%{transform:translate(-7px,-3px)}65%{transform:translate(6px,4px)}82%{transform:translate(-4px,2px)}}
+.damage-number.crit{font-size:1.35rem!important;color:#ffad32!important;font-weight:1000;text-shadow:0 0 6px #fff,0 0 15px #ff6b00,0 3px 2px #000!important}
+.unit.defeated{transform-origin:center bottom;animation:unit-death-sink calc(.45s*var(--battle-rate,1)) ease-in forwards!important}
+@keyframes unit-death-sink{0%{opacity:1;filter:none;transform:translateY(0) rotate(0)}35%{opacity:1;filter:brightness(2.5) saturate(0);transform:translateY(2%) rotate(-3deg)}100%{opacity:0;filter:grayscale(1) brightness(.25);transform:translateY(48%) rotate(12deg) scale(.72)}}
+.unit.boss-defeated{animation:boss-death-slow calc(.55s*var(--battle-rate,1)) ease-in forwards!important}
+@keyframes boss-death-slow{0%{opacity:1;filter:brightness(1);transform:scale(1)}32%{opacity:1;filter:brightness(4) saturate(0);transform:scale(1.08)}100%{opacity:0;filter:grayscale(1) brightness(.4);transform:translateY(35%) rotate(7deg) scale(.82)}}
+.board-viewport.boss-death-flash::after{content:'';position:absolute;inset:0;z-index:30;background:#fff;pointer-events:none;animation:boss-white-flash .3s ease-out forwards}
+@keyframes boss-white-flash{0%{opacity:.92}100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.board-viewport.shake-light,.board-viewport.shake-crit,.board-viewport.shake-ultimate{animation:none!important}.unit.defeated{animation-duration:.12s!important}.board-viewport.boss-death-flash::after{animation-duration:.12s!important}}
+
 /* 技能特效變體 */
 .vfx.fx-freeze{background:radial-gradient(circle,#e8fbff 0%,#9fd9ff 34%,#3f8fe600 72%)!important;clip-path:polygon(50% 0,63% 32%,100% 38%,72% 60%,82% 100%,50% 76%,18% 100%,28% 60%,0 38%,37% 32%);animation:fx-freeze calc(.62s*var(--battle-rate,1)) ease-out forwards}
 @keyframes fx-freeze{0%{opacity:0;transform:scale(.3) rotate(-18deg)}30%{opacity:1;transform:scale(1.15) rotate(4deg)}100%{opacity:0;transform:scale(.9) rotate(14deg)}}

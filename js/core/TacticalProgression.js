@@ -4,7 +4,7 @@
 
   var SAVE_KEY = 'jose-tactics-progression-v2';
   var LEGACY_KEY = 'jose-tactics-progression-v1';
-  var PARTY_MAX = 6;
+  var DEPLOY_CAPACITY = 25;
   /* 初始陣容：熔球獸、炎獅、火狐 + 會治療的葉耳兔。 */
   var DEFAULT_PARTY = ['molten_ball', 'fire_lion', 'fire_fox', 'leaf_ear_rabbit'];
   var STARTER_PETS = DEFAULT_PARTY.slice();
@@ -17,6 +17,11 @@
     { id: 'd-chest', name: '活躍寶箱', description: '完成上列全部每日任務', stat: 'chest', target: 3, reward: { crystals: 20, fusionCore: 1 } }
   ];
   var ELEMENTS = ['fire', 'forest', 'ocean', 'light', 'dark'];
+
+  function deploymentCost(profile) {
+    var size = Number(profile && profile.size) || 1;
+    return size === 3 ? 3 : size === 2 ? 4 : 1;
+  }
 
   function number(value, fallback) { value = Number(value); return Number.isFinite(value) ? value : fallback; }
   function emptyElements() { return { fire: 0, forest: 0, ocean: 0, light: 0, dark: 0 }; }
@@ -88,10 +93,16 @@
   TacticalProgression.prototype.migrate = function (raw) {
     var next = Object.assign(fresh(), raw || {});
     next.version = 2;
-    // 彈性 1〜6 隻編制：舊存檔超過六隻時保留前六隻，無效或空隊伍回復預設隊伍。
+    // 出陣成本上限 25：1×1=1、2×2=4、3×3=3；遷移時依原順序保留可容納成員。
     var party = Array.isArray(next.party) ? next.party.filter(this.validPet.bind(this)) : [];
     party = party.filter(function (id, index) { return party.indexOf(id) === index; });
-    next.party = party.length ? party.slice(0, PARTY_MAX) : DEFAULT_PARTY.slice();
+    var used = 0, self = this;
+    next.party = party.filter(function (id) {
+      var cost = self.deploymentCost(id);
+      if (used + cost > DEPLOY_CAPACITY) return false;
+      used += cost; return true;
+    });
+    if (!next.party.length) next.party = DEFAULT_PARTY.slice();
     next.medals = Math.max(0, number(next.medals, 0));
     next.fusionCores = Math.max(0, number(next.fusionCores, 0));
     next.wins = Math.max(0, number(next.wins, 0));
@@ -138,11 +149,22 @@
   };
 
   TacticalProgression.prototype.setParty = function (party) {
-    if (!Array.isArray(party) || !party.length || party.length > PARTY_MAX || !party.every(this.validPet.bind(this))) return false;
+    if (!Array.isArray(party) || !party.length || !party.every(this.validPet.bind(this))) return false;
     if (new Set(party).size !== party.length) return false;
     if (!party.every(this.owns.bind(this))) return false;
+    if (this.partyCost(party) > DEPLOY_CAPACITY) return false;
     this.state.party = party.slice(); this.save(); return true;
   };
+
+  TacticalProgression.prototype.deploymentCost = function (petOrId) {
+    var profile = typeof petOrId === 'string' ? this.profiles.find(function (pet) { return pet.id === petOrId; }) : petOrId;
+    return deploymentCost(profile);
+  };
+  TacticalProgression.prototype.partyCost = function (party) {
+    var self = this;
+    return (party || this.state.party || []).reduce(function (total, id) { return total + self.deploymentCost(id); }, 0);
+  };
+  TacticalProgression.prototype.partyCapacity = function () { return DEPLOY_CAPACITY; };
 
   /* ── 幻獸擁有制與召喚 ── */
   TacticalProgression.prototype.owns = function (id) { return Boolean(this.state.owned[id]); };
@@ -445,7 +467,7 @@
       this.state.wins++; daily.wins++;
       if (summary.bossKill) this.state.bossKills++;
       reward.firstClear = !this.state.cleared[stage.id];
-      reward.stars = 1 + (summary.survivors >= (summary.partySize || PARTY_MAX) ? 1 : 0) + (summary.round <= stage.turnLimit ? 1 : 0);
+      reward.stars = 1 + (summary.survivors >= (summary.partySize || this.state.party.length) ? 1 : 0) + (summary.round <= stage.turnLimit ? 1 : 0);
       reward.medals = reward.firstClear ? stage.rewards.medals : Math.max(1, Math.floor(stage.rewards.medals / 2));
       reward.essence = reward.firstClear ? stage.rewards.essence : Math.max(1, Math.floor(stage.rewards.essence / 2));
       reward.fusionCore = reward.firstClear ? stage.rewards.fusionCore : 0;

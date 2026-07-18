@@ -1,154 +1,257 @@
-# -*- coding: utf-8 -*-
-"""Derive per-cell battle-map annotations from the map art geometry.
+"""Classify the 60 rendered 21x10 maps into gameplay terrain.
 
-Every one of the 60 maps is produced by scripts/generate-battle-assets.py:
-a shared forest/river/cliff base plate plus deterministic chapter and
-variant overlays.  This script re-runs the exact same overlay geometry,
-measures which 80×80 board cells each painted feature covers, and emits
-js/data/map-terrain.js — one 21×10 grid per map so the in-game water /
-forest / fire / impassable markers always match the visible art.
-
-Legend: '.' plain  'W' water  'F' forest  'R' fire/lava  '#' impassable
+The source JPG is authoritative: every cell is sampled from its inner area and
+classified from hue distribution, relative luminance and texture.  The output
+also contains review overlays and connectivity validation, so changing map art
+cannot silently leave stale gameplay terrain behind.
 """
+
 from __future__ import annotations
 
+import colorsys
+import heapq
 import json
-import math
+import statistics
+from dataclasses import dataclass
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageStat
+from PIL import Image, ImageDraw, ImageFont, ImageStat
 
-ROOT = Path(__file__).resolve().parent.parent
-OUT = ROOT / "js" / "data" / "map-terrain.js"
-W, H = 1680, 800
-COLS, ROWS, CELL = 21, 10, 80
-
-# Hand-audited from assets/maps/chapter-01-forest-river-21x10.png, the base
-# plate shared by all 60 maps: cliff blocks in the four corners, tree lines
-# down both edges, and the rocky stream crossing row 2.  Everything else on
-# the plate is open plain — it must never be marked impassable.
-BASE = [
-    "###...............###",
-    "###...............###",
-    "FFWWWWWWWWWWWWWWWWWFF",
-    "FFF...............FFF",
-    "FFF...............FFF",
-    "FFF...............FFF",
-    "FFF...............FFF",
-    "FFF...............FFF",
-    "###...............###",
-    "###...............###",
-]
-
+ROOT = Path(__file__).resolve().parents[1]
+MAPS = ROOT / "assets" / "maps"
+OUTPUT = ROOT / "js" / "data" / "map-terrain.js"
+PREVIEWS = ROOT / "scratch" / "map-terrain-previews"
+AUDIT_IMAGE = ROOT / "docs" / "地形分類抽查對照.jpg"
+COLS, ROWS = 21, 10
+CELL_W, CELL_H = 80, 80
 VARIANTS = ("field", "boss", "hard-1", "hard-2", "hard-3", "hard-4")
+WALKABLE = {".", "W", "F", "R"}
+
+# Artwork-specific corrections belong here, never in tactical-content.js.
+# Entries use zero-based x/y cells and are intentionally small and reviewable.
+OVERRIDES: dict[str, dict[tuple[int, int], str]] = {
+    "chapter-01-field": {(4, 6): ".", (5, 6): ".", (6, 6): "."},
+}
+
+# Deployment and enemy anchor areas must never become blocked from dark artwork.
+SAFE_CELLS = {
+    *((x, y) for y in range(6, 10) for x in range(3, 9)),
+    (9, 9),
+    *((x, y) for y in range(1, 9) for x in range(16, 20)),
+}
 
 
-def cell_of(x: float, y: float) -> tuple[int, int]:
-    return min(COLS - 1, max(0, int(x // CELL))), min(ROWS - 1, max(0, int(y // CELL)))
+@dataclass(frozen=True)
+class CellStats:
+    hue: float
+    saturation: float
+    value: float
+    texture: float
+    blue: float
+    green: float
+    red: float
 
 
-def paint(grid: list[list[str]], x: float, y: float, code: str, over_blocked: bool = False) -> None:
-    cx, cy = cell_of(x, y)
-    if grid[cy][cx] != "#" or over_blocked:
-        grid[cy][cx] = code
+def cell_stats(image: Image.Image, x: int, y: int) -> CellStats:
+    margin_x, margin_y = 12, 12
+    crop = image.crop((
+        x * CELL_W + margin_x,
+        y * CELL_H + margin_y,
+        (x + 1) * CELL_W - margin_x,
+        (y + 1) * CELL_H - margin_y,
+    )).resize((16, 16), Image.Resampling.LANCZOS)
+    pixels = list(crop.get_flattened_data())
+    hsv = [colorsys.rgb_to_hsv(r / 255, g / 255, b / 255) for r, g, b in pixels]
+    count = len(hsv)
+    hue = statistics.fmean(item[0] for item in hsv)
+    saturation = statistics.fmean(item[1] for item in hsv)
+    value = statistics.fmean(item[2] for item in hsv)
+    texture = statistics.fmean(ImageStat.Stat(crop).stddev) / 255
+    blue = sum(0.48 <= h <= 0.68 and s >= 0.22 for h, s, _ in hsv) / count
+    green = sum(0.18 <= h <= 0.47 and s >= 0.20 for h, s, _ in hsv) / count
+    red = sum((h <= 0.12 or h >= 0.94) and s >= 0.30 for h, s, _ in hsv) / count
+    return CellStats(hue, saturation, value, texture, blue, green, red)
 
 
-def polyline_cells(grid: list[list[str]], points: list[tuple[float, float]], code: str) -> None:
-    """Mark every cell the painted centerline passes through."""
-    for (x0, y0), (x1, y1) in zip(points, points[1:]):
-        steps = max(2, int(math.hypot(x1 - x0, y1 - y0) / 8))
-        for step in range(steps + 1):
-            t = step / steps
-            paint(grid, x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, code)
+def classify_map(image: Image.Image) -> list[list[str]]:
+    stats = [[cell_stats(image, x, y) for x in range(COLS)] for y in range(ROWS)]
+    flat = [item for row in stats for item in row]
+    med_v = statistics.median(item.value for item in flat)
+    med_s = max(0.05, statistics.median(item.saturation for item in flat))
+    med_t = max(0.01, statistics.median(item.texture for item in flat))
+    grid: list[list[str]] = []
+    for y, row in enumerate(stats):
+        output_row: list[str] = []
+        for x, item in enumerate(row):
+            dark = item.value < med_v * 0.73
+            rough = item.texture > med_t * 1.08
+            saturated = item.saturation > med_s * 1.08
+            bright = item.value > med_v * 1.07
+            code = "."
+            if (x, y) not in SAFE_CELLS and dark and rough:
+                code = "#"
+            elif item.blue >= 0.56 and (bright or saturated) and item.texture < med_t * 1.30:
+                code = "W"
+            elif item.red >= 0.60 and (bright or saturated) and item.texture > med_t * 0.72:
+                code = "R"
+            elif item.green >= 0.58 and item.value < med_v * 0.91 and rough:
+                code = "F"
+            output_row.append(code)
+        grid.append(output_row)
+    # Remove isolated one-cell noise created by compression and promote only
+    # strongly supported holes inside a visible terrain patch.
+    for _ in range(2):
+        updated = [row[:] for row in grid]
+        for y in range(ROWS):
+            for x in range(COLS):
+                neighbors = [grid[ny][nx] for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)) if 0 <= nx < COLS and 0 <= ny < ROWS]
+                code = grid[y][x]
+                if code in "WFR" and neighbors.count(code) == 0:
+                    updated[y][x] = "."
+                elif code == ".":
+                    for candidate in "WFR":
+                        if neighbors.count(candidate) >= 3:
+                            updated[y][x] = candidate
+                            break
+        grid = updated
+    return grid
 
 
-def coverage_cells(mask: Image.Image, threshold: float) -> list[tuple[int, int]]:
-    cells = []
-    for cy in range(ROWS):
-        for cx in range(COLS):
-            box = mask.crop((cx * CELL, cy * CELL, (cx + 1) * CELL, (cy + 1) * CELL))
-            if ImageStat.Stat(box).mean[0] / 255 >= threshold:
-                cells.append((cx, cy))
-    return cells
+def apply_overrides(key: str, grid: list[list[str]]) -> None:
+    for (x, y), code in OVERRIDES.get(key, {}).items():
+        grid[y][x] = code
+    for x, y in SAFE_CELLS:
+        if 0 <= x < COLS and 0 <= y < ROWS and grid[y][x] == "#":
+            grid[y][x] = "."
+    chapter = int(key.split("-")[1])
+    if key.endswith("-field") and chapter not in {4, 8}:
+        for y in range(2, 8):
+            for x in range(3, 18):
+                if grid[y][x] == "#":
+                    grid[y][x] = "."
 
 
-def chapter_overlay(grid: list[list[str]], chapter: int) -> None:
-    """Same geometry as map_overlay() in generate-battle-assets.py."""
-    if chapter in (3, 6, 9, 10):
-        # Winding lava / energy stream across the upper battlefield.
-        points = [(W * t / 18, H * (.35 + .08 * math.sin(t * .85 + chapter))) for t in range(19)]
-        polyline_cells(grid, points, "R")
-    elif chapter in (5, 7):
-        # Three drift streams: an icy / tidal water band.
-        for offset in (-36, 0, 40):
-            points = [(0, H * .28 + offset)] + [(W * t / 12, H * (.27 + .04 * math.sin(t + chapter)) + offset) for t in range(1, 13)]
-            polyline_cells(grid, points, "W")
-    elif chapter in (4, 8):
-        # Three ruin pillars: solid blockers.
-        mask = Image.new("L", (W, H))
-        draw = ImageDraw.Draw(mask)
-        for fx in (.46, .62, .78):
-            x = int(W * fx)
-            draw.rectangle((x, int(H * .18), x + 42, int(H * .48)), fill=255)
-        for cx, cy in coverage_cells(mask, .25):
-            grid[cy][cx] = "#"
-    # Chapters 1 and 2 only add faint light-grass glows: plain, no markers.
+def reachable(grid: list[list[str]], start: tuple[int, int]) -> set[tuple[int, int]]:
+    seen = {start}
+    queue = [start]
+    while queue:
+        x, y = queue.pop(0)
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            point = (x + dx, y + dy)
+            if 0 <= point[0] < COLS and 0 <= point[1] < ROWS and point not in seen and grid[point[1]][point[0]] in WALKABLE:
+                seen.add(point)
+                queue.append(point)
+    return seen
 
 
-def variant_overlay(grid: list[list[str]], variant: str) -> None:
-    mask = Image.new("L", (W, H))
-    draw = ImageDraw.Draw(mask)
-    centers: list[tuple[int, int]] = []
-    if variant == "boss":
-        cx, cy = int(W * .74), int(H * .48)
-        draw.polygon([(cx, cy - 92), (cx + 80, cy + 52), (cx - 80, cy + 52)], fill=255)
-    elif variant == "hard-1":
-        centers = [(int(W * (.36 + i * .09)), int(H * (.2 + i * .1))) for i in range(6)]
-    elif variant == "hard-2":
-        centers = [(int(W * (.34 + i * .085)), int(H * (.2 + (i % 2) * .56))) for i in range(7)]
-    elif variant == "hard-3":
-        cx, cy = int(W * .64), int(H * .5)
-        centers = [(int(cx + math.cos(math.tau * i / 10) * W * .18), int(cy + math.sin(math.tau * i / 10) * H * .31)) for i in range(10)]
-    elif variant == "hard-4":
-        cx, cy = int(W * .68), int(H * .5)
-        draw.ellipse((cx - 145, cy - 145, cx + 145, cy + 145), fill=255)
-    for x, y in coverage_cells(mask, .5 if variant == "hard-4" else .25):
-        grid[y][x] = "#"
-    for px, py in centers:
-        gx, gy = cell_of(px, py)
-        grid[gy][gx] = "#"
+def ensure_connected(grid: list[list[str]]) -> bool:
+    """Carve the fewest dark cells needed between deployment and enemy areas."""
+    start, goal = (6, 7), (17, 5)
+    if goal in reachable(grid, start):
+        return False
+    heap = [(0, start)]
+    previous: dict[tuple[int, int], tuple[int, int]] = {}
+    costs = {start: 0}
+    while heap:
+        cost, point = heapq.heappop(heap)
+        if point == goal:
+            break
+        if cost != costs[point]:
+            continue
+        x, y = point
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nxt = (x + dx, y + dy)
+            if not (0 <= nxt[0] < COLS and 0 <= nxt[1] < ROWS):
+                continue
+            next_cost = cost + (8 if grid[nxt[1]][nxt[0]] == "#" else 1)
+            if next_cost < costs.get(nxt, 10**9):
+                costs[nxt] = next_cost
+                previous[nxt] = point
+                heapq.heappush(heap, (next_cost, nxt))
+    point = goal
+    while point != start:
+        if grid[point[1]][point[0]] == "#":
+            grid[point[1]][point[0]] = "."
+        point = previous[point]
+    if goal not in reachable(grid, start):
+        raise RuntimeError("terrain connectivity repair failed")
+    return True
 
 
-def build_grid(chapter: int, variant: str) -> list[str]:
-    grid = [list(row) for row in BASE]
-    chapter_overlay(grid, chapter)
-    variant_overlay(grid, variant)
-    return ["".join(row) for row in grid]
+COLORS = {
+    "W": (39, 155, 255, 115),
+    "F": (54, 180, 88, 115),
+    "R": (255, 84, 35, 125),
+    "#": (16, 12, 22, 170),
+}
+
+
+def preview(image: Image.Image, grid: list[list[str]], key: str) -> Image.Image:
+    result = image.convert("RGBA")
+    overlay = Image.new("RGBA", result.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(overlay)
+    font = ImageFont.load_default(size=18)
+    for y, row in enumerate(grid):
+        for x, code in enumerate(row):
+            box = (x * CELL_W, y * CELL_H, (x + 1) * CELL_W - 1, (y + 1) * CELL_H - 1)
+            draw.rectangle(box, fill=COLORS.get(code, (0, 0, 0, 0)), outline=(255, 255, 255, 45), width=1)
+            if code != ".":
+                draw.text((box[0] + 5, box[1] + 4), code, fill=(255, 255, 255, 230), font=font, stroke_width=2, stroke_fill=(0, 0, 0, 180))
+    draw.rectangle((0, 0, 430, 32), fill=(0, 0, 0, 190))
+    draw.text((8, 7), key + "  W=water F=forest R=lava #=blocked", fill="white")
+    return Image.alpha_composite(result, overlay).convert("RGB")
+
+
+def write_audit(examples: list[tuple[str, Image.Image, Image.Image]]) -> None:
+    thumb_w, thumb_h = 630, 300
+    canvas = Image.new("RGB", (thumb_w * 2, thumb_h * len(examples)), "#10131a")
+    draw = ImageDraw.Draw(canvas)
+    for index, (key, source, overlay) in enumerate(examples):
+        for column, image in enumerate((source, overlay)):
+            thumb = image.copy()
+            thumb.thumbnail((thumb_w, thumb_h - 24), Image.Resampling.LANCZOS)
+            canvas.paste(thumb, (column * thumb_w, index * thumb_h + 24))
+        draw.text((8, index * thumb_h + 5), f"{key} - original", fill="white")
+        draw.text((thumb_w + 8, index * thumb_h + 5), f"{key} - classified overlay", fill="white")
+    AUDIT_IMAGE.parent.mkdir(parents=True, exist_ok=True)
+    canvas.save(AUDIT_IMAGE, quality=88, optimize=True)
 
 
 def main() -> None:
-    data = {
-        f"chapter-{chapter:02d}-{variant}": build_grid(chapter, variant)
-        for chapter in range(1, 11)
-        for variant in VARIANTS
-    }
-    rows = ",\n".join(
-        f'    "{key}": [\n' + ",\n".join(f'      "{row}"' for row in grid) + "\n    ]"
-        for key, grid in data.items()
-    )
-    OUT.write_text(
-        "/* 由 scripts/generate-map-terrain.py 依 60 張美術大地圖幾何自動產生，請勿手改。\n"
-        "   圖例：'.' 平原、'W' 水、'F' 森林、'R' 火焰熔岩、'#' 禁行。 */\n"
-        "(function (global) {\n"
-        "  'use strict';\n"
-        "  global.TACTICAL_MAP_TERRAIN = Object.freeze({\n"
-        f"{rows}\n"
-        "  });\n"
-        "}(typeof window !== 'undefined' ? window : globalThis));\n",
+    PREVIEWS.mkdir(parents=True, exist_ok=True)
+    maps: dict[str, list[str]] = {}
+    audit: list[tuple[str, Image.Image, Image.Image]] = []
+    repaired = 0
+    audit_keys = {f"chapter-{chapter:02d}-field" for chapter in range(1, 11)}
+    for chapter in range(1, 11):
+        for variant in VARIANTS:
+            key = f"chapter-{chapter:02d}-{variant}"
+            source_path = MAPS / f"{key}-21x10.jpg"
+            if not source_path.exists():
+                raise FileNotFoundError(source_path)
+            source = Image.open(source_path).convert("RGB")
+            if source.size != (COLS * CELL_W, ROWS * CELL_H):
+                raise ValueError(f"{source_path.name}: expected 1680x800, got {source.size}")
+            grid = classify_map(source)
+            apply_overrides(key, grid)
+            repaired += int(ensure_connected(grid))
+            if (17, 5) not in reachable(grid, (6, 7)):
+                raise RuntimeError(f"{key}: spawn-to-enemy path is disconnected")
+            overlay = preview(source, grid, key)
+            overlay.save(PREVIEWS / f"{key}.jpg", quality=86, optimize=True)
+            if key in audit_keys:
+                audit.append((key, source, overlay))
+            maps[key] = ["".join(row) for row in grid]
+    payload = json.dumps(maps, ensure_ascii=False, indent=2)
+    OUTPUT.write_text(
+        "/* Generated by scripts/generate-map-terrain.py from the actual 60 map JPGs. */\n"
+        f"window.TACTICAL_MAP_TERRAIN = Object.freeze({payload});\n",
         encoding="utf-8",
     )
-    blocked = sum(row.count("#") for grid in data.values() for row in grid)
-    print(f"Wrote {OUT.relative_to(ROOT)} with {len(data)} grids ({blocked} blocked cells total).")
+    write_audit(audit)
+    print(f"Generated {len(maps)} terrain grids; {repaired} paths repaired")
+    print(f"Review overlays: {PREVIEWS}")
+    print(f"10-map audit: {AUDIT_IMAGE}")
 
 
 if __name__ == "__main__":
