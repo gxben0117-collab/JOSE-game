@@ -68,6 +68,7 @@
   function mapData() { return content.mapById(currentStage.mapId); }
   function alive(team) { return state.units.filter(function (unit) { return unit.team === team && unit.hp > 0; }); }
   function selected() { return state.units.find(function (unit) { return unit.key === state.selected; }); }
+  function inspected() { return state.units.find(function (unit) { return unit.key === state.inspected; }) || selected(); }
   function unitSize(unit) { return (unit && unit.p && unit.p.size) || 1; }
   function deploymentCost(pet) { return progression.deploymentCost(pet && pet.p ? pet.p : pet); }
   function selectedDeploymentCost(ids) { return progression.partyCost(ids || deploySelection); }
@@ -274,7 +275,7 @@
     else if (stageId) currentStage = content.stageById(stageId);
     if (!currentStage.tower) { progress.currentStage = currentStage.id; progression.save(); }
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
-    state = { round: 1, phase: 'deploy', selected: null, mode: 'move', skill: 0, over: false, animating: false, autoEnding: false, resultRecorded: false,
+    state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
       enemyScale: scale * balance.scale, partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {} };
     state.obstacles = (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
@@ -506,26 +507,6 @@
       if (drag && drag.moved) suppressClickUntil = Date.now() + 180;
       drag = null; scroller.classList.remove('dragging');
     });
-    scroller.addEventListener('scroll', renderMinimapView, { passive: true });
-  }
-  function renderMinimap() {
-    var dots = document.getElementById('minimap-dots'); if (!dots) return;
-    var html = '';
-    state.obstacles.forEach(function (spot) { html += '<i class="mm-rock" style="left:' + ((spot.x + 0.5) / COLS * 100) + '%;top:' + ((spot.y + 0.5) / ROWS * 100) + '%"></i>'; });
-    state.units.forEach(function (unit) {
-      if (unit.hp <= 0) return;
-      html += '<i class="mm-' + (unit.boss ? 'boss' : unit.team) + '" style="left:' + ((unit.x + 0.5) / COLS * 100) + '%;top:' + ((unit.y + 0.5) / ROWS * 100) + '%"></i>';
-    });
-    dots.innerHTML = html;
-    renderMinimapView();
-  }
-  function renderMinimapView() {
-    var view = document.getElementById('minimap-view'), scroller = dom.board.parentElement;
-    if (!view || !scroller || !scroller.scrollWidth) return;
-    view.style.left = scroller.scrollLeft / scroller.scrollWidth * 100 + '%';
-    view.style.top = scroller.scrollTop / scroller.scrollHeight * 100 + '%';
-    view.style.width = Math.min(100, scroller.clientWidth / scroller.scrollWidth * 100) + '%';
-    view.style.height = Math.min(100, scroller.clientHeight / scroller.scrollHeight * 100) + '%';
   }
 
   /* 粒子爆散：hit 向外飛散、heal 向上飄升、death 大範圍炸開。 */
@@ -847,7 +828,8 @@
   }
 
   function unitElement(unit) {
-    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
+    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
+    element.setAttribute('aria-pressed', state.inspected === unit.key ? 'true' : 'false');
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
     var statuses = (unit.shield > 0 ? '🛡️' : '') + (unit.burn > 0 ? '🔥' : '') + (unit.poison > 0 ? '☠️' : '') + (unit.freeze > 0 ? '❄️' : '') + (unit.atkBuff > 0 ? '⬆️' : '');
     element.title = unit.p.name + '（' + unit.p.roleLabel + '）';
@@ -856,6 +838,7 @@
     element.addEventListener('click', function (event) {
       event.stopPropagation();
       if (cameraSuppressed()) return;
+      state.inspected = unit.key;
       focusUnit(unit, false);
       if (state.mode === 'skill' && selected() && canTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
       if (state.phase === 'deploy' && unit.team === 'ally') { state.selected = unit.key; note('已選擇 ' + unitName(unit) + '，點選左側部署格調整站位。'); render(); return; }
@@ -886,7 +869,6 @@
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
-    renderMinimap();
     renderParty(); renderTrait(); renderBattleSides(); renderDetail(); renderTurnOrder(); renderBossBar();
     dom.banner.textContent = state.over ? '戰鬥結束' : state.phase === 'deploy' ? '部署階段' : '第 ' + state.round + ' 回合｜' + (state.phase === 'player' ? '我方行動' : '敵方行動');
     dom.roundStatus.textContent = state.over ? '結算完成' : state.phase === 'deploy' ? '自由部署' : state.phase === 'player' ? '我方回合' : '敵方回合';
@@ -909,7 +891,7 @@
     state.units.filter(function (unit) { return unit.team === 'ally'; }).forEach(function (unit) {
       var card = document.createElement('button'); card.type = 'button'; card.className = 'party-card' + (state.selected === unit.key ? ' selected' : '') + (unit.hp <= 0 ? ' dead' : ''); card.disabled = unit.hp <= 0;
       card.innerHTML = '<div class="party-name">' + unit.p.name + (unitSize(unit) > 1 ? ' ⬛2×2' : '') + '</div><div class="party-meta">' + unit.p.roleLabel + '｜★' + progression.starOf(unit.id) + '｜融合 ' + (progress.fusion[unit.id] || 0) + '</div><div class="hpbar"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></div>';
-      card.onclick = function () { if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.mode = 'move'; render(); focusUnit(unit, false); } }; dom.list.appendChild(card);
+      card.onclick = function () { if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; render(); focusUnit(unit, false); } }; dom.list.appendChild(card);
     });
   }
   function renderBattleSides() {
@@ -932,7 +914,7 @@
       card.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp + '，點擊置中');
       card.onclick = function () {
         if (cameraSuppressed() || unit.hp <= 0) return;
-        if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; render(); }
+        if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; state.skill = 0; render(); }
         focusUnit(unit, false);
       };
       dom.battleAllyList.appendChild(card);
@@ -950,14 +932,22 @@
     }).join('') + '</div>';
   }
   function renderDetail() {
-    var unit = selected(); dom.skills.innerHTML = '';
-    if (!unit) { dom.detail.textContent = state.phase === 'deploy' ? '點選我方幻獸並選擇部署格。' : '點選任一幻獸查看戰鬥能力。'; return; }
+    var unit = inspected(); dom.skills.innerHTML = '';
+    if (!unit) { dom.detail.textContent = state.phase === 'deploy' ? '點選地圖上的幻獸或魔獸查看資訊；我方幻獸可繼續調整部署。' : '點選地圖上的任一幻獸或魔獸查看完整資訊。'; return; }
     var passive = unit.p.passives.map(function (entry) { return entry.name; }).join('、') || '無';
     var statusText = [];
     if (unit.freeze > 0) statusText.push('❄ 冰凍 ' + unit.freeze);
     if (unit.poison > 0) statusText.push('☠ 中毒 ' + unit.poison);
     if (unit.burn > 0) statusText.push('🔥 灼燒 ' + unit.burn);
-    dom.detail.innerHTML = '<div class="detail-head"><span class="detail-face" style="background-image:url(\'' + portrait(unit) + '\')"></span><div class="detail-title"><strong>' + unit.p.name + '</strong><small>' + unit.p.roleLabel + '</small><span class="detail-hp"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></div></div>被動：' + passive + (statusText.length ? '<br>狀態：' + statusText.join('、') : '') + '<div class="stat-grid"><span>力量 ' + Math.round(stat(unit, 'power')) + '</span><span>魔力 ' + Math.round(stat(unit, 'magic')) + '</span><span>防衛 ' + Math.round(stat(unit, 'defense')) + '</span><span>速度 ' + unit.p.stats.speed + '</span><span>血量 ' + unit.hp + '/' + unit.maxHp + '</span><span>移動 ' + moveRange(unit) + ' 格</span></div>';
+    var elementIcon = { fire: '🔥', forest: '🌿', ocean: '🌊', light: '✨', dark: '🌑' }[unit.p.element] || '◆';
+    var stage = unit.p.evolution[Math.min(unit.evolution, unit.p.evolution.length) - 1];
+    var teamLabel = unit.team === 'ally' ? '我方幻獸' : unit.boss ? '敵方首領' : '敵方魔獸';
+    var skillInfo = unit.p.skills.map(function (skill) {
+      var type = skill.attackStyle === 'support' ? '輔助' : skill.attackStyle === 'area' ? '範圍' : skill.attackStyle === 'melee' ? '近戰' : '遠程';
+      var cooldown = skill.cooldown ? '・冷卻' + skill.cooldown : '・無冷卻';
+      return '<li><b>' + skill.name + '</b><span>' + type + '・距離' + skillRange(unit, skill) + cooldown + '</span></li>';
+    }).join('');
+    dom.detail.innerHTML = '<div class="detail-head"><span class="detail-face" style="background-image:url(\'' + portrait(unit) + '\')"></span><div class="detail-title"><strong>' + unit.p.name + '</strong><small>' + elementIcon + ' ' + teamLabel + '・' + unit.p.roleLabel + '</small><span class="detail-hp"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></div></div><div class="detail-tags"><span>' + (stage?.label || '戰鬥型態') + '</span><span>' + unitSize(unit) + '×' + unitSize(unit) + '</span><span>' + (unit.p.rarity || 'normal').toUpperCase() + '</span></div><p class="detail-passive">被動：' + passive + (statusText.length ? '<br>狀態：' + statusText.join('、') : '') + '</p><div class="stat-grid"><span>力量 ' + Math.round(stat(unit, 'power')) + '</span><span>魔力 ' + Math.round(stat(unit, 'magic')) + '</span><span>防衛 ' + Math.round(stat(unit, 'defense')) + '</span><span>速度 ' + unit.p.stats.speed + '</span><span>血量 ' + unit.hp + '/' + unit.maxHp + '</span><span>移動 ' + moveRange(unit) + ' 格</span></div><h3 class="detail-skill-title">技能資訊</h3><ul class="detail-skill-list">' + skillInfo + '</ul>';
     if (unit.team !== 'ally') return;
     unit.p.skills.forEach(function (skill, index) {
       var button = document.createElement('button'), cooldown = unit.cooldowns[index] || 0;
@@ -1591,12 +1581,6 @@
     var focus = selected() || alive('ally')[0];
     if (focus) focusUnit(focus, true);
   };
-  var minimap = document.getElementById('minimap');
-  if (minimap) minimap.addEventListener('click', function (event) {
-    var rect = minimap.getBoundingClientRect();
-    focusCamera((event.clientX - rect.left) / rect.width * COLS - 0.5, (event.clientY - rect.top) / rect.height * ROWS - 0.5, false);
-  });
-
   syncTerrainVisibility();
   reset(currentStage.id);
   if (/[?&]view=battle/.test(window.location.search)) { setView('battle'); focusDeployZone(true); }

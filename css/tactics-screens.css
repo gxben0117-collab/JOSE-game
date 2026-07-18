@@ -85,22 +85,11 @@
 .screen-battle .board{width:100%;min-width:0;aspect-ratio:21 / 10;height:auto}
 .screen-battle .cell{min-height:0}
 
-/* 小地圖 */
-.minimap{position:absolute;right:10px;top:10px;z-index:16;width:118px;height:118px;border-radius:10px;background:#0a1120d9;border:1px solid #45598c;box-shadow:0 8px 22px #000a;cursor:pointer;overflow:hidden}
-.minimap-dots{position:absolute;inset:0}
-.minimap-dots i{position:absolute;width:5px;height:5px;border-radius:50%;transform:translate(-50%,-50%);pointer-events:none}
-.minimap-dots .mm-ally{background:#63b3ff;box-shadow:0 0 4px #63b3ff}
-.minimap-dots .mm-enemy{background:#ff717b;box-shadow:0 0 4px #ff717b}
-.minimap-dots .mm-boss{width:7px;height:7px;background:#ffd36a;box-shadow:0 0 6px #ffb02f}
-.minimap-dots .mm-rock{width:3px;height:3px;border-radius:30%;background:#8fa3c8aa}
-.minimap-view{position:absolute;border:1px solid #ffe9b0;border-radius:3px;background:#ffffff14;box-shadow:0 0 8px #ffd36a55;pointer-events:none;transition:all .12s linear}
-
 @media (max-width:980px){
   .battle-main{grid-template-columns:1fr}
   .battle-ally-panel{display:none}
   .battle-panel{position:static;max-height:none;overflow:visible}
   .screen-battle .board-viewport{--cell:clamp(36px,calc((100vw - 52px)/12),60px)}
-  .minimap{width:92px;height:92px;right:6px;top:6px}
 }
 
 /* ── 畫面三：結算 ── */
@@ -139,6 +128,13 @@
 /* 選中單位資訊卡 */
 .detail-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
 .detail-face{flex:0 0 54px;height:54px;border-radius:10px;background:#0b1327 center/contain no-repeat;box-shadow:inset 0 0 0 1px #ffffff2e}
+.detail-title{min-width:0;flex:1}.detail-title strong,.detail-title small{display:block}.detail-title strong{color:#fff0c5;font-size:1rem}.detail-title small{margin:2px 0 6px;color:#bcd5f4;font-size:.7rem}
+.detail-hp{display:block;height:6px;overflow:hidden;border-radius:999px;background:#40191a}.detail-hp i{display:block;height:100%;background:linear-gradient(90deg,#45b85d,#d9e775)}
+.detail-tags{display:flex;gap:5px;flex-wrap:wrap;margin:0 0 8px}.detail-tags span{padding:2px 6px;border:1px solid #79563a;border-radius:999px;background:#251815;color:#e8c994;font-size:.64rem}
+.detail-passive{margin:0;padding:7px;border-left:3px solid #a97843;background:#211615;color:#d6c0a3;font-size:.7rem;line-height:1.45}
+.detail-skill-title{margin:10px 0 5px;color:#f4d48d;font-size:.78rem}
+.detail-skill-list{display:grid;gap:5px;margin:0;padding:0;list-style:none}.detail-skill-list li{display:grid;gap:1px;padding:6px 7px;border:1px solid #593d2d;border-radius:4px;background:#211614}.detail-skill-list b{color:#ffe5b0;font-size:.72rem}.detail-skill-list span{color:#bca88f;font-size:.62rem}
+.idle-arena .unit.inspected{outline:2px solid #ffe38a;outline-offset:2px;filter:drop-shadow(0 0 5px #ffd86f) drop-shadow(2px 4px 1px #1a0c09)}
 .detail-title{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .detail-title strong{font-size:.95rem}
 .detail-title small{color:#9db3d9}

@@ -132,6 +132,8 @@ try {
   assert.ok(deployed.deployToolbar); assert.equal(deployed.balance, '滿編迎擊'); assert.equal(deployed.partyCost, 25);
   assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.evolvedMotion, /molten_ball-stage_3-motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
+  const unitInspection = await evaluate(`(async () => { const enemy = document.querySelector('.unit.enemy'); enemy.click(); await new Promise(resolve => setTimeout(resolve, 80)); const enemyResult = { highlighted: !!document.querySelector('.unit.enemy.inspected'), tags: document.querySelectorAll('#unit-detail .detail-tags span').length, skills: document.querySelectorAll('#unit-detail .detail-skill-list li').length, text: document.querySelector('#unit-detail').innerText.length }; const ally = document.querySelector('.unit.ally'); ally.click(); await new Promise(resolve => setTimeout(resolve, 80)); return { enemy: enemyResult, allyHighlighted: !!document.querySelector('.unit.ally.inspected'), allyActions: document.querySelectorAll('#skill-buttons .skill').length, minimap: !!document.querySelector('#minimap') }; })()`);
+  assert.ok(unitInspection.enemy.highlighted && unitInspection.enemy.tags >= 3 && unitInspection.enemy.skills > 0 && unitInspection.enemy.text > 80); assert.ok(unitInspection.allyHighlighted && unitInspection.allyActions > 0); assert.equal(unitInspection.minimap, false);
   const terrainToggle = await evaluate(`(async () => { const button = document.querySelector('#terrain-toggle'); button.click(); await new Promise(resolve => setTimeout(resolve, 180)); const result = { pressed: button.getAttribute('aria-pressed'), all: document.querySelector('#board').classList.contains('show-terrain'), stored: localStorage.getItem('jose-terrain-visibility'), opacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity }; button.click(); return result; })()`);
   assert.deepEqual(terrainToggle, { pressed: 'true', all: true, stored: 'all', opacity: '0.9' });
   await evaluate(`document.querySelector('#end-turn').click()`); await delay(300);
@@ -165,7 +167,7 @@ try {
   assert.match(bossStage.map, /chapter-10-boss-21x10\.jpg/); assert.match(bossStage.kind, /-boss$/); assert.equal(bossStage.cells, 210);
 
   assert.deepEqual(errors, [], `Browser errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, walkAnimation, attackAnimation, mobile, hardStage, bossStage, screenshots: [desktopShot, desktopBattleShot, mobileShot], errors }, null, 2));
+  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, unitInspection, walkAnimation, attackAnimation, mobile, hardStage, bossStage, screenshots: [desktopShot, desktopBattleShot, mobileShot], errors }, null, 2));
 } finally {
   try { socket?.close(); } catch {}
   browser.kill();

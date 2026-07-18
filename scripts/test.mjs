@@ -299,6 +299,14 @@ test('全部戰鬥單位使用四方向新版動作圖', () => {
   ['motion-idle-right', 'motion-idle-left', 'motion-walk-right', 'motion-walk-left', 'motion-attack-right', 'motion-attack-left'].forEach(name => assert.match(css, new RegExp(name)));
   ['motion-4dir-idle-down','motion-4dir-walk-down','motion-4dir-attack-down','motion-4dir-idle-up','motion-4dir-walk-up','motion-4dir-attack-up'].forEach(name => assert.match(css, new RegExp(name)));
 });
+test('戰鬥地圖可點選敵我單位查看完整資訊且已移除小地圖', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const html = readFileSync(join(root, 'tactics.html'), 'utf8');
+  const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  assert.match(source, /function inspected\(\)/); assert.match(source, /state\.inspected = unit\.key/);
+  assert.match(source, /detail-skill-list/); assert.match(source, /teamLabel/); assert.match(css, /\.unit\.inspected/);
+  assert.doesNotMatch(source, /renderMinimap|minimap-view/); assert.doesNotMatch(html, /id="minimap"/); assert.doesNotMatch(css, /\.minimap/);
+});
 test('移動、地形顯示與打擊感採新版戰鬥演出', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
@@ -346,12 +354,12 @@ test('SRPG 介面：點敵即施放、階段橫幅、威脅範圍、待機與取
 });
 test('大地圖鏡頭：拖曳平移、點選置中與小地圖', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
-  assert.match(source, /function focusCamera/); assert.match(source, /function enableCameraDrag/); assert.match(source, /function renderMinimap/);
+  assert.match(source, /function focusCamera/); assert.match(source, /function enableCameraDrag/); assert.doesNotMatch(source, /function renderMinimap/);
   const unitClickSource = source.slice(source.indexOf("element.addEventListener('click', function (event)"), source.indexOf('var threatTileMap'));
   assert.match(unitClickSource, /focusUnit\(unit, false\)/);
   assert.match(source, /gridTemplateColumns = 'repeat\(' \+ COLS/);
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
-  assert.match(html, /id="minimap"/); assert.match(html, /id="minimap-view"/);
+  assert.doesNotMatch(html, /id="minimap"/); assert.doesNotMatch(html, /id="minimap-view"/);
 });
 test('戰鬥引擎具備視線遮蔽、位移、狀態與部署階段', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /function lineClear/); assert.match(source, /async function displace/); assert.match(source, /function planFor/); assert.match(source, /phase: 'deploy'/); assert.match(source, /unit\.freeze/); assert.match(source, /unit\.poison/); });
 test('棋盤角色可存取且不重複顯示精確血量文字', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.doesNotMatch(source, /class=\\?"unit-hp/); assert.match(source, /element\.setAttribute\('aria-label', unit\.p\.name \+ '，生命 '/); assert.match(source, /state\.mode === 'skill' && selected\(\) && canTarget\(selected\(\), unit\)/); });
@@ -429,7 +437,7 @@ test('戰鬥側欄只保留戰鬥資訊，不顯示進化解鎖按鈕', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const detailSource = source.slice(source.indexOf('function renderDetail'), source.indexOf('async function clickCell'));
   assert.doesNotMatch(html, /id="evolution-buttons"/); assert.doesNotMatch(source, /dom\.evolution/);
-  assert.doesNotMatch(detailSource, /unit\.p\.evolution|進化階段|成長體|最終型/);
+  assert.match(detailSource, /stage\?\.label/); assert.doesNotMatch(detailSource, /openGrowthConfirmation|unlockEvolution|growth-evolve/);
   assert.match(html, /class="skill-help"/); assert.match(source, /skill\.kind === 'basic' \? '⚔ 普攻/);
 });
 test('鏡頭只在玩家點選時置中，移動、攻擊與敵方行動不自動追鏡', () => {
