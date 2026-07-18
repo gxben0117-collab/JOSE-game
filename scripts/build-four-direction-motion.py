@@ -17,6 +17,7 @@ OUTPUT_DIR = ROOT / "assets" / "animations" / "directional"
 FRAME_DIR = OUTPUT_DIR / "frames"
 FRAME = 112
 ANIMATION_FRAMES = 6
+SAFE_MARGIN = 3
 DIRECTIONS = ("down", "right", "up", "left")
 ACTIONS = ("idle", "move", "attack")
 # 這三張 AI 參考圖的側面欄位是依「角色看向畫面中央」構圖，
@@ -55,11 +56,25 @@ def animate(base: Image.Image, action: str, direction: str, frame: int) -> Image
         dx, dy = phase_x, phase_y
     else:
         dx, dy = phase_x // 2, phase_y
-    work = base
+    # Transform only the visible beast instead of scaling the full 112px canvas.
+    # Scaling and translating the full canvas could push opaque pixels outside
+    # the frame, visibly slicing heads, tails and attack effects at its edges.
+    alpha_box = base.getchannel("A").getbbox()
+    work = base.crop(alpha_box) if alpha_box else base
     if scale != 1:
-        work = base.resize((int(FRAME * scale), int(FRAME * scale)), Image.Resampling.LANCZOS)
+        work = work.resize(
+            (max(1, round(work.width * scale)), max(1, round(work.height * scale))),
+            Image.Resampling.LANCZOS,
+        )
+    maximum = FRAME - SAFE_MARGIN * 2
+    if work.width > maximum or work.height > maximum:
+        work.thumbnail((maximum, maximum), Image.Resampling.LANCZOS)
+    target_x = (FRAME - work.width) // 2 + dx
+    target_y = FRAME - work.height - SAFE_MARGIN + dy
+    target_x = min(max(SAFE_MARGIN, target_x), FRAME - SAFE_MARGIN - work.width)
+    target_y = min(max(SAFE_MARGIN, target_y), FRAME - SAFE_MARGIN - work.height)
     result = Image.new("RGBA", (FRAME, FRAME))
-    result.alpha_composite(work, ((FRAME - work.width) // 2 + dx, FRAME - work.height + dy))
+    result.alpha_composite(work, (target_x, target_y))
     return result
 
 

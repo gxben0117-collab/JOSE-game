@@ -153,6 +153,8 @@ test('初始四獸具有上下左右待機、移動、攻擊十二列動畫與 2
     }
   }
   assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 288);
+  const bounds = spawnSync('python', ['scripts/check-directional-frame-bounds.py'], { cwd: root, encoding: 'utf8' });
+  assert.equal(bounds.status, 0, bounds.stderr || bounds.stdout);
 });
 test('六種定位都有三節點技能樹', () => assert.ok(Object.values(content.skillTrees).every(tree => tree.length === 3 && tree.every(node => node.id && node.bonus))));
 test('任務具有進度目標與實際獎勵', () => assert.ok(content.quests.length >= 6 && content.quests.every(quest => quest.target > 0 && Object.keys(quest.reward).length)));

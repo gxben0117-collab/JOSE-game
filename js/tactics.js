@@ -107,7 +107,7 @@
   function portrait(unit) { return unit.p.evolution[Math.min(unit.evolution, unit.p.evolution.length) - 1].portrait; }
   /* URL is consumed by a CSS custom property, so it resolves from css/. */
   var FOUR_DIRECTION_UNITS = { molten_ball: true, fire_lion: true, fire_fox: true, leaf_ear_rabbit: true };
-  function motionSheet(unit) { return FOUR_DIRECTION_UNITS[unit.id] ? '../assets/animations/directional/' + unit.id + '-motion-4dir-sheet.webp' : '../assets/animations/units/' + unit.id + '-motion-sheet.webp'; }
+  function motionSheet(unit) { return FOUR_DIRECTION_UNITS[unit.id] ? '../assets/animations/directional/' + unit.id + '-motion-4dir-sheet.webp?v=21' : '../assets/animations/units/' + unit.id + '-motion-sheet.webp'; }
   function bonuses(unit) { return unit.team === 'ally' ? progression.bonusesFor(unit.p) : {}; }
   function bonusValue(unit, key) { var value = bonuses(unit); return (value.all || 0) + (value[key] || 0); }
   function starMultiplier(unit) { return unit.team === 'ally' ? progression.starMultiplier(unit.id) : 1; }
