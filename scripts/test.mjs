@@ -140,19 +140,20 @@ test('地形以連續區塊生成而非零碎散點', () => {
   }
   assert.ok(content.maps.some(map => content.terrainAt(content.stages.find(stage => stage.mapId === map.id), 10, 5)), '所有章節中央都被分類成無地形');
 });
-test('初始四獸具有上下左右待機、移動、攻擊十二列動畫與 288 張透明散圖', () => {
+test('全部 115 隻幻獸與 52 隻魔獸具有四方向六幀動作圖集與 12024 張透明散圖', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
-  const starter = ['molten_ball', 'fire_lion', 'fire_fox', 'leaf_ear_rabbit'];
+  const unitIds = Array.from(profiles, unit => unit.id).sort();
   const rows = ['idle-down','move-down','attack-down','idle-right','move-right','attack-right','idle-up','move-up','attack-up','idle-left','move-left','attack-left'];
-  for (const id of starter) {
+  assert.deepEqual(Object.keys(manifest).sort(), unitIds);
+  for (const id of unitIds) {
     assert.equal(manifest[id].columns, 6); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
     assert.deepEqual(Array.from(manifest[id].rowsOrder), rows); assert.ok(existsSync(join(root, manifest[id].file)));
-    assert.deepEqual(Array.from(manifest[id].sourceColumns), id === 'molten_ball' ? [0,1,2,3] : [0,3,2,1]);
+    assert.ok(['authored-four-direction', 'derived-from-approved-motion'].includes(manifest[id].sourceType));
     for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 6; frame++) {
       assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
     }
   }
-  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 288);
+  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 12024);
   const bounds = spawnSync('python', ['scripts/check-directional-frame-bounds.py'], { cwd: root, encoding: 'utf8' });
   assert.equal(bounds.status, 0, bounds.stderr || bounds.stdout);
 });
@@ -278,13 +279,13 @@ test('最終進化需要成長體、材料與融合', () => { const { sandbox } 
 
 test('主頁只導向唯一戰棋模式', () => { const home = readFileSync(join(root, 'index.html'), 'utf8'); assert.match(home, /url=tactics\.html/); assert.match(home, /href="tactics\.html"/); });
 test('戰棋使用 21×10 地圖、25 出陣單位、路徑搜尋與分體型部署', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /COLS = 21, ROWS = 10/); assert.match(source, /DEPLOY_CAPACITY = 25/); assert.match(source, /function pathTo/); assert.match(source, /function placeAllies/); assert.match(source, /function canStand/); assert.match(source, /function unitSize/); assert.match(source, /function inLargeDeployReserve/); assert.match(source, /function enemyFormation/); assert.match(source, /function squadActive/); assert.match(source, /function canMove\(unit, x, y\).*pathTo/); });
-test('動作系統支援四方向新版圖並為舊圖保留左右回退', () => {
+test('全部戰鬥單位使用四方向新版動作圖', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   assert.match(source, /facing: team === 'ally' \? 'right' : 'left'/);
   assert.match(source, /path\[index\]\.x > fromX \? 'right' : 'left'/);
   assert.match(source, /targetDx > 0 \? 'right' : 'left'/); assert.match(source, /point\.y !== fromY/);
-  assert.match(source, /motion-4dir/); assert.match(source, /-motion-4dir-sheet\.webp/); assert.match(source, /-motion-sheet\.webp/);
+  assert.match(source, /motion-4dir/); assert.match(source, /-motion-4dir-sheet\.webp/); assert.doesNotMatch(source, /FOUR_DIRECTION_UNITS/);
   ['motion-idle-right', 'motion-idle-left', 'motion-walk-right', 'motion-walk-left', 'motion-attack-right', 'motion-attack-left'].forEach(name => assert.match(css, new RegExp(name)));
   ['motion-4dir-idle-down','motion-4dir-walk-down','motion-4dir-attack-down','motion-4dir-idle-up','motion-4dir-walk-up','motion-4dir-attack-up'].forEach(name => assert.match(css, new RegExp(name)));
 });

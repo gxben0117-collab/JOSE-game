@@ -9,12 +9,13 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "assets" / "animations" / "directional" / "sources"
 OUTPUT_DIR = ROOT / "assets" / "animations" / "directional"
 FRAME_DIR = OUTPUT_DIR / "frames"
+LEGACY_DIR = ROOT / "assets" / "animations" / "units"
 FRAME = 112
 ANIMATION_FRAMES = 6
 SAFE_MARGIN = 3
@@ -78,6 +79,10 @@ def animate(base: Image.Image, action: str, direction: str, frame: int) -> Image
     return result
 
 
+def save_frame(frame: Image.Image, path: Path) -> None:
+    frame.save(path, "PNG", compress_level=6)
+
+
 def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
     source = Image.open(source_path).convert("RGBA")
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
@@ -97,19 +102,82 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
             for frame_index in range(ANIMATION_FRAMES):
                 frame = animate(base, action, direction, frame_index)
                 sheet.alpha_composite(frame, (frame_index * FRAME, row * FRAME))
-                frame.save(FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index + 1:02d}.png", optimize=True)
+                save_frame(frame, FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index + 1:02d}.png")
     filename = f"{unit_id}-motion-4dir-sheet.webp"
-    sheet.save(OUTPUT_DIR / filename, "WEBP", quality=88, method=6, exact=True)
+    sheet.save(OUTPUT_DIR / filename, "WEBP", quality=88, method=4, exact=True)
     source_columns = [0, 3, 2, 1] if unit_id in SWAPPED_SIDE_UNITS else [0, 1, 2, 3]
-    return {"file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "source": f"assets/animations/directional/sources/{source_path.name}"}
+    return {"file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "sourceType": "authored-four-direction", "source": f"assets/animations/directional/sources/{source_path.name}"}
+
+
+def vertical_variant(image: Image.Image, direction: str) -> Image.Image:
+    """Create a centered vertical-view variant from approved existing art.
+
+    Non-starter units do not have hand-painted back/front references yet. The
+    narrower centered silhouette keeps down/up movement visually distinct from
+    the broad side views while preserving the original unit identity.
+    """
+    box = image.getchannel("A").getbbox()
+    subject = image.crop(box) if box else image
+    width_scale = .84 if direction == "down" else .78
+    subject = subject.resize((max(1, round(subject.width * width_scale)), subject.height), Image.Resampling.LANCZOS)
+    if direction == "up":
+        subject = ImageOps.mirror(subject)
+    canvas = Image.new("RGBA", (FRAME, FRAME))
+    x = (FRAME - subject.width) // 2
+    y = min(FRAME - SAFE_MARGIN - subject.height, max(SAFE_MARGIN, (FRAME - subject.height) // 2))
+    canvas.alpha_composite(subject, (x, y))
+    return canvas
+
+
+def build_legacy(unit_id: str, source_path: Path) -> dict[str, object]:
+    """Upgrade an approved 4x6 left/right sheet into the 6x12 contract."""
+    source = Image.open(source_path).convert("RGBA")
+    sheet = Image.new("RGBA", (FRAME * ANIMATION_FRAMES, FRAME * 12))
+    row_order: list[str] = []
+    source_frames = (0, 1, 2, 3, 2, 1)
+    for direction_index, direction in enumerate(DIRECTIONS):
+        side_row_offset = 3 if direction == "left" else 0
+        for action_index, action in enumerate(ACTIONS):
+            source_row = side_row_offset + action_index
+            row = direction_index * 3 + action_index
+            row_order.append(f"{action}-{direction}")
+            for frame_index, source_column in enumerate(source_frames):
+                cell = source.crop((source_column * FRAME, source_row * FRAME, (source_column + 1) * FRAME, (source_row + 1) * FRAME))
+                base = contain(cell, .88)
+                if direction in ("down", "up"):
+                    base = vertical_variant(base, direction)
+                frame = animate(base, action, direction, frame_index)
+                sheet.alpha_composite(frame, (frame_index * FRAME, row * FRAME))
+                save_frame(frame, FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index + 1:02d}.png")
+    filename = f"{unit_id}-motion-4dir-sheet.webp"
+    sheet.save(OUTPUT_DIR / filename, "WEBP", quality=86, method=4, exact=True)
+    return {
+        "file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES,
+        "rows": 12, "frame": FRAME, "rowsOrder": row_order,
+        "sourceColumns": ["derived-down", "legacy-right", "derived-up", "legacy-left"],
+        "sourceType": "derived-from-approved-motion",
+        "source": f"assets/animations/units/{source_path.name}",
+    }
 
 
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    FRAME_DIR.mkdir(parents=True, exist_ok=True)
+    for stale in FRAME_DIR.glob("*.png"):
+        stale.unlink()
+    for stale in OUTPUT_DIR.glob("*-motion-4dir-sheet.webp"):
+        stale.unlink()
+    authored_sources = {
+        source.name.split("-four-direction-reference-")[0]: source
+        for source in SOURCE_DIR.glob("*-four-direction-reference-v*-alpha.png")
+    }
     manifest: dict[str, object] = {}
-    for source in sorted(SOURCE_DIR.glob("*-four-direction-reference-v*-alpha.png")):
-        unit_id = source.name.split("-four-direction-reference-")[0]
-        manifest[unit_id] = build_reference(unit_id, source)
+    legacy_manifest = json.loads((LEGACY_DIR / "manifest.json").read_text(encoding="utf-8"))
+    for unit_id in sorted(legacy_manifest):
+        if unit_id in authored_sources:
+            manifest[unit_id] = build_reference(unit_id, authored_sources[unit_id])
+        else:
+            manifest[unit_id] = build_legacy(unit_id, LEGACY_DIR / f"{unit_id}-motion-sheet.webp")
     (OUTPUT_DIR / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"Built {len(manifest)} four-direction unit sheets and {len(manifest) * 12 * ANIMATION_FRAMES} transparent frames.")
 

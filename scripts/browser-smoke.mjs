@@ -120,7 +120,8 @@ try {
     idleAnimation: getComputedStyle(document.querySelector('.unit.ally .portrait')).animationName,
     terrainToggle: document.querySelector('#terrain-toggle')?.textContent,
     terrainOpacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity,
-    fourDirectionStarters: document.querySelectorAll('.unit.ally.motion-4dir').length,
+    fourDirectionAllies: document.querySelectorAll('.unit.ally.motion-4dir').length,
+    fourDirectionEnemies: document.querySelectorAll('.unit.enemy.motion-4dir').length,
     fourDirectionSheetSize: getComputedStyle(document.querySelector('.unit.ally.motion-4dir .portrait')).backgroundSize,
     deployToolbar: !document.querySelector('#deploy-toolbar').hidden,
     balance: window.__TACTICS_DEBUG__.getState().balanceLabel,
@@ -128,7 +129,7 @@ try {
   }))()`);
   assert.ok(deployed.battleVisible && deployed.allies === 25 && deployed.enemies >= 25);
   assert.ok(deployed.deployToolbar); assert.equal(deployed.balance, '滿編迎擊'); assert.equal(deployed.partyCost, 25);
-  assert.equal(deployed.fourDirectionStarters, 4); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
+  assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
   const terrainToggle = await evaluate(`(async () => { const button = document.querySelector('#terrain-toggle'); button.click(); await new Promise(resolve => setTimeout(resolve, 180)); const result = { pressed: button.getAttribute('aria-pressed'), all: document.querySelector('#board').classList.contains('show-terrain'), stored: localStorage.getItem('jose-terrain-visibility'), opacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity }; button.click(); return result; })()`);
   assert.deepEqual(terrainToggle, { pressed: 'true', all: true, stored: 'all', opacity: '0.9' });
