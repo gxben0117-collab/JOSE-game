@@ -100,7 +100,7 @@ try {
   assert.deepEqual(packingRoster, { allies: 7, large: 6, small: 1, covered: 18 });
 
   const capacityLoaded = waitEvent('Page.loadEventFired');
-  await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); const ids = TACTICAL_PET_DATA.filter(pet => pet.size === 1).slice(0, 25).map(pet => pet.id); ids.forEach(id => { save.owned[id] = true; }); save.party = ids; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
+  await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); const ids = TACTICAL_PET_DATA.filter(pet => pet.size === 1).slice(0, 25).map(pet => pet.id); ids.forEach(id => { save.owned[id] = true; }); save.party = ids; save.evolution.molten_ball = 3; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
   await capacityLoaded; await delay(700);
   const capacityRoster = await evaluate(`(() => { document.querySelector('#hub-party').click(); const search = document.querySelector('#deploy-search'); search.value = '熔球'; search.dispatchEvent(new Event('input')); const filtered = document.querySelectorAll('#deploy-grid .deploy-card').length; search.value = ''; search.dispatchEvent(new Event('input')); const result = { help: document.querySelector('#deploy-help').textContent, selected: document.querySelectorAll('#deploy-grid .deploy-card.selected').length, filtered, budget: document.querySelector('#deploy-budget-label').textContent }; document.querySelector('#close-deploy').click(); return result; })()`);
   assert.equal(capacityRoster.selected, 25); assert.match(capacityRoster.help, /出陣單位 25 \/ 25/);
@@ -117,6 +117,7 @@ try {
     allyRight: !!document.querySelector('.unit.ally.facing-right'),
     enemyLeft: !!document.querySelector('.unit.enemy.facing-left'),
     motion: getComputedStyle(document.querySelector('.unit.ally .portrait')).backgroundImage,
+    evolvedMotion: getComputedStyle(document.querySelector('.unit.ally[data-key$="-molten_ball"] .portrait')).backgroundImage,
     idleAnimation: getComputedStyle(document.querySelector('.unit.ally .portrait')).animationName,
     terrainToggle: document.querySelector('#terrain-toggle')?.textContent,
     terrainOpacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity,
@@ -129,7 +130,7 @@ try {
   }))()`);
   assert.ok(deployed.battleVisible && deployed.allies === 25 && deployed.enemies >= 25);
   assert.ok(deployed.deployToolbar); assert.equal(deployed.balance, '滿編迎擊'); assert.equal(deployed.partyCost, 25);
-  assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
+  assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.evolvedMotion, /molten_ball-stage_3-motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
   const terrainToggle = await evaluate(`(async () => { const button = document.querySelector('#terrain-toggle'); button.click(); await new Promise(resolve => setTimeout(resolve, 180)); const result = { pressed: button.getAttribute('aria-pressed'), all: document.querySelector('#board').classList.contains('show-terrain'), stored: localStorage.getItem('jose-terrain-visibility'), opacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity }; button.click(); return result; })()`);
   assert.deepEqual(terrainToggle, { pressed: 'true', all: true, stored: 'all', opacity: '0.9' });

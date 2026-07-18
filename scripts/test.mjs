@@ -140,7 +140,7 @@ test('地形以連續區塊生成而非零碎散點', () => {
   }
   assert.ok(content.maps.some(map => content.terrainAt(content.stages.find(stage => stage.mapId === map.id), 10, 5)), '所有章節中央都被分類成無地形');
 });
-test('全部 115 隻幻獸與 52 隻魔獸具有四方向六幀動作圖集與 12024 張透明散圖', () => {
+test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向六幀動作圖集', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
   const unitIds = Array.from(profiles, unit => unit.id).sort();
   const rows = ['idle-down','move-down','attack-down','idle-right','move-right','attack-right','idle-up','move-up','attack-up','idle-left','move-left','attack-left'];
@@ -152,8 +152,18 @@ test('全部 115 隻幻獸與 52 隻魔獸具有四方向六幀動作圖集與 1
     for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 6; frame++) {
       assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
     }
+    const profile = profiles.find(unit => unit.id === id);
+    const hasEvolutionArt = profile.evolution[1]?.portrait.startsWith(`assets/pets/${id}/evolution/`);
+    assert.deepEqual(Object.keys(manifest[id].evolutionSheets), hasEvolutionArt ? ['1','2','3'] : ['1']);
+    if (hasEvolutionArt) for (const stage of [2, 3]) {
+      assert.ok(existsSync(join(root, manifest[id].evolutionSheets[String(stage)])));
+      for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 6; frame++) {
+        assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-stage_${stage}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
+      }
+    }
   }
-  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 12024);
+  assert.equal(Object.values(manifest).filter(entry => Object.keys(entry.evolutionSheets).length === 3).length, 65);
+  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 21384);
   const bounds = spawnSync('python', ['scripts/check-directional-frame-bounds.py'], { cwd: root, encoding: 'utf8' });
   assert.equal(bounds.status, 0, bounds.stderr || bounds.stdout);
 });

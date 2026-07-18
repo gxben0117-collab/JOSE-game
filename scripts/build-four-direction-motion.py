@@ -16,11 +16,13 @@ SOURCE_DIR = ROOT / "assets" / "animations" / "directional" / "sources"
 OUTPUT_DIR = ROOT / "assets" / "animations" / "directional"
 FRAME_DIR = OUTPUT_DIR / "frames"
 LEGACY_DIR = ROOT / "assets" / "animations" / "units"
+EVOLUTION_ROOT = ROOT / "assets" / "pets"
 FRAME = 112
 ANIMATION_FRAMES = 6
 SAFE_MARGIN = 3
 DIRECTIONS = ("down", "right", "up", "left")
 ACTIONS = ("idle", "move", "attack")
+SOURCE_ALREADY_RIGHT = {"abyss_dragon", "abyss_god_dragon"}
 # 這三張 AI 參考圖的側面欄位是依「角色看向畫面中央」構圖，
 # 實際內容與提示標籤相反，因此合圖時交換第 2、4 欄。
 SWAPPED_SIDE_UNITS = {"fire_lion", "fire_fox", "leaf_ear_rabbit"}
@@ -160,6 +162,36 @@ def build_legacy(unit_id: str, source_path: Path) -> dict[str, object]:
     }
 
 
+def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[str, object]:
+    """Build a full four-direction sheet from that stage's approved portrait."""
+    portrait = contain(Image.open(source_path), .86)
+    right_base = portrait if unit_id in SOURCE_ALREADY_RIGHT else ImageOps.mirror(portrait)
+    sheet = Image.new("RGBA", (FRAME * ANIMATION_FRAMES, FRAME * 12))
+    row_order: list[str] = []
+    for direction_index, direction in enumerate(DIRECTIONS):
+        if direction == "right":
+            direction_base = right_base
+        elif direction == "left":
+            direction_base = ImageOps.mirror(right_base)
+        else:
+            direction_base = vertical_variant(right_base, direction)
+        for action_index, action in enumerate(ACTIONS):
+            row = direction_index * 3 + action_index
+            row_order.append(f"{action}-{direction}")
+            for frame_index in range(ANIMATION_FRAMES):
+                frame = animate(direction_base, action, direction, frame_index)
+                sheet.alpha_composite(frame, (frame_index * FRAME, row * FRAME))
+                save_frame(frame, FRAME_DIR / f"{unit_id}-stage_{stage}-{action}-{direction}-frame_{frame_index + 1:02d}.png")
+    filename = f"{unit_id}-stage_{stage}-motion-4dir-sheet.webp"
+    sheet.save(OUTPUT_DIR / filename, "WEBP", quality=86, method=4, exact=True)
+    return {
+        "file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES,
+        "rows": 12, "frame": FRAME, "rowsOrder": row_order,
+        "sourceType": "approved-evolution-portrait",
+        "source": f"assets/pets/{unit_id}/evolution/{source_path.name}",
+    }
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
@@ -178,8 +210,17 @@ def main() -> None:
             manifest[unit_id] = build_reference(unit_id, authored_sources[unit_id])
         else:
             manifest[unit_id] = build_legacy(unit_id, LEGACY_DIR / f"{unit_id}-motion-sheet.webp")
+        manifest[unit_id]["evolutionSheets"] = {"1": manifest[unit_id]["file"]}
+        evolution_dir = EVOLUTION_ROOT / unit_id / "evolution"
+        for stage in (2, 3):
+            stage_path = evolution_dir / f"stage_{stage}.png"
+            if stage_path.exists():
+                stage_entry = build_evolution_stage(unit_id, stage, stage_path)
+                manifest[unit_id]["evolutionSheets"][str(stage)] = stage_entry["file"]
     (OUTPUT_DIR / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Built {len(manifest)} four-direction unit sheets and {len(manifest) * 12 * ANIMATION_FRAMES} transparent frames.")
+    sheet_count = len(list(OUTPUT_DIR.glob("*-motion-4dir-sheet.webp")))
+    frame_count = len(list(FRAME_DIR.glob("*.png")))
+    print(f"Built {sheet_count} four-direction unit/evolution sheets and {frame_count} transparent frames.")
 
 
 if __name__ == "__main__":
