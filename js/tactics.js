@@ -4,7 +4,8 @@
 
   var COLS = 21, ROWS = 10, HARD_ROUND_LIMIT = 45, DEPLOY_CAPACITY = 25, AGGRO_RANGE = 7;
   /* 25 格底部部署區：6×4 主區（24 格）+ 右下 1 格，能容納 25 隻 1×1 或 6 隻 2×2 + 1 隻 1×1。 */
-  var DEPLOY_MIN_X = 3, DEPLOY_MAX_X = 9, DEPLOY_MIN_Y = 6, DEPLOY_MAX_Y = 9;
+  /* 戰前自由部署：左側 3 欄 × 10 列；出陣容量仍獨立維持 25 單位。 */
+  var DEPLOY_MIN_X = 0, DEPLOY_MAX_X = 2, DEPLOY_MIN_Y = 0, DEPLOY_MAX_Y = 9;
   var content = window.TACTICAL_CONTENT;
   var profiles = window.TACTICAL_PET_DATA.concat(window.TACTICAL_ENEMY_DATA || []);
   var progression = new window.TacticalProgression({ profiles: window.TACTICAL_PET_DATA, content: content });
@@ -111,7 +112,7 @@
     var stage = Math.max(1, Math.min(3, Number(unit.evolution) || 1));
     var stagePortrait = unit.p.evolution[Math.min(stage, unit.p.evolution.length) - 1]?.portrait || '';
     var stageSuffix = stage > 1 && stagePortrait.indexOf('assets/pets/' + unit.id + '/evolution/stage_' + stage + '.png') === 0 ? '-stage_' + stage : '';
-    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=23';
+    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=24';
   }
   function bonuses(unit) { return unit.team === 'ally' ? progression.bonusesFor(unit.p) : {}; }
   function bonusValue(unit, key) { var value = bonuses(unit); return (value.all || 0) + (value[key] || 0); }
@@ -138,18 +139,13 @@
   }
 
   /* 25 格主部署區；3×3 幻獸成本依規則只算 3，改在左上大型部署列排列，避免合法編隊被候補。 */
-  function inDeployZone(x, y) { return (x >= 3 && x <= 8 && y >= 6 && y <= 9) || (x === 9 && y === 9); }
-  function inLargeDeployReserve(x, y) { return x >= 0 && x <= 11 && y >= 0 && y <= 5; }
+  function inDeployZone(x, y) { return x >= DEPLOY_MIN_X && x <= DEPLOY_MAX_X && y >= DEPLOY_MIN_Y && y <= DEPLOY_MAX_Y; }
+  function inLargeDeployReserve(x, y) { return x >= DEPLOY_MIN_X && x <= DEPLOY_MAX_X + 2 && y >= DEPLOY_MIN_Y && y <= DEPLOY_MAX_Y; }
   function deployFits(unit, x, y) {
-    var size = unitSize(unit);
-    for (var dy = 0; dy < size; dy++) for (var dx = 0; dx < size; dx++) {
-      if (size === 3 ? !inLargeDeployReserve(x + dx, y + dy) : !inDeployZone(x + dx, y + dy)) return false;
-    }
-    return canStand(unit, x, y);
+    return inDeployZone(x, y) && canStand(unit, x, y);
   }
   function clearDeploymentObstacles() {
-    var hasSizeThree = partyIds.some(function (id) { return (profile(id) || {}).size === 3; });
-    state.obstacles = state.obstacles.filter(function (spot) { return !inDeployZone(spot.x, spot.y) && !(hasSizeThree && inLargeDeployReserve(spot.x, spot.y)); });
+    state.obstacles = state.obstacles.filter(function (spot) { return !inLargeDeployReserve(spot.x, spot.y); });
     state.obstacleMap = {};
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
   }
@@ -185,18 +181,14 @@
     if (state.phase !== 'deploy') return;
     var allies = state.units.filter(function (unit) { return unit.team === 'ally'; });
     allies.forEach(function (unit) { unit.x = -9; unit.y = -9; });
-    var large = allies.filter(function (unit) { return unitSize(unit) === 3; }).sort(function (a, b) { return formationRoleRank(a, mode) - formationRoleRank(b, mode); });
-    var big = allies.filter(function (unit) { return unitSize(unit) === 2; }).sort(function (a, b) { return formationRoleRank(a, mode) - formationRoleRank(b, mode); });
-    var small = allies.filter(function (unit) { return unitSize(unit) === 1; }).sort(function (a, b) { return formationRoleRank(a, mode) - formationRoleRank(b, mode); });
-    var reserve = mode === 'assault' ? [[9,3],[6,3],[3,3],[9,0],[6,0],[3,0],[0,3],[0,0]] : [[6,3],[3,3],[6,0],[3,0],[9,3],[0,3],[9,0],[0,0]];
-    var bigAnchors = mode === 'assault' ? [[7,6],[7,8],[5,6],[5,8],[3,6],[3,8]] : [[7,6],[7,8],[5,6],[5,8],[3,6],[3,8]];
-    large.forEach(function (unit, index) { var spot = reserve[index]; if (spot && deployFits(unit, spot[0], spot[1])) { unit.x = spot[0]; unit.y = spot[1]; } });
-    big.forEach(function (unit, index) { var spot = bigAnchors[index]; if (spot && deployFits(unit, spot[0], spot[1])) { unit.x = spot[0]; unit.y = spot[1]; } });
+    allies.sort(function (a, b) { return unitSize(b) - unitSize(a) || formationRoleRank(a, mode) - formationRoleRank(b, mode); });
     var cells = [];
-    for (var x = DEPLOY_MAX_X; x >= DEPLOY_MIN_X; x--) for (var y = DEPLOY_MIN_Y; y <= DEPLOY_MAX_Y; y++) if (inDeployZone(x, y)) cells.push([x, y]);
-    cells.push([9, 9]);
-    if (mode !== 'assault') cells.sort(function (a, b) { return Math.abs(a[1] - 7.5) - Math.abs(b[1] - 7.5) || b[0] - a[0]; });
-    small.forEach(function (unit) { var spot = cells.find(function (entry) { return deployFits(unit, entry[0], entry[1]); }); if (spot) { unit.x = spot[0]; unit.y = spot[1]; } });
+    for (var y = DEPLOY_MIN_Y; y <= DEPLOY_MAX_Y; y++) for (var x = DEPLOY_MIN_X; x <= DEPLOY_MAX_X; x++) cells.push([x, y]);
+    cells.sort(function (a, b) {
+      if (mode === 'assault') return b[0] - a[0] || Math.abs(a[1] - 4.5) - Math.abs(b[1] - 4.5);
+      return Math.abs(a[1] - 4.5) - Math.abs(b[1] - 4.5) || a[0] - b[0];
+    });
+    allies.forEach(function (unit) { var spot = cells.find(function (entry) { return deployFits(unit, entry[0], entry[1]); }); if (spot) { unit.x = spot[0]; unit.y = spot[1]; } });
     state.selected = null; audio.play('ui'); note(mode === 'assault' ? '已套用突擊陣：輸出與控場靠前，快速接敵。' : '已套用均衡陣：防禦在前、治療與輔助在後。'); render();
   }
 
@@ -807,7 +799,7 @@
       element.innerHTML = '<span class="terrain-hint terrain-hint-' + tile + '" aria-hidden="true">' + terrainLabel + '</span>';
     }
     else element.innerHTML = '';
-    if (state.phase === 'deploy' && !unit && (inDeployZone(x, y) || (active && unitSize(active) === 3 && inLargeDeployReserve(x, y)))) element.classList.add('deploy-zone');
+    if (state.phase === 'deploy' && !unit && inDeployZone(x, y)) element.classList.add('deploy-zone');
     if (threatTileMap && threatTileMap[x + ',' + y]) element.classList.add(threatTileMap[x + ',' + y] === 'move' ? 'threat-move' : 'threat-range');
     if (active && state.phase === 'deploy' && active.team === 'ally' && !unit && deployFits(active, x, y)) element.classList.add('move-target');
     if (active && state.phase === 'player' && !state.over) {
@@ -865,7 +857,7 @@
     }
     dom.board.classList.toggle('is-deploying', state.phase === 'deploy');
     if (dom.deployToolbar) dom.deployToolbar.hidden = state.phase !== 'deploy';
-    if (dom.deployStatus) dom.deployStatus.textContent = '出陣 ' + alive('ally').length + ' 隻｜' + state.partyCost + '/25 單位｜' + state.balance.label + '・敵軍 ' + alive('enemy').length + ' 隻' + (active && active.team === 'ally' ? '｜已選 ' + active.p.name : '');
+    if (dom.deployStatus) dom.deployStatus.textContent = '左側 3×10｜出陣 ' + alive('ally').length + ' 隻｜' + state.partyCost + '/25 單位｜' + state.balance.label + '・敵軍 ' + alive('enemy').length + ' 隻' + (active && active.team === 'ally' ? '｜已選 ' + active.p.name : '');
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);

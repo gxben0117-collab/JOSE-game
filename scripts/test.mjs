@@ -148,7 +148,7 @@ test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向六幀�
   for (const id of unitIds) {
     assert.equal(manifest[id].columns, 6); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
     assert.deepEqual(Array.from(manifest[id].rowsOrder), rows); assert.ok(existsSync(join(root, manifest[id].file)));
-    assert.ok(['authored-four-direction', 'derived-from-approved-motion'].includes(manifest[id].sourceType));
+    assert.ok(['authored-four-direction', 'derived-from-approved-motion', 'inspected-2x2-portrait-four-direction'].includes(manifest[id].sourceType));
     for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 6; frame++) {
       assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
     }
@@ -320,16 +320,27 @@ test('行動裝置只在使用者互動後觸發震動', () => {
   const source = readFileSync(join(root, 'js/core/TacticalAudio.js'), 'utf8');
   assert.match(source, /navigator\.userActivation/); assert.match(source, /activation\.hasBeenActive/);
 });
-test('我方主部署區恰為 25 格並可容納六個 2×2 加一個 1×1', () => {
+test('我方自由部署區為靠左側 3×10 並維持 25 出陣單位規則', () => {
   const cells = [];
-  for (let y = 6; y <= 9; y++) for (let x = 3; x <= 8; x++) cells.push({ x, y });
-  cells.push({ x: 9, y: 9 });
-  assert.equal(new Set(cells.map(cell => cell.x + ',' + cell.y)).size, 25);
-  const occupied = new Set();
-  for (const anchor of [{x:3,y:6},{x:5,y:6},{x:7,y:6},{x:3,y:8},{x:5,y:8},{x:7,y:8}]) {
-    for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) occupied.add((anchor.x + dx) + ',' + (anchor.y + dy));
+  for (let y = 0; y < 10; y++) for (let x = 0; x < 3; x++) cells.push({ x, y });
+  assert.equal(new Set(cells.map(cell => cell.x + ',' + cell.y)).size, 30);
+  assert.ok(cells.every(cell => cell.x <= 2 && cell.y <= 9));
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  assert.match(source, /DEPLOY_MIN_X = 0, DEPLOY_MAX_X = 2, DEPLOY_MIN_Y = 0, DEPLOY_MAX_Y = 9/);
+  assert.match(source, /DEPLOY_CAPACITY = 25/);
+});
+
+test('2×2 圖集逐隻校正左右並提供明確上下方向', () => {
+  const source = readFileSync(join(root, 'scripts/build-four-direction-motion.py'), 'utf8');
+  const directionalManifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
+  for (const id of ['abyss_god_dragon', 'amber_antler_moose', 'crimson_dragon']) assert.match(source, new RegExp('\\"' + id + '\\"'));
+  assert.match(source, /explicit_heading/);
+  assert.match(source, /angle = 90 if direction == "up" else -90/);
+  for (const id of ['abyss_god_dragon', 'amber_antler_moose', 'crimson_dragon']) {
+    const entry = directionalManifest[id];
+    assert.equal(entry.rows, 12);
+    assert.equal(entry.sourceType, 'inspected-2x2-portrait-four-direction');
   }
-  occupied.add('9,9'); assert.equal(occupied.size, 25);
 });
 test('敵軍名冊展開為 10~30 隻且首領在首位', () => {
   for (const stage of content.stages) {

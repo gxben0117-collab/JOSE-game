@@ -51,14 +51,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/abyss_god_dragon-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/abyss_god_dragon/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/abyss_god_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/abyss_god_dragon-stage_2-motion-4dir-sheet.webp",
@@ -84,14 +78,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/abyss_mammoth-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/abyss_mammoth.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/abyss_mammoth-motion-4dir-sheet.webp"
     }
@@ -210,14 +198,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/amber_antler_moose-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/amber_antler_moose.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/amber_antler_moose-motion-4dir-sheet.webp"
     }
@@ -241,14 +223,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/ancient_treant-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/ancient_treant/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/ancient_treant-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/ancient_treant-stage_2-motion-4dir-sheet.webp",
@@ -367,14 +343,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/aurora_narwhal-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/aurora_narwhal.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/aurora_narwhal-motion-4dir-sheet.webp"
     }
@@ -491,14 +461,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/blazing_dragon-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/blazing_dragon/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/blazing_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/blazing_dragon-stage_2-motion-4dir-sheet.webp",
@@ -617,14 +581,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/brine_crocodile-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/brine_crocodile.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/brine_crocodile-motion-4dir-sheet.webp"
     }
@@ -681,14 +639,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/cathedral_elephant-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/cathedral_elephant.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/cathedral_elephant-motion-4dir-sheet.webp"
     }
@@ -1086,14 +1038,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/crimson_dragon-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/crimson_dragon/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/crimson_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/crimson_dragon-stage_2-motion-4dir-sheet.webp",
@@ -1183,14 +1129,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/crown_unicorn-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/crown_unicorn.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/crown_unicorn-motion-4dir-sheet.webp"
     }
@@ -1439,14 +1379,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/eclipse_dragon-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/eclipse_dragon/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/eclipse_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/eclipse_dragon-stage_2-motion-4dir-sheet.webp",
@@ -1631,14 +1565,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/emerald_dragon-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/emerald_dragon/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/emerald_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/emerald_dragon-stage_2-motion-4dir-sheet.webp",
@@ -1664,14 +1592,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/emerald_god_dragon-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/emerald_god_dragon/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/emerald_god_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/emerald_god_dragon-stage_2-motion-4dir-sheet.webp",
@@ -1728,14 +1650,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/fern_ceratops-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/fern_ceratops.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/fern_ceratops-motion-4dir-sheet.webp"
     }
@@ -1825,14 +1741,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/flame_emperor-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/flame_emperor/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/flame_emperor-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/flame_emperor-stage_2-motion-4dir-sheet.webp",
@@ -1858,14 +1768,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/flame_god_lion-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/flame_god_lion/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/flame_god_lion-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/flame_god_lion-stage_2-motion-4dir-sheet.webp",
@@ -2050,14 +1954,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/forest_god-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/forest_god/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/forest_god-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/forest_god-stage_2-motion-4dir-sheet.webp",
@@ -2116,14 +2014,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/frost_leviathan-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/frost_leviathan/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/frost_leviathan-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/frost_leviathan-stage_2-motion-4dir-sheet.webp",
@@ -2428,14 +2320,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/gold_qilin-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/gold_qilin/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/gold_qilin-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/gold_qilin-stage_2-motion-4dir-sheet.webp",
@@ -2847,14 +2733,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/jade_qilin-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/jade_qilin/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/jade_qilin-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/jade_qilin-stage_2-motion-4dir-sheet.webp",
@@ -2942,14 +2822,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/kiln_rhinoceros-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/kiln_rhinoceros.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/kiln_rhinoceros-motion-4dir-sheet.webp"
     }
@@ -3454,14 +3328,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/mushroom_bison-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/mushroom_bison.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/mushroom_bison-motion-4dir-sheet.webp"
     }
@@ -3677,14 +3545,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/obsidian_gorilla-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pack/obsidian_gorilla.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/obsidian_gorilla-motion-4dir-sheet.webp"
     }
@@ -4212,14 +4074,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/sea_emperor-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/sea_emperor/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/sea_emperor-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/sea_emperor-stage_2-motion-4dir-sheet.webp",
@@ -4245,14 +4101,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/sea_god_beast-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/sea_god_beast/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/sea_god_beast-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/sea_god_beast-stage_2-motion-4dir-sheet.webp",
@@ -4468,14 +4318,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/solar_phoenix-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/solar_phoenix/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/solar_phoenix-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/solar_phoenix-stage_2-motion-4dir-sheet.webp",
@@ -4972,14 +4816,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/tsunami_dragon-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/tsunami_dragon/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/tsunami_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/tsunami_dragon-stage_2-motion-4dir-sheet.webp",
@@ -5228,14 +5066,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/void_leviathan-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/void_leviathan/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/void_leviathan-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/void_leviathan-stage_2-motion-4dir-sheet.webp",
@@ -5261,14 +5093,8 @@
       "move-left",
       "attack-left"
     ],
-    "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
-    ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/volcanic_titan-motion-sheet.webp",
+    "sourceType": "inspected-2x2-portrait-four-direction",
+    "source": "assets/pets/volcanic_titan/evolution/stage_1.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/volcanic_titan-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/volcanic_titan-stage_2-motion-4dir-sheet.webp",

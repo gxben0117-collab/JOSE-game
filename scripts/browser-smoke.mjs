@@ -96,8 +96,8 @@ try {
   const packingLoaded = waitEvent('Page.loadEventFired');
   await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); const large = TACTICAL_PET_DATA.filter(pet => pet.size === 2).slice(0, 6).map(pet => pet.id); const small = TACTICAL_PET_DATA.find(pet => pet.size === 1).id; [...large, small].forEach(id => { save.owned[id] = true; }); save.party = [...large, small]; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
   await packingLoaded; await delay(700);
-  const packingRoster = await evaluate(`(() => ({ allies: document.querySelectorAll('#board .unit.ally').length, large: document.querySelectorAll('#board .unit.ally.size-2').length, small: document.querySelectorAll('#board .unit.ally.size-1').length, covered: document.querySelectorAll('#board .cell.covered').length }))()`);
-  assert.deepEqual(packingRoster, { allies: 7, large: 6, small: 1, covered: 18 });
+  const packingRoster = await evaluate(`(() => ({ allies: document.querySelectorAll('#board .unit.ally').length, large: document.querySelectorAll('#board .unit.ally.size-2').length, small: document.querySelectorAll('#board .unit.ally.size-1').length, covered: document.querySelectorAll('#board .cell.covered').length, anchorColumns: [...document.querySelectorAll('#board .unit.ally')].map(unit => [...document.querySelectorAll('#board .cell')].indexOf(unit.parentElement) % 21) }))()`);
+  assert.equal(packingRoster.allies, 7); assert.equal(packingRoster.large, 6); assert.equal(packingRoster.small, 1); assert.equal(packingRoster.covered, 18); assert.ok(packingRoster.anchorColumns.every(column => column >= 0 && column <= 2));
 
   const capacityLoaded = waitEvent('Page.loadEventFired');
   await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); const ids = TACTICAL_PET_DATA.filter(pet => pet.size === 1).slice(0, 25).map(pet => pet.id); ids.forEach(id => { save.owned[id] = true; }); save.party = ids; save.evolution.molten_ball = 3; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
@@ -126,10 +126,13 @@ try {
     fourDirectionSheetSize: getComputedStyle(document.querySelector('.unit.ally.motion-4dir .portrait')).backgroundSize,
     deployToolbar: !document.querySelector('#deploy-toolbar').hidden,
     balance: window.__TACTICS_DEBUG__.getState().balanceLabel,
-    partyCost: window.__TACTICS_DEBUG__.getState().partyCost
+    partyCost: window.__TACTICS_DEBUG__.getState().partyCost,
+    deployStatus: document.querySelector('#deploy-status').textContent,
+    allyAnchorColumns: [...document.querySelectorAll('#board .unit.ally')].map(unit => [...document.querySelectorAll('#board .cell')].indexOf(unit.parentElement) % 21)
   }))()`);
   assert.ok(deployed.battleVisible && deployed.allies === 25 && deployed.enemies >= 25);
   assert.ok(deployed.deployToolbar); assert.equal(deployed.balance, '滿編迎擊'); assert.equal(deployed.partyCost, 25);
+  assert.match(deployed.deployStatus, /3×10/); assert.ok(deployed.allyAnchorColumns.every(column => column >= 0 && column <= 2));
   assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.evolvedMotion, /molten_ball-stage_3-motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
   const unitInspection = await evaluate(`(async () => { const enemy = document.querySelector('.unit.enemy'); enemy.click(); await new Promise(resolve => setTimeout(resolve, 80)); const enemyResult = { highlighted: !!document.querySelector('.unit.enemy.inspected'), tags: document.querySelectorAll('#unit-detail .detail-tags span').length, skills: document.querySelectorAll('#unit-detail .detail-skill-list li').length, text: document.querySelector('#unit-detail').innerText.length }; const ally = document.querySelector('.unit.ally'); ally.click(); await new Promise(resolve => setTimeout(resolve, 80)); return { enemy: enemyResult, allyHighlighted: !!document.querySelector('.unit.ally.inspected'), allyActions: document.querySelectorAll('#skill-buttons .skill').length, minimap: !!document.querySelector('#minimap') }; })()`);
@@ -137,8 +140,7 @@ try {
   const terrainToggle = await evaluate(`(async () => { const button = document.querySelector('#terrain-toggle'); button.click(); await new Promise(resolve => setTimeout(resolve, 180)); const result = { pressed: button.getAttribute('aria-pressed'), all: document.querySelector('#board').classList.contains('show-terrain'), stored: localStorage.getItem('jose-terrain-visibility'), opacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity }; button.click(); return result; })()`);
   assert.deepEqual(terrainToggle, { pressed: 'true', all: true, stored: 'all', opacity: '0.9' });
   await evaluate(`document.querySelector('#end-turn').click()`); await delay(300);
-  await evaluate(`document.querySelector('.unit.ally').click()`); await delay(100);
-  const moved = await evaluate(`(() => { const target = document.querySelector('.cell.move-target'); if (!target) return false; target.click(); return true; })()`);
+  const moved = await evaluate(`(() => { const count = document.querySelectorAll('.unit.ally').length; for (let index = 0; index < count; index++) { const ally = document.querySelectorAll('.unit.ally')[index]; ally.click(); const target = document.querySelector('.cell.move-target'); if (target) { target.click(); return true; } } return false; })()`);
   assert.ok(moved); await delay(60);
   const walkAnimation = await evaluate(`(() => { const portrait = document.querySelector('.unit.ally.walking .portrait'); return portrait ? getComputedStyle(portrait).animationName : ''; })()`);
   assert.match(walkAnimation, /motion-(4dir-)?walk-(right|left|up|down)/); await delay(840);

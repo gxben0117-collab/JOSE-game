@@ -22,7 +22,22 @@ ANIMATION_FRAMES = 6
 SAFE_MARGIN = 3
 DIRECTIONS = ("down", "right", "up", "left")
 ACTIONS = ("idle", "move", "attack")
-SOURCE_ALREADY_RIGHT = {"abyss_dragon", "abyss_god_dragon"}
+SIZE2_IDS = {
+    "blazing_dragon", "crimson_dragon", "emerald_dragon", "tsunami_dragon", "frost_leviathan",
+    "volcanic_titan", "ancient_treant", "flame_emperor", "forest_god", "sea_emperor",
+    "flame_god_lion", "emerald_god_dragon", "abyss_god_dragon", "sea_god_beast", "jade_qilin",
+    "solar_phoenix", "eclipse_dragon", "void_leviathan", "gold_qilin", "kiln_rhinoceros",
+    "fern_ceratops", "mushroom_bison", "amber_antler_moose", "brine_crocodile", "aurora_narwhal",
+    "cathedral_elephant", "crown_unicorn", "obsidian_gorilla", "abyss_mammoth",
+}
+# Portraits whose head/snout is authored toward screen-right. Front-facing
+# silhouettes are intentionally omitted because mirroring does not change their
+# readable heading. This list is based on visual inspection of the source pack.
+SOURCE_ALREADY_RIGHT = {
+    "abyss_dragon", "crimson_dragon", "emerald_dragon", "jade_qilin", "kiln_rhinoceros", "fern_ceratops",
+    "mushroom_bison", "amber_antler_moose", "brine_crocodile", "aurora_narwhal",
+    "cathedral_elephant", "crown_unicorn", "abyss_mammoth",
+}
 # 這三張 AI 參考圖的側面欄位是依「角色看向畫面中央」構圖，
 # 實際內容與提示標籤相反，因此合圖時交換第 2、4 欄。
 SWAPPED_SIDE_UNITS = {"fire_lion", "fire_fox", "leaf_ear_rabbit"}
@@ -111,13 +126,19 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
     return {"file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "sourceType": "authored-four-direction", "source": f"assets/animations/directional/sources/{source_path.name}"}
 
 
-def vertical_variant(image: Image.Image, direction: str) -> Image.Image:
+def vertical_variant(image: Image.Image, direction: str, explicit_heading: bool = False) -> Image.Image:
     """Create a centered vertical-view variant from approved existing art.
 
     Non-starter units do not have hand-painted back/front references yet. The
     narrower centered silhouette keeps down/up movement visually distinct from
     the broad side views while preserving the original unit identity.
     """
+    if explicit_heading:
+        # A quarter-turn makes the head point unambiguously toward the actual
+        # board direction. This is used for every 2x2 unit, where a merely
+        # narrowed side silhouette was too subtle at tactical-map scale.
+        angle = 90 if direction == "up" else -90
+        return contain(image.rotate(angle, Image.Resampling.BICUBIC, expand=True), .88)
     box = image.getchannel("A").getbbox()
     subject = image.crop(box) if box else image
     width_scale = .84 if direction == "down" else .78
@@ -174,7 +195,7 @@ def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[s
         elif direction == "left":
             direction_base = ImageOps.mirror(right_base)
         else:
-            direction_base = vertical_variant(right_base, direction)
+            direction_base = vertical_variant(right_base, direction, unit_id in SIZE2_IDS)
         for action_index, action in enumerate(ACTIONS):
             row = direction_index * 3 + action_index
             row_order.append(f"{action}-{direction}")
@@ -192,6 +213,31 @@ def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[s
     }
 
 
+def stage_one_portrait(unit_id: str) -> Path | None:
+    pet_portrait = EVOLUTION_ROOT / unit_id / "evolution" / "stage_1.png"
+    if pet_portrait.exists():
+        return pet_portrait
+    pack_portrait = ROOT / "assets" / "pack" / f"{unit_id}.png"
+    return pack_portrait if pack_portrait.exists() else None
+
+
+def build_size2_stage_one(unit_id: str, source_path: Path) -> dict[str, object]:
+    entry = build_evolution_stage(unit_id, 1, source_path)
+    generated_sheet = OUTPUT_DIR / f"{unit_id}-stage_1-motion-4dir-sheet.webp"
+    final_sheet = OUTPUT_DIR / f"{unit_id}-motion-4dir-sheet.webp"
+    generated_sheet.replace(final_sheet)
+    for action in ACTIONS:
+        for direction in DIRECTIONS:
+            for frame_index in range(1, ANIMATION_FRAMES + 1):
+                generated_frame = FRAME_DIR / f"{unit_id}-stage_1-{action}-{direction}-frame_{frame_index:02d}.png"
+                final_frame = FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index:02d}.png"
+                generated_frame.replace(final_frame)
+    entry["file"] = f"assets/animations/directional/{final_sheet.name}"
+    entry["sourceType"] = "inspected-2x2-portrait-four-direction"
+    entry["source"] = source_path.relative_to(ROOT).as_posix()
+    return entry
+
+
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
@@ -206,7 +252,10 @@ def main() -> None:
     manifest: dict[str, object] = {}
     legacy_manifest = json.loads((LEGACY_DIR / "manifest.json").read_text(encoding="utf-8"))
     for unit_id in sorted(legacy_manifest):
-        if unit_id in authored_sources:
+        portrait_path = stage_one_portrait(unit_id)
+        if unit_id in SIZE2_IDS and portrait_path:
+            manifest[unit_id] = build_size2_stage_one(unit_id, portrait_path)
+        elif unit_id in authored_sources:
             manifest[unit_id] = build_reference(unit_id, authored_sources[unit_id])
         else:
             manifest[unit_id] = build_legacy(unit_id, LEGACY_DIR / f"{unit_id}-motion-sheet.webp")
