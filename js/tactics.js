@@ -106,7 +106,8 @@
   function evolutionMultiplier(unit) { return 1 + (unit.evolution - 1) * 0.12; }
   function portrait(unit) { return unit.p.evolution[Math.min(unit.evolution, unit.p.evolution.length) - 1].portrait; }
   /* URL is consumed by a CSS custom property, so it resolves from css/. */
-  function motionSheet(unit) { return '../assets/animations/units/' + unit.id + '-motion-sheet.webp'; }
+  var FOUR_DIRECTION_UNITS = { molten_ball: true, fire_lion: true, fire_fox: true, leaf_ear_rabbit: true };
+  function motionSheet(unit) { return FOUR_DIRECTION_UNITS[unit.id] ? '../assets/animations/directional/' + unit.id + '-motion-4dir-sheet.webp' : '../assets/animations/units/' + unit.id + '-motion-sheet.webp'; }
   function bonuses(unit) { return unit.team === 'ally' ? progression.bonusesFor(unit.p) : {}; }
   function bonusValue(unit, key) { var value = bonuses(unit); return (value.all || 0) + (value[key] || 0); }
   function starMultiplier(unit) { return unit.team === 'ally' ? progression.starMultiplier(unit.id) : 1; }
@@ -403,11 +404,15 @@
     var totalDuration = duration(millisecondsPerCell * path.length), timers = [];
     path.forEach(function (point, index) {
       var fromX = index ? path[index - 1].x : originX;
+      var fromY = index ? path[index - 1].y : originY;
       timers.push(setTimeout(function () {
         if (point.x !== fromX) unit.facing = path[index].x > fromX ? 'right' : 'left';
+        else if (FOUR_DIRECTION_UNITS[unit.id] && point.y !== fromY) unit.facing = path[index].y > fromY ? 'down' : 'up';
         if (piece) {
           piece.classList.toggle('facing-right', unit.facing === 'right');
           piece.classList.toggle('facing-left', unit.facing === 'left');
+          piece.classList.toggle('facing-up', unit.facing === 'up');
+          piece.classList.toggle('facing-down', unit.facing === 'down');
         }
         audio.play('move');
       }, Math.round(totalDuration * index / path.length)));
@@ -705,7 +710,9 @@
     if (skill.cooldown > 0) unit.cooldowns[actualIndex] = Math.max(1, skill.cooldown - (bonuses(unit).cooldown || 0));
     if (unit.team === 'ally' && skill.kind !== 'basic' && !options.counter) { state.stats.skills++; progression.recordSkill(); }
     if (unit.team === 'ally' && isControlSkill(skill) && !options.counter) progression.recordControl();
-    if (target.x !== unit.x) unit.facing = target.x > unit.x ? 'right' : 'left';
+    var targetDx = target.x - unit.x, targetDy = target.y - unit.y;
+    if (Math.abs(targetDx) >= Math.abs(targetDy) && targetDx !== 0) unit.facing = targetDx > 0 ? 'right' : 'left';
+    else if (FOUR_DIRECTION_UNITS[unit.id] && targetDy !== 0) unit.facing = targetDy > 0 ? 'down' : 'up';
     render();
     var casterPiece = dom.board.querySelector('[data-key="' + unit.key + '"]'); if (casterPiece) casterPiece.classList.add('cast');
     if (skill.kind === 'ultimate' && skill.attackStyle !== 'support') ultimateFlash();
@@ -836,11 +843,12 @@
   }
 
   function unitElement(unit) {
-    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
+    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite' + (FOUR_DIRECTION_UNITS[unit.id] ? ' motion-4dir' : '') + ' facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
     var statuses = (unit.shield > 0 ? '🛡️' : '') + (unit.burn > 0 ? '🔥' : '') + (unit.poison > 0 ? '☠️' : '') + (unit.freeze > 0 ? '❄️' : '') + (unit.atkBuff > 0 ? '⬆️' : '');
     element.title = unit.p.name + '（' + unit.p.roleLabel + '）';
-    element.innerHTML = '<span class="portrait" role="img" aria-label="' + unit.p.name + '，朝向' + (unit.facing === 'right' ? '右' : '左') + '" style="--motion-sheet:url(\'' + motionSheet(unit) + '\')"></span>' + (statuses ? '<span class="status-icons">' + statuses + '</span>' : '') + '<span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
+    var facingLabel = { right: '右', left: '左', up: '上', down: '下' }[unit.facing] || '右';
+    element.innerHTML = '<span class="portrait" role="img" aria-label="' + unit.p.name + '，朝向' + facingLabel + '" style="--motion-sheet:url(\'' + motionSheet(unit) + '\')"></span>' + (statuses ? '<span class="status-icons">' + statuses + '</span>' : '') + '<span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
     element.addEventListener('click', function (event) {
       event.stopPropagation();
       if (cameraSuppressed()) return;

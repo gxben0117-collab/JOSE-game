@@ -120,13 +120,14 @@ try {
     idleAnimation: getComputedStyle(document.querySelector('.unit.ally .portrait')).animationName,
     terrainToggle: document.querySelector('#terrain-toggle')?.textContent,
     terrainOpacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity,
+    fourDirectionStarters: document.querySelectorAll('.unit.ally.motion-4dir').length,
     deployToolbar: !document.querySelector('#deploy-toolbar').hidden,
     balance: window.__TACTICS_DEBUG__.getState().balanceLabel,
     partyCost: window.__TACTICS_DEBUG__.getState().partyCost
   }))()`);
   assert.ok(deployed.battleVisible && deployed.allies === 25 && deployed.enemies >= 25);
   assert.ok(deployed.deployToolbar); assert.equal(deployed.balance, '滿編迎擊'); assert.equal(deployed.partyCost, 25);
-  assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-idle-right/);
+  assert.equal(deployed.fourDirectionStarters, 4); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
   const terrainToggle = await evaluate(`(async () => { const button = document.querySelector('#terrain-toggle'); button.click(); await new Promise(resolve => setTimeout(resolve, 180)); const result = { pressed: button.getAttribute('aria-pressed'), all: document.querySelector('#board').classList.contains('show-terrain'), stored: localStorage.getItem('jose-terrain-visibility'), opacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity }; button.click(); return result; })()`);
   assert.deepEqual(terrainToggle, { pressed: 'true', all: true, stored: 'all', opacity: '0.9' });
@@ -135,12 +136,12 @@ try {
   const moved = await evaluate(`(() => { const target = document.querySelector('.cell.move-target'); if (!target) return false; target.click(); return true; })()`);
   assert.ok(moved); await delay(60);
   const walkAnimation = await evaluate(`(() => { const portrait = document.querySelector('.unit.ally.walking .portrait'); return portrait ? getComputedStyle(portrait).animationName : ''; })()`);
-  assert.match(walkAnimation, /motion-walk-(right|left)/); await delay(840);
+  assert.match(walkAnimation, /motion-(4dir-)?walk-(right|left|up|down)/); await delay(840);
   await evaluate(`(() => { window.__attackAnimation = ''; new MutationObserver(records => { for (const record of records) { const unit = record.target; if (unit.classList?.contains('unit') && unit.classList.contains('cast')) { const portrait = unit.querySelector('.portrait'); window.__attackAnimation = portrait ? getComputedStyle(portrait).animationName : ''; } } }).observe(document.querySelector('#board'), { subtree: true, attributes: true, attributeFilter: ['class'] }); window.__TACTICS_DEBUG__.setSpeed(8); window.__TACTICS_DEBUG__.startAuto(); })()`);
   let attackAnimation = '';
   for (let attempt = 0; attempt < 100 && !attackAnimation; attempt++) { await delay(100); attackAnimation = await evaluate(`window.__attackAnimation || ''`); }
   await evaluate(`window.__TACTICS_DEBUG__.stopAuto()`); await delay(400);
-  assert.match(attackAnimation, /motion-attack-(right|left)/);
+  assert.match(attackAnimation, /motion-(4dir-)?attack-(right|left|up|down)/);
   const desktopBattleShot = await screenshot('jose-desktop-battle.png');
 
   await command('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true }); await delay(500);

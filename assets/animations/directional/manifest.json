@@ -1,0 +1,86 @@
+{
+  "fire_fox": {
+    "file": "assets/animations/directional/fire_fox-motion-4dir-sheet.webp",
+    "columns": 4,
+    "rows": 12,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ],
+    "source": "assets/animations/directional/sources/fire_fox-four-direction-reference-v1-alpha.png"
+  },
+  "fire_lion": {
+    "file": "assets/animations/directional/fire_lion-motion-4dir-sheet.webp",
+    "columns": 4,
+    "rows": 12,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ],
+    "source": "assets/animations/directional/sources/fire_lion-four-direction-reference-v1-alpha.png"
+  },
+  "leaf_ear_rabbit": {
+    "file": "assets/animations/directional/leaf_ear_rabbit-motion-4dir-sheet.webp",
+    "columns": 4,
+    "rows": 12,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ],
+    "source": "assets/animations/directional/sources/leaf_ear_rabbit-four-direction-reference-v1-alpha.png"
+  },
+  "molten_ball": {
+    "file": "assets/animations/directional/molten_ball-motion-4dir-sheet.webp",
+    "columns": 4,
+    "rows": 12,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ],
+    "source": "assets/animations/directional/sources/molten_ball-four-direction-reference-v1-alpha.png"
+  }
+}
