@@ -5,7 +5,7 @@ const root = new URL('..', import.meta.url);
 const context = { console };
 context.window = context;
 vm.createContext(context);
-for (const file of ['js/data/pets.js', 'js/data/pets-lightdark.js', 'js/data/pets-pack.js', 'js/data/tactical-pets.js', 'js/data/tactical-enemies.js', 'js/data/tactical-content.js']) {
+for (const file of ['js/data/pets.js', 'js/data/pets-lightdark.js', 'js/data/pets-pack.js', 'js/data/tactical-pets.js', 'js/data/tactical-enemies.js', 'js/data/map-terrain.js', 'js/data/tactical-content.js']) {
   vm.runInContext(fs.readFileSync(new URL(file, root), 'utf8'), context, { filename: file });
 }
 

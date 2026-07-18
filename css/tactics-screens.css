@@ -4,8 +4,8 @@
 .tactics-app{max-width:none;padding:0}
 
 /* ── 畫面一：遠征準備 ── */
-.screen-home{max-width:1080px;margin:0 auto;padding:18px 18px 28px}
-.home-layout{display:grid;grid-template-columns:1.2fr 1fr;gap:16px;margin:16px 0}
+.screen-home{max-width:1080px;margin:0 auto;padding:18px 18px 118px}
+.home-layout{display:grid;grid-template-columns:1.2fr 1fr;align-items:start;gap:16px;margin:16px 0}
 .home-hint{margin-top:12px;padding:12px 14px;border-radius:10px;background:#101a30;border:1px solid #33497a;color:#a9bce0;font-size:.82rem;line-height:1.6}
 .home-hint>b{display:block;margin-bottom:8px;color:#dce8ff;letter-spacing:.08em}
 .home-hint>small{display:block;margin-top:10px;color:#7f93bd}
@@ -17,19 +17,58 @@
 /* 戰鬥頁棋盤下方的地形效果速覽 */
 .board-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;padding:8px 12px;border-radius:9px;background:#0e172bcc;border:1px solid #2c4168;color:#9db3d9;font-size:.72rem;line-height:1.5}
 .board-legend span{white-space:nowrap}
-.enter-battle{display:block;width:min(520px,100%);margin:6px auto 0;padding:16px 22px;font-size:1.2rem;font-weight:900;letter-spacing:.14em;border-radius:14px;box-shadow:0 10px 26px #0008,0 0 0 1px #ffffff22 inset;animation:enter-pulse 2.2s ease-in-out infinite}
+.enter-battle-dock{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));z-index:60;display:grid;grid-template-columns:1fr minmax(230px,300px);align-items:center;gap:18px;width:min(760px,calc(100vw - 32px));padding:10px 12px 10px 18px;transform:translateX(-50%);border:1px solid #d39a53;border-radius:12px;background:linear-gradient(135deg,#2b1915f5,#171013f5);box-shadow:0 18px 50px #000c,0 0 0 1px #ffe4a11c inset;backdrop-filter:blur(10px)}
+.enter-battle-dock span{display:flex;flex-direction:column;gap:2px;min-width:0;color:#ffe2a1}
+.enter-battle-dock span b{font-size:.9rem;letter-spacing:.08em}
+.enter-battle-dock span small{color:#c6ab8a;font-size:.72rem}
+.enter-battle{display:block;width:100%;margin:0;padding:13px 20px;font-size:1.05rem;font-weight:900;letter-spacing:.12em;border-radius:8px;box-shadow:0 8px 22px #0008,0 0 0 1px #ffffff22 inset;animation:enter-pulse 2.2s ease-in-out infinite}
 @keyframes enter-pulse{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
 .screen-home .party-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
 @media (max-width:860px){.home-layout{grid-template-columns:1fr}}
 
+/* 橫向桌機版原本把整頁鎖成 100dvh 並隱藏溢位，隊伍較多時會裁掉出擊鈕。
+   主城改為獨立可捲動頁；戰鬥畫面仍維持固定鏡頭。 */
+@media (orientation:landscape) and (min-width:700px){
+  body.view-home{height:100dvh;min-height:100dvh;overflow-x:hidden;overflow-y:auto;overscroll-behavior-y:contain}
+  body.view-home .tactics-app{height:auto;min-height:100dvh;overflow:visible}
+  body.view-home .screen-home{height:auto;min-height:calc(100dvh - clamp(16px,2.5vw,36px));overflow:visible;padding-bottom:118px}
+}
+@media (max-width:650px){
+  .screen-home{padding-bottom:112px}
+  .enter-battle-dock{grid-template-columns:1fr;width:calc(100vw - 20px);padding:9px 10px}
+  .enter-battle-dock span{display:none}
+  .enter-battle{min-height:48px;font-size:1rem}
+}
+
 /* ── 畫面二：戰鬥 ── */
 .screen-battle{display:flex;flex-direction:column;min-height:100vh;padding:10px 12px calc(12px + var(--safe-bottom,0px))}
-.battle-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 10px}
+.battle-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:1800px;margin:0 auto;padding:4px 2px 10px}
 .battle-topbar button{width:auto;flex:0 0 auto;padding:8px 16px}
 .battle-topbar .round-status{white-space:nowrap;flex:0 0 auto}
 .boss-bar[hidden],.battle-hud[hidden]{display:none!important}
 .battle-stage-label{color:#ffd9a0;font-size:1rem;letter-spacing:.08em;text-align:center;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.battle-main{display:grid;grid-template-columns:minmax(0,1fr) 302px;gap:14px;align-items:start;flex:1}
+.battle-main{display:grid;grid-template-columns:190px minmax(0,1fr) 292px;gap:10px;align-items:start;flex:0 0 auto;width:100%;max-width:1800px;margin:0 auto;padding:9px;border:1px solid #93613b;border-radius:5px;background:linear-gradient(145deg,#2b1916,#140e10);box-shadow:0 18px 54px #000b,0 0 0 2px #42271d inset}
+.screen-battle .board-wrap{min-width:0;padding:7px;border:1px solid #7f5335;border-radius:3px;background:#120c0d;box-shadow:0 0 0 1px #1b100d inset!important}
+.screen-battle .board{margin-inline:auto}
+.battle-ally-panel{position:sticky;top:10px;display:flex;flex-direction:column;gap:9px;max-height:calc(100vh - 92px);overflow:hidden;padding:10px;border:1px solid #775036;border-radius:4px;background:linear-gradient(160deg,#2d1d19,#171113);box-shadow:3px 4px 0 #0e090a}
+.battle-side-head{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#ffe1a0;font-size:.78rem}
+.battle-side-head span{padding:2px 6px;border:1px solid #8a633c;border-radius:999px;background:#160f10;color:#d8c09e;font-size:.68rem;white-space:nowrap}
+.battle-ally-list{display:grid;gap:5px;overflow-y:auto;padding-right:2px;scrollbar-width:thin;scrollbar-color:#9a6941 #211411}
+.battle-roster-card{display:grid;grid-template-columns:38px minmax(0,1fr);align-items:center;gap:7px;min-height:48px;width:100%;padding:4px 6px;text-align:left;border-color:#67442f!important;background:#211615!important}
+.battle-roster-card>i{width:36px;height:36px;background:center/contain no-repeat;filter:drop-shadow(1px 2px 1px #000)}
+.battle-roster-card span,.battle-roster-card b,.battle-roster-card small,.battle-roster-card em{display:block;min-width:0}
+.battle-roster-card b{overflow:hidden;color:#ffe5b1;font-size:.74rem;text-overflow:ellipsis;white-space:nowrap}
+.battle-roster-card small{overflow:hidden;margin-top:1px;color:#bba58b;font-size:.62rem;text-overflow:ellipsis;white-space:nowrap}
+.battle-roster-card em{height:4px;margin-top:4px;overflow:hidden;border-radius:5px;background:#3f1818}
+.battle-roster-card em u{display:block;height:100%;background:linear-gradient(90deg,#4fbf6a,#c6df73);text-decoration:none}
+.battle-roster-card.selected{border-color:#f2cb70!important;background:#3b291c!important;box-shadow:0 0 0 2px #d99b4144}
+.battle-roster-card.acted{opacity:.62}
+.battle-roster-card.defeated{filter:grayscale(1);opacity:.35}
+.battle-team-trait{margin:0;padding:8px;font-size:.66rem;line-height:1.35}
+.battle-team-trait b,.battle-team-trait span{display:block}
+.battle-objective{padding-top:7px;border-top:1px solid #583b2b;color:#bda486;font-size:.64rem;line-height:1.4}
+.battle-enemy-overview{display:grid;gap:5px;padding:8px;border:1px solid #78423b;border-radius:4px;background:#2b1718}
+.battle-enemy-overview small{color:#d5aaa2;font-size:.68rem;line-height:1.35}
 .battle-panel{position:sticky;top:10px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 90px);overflow-y:auto}
 .battle-controls{display:grid;gap:8px}
 
@@ -38,9 +77,9 @@
 .board-viewport{position:relative}
 /* Fixed scale: the former zoom control is removed. Legacy marker: --zoom:1.5 *var(--zoom). */
 .screen-battle .board-viewport{--cell:calc(clamp(38px,min(calc((100vw - 380px)/18),calc((100vh - 250px)/11)),66px))}
-.screen-battle .board-scroll{overflow:auto;height:calc(var(--cell)*9 + 12px);cursor:grab;touch-action:none;scrollbar-width:thin}
+.screen-battle .board-scroll{overflow:hidden;height:auto;cursor:default;touch-action:auto;scrollbar-width:none}
 .screen-battle .board-scroll.dragging{cursor:grabbing;user-select:none}
-.screen-battle .board{width:max-content;min-width:0;aspect-ratio:auto;height:auto}
+.screen-battle .board{width:100%;min-width:0;aspect-ratio:21 / 10;height:auto}
 .screen-battle .cell{min-height:0}
 
 /* 小地圖 */
@@ -55,6 +94,7 @@
 
 @media (max-width:980px){
   .battle-main{grid-template-columns:1fr}
+  .battle-ally-panel{display:none}
   .battle-panel{position:static;max-height:none;overflow:visible}
   .screen-battle .board-viewport{--cell:clamp(36px,calc((100vw - 52px)/12),60px)}
   .minimap{width:92px;height:92px;right:6px;top:6px}
@@ -119,6 +159,43 @@
 .board-viewport.ult-cast::after{content:'';position:absolute;inset:0;z-index:20;pointer-events:none;border-radius:inherit;background:radial-gradient(circle at 50% 45%,transparent 40%,#ffffff2e 72%,#ffd36a55 100%);animation:ult-flash calc(.62s*var(--battle-rate,1)) ease-out forwards}
 .board-viewport.shake{animation:shake calc(.32s*var(--battle-rate,1)) ease-in-out}
 .board-viewport.shake-hard{animation:shake-hard calc(.4s*var(--battle-rate,1)) ease-in-out}
+
+/* ══ 養成材料帳本、功能說明與二次確認（V0.14）══ */
+.growth-resource-ledger{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin:16px 0 10px;padding:10px 12px;border:1px solid #70503a;border-radius:8px;background:#160f12;color:#d8bf9e}
+.growth-resource-ledger b{margin-right:4px;color:#ffe09a;font-size:.78rem}
+.growth-resource-ledger span{padding:5px 8px;border:1px solid #5f422f;border-radius:999px;background:#2a1b18;font-size:.72rem;white-space:nowrap}
+.growth-actions{grid-template-columns:repeat(3,minmax(0,1fr));align-items:stretch;gap:10px}
+.growth-action-card{display:flex;flex-direction:column;min-width:0;padding:10px;border:1px solid #6a4b39;border-radius:8px;background:linear-gradient(160deg,#281a18,#151014);box-shadow:0 7px 18px #0006}
+.growth-action-card h4{margin:10px 0 5px;color:#ffe2a2;font-size:.96rem}
+.growth-action-card>p{flex:1;margin:0;color:#c9b396;font-size:.74rem;line-height:1.55}
+.growth-action-card>small{display:block;min-height:3.2em;margin-top:8px;padding:7px;border-left:3px solid #bb8047;background:#1b1213;color:#e0c8a7;font-size:.68rem;line-height:1.45}
+.growth-action-card>button{width:100%;margin-top:9px;border-color:#b07a45!important;background:linear-gradient(#674026,#3c241c)!important;color:#ffe7b5!important;font-weight:800}
+.growth-action-card>button:disabled{filter:grayscale(.8);opacity:.48}
+.growth-action-materials{display:grid;gap:5px;min-height:90px;padding-bottom:8px;border-bottom:1px solid #53382d}
+.growth-material{display:grid;grid-template-columns:22px minmax(0,1fr);grid-template-areas:'icon label' 'icon detail';align-items:center;column-gap:5px;padding:5px 6px;border:1px solid #604635;border-radius:6px;background:#1b1516}
+.growth-material>i{grid-area:icon;font-style:normal;text-align:center}
+.growth-material>b{grid-area:label;overflow:hidden;color:#efd6ad;font-size:.7rem;text-overflow:ellipsis;white-space:nowrap}
+.growth-material>small{grid-area:detail;color:#b9a48b;font-size:.61rem;line-height:1.25}
+.growth-material.enough{border-color:#4f7650;background:#152119}
+.growth-material.enough>small{color:#9ed0a4}
+.growth-material.short{border-color:#8b4742;background:#291617}
+.growth-material.short>small{color:#f1a49e}
+.growth-max{display:grid;place-items:center;min-height:70px;border:1px dashed #77644b;border-radius:6px;color:#d6bd91;font-size:.75rem}
+.growth-prerequisite{padding:5px 7px;border-radius:5px;font-size:.65rem}
+.growth-prerequisite.enough{background:#19301f;color:#9ed0a4}.growth-prerequisite.short{background:#39191b;color:#ffaaa4}
+.growth-confirm-modal{z-index:130}
+.growth-confirm-dialog{width:min(620px,100%)}
+.growth-confirm-copy{color:#d8c09e;line-height:1.55}
+.growth-confirm-materials{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0}
+.growth-confirm-effect{display:grid;gap:5px;padding:11px 12px;border:1px solid #537052;border-radius:7px;background:#14231a}
+.growth-confirm-effect b{color:#aee2ad;font-size:.78rem}.growth-confirm-effect span{color:#d5e8d3;font-size:.74rem;line-height:1.5}
+.growth-confirm-warning{padding:9px 11px;border-left:3px solid #d99042;background:#2b1c16;color:#f1c08e;font-size:.7rem;line-height:1.45}
+
+@media(max-width:760px){
+  .growth-actions{grid-template-columns:1fr}
+  .growth-action-materials{min-height:0}
+  .growth-confirm-materials{grid-template-columns:1fr}
+}
 
 /* ══ 章節節點關卡地圖（V0.10）══ */
 .chapter-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
@@ -257,3 +334,24 @@ body.map-rift .obstacle-icon{background-image:url('../assets/terrain/rock-rift.p
 @keyframes impact-pop{0%{opacity:0;transform:scale(.4) rotate(-8deg)}30%{opacity:1;transform:scale(1.12) rotate(2deg)}100%{opacity:0;transform:scale(1.3)}}
 
 .star-row{color:#ffd36a;font-size:.85rem;letter-spacing:.08em}
+
+/* 全名冊方向動畫：4 欄 × 6 列（右待機／移動／攻擊、左待機／移動／攻擊）。 */
+.unit.motion-sprite .portrait{background-image:var(--motion-sheet)!important;background-size:400% 600%!important;background-repeat:no-repeat!important}
+.unit.motion-sprite.facing-right .portrait{animation:motion-idle-right 1.65s linear infinite!important}
+.unit.motion-sprite.facing-left .portrait{animation:motion-idle-left 1.65s linear infinite!important}
+.unit.motion-sprite.facing-right.walking .portrait{animation:motion-walk-right .42s linear infinite!important}
+.unit.motion-sprite.facing-left.walking .portrait{animation:motion-walk-left .42s linear infinite!important}
+.unit.motion-sprite.facing-right.cast .portrait{animation:motion-attack-right .52s linear both!important}
+.unit.motion-sprite.facing-left.cast .portrait{animation:motion-attack-left .52s linear both!important}
+@keyframes motion-idle-right{0%,24.9%{background-position:0 0}25%,49.9%{background-position:33.333% 0}50%,74.9%{background-position:66.667% 0}75%,100%{background-position:100% 0}}
+@keyframes motion-walk-right{0%,24.9%{background-position:0 20%}25%,49.9%{background-position:33.333% 20%}50%,74.9%{background-position:66.667% 20%}75%,100%{background-position:100% 20%}}
+@keyframes motion-attack-right{0%,24.9%{background-position:0 40%}25%,49.9%{background-position:33.333% 40%}50%,74.9%{background-position:66.667% 40%}75%,100%{background-position:100% 40%}}
+@keyframes motion-idle-left{0%,24.9%{background-position:0 60%}25%,49.9%{background-position:33.333% 60%}50%,74.9%{background-position:66.667% 60%}75%,100%{background-position:100% 60%}}
+@keyframes motion-walk-left{0%,24.9%{background-position:0 80%}25%,49.9%{background-position:33.333% 80%}50%,74.9%{background-position:66.667% 80%}75%,100%{background-position:100% 80%}}
+@keyframes motion-attack-left{0%,24.9%{background-position:0 100%}25%,49.9%{background-position:33.333% 100%}50%,74.9%{background-position:66.667% 100%}75%,100%{background-position:100% 100%}}
+
+/* 25×25 whole-map layer: grids are transparent interaction overlays, not repeated terrain tiles. */
+.idle-arena .board{position:relative;isolation:isolate;background-size:cover;background-image:radial-gradient(ellipse at 24% 73%,#6a945455 0 16%,transparent 17%),radial-gradient(ellipse at 75% 24%,#345d3555 0 19%,transparent 20%),linear-gradient(135deg,#425f38,#273d29 52%,#52653d)}
+.idle-arena .board .cell{background:transparent!important;border-color:#ffffff0d!important}.idle-arena .board[data-map-kind$="-boss"]{background-image:radial-gradient(circle at 68% 48%,#ff9b4555 0 11%,transparent 12%),repeating-radial-gradient(circle at 65% 50%,#ffffff0a 0 2px,transparent 3px 42px),linear-gradient(135deg,#482e25,#24191c 56%,#56352b)}.idle-arena .board[data-map-kind$="-hard"]{background-image:linear-gradient(115deg,transparent 0 41%,#b44c4e55 42% 48%,transparent 49%),radial-gradient(ellipse at 75% 28%,#70533b88 0 14%,transparent 15%),linear-gradient(135deg,#342b45,#202333 57%,#493b4f)}
+.cell .terrain-hint{display:grid!important;place-items:center!important;width:1.55em!important;height:1.55em!important;inset:auto 8% 8% auto!important;border-radius:50%;background:#07131bd9!important;border:1px solid #ffffff5c!important;box-shadow:0 2px 5px #0009;font-size:calc(var(--cell)*.27)!important;font-weight:900;opacity:1!important}.cell .terrain-hint-water{color:#a9e9ff}.cell .terrain-hint-fire{color:#ffd09a}.cell .terrain-hint-forest{color:#d6f5a8}.cell.obstacle{background:#10111770!important;box-shadow:inset 0 0 0 1px #ffffff22!important}.cell.obstacle .obstacle-icon{background:none!important;display:grid!important;place-items:center!important;inset:8%!important;border:1px solid #ffdbab99;border-radius:7px;color:transparent!important;font-size:calc(var(--cell)*.19)!important;font-weight:900;filter:none!important}.cell.obstacle .obstacle-icon::after{content:'禁行';color:#ffe2b4;font-size:inherit}
+.cell .terrain-hint{width:1.05em!important;height:1.05em!important;inset:auto 7% 7% auto!important;background:#06111a99!important;border-color:#ffffff38!important;box-shadow:0 1px 3px #0007!important;font-size:calc(var(--cell)*.19)!important;opacity:.72!important}.cell.obstacle{background:#10111740!important;box-shadow:none!important}.cell.obstacle .obstacle-icon{inset:auto 8% 8% auto!important;width:1.05em!important;height:1.05em!important;border:0!important;border-radius:50%!important;background:#190b0b88!important;font-size:calc(var(--cell)*.17)!important;opacity:.62!important}.cell.obstacle .obstacle-icon::after{content:'⛔';color:#ffd7c1!important}

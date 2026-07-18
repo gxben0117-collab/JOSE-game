@@ -18,12 +18,12 @@
    - `TacticalAudio`：延遲建立 AudioContext；新增 crit／freeze／poison／push／boss 音效。
 3. 戰鬥控制器 `js/tactics.js`
    - 單位建立：我方讀進化階段；敵方讀關卡 `power` 倍率（首領再 ×1.1 血量）。
-   - 空間系統：20×20 戰場（`COLS/ROWS = 20`）、BFS 路徑（障礙物阻擋）、`reachableTiles()`、`lineClear()` 視線採樣——遠程／範圍技能需要通視。部署區為左下 6×6，敵軍由右側多個錨點組成隊形。
-   - 鏡頭系統：預設 `--zoom: 1.5`，格子與戰旗同步放大；玩家點選棋盤上任一敵我單位時，`focusUnit()` 依 1×1／2×2／3×3 佔格中心定位並短暫標示焦點。`walkUnit()`、`act()` 與 `enemyTurn()` 不呼叫鏡頭跟隨，避免動畫期間視角晃動；`enableCameraDrag()` 支援拖曳平移，`renderMinimap()` 支援視角框與點擊跳轉。
+   - 空間系統：21×10 橫向戰場（`COLS = 21`、`ROWS = 10`），整張棋盤固定完整顯示、不需拖曳；BFS 路徑（障礙物阻擋）、`reachableTiles()`、`lineClear()` 視線採樣——遠程／範圍技能需要通視。部署區為下方中央 5×4，敵軍由右側多個錨點組成隊形。
+   - 鏡頭系統：無放大控制；玩家點選棋盤上任一敵我單位時，`focusUnit()` 依 1×1／2×2／3×3 佔格中心定位並短暫標示焦點。`walkUnit()`、`act()` 與 `enemyTurn()` 不呼叫鏡頭跟隨，避免動畫期間視角晃動。
    - 狀態系統：freeze（跳過行動）、poison（回合 6% 最大生命）、burn、shield、atkBuff；`displace()` 處理擊退／拉扯，撞牆／障礙／單位轉為碰撞傷害；首領免疫凍結與位移。
    - 流程：`deploy`（自由部署）→ `player` ↔ `enemy` → 結算；首領關開戰有登場演出與常駐血條。
    - 畫面：`setView()` 切換三個獨立頁面（`screen-home` 準備／`screen-battle` 戰鬥／`screen-result` 結算），戰鬥頁只掛戰鬥控制鍵。
-   - 編隊：`PARTY_SIZE = 10`（1〜10 彈性）；我方左下角網格站位；敵方 `rosterFor()` 名冊展開 10〜30 隻，`enemyFormation()` 依 seed 分小隊散布，`squadActive()` 警戒圈（7 格）控制出擊；首領關斬首即勝。
+   - 編隊：`PARTY_SIZE = 6`（1〜6 彈性）；我方下方中央網格站位；敵方 `rosterFor()` 名冊展開 10〜30 隻，`enemyFormation()` 依 seed 分小隊散布，`squadActive()` 警戒圈（7 格）控制出擊；首領關斬首即勝。
    - 主城系統：擁有制（初始 8 隻）、召喚（水晶／六階機率）、圖鑑收集加成（併入 `bonusesFor`）、每日任務（日期重置），皆在 `TacticalProgression`。
    - AI `planFor()`：可達位置 × 可用技能 × 目標的聯合評分（期望傷害、擊殺、集火、範圍命中數、控場價值、地形與脆皮距離控管），敵我自動戰鬥共用。
    - 操作：手動選擇技能後第一次點擊合法目標即呼叫 `act()`，沒有二次確認；敵我資料第一技能皆為無冷卻傷害普攻，供冷卻期與反擊保底。

@@ -4,7 +4,7 @@
 
   var SAVE_KEY = 'jose-tactics-progression-v2';
   var LEGACY_KEY = 'jose-tactics-progression-v1';
-  var PARTY_MAX = 10;
+  var PARTY_MAX = 6;
   /* 初始陣容：熔球獸、炎獅、火狐 + 會治療的葉耳兔。 */
   var DEFAULT_PARTY = ['molten_ball', 'fire_lion', 'fire_fox', 'leaf_ear_rabbit'];
   var STARTER_PETS = DEFAULT_PARTY.slice();
@@ -88,7 +88,7 @@
   TacticalProgression.prototype.migrate = function (raw) {
     var next = Object.assign(fresh(), raw || {});
     next.version = 2;
-    // 彈性 1〜10 隻編制：保留舊存檔的有效隊伍，無效或空隊伍回復預設 6 隻。
+    // 彈性 1〜6 隻編制：舊存檔超過六隻時保留前六隻，無效或空隊伍回復預設隊伍。
     var party = Array.isArray(next.party) ? next.party.filter(this.validPet.bind(this)) : [];
     party = party.filter(function (id, index) { return party.indexOf(id) === index; });
     next.party = party.length ? party.slice(0, PARTY_MAX) : DEFAULT_PARTY.slice();

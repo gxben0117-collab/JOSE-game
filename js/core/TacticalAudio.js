@@ -60,7 +60,10 @@
       boss: [[98, 0.5, 'sawtooth', 0, 0.3], [130, 0.5, 'sawtooth', 0.1, 0.24], [65, 0.7, 'square', 0.25, 0.26]]
     };
     (patterns[name] || patterns.ui).forEach(function (tone) { self.tone.apply(self, tone); });
-    if ((name === 'hit' || name === 'attack') && global.navigator && typeof global.navigator.vibrate === 'function') global.navigator.vibrate(name === 'hit' ? 25 : 12);
+    var activation = global.navigator && global.navigator.userActivation;
+    if ((name === 'hit' || name === 'attack') && global.navigator && typeof global.navigator.vibrate === 'function' && (!activation || activation.hasBeenActive)) {
+      global.navigator.vibrate(name === 'hit' ? 25 : 12);
+    }
   };
 
   TacticalAudio.prototype.destroy = function () {

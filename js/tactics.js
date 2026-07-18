@@ -2,9 +2,10 @@
 (function () {
   'use strict';
 
-  var COLS = 20, ROWS = 20, HARD_ROUND_LIMIT = 45, PARTY_SIZE = 10, AGGRO_RANGE = 7;
+  var COLS = 21, ROWS = 10, HARD_ROUND_LIMIT = 45, PARTY_SIZE = 6, AGGRO_RANGE = 7;
   /* 布陣空間預設 5×5：大型（2×2）幻獸佔 4 格，天然限制大型單位的出戰數量。 */
-  var DEPLOY_MIN_X = 1, DEPLOY_MAX_X = 6, DEPLOY_MIN_Y = 13, DEPLOY_MAX_Y = 18;
+  /* Chapter 1's open lower plain: deployment block clear of the river and cliffs. */
+  var DEPLOY_MIN_X = 4, DEPLOY_MAX_X = 8, DEPLOY_MIN_Y = 5, DEPLOY_MAX_Y = 8;
   var content = window.TACTICAL_CONTENT;
   var profiles = window.TACTICAL_PET_DATA.concat(window.TACTICAL_ENEMY_DATA || []);
   var progression = new window.TacticalProgression({ profiles: window.TACTICAL_PET_DATA, content: content });
@@ -24,11 +25,14 @@
     questSummary: document.getElementById('quest-summary'), deployModal: document.getElementById('deploy-modal'), deployGrid: document.getElementById('deploy-grid'), deployHelp: document.getElementById('deploy-help'),
     campaignModal: document.getElementById('campaign-modal'), campaignGrid: document.getElementById('campaign-grid'), growthModal: document.getElementById('growth-modal'),
     growthPet: document.getElementById('growth-pet'), growthFeedback: document.getElementById('growth-feedback'), growthContent: document.getElementById('growth-content'), questList: document.getElementById('quest-list'),
+    growthConfirmModal: document.getElementById('growth-confirm-modal'), growthConfirmTitle: document.getElementById('growth-confirm-title'), growthConfirmCopy: document.getElementById('growth-confirm-copy'), growthConfirmMaterials: document.getElementById('growth-confirm-materials'), growthConfirmEffect: document.getElementById('growth-confirm-effect'), growthConfirmAccept: document.getElementById('growth-confirm-accept'),
     resultIcon: document.getElementById('result-icon'), resultStage: document.getElementById('result-stage'),
     resultTitle: document.getElementById('result-title'), resultCopy: document.getElementById('result-copy'), resultStats: document.getElementById('result-stats'), resultRewards: document.getElementById('result-rewards'),
     bossBar: document.getElementById('boss-bar'), bossName: document.getElementById('boss-name'), bossHpFill: document.getElementById('boss-hp-fill'), bossIntro: document.getElementById('boss-intro'),
     screenHome: document.getElementById('screen-home'), screenBattle: document.getElementById('screen-battle'), screenResult: document.getElementById('screen-result'),
     enterBattle: document.getElementById('enter-battle'), battleExit: document.getElementById('battle-exit'), battleStageLabel: document.getElementById('battle-stage-label'),
+    battleAllyList: document.getElementById('battle-ally-list'), battleAllyCount: document.getElementById('battle-ally-count'), battleTeamTrait: document.getElementById('battle-team-trait'), battleObjective: document.getElementById('battle-objective'),
+    battleEnemyCount: document.getElementById('battle-enemy-count'), battleEnemySummary: document.getElementById('battle-enemy-summary'),
     auto: document.getElementById('auto-turn'), speed: document.getElementById('battle-speed'), endTurn: document.getElementById('end-turn')
   };
 
@@ -83,6 +87,8 @@
   function pause(milliseconds) { return new Promise(function (resolve) { setTimeout(resolve, duration(milliseconds)); }); }
   function evolutionMultiplier(unit) { return 1 + (unit.evolution - 1) * 0.12; }
   function portrait(unit) { return unit.p.evolution[Math.min(unit.evolution, unit.p.evolution.length) - 1].portrait; }
+  /* URL is consumed by a CSS custom property, so it resolves from css/. */
+  function motionSheet(unit) { return '../assets/animations/units/' + unit.id + '-motion-sheet.webp'; }
   function bonuses(unit) { return unit.team === 'ally' ? progression.bonusesFor(unit.p) : {}; }
   function bonusValue(unit, key) { var value = bonuses(unit); return (value.all || 0) + (value[key] || 0); }
   function starMultiplier(unit) { return unit.team === 'ally' ? progression.starMultiplier(unit.id) : 1; }
@@ -100,7 +106,7 @@
 
   function clone(id, team, x, y, index) {
     var pet = profile(id), evolution = team === 'ally' ? portraitStage(id) : Math.max(1, Math.min(pet.evolution.length, 1 + Math.floor((Math.max(1, currentStage.order) - 1) / 6)));
-    var unit = { id: id, key: team + '-' + index + '-' + id, team: team, p: pet, x: x, y: y, hp: 1, maxHp: 1, moved: false, acted: false, evolution: evolution,
+    var unit = { id: id, key: team + '-' + index + '-' + id, team: team, p: pet, x: x, y: y, hp: 1, maxHp: 1, moved: false, acted: false, facing: team === 'ally' ? 'right' : 'left', evolution: evolution,
       cooldowns: pet.skills.map(function () { return 0; }), shield: 0, burn: 0, poison: 0, freeze: 0, atkBuff: 0, boss: Boolean(pet.boss) };
     unit.maxHp = Math.round(pet.stats.health * evolutionMultiplier(unit) * starMultiplier(unit) * (1 + bonusValue(unit, 'health')) * (team === 'enemy' ? state.enemyScale * (unit.boss ? 1.1 : 1) : 1));
     unit.hp = unit.maxHp;
@@ -204,8 +210,12 @@
     enemyFormation(roster).forEach(function (spot, index) {
       var unit = clone(spot.id, 'enemy', spot.x, spot.y, index); unit.squad = spot.squad; state.units.push(unit);
     });
-    dom.board.style.gridTemplateColumns = 'repeat(' + COLS + ', var(--cell))';
-    dom.board.style.gridTemplateRows = 'repeat(' + ROWS + ', var(--cell))';
+    dom.board.style.width = '100%';
+    dom.board.style.aspectRatio = COLS + ' / ' + ROWS;
+    dom.board.style.gridTemplateColumns = 'repeat(' + COLS + ', minmax(0, 1fr))';
+    dom.board.style.gridTemplateRows = 'repeat(' + ROWS + ', minmax(0, 1fr))';
+    dom.board.dataset.mapKind = content.mapLayout ? content.mapLayout(currentStage) : currentStage.mapId;
+    dom.board.style.backgroundImage = "url('" + (content.mapAsset ? content.mapAsset(currentStage) : 'assets/maps/chapter-01-field-21x10.jpg') + "')";
     document.body.className = 'map-' + mapData().theme + ' view-' + currentView;
     note('部署階段：點選我方幻獸，再點左下角藍色部署格（6×6）調整站位，完成後按「開始戰鬥」。敵軍共 ' + roster.length + ' 隻分小隊散布全圖。' +
       (benched.length ? '⚠ 布陣空間不足，候補未出戰：' + benched.join('、') + '。' : ''));
@@ -310,7 +320,9 @@
     unit.prevX = unit.x; unit.prevY = unit.y; /* 供「取消移動」還原 */
     state.animating = true; note(unitName(unit) + ' 移動 ' + path.length + ' 格。');
     for (var index = 0; index < path.length; index++) {
-      var fromX = unit.x, fromY = unit.y; unit.x = path[index].x; unit.y = path[index].y; render();
+      var fromX = unit.x, fromY = unit.y;
+      if (path[index].x !== fromX) unit.facing = path[index].x > fromX ? 'right' : 'left';
+      unit.x = path[index].x; unit.y = path[index].y; render();
       var piece = dom.board.querySelector('[data-key="' + unit.key + '"]');
       if (piece) { piece.style.setProperty('--walk-x', (fromX - unit.x) * 100 + '%'); piece.style.setProperty('--walk-y', (fromY - unit.y) * 100 + '%'); piece.classList.add('walking'); }
       audio.play('move'); await pause(135);
@@ -578,6 +590,8 @@
     if (skill.cooldown > 0) unit.cooldowns[actualIndex] = Math.max(1, skill.cooldown - (bonuses(unit).cooldown || 0));
     if (unit.team === 'ally' && skill.kind !== 'basic' && !options.counter) { state.stats.skills++; progression.recordSkill(); }
     if (unit.team === 'ally' && isControlSkill(skill) && !options.counter) progression.recordControl();
+    if (target.x !== unit.x) unit.facing = target.x > unit.x ? 'right' : 'left';
+    render();
     var casterPiece = dom.board.querySelector('[data-key="' + unit.key + '"]'); if (casterPiece) casterPiece.classList.add('cast');
     if (skill.kind === 'ultimate' && skill.attackStyle !== 'support') ultimateFlash();
     if (skill.attackStyle === 'area') telegraphArea(target, skill.radius || 1, skill.vfxHue);
@@ -663,7 +677,7 @@
     return theme === 'ember' ? '🌋' : theme === 'verdant' ? '🌳' : theme === 'tide' ? '🪸' : '🔮';
   }
 
-  var moveTargetMap = null; /* 每次 render 只做一次 BFS，供 400 格查表用 */
+  var moveTargetMap = null; /* 每次 render 只做一次 BFS，供 210 格查表用 */
   function cell(x, y) {
     var element = document.createElement('div'), unit = at(x, y), active = selected(), tile = terrain(x, y); element.className = 'cell';
     if (obstacleAt(x, y)) {
@@ -675,8 +689,9 @@
     if (tile) {
       var terrainCopy = tile === 'fire' ? '熔岩：火系增傷，非火系每回合受傷' : tile === 'forest' ? '森林：森林系防禦與治療提升' : '水域：海洋系移動與傷害提升';
       var terrainGlyph = tile === 'fire' ? '♨' : tile === 'forest' ? '♣' : '≈';
+      var terrainLabel = tile === 'fire' ? '🔥' : tile === 'forest' ? '🌿' : '💧';
       element.classList.add('terrain-' + tile); element.title = terrainCopy;
-      element.innerHTML = (x * 3 + y * 5 + currentStage.seed) % 11 === 0 ? '<span class="terrain-hint terrain-hint-' + tile + '" aria-hidden="true">' + terrainGlyph + '</span>' : '';
+      element.innerHTML = '<span class="terrain-hint terrain-hint-' + tile + '" aria-hidden="true">' + terrainLabel + '</span>';
     }
     else element.innerHTML = '';
     if (state.phase === 'deploy' && inDeployZone(x, y) && !unit) element.classList.add('deploy-zone');
@@ -693,11 +708,11 @@
   }
 
   function unitElement(unit) {
-    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : ''); element.dataset.key = unit.key;
+    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : ''); element.dataset.key = unit.key;
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
     var statuses = (unit.shield > 0 ? '🛡️' : '') + (unit.burn > 0 ? '🔥' : '') + (unit.poison > 0 ? '☠️' : '') + (unit.freeze > 0 ? '❄️' : '') + (unit.atkBuff > 0 ? '⬆️' : '');
     element.title = unit.p.name + '（' + unit.p.roleLabel + '）';
-    element.innerHTML = '<span class="portrait" role="img" aria-label="' + unit.p.name + '" style="background-image:url(\'' + portrait(unit) + '\')"></span>' + (statuses ? '<span class="status-icons">' + statuses + '</span>' : '') + '<span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
+    element.innerHTML = '<span class="portrait" role="img" aria-label="' + unit.p.name + '，朝向' + (unit.facing === 'right' ? '右' : '左') + '" style="--motion-sheet:url(\'' + motionSheet(unit) + '\')"></span>' + (statuses ? '<span class="status-icons">' + statuses + '</span>' : '') + '<span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
     element.addEventListener('click', function (event) {
       event.stopPropagation();
       if (cameraSuppressed()) return;
@@ -730,7 +745,7 @@
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
     renderMinimap();
-    renderParty(); renderTrait(); renderDetail(); renderTurnOrder(); renderBossBar();
+    renderParty(); renderTrait(); renderBattleSides(); renderDetail(); renderTurnOrder(); renderBossBar();
     dom.banner.textContent = state.over ? '戰鬥結束' : state.phase === 'deploy' ? '部署階段' : '第 ' + state.round + ' 回合｜' + (state.phase === 'player' ? '我方行動' : '敵方行動');
     dom.roundStatus.textContent = state.over ? '結算完成' : state.phase === 'deploy' ? '自由部署' : state.phase === 'player' ? '我方回合' : '敵方回合';
     dom.endTurn.textContent = state.phase === 'deploy' ? '⚔️ 開始戰鬥' : '結束本回合';
@@ -754,6 +769,36 @@
       card.innerHTML = '<div class="party-name">' + unit.p.name + (unitSize(unit) > 1 ? ' ⬛2×2' : '') + '</div><div class="party-meta">' + unit.p.roleLabel + '｜★' + progression.starOf(unit.id) + '｜融合 ' + (progress.fusion[unit.id] || 0) + '</div><div class="hpbar"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></div>';
       card.onclick = function () { if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.mode = 'move'; render(); focusUnit(unit, false); } }; dom.list.appendChild(card);
     });
+  }
+  function renderBattleSides() {
+    if (!dom.battleAllyList) return;
+    var allies = state.units.filter(function (unit) { return unit.team === 'ally'; });
+    var livingAllies = allies.filter(function (unit) { return unit.hp > 0; });
+    var enemies = state.units.filter(function (unit) { return unit.team === 'enemy'; });
+    var livingEnemies = enemies.filter(function (unit) { return unit.hp > 0; });
+    dom.battleAllyCount.textContent = livingAllies.length + ' / ' + allies.length;
+    dom.battleEnemyCount.textContent = livingEnemies.length + ' / ' + enemies.length;
+    dom.battleObjective.textContent = '目標｜' + currentStage.objective;
+    var trait = traitFor('ally');
+    dom.battleTeamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>';
+    dom.battleAllyList.innerHTML = '';
+    allies.forEach(function (unit) {
+      var card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'battle-roster-card' + (state.selected === unit.key ? ' selected' : '') + (unit.hp <= 0 ? ' defeated' : '') + (unit.acted ? ' acted' : '');
+      card.innerHTML = '<i style="background-image:url(\'' + portrait(unit) + '\')"></i><span><b>' + unit.p.name + '</b><small>' + unit.p.roleLabel + (unitSize(unit) > 1 ? '｜' + unitSize(unit) + '×' + unitSize(unit) : '') + '</small><em><u style="width:' + (100 * unit.hp / unit.maxHp) + '%"></u></em></span>';
+      card.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp + '，點擊置中');
+      card.onclick = function () {
+        if (cameraSuppressed() || unit.hp <= 0) return;
+        if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; render(); }
+        focusUnit(unit, false);
+      };
+      dom.battleAllyList.appendChild(card);
+    });
+    var boss = livingEnemies.find(function (unit) { return unit.boss; });
+    if (boss) dom.battleEnemySummary.textContent = '首領 ' + boss.p.name + '｜生命 ' + boss.hp + ' / ' + boss.maxHp;
+    else if (livingEnemies.length) dom.battleEnemySummary.textContent = '剩餘 ' + livingEnemies.length + ' 隻｜點選敵軍可置中並查看威脅範圍';
+    else dom.battleEnemySummary.textContent = '敵軍已全數擊破';
   }
   function renderTrait() { var trait = traitFor('ally'); dom.teamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>'; }
   function renderTurnOrder() {
@@ -1023,7 +1068,7 @@
     dom.questSummary.innerHTML = '<b>遠征任務</b><br>' + (completed ? completed + ' 個獎勵可領取' : '主線 ' + clearedMain + '/' + mainStages.length + ' 關已通過') + '｜勝場 ' + progress.wins;
   }
   function renderCampaignMeta() {
-    var map = mapData(); dom.mapEyebrow.textContent = map.icon + ' ' + map.name + '｜20 × 20 戰場'; dom.stageTitle.textContent = map.name + '：' + currentStage.name; dom.stageDescription.textContent = map.description;
+    var map = mapData(); dom.mapEyebrow.textContent = map.icon + ' ' + map.name + '｜10 × 21 戰場'; dom.stageTitle.textContent = map.name + '：' + currentStage.name; dom.stageDescription.textContent = map.description;
     dom.stageBadge.textContent = currentStage.difficulty; dom.stageObjective.textContent = '目標：' + currentStage.objective;
     dom.stageProgress.textContent = currentStage.tower ? '無限塔・歷史最高 ' + progress.tower.best + ' 層' : '第 ' + currentStage.chapter + ' 章／10・' + (currentStage.hard ? 'HARD 特別關' : currentStage.boss ? '魔王關' : '第 ' + currentStage.index + ' 關');
     dom.battleStageLabel.textContent = map.icon + ' ' + map.name + '：' + currentStage.name + '｜' + currentStage.difficulty;
@@ -1078,17 +1123,49 @@
     dom.growthPet.innerHTML = roster.map(function (pet) { return '<option value="' + pet.id + '"' + (pet.id === growthPetId ? ' selected' : '') + '>' + pet.name + '｜' + pet.roleLabel + '</option>'; }).join('');
     renderGrowth(); dom.growthModal.hidden = false; audio.play('ui');
   }
+  var pendingGrowthAction = null;
+  function growthMaterialsHtml(items) {
+    return items.map(function (item) {
+      var enough = item.owned >= item.cost, remaining = item.owned - item.cost;
+      return '<span class="growth-material ' + (enough ? 'enough' : 'short') + '"><i>' + item.icon + '</i><b>' + item.label + '</b><small>持有 ' + item.owned + '｜需求 ' + item.cost + '｜使用後 ' + (remaining >= 0 ? remaining : '缺 ' + Math.abs(remaining)) + '</small></span>';
+    }).join('');
+  }
+  function openGrowthConfirmation(config) {
+    pendingGrowthAction = config.ready ? config.onConfirm : null;
+    dom.growthConfirmTitle.textContent = config.title;
+    dom.growthConfirmCopy.textContent = config.copy;
+    dom.growthConfirmMaterials.innerHTML = growthMaterialsHtml(config.materials);
+    dom.growthConfirmEffect.innerHTML = '<b>執行後效果</b><span>' + config.effect + '</span>';
+    dom.growthConfirmAccept.disabled = !config.ready;
+    dom.growthConfirmAccept.textContent = config.ready ? '確認使用材料' : '材料不足，無法執行';
+    dom.growthConfirmModal.hidden = false; audio.play('ui');
+  }
+  function closeGrowthConfirmation() { dom.growthConfirmModal.hidden = true; pendingGrowthAction = null; }
   function renderGrowth() {
     var pet = window.TACTICAL_PET_DATA.find(function (entry) { return entry.id === growthPetId; }), fusion = progress.fusion[pet.id] || 0, stage = portraitStage(pet.id), points = progress.skillPoints[pet.id] || 0, essence = progress.essences[pet.element] || 0, nextStage = stage + 1, evolutionCost = progression.evolutionCost(nextStage);
     var star = progression.starOf(pet.id), starCost = progression.starCost(pet.id), copies = progress.copies[pet.id] || 0;
-    var starText = starCost
-      ? '⭐ 升 ' + starCost.nextStar + ' 星（複製體 ' + starCost.copies + '／🪙 ' + starCost.gold + '，持有複製體 ' + copies + '）'
-      : '⭐ 已達 9 星上限';
-    dom.growthContent.innerHTML = '<div class="growth-overview"><div class="growth-portrait" style="background-image:url(\'' + pet.evolution[stage - 1].portrait + '\')"></div><div><h3>' + pet.name + '｜' + pet.roleLabel + '　<span class="star-row">' + (star ? '★'.repeat(star) : '☆ 0 星') + '</span></h3><div class="growth-meta"><span>星級 ' + star + '/9（每星全能力 +10%）</span><span>進化 ' + stage + '/3</span><span>融合 ' + fusion + '/3</span><span>技能點 ' + points + '</span><span>元素精華 ' + essence + '</span></div><p>星級消耗同幻獸複製體（召喚重複取得）與金幣；融合永久 +4% 並給 1 技能點。</p></div></div><div class="growth-actions"><button id="growth-star">' + starText + '</button><button id="growth-fuse">🧬 融合升階（核心 ' + (2 + fusion) + '／精華 ' + (6 + fusion * 3) + '）</button><button id="growth-evolve">✨ ' + (nextStage > 3 ? '已達最終進化' : '解鎖' + pet.evolution[nextStage - 1].label + '（' + evolutionCost.medals + '🏅／' + evolutionCost.essence + '精華）') + '</button></div><h3>技能樹</h3><div id="skill-tree" class="skill-tree"></div>';
-    document.getElementById('growth-star').disabled = !starCost;
-    document.getElementById('growth-star').onclick = function () { var result = progression.starUp(pet.id); if (!result.ok) return growthMessage(result.reason); audio.play('unlock'); renderProgress(); renderGrowth(); growthMessage('升星成功！目前 ' + result.star + ' 星，全能力 +' + result.star * 10 + '%。'); };
-    document.getElementById('growth-fuse').disabled = fusion >= 3; document.getElementById('growth-fuse').onclick = function () { var result = progression.fuse(pet); if (!result.ok) return growthMessage(result.reason); audio.play('unlock'); renderProgress(); renderGrowth(); growthMessage('融合成功，全能力提升並獲得 1 技能點。'); };
-    document.getElementById('growth-evolve').disabled = nextStage > 3; document.getElementById('growth-evolve').onclick = function () { var result = progression.unlockEvolution(pet, nextStage); if (!result.ok) return growthMessage(result.reason); audio.play('unlock'); renderProgress(); renderGrowth(); growthMessage('進化階段已永久解鎖。'); };
+    var elementLabel = { fire: '火', forest: '森', ocean: '海', light: '光', dark: '暗' }[pet.element] || pet.element;
+    var starMaterials = starCost ? [{ icon: '🧩', label: pet.name + '複製體', owned: copies, cost: starCost.copies }, { icon: '🪙', label: '金幣', owned: progress.gold, cost: starCost.gold }] : [];
+    var coreCost = 2 + fusion, fusionEssenceCost = 6 + fusion * 3;
+    var fuseMaterials = [{ icon: '🧬', label: '融合核心', owned: progress.fusionCores, cost: coreCost }, { icon: '🔷', label: elementLabel + '元素精華', owned: essence, cost: fusionEssenceCost }];
+    var evolveMaterials = nextStage <= 3 ? [{ icon: '🏅', label: '戰術徽章', owned: progress.medals, cost: evolutionCost.medals }, { icon: '🔷', label: elementLabel + '元素精華', owned: essence, cost: evolutionCost.essence }] : [];
+    var starReady = Boolean(starCost && starMaterials.every(function (item) { return item.owned >= item.cost; }));
+    var fuseReady = fusion < 3 && fuseMaterials.every(function (item) { return item.owned >= item.cost; });
+    var evolveReady = nextStage <= 3 && evolveMaterials.every(function (item) { return item.owned >= item.cost; }) && fusion >= (evolutionCost.fusion || 0);
+    var starCard = '<article class="growth-action-card"><div class="growth-action-materials">' + (starCost ? growthMaterialsHtml(starMaterials) : '<span class="growth-max">已達星級上限</span>') + '</div><h4>⭐ ' + (starCost ? '升 ' + starCost.nextStar + ' 星' : '9 星完成') + '</h4><p>消耗召喚重複取得的同名幻獸複製體與金幣。每升一星，力量、魔力、防衛、速度與血量等戰鬥能力永久增加 10%，最高 9 星。</p><small>本次效果：' + (starCost ? star + ' 星 → ' + starCost.nextStar + ' 星；累積全能力加成 +' + starCost.nextStar * 10 + '%' : '已獲得最高 +90% 星級加成') + '</small><button id="growth-star" ' + (!starCost ? 'disabled' : '') + '>' + (starCost ? '查看材料並確認升星' : '已達 9 星上限') + '</button></article>';
+    var fuseCard = '<article class="growth-action-card"><div class="growth-action-materials">' + (fusion < 3 ? growthMaterialsHtml(fuseMaterials) : '<span class="growth-max">已達融合上限</span>') + '</div><h4>🧬 融合升階</h4><p>消耗融合核心與本幻獸的同系元素精華。每階讓全能力永久增加 4%，並立即取得 1 點技能點，可用於技能樹；最高融合 3 階。</p><small>本次效果：' + (fusion < 3 ? '融合 ' + fusion + ' → ' + (fusion + 1) + '；全能力 +4%；技能點 ' + points + ' → ' + (points + 1) : '已取得最高融合加成') + '</small><button id="growth-fuse" ' + (fusion >= 3 ? 'disabled' : '') + '>' + (fusion < 3 ? '查看材料並確認融合' : '融合已達 3 階') + '</button></article>';
+    var evolveLabel = nextStage <= 3 ? pet.evolution[nextStage - 1].label : '最終型';
+    var evolveCard = '<article class="growth-action-card"><div class="growth-action-materials">' + (nextStage <= 3 ? growthMaterialsHtml(evolveMaterials) + (evolutionCost.fusion ? '<span class="growth-prerequisite ' + (fusion >= evolutionCost.fusion ? 'enough' : 'short') + '">前置：融合 ' + fusion + ' / ' + evolutionCost.fusion + '</span>' : '') : '<span class="growth-max">已達最終進化</span>') + '</div><h4>✨ ' + (nextStage <= 3 ? '解鎖' + evolveLabel : '最終型完成') + '</h4><p>永久解鎖下一階幻獸立繪與戰鬥型態。每次進化讓戰鬥全能力倍率增加 12%；最終型需要先完成至少 1 次融合。</p><small>本次效果：' + (nextStage <= 3 ? pet.evolution[stage - 1].label + ' → ' + evolveLabel + '；進化能力加成 +' + (nextStage - 1) * 12 + '%' : '已解鎖三階立繪與最高 +24% 進化加成') + '</small><button id="growth-evolve" ' + (nextStage > 3 ? 'disabled' : '') + '>' + (nextStage <= 3 ? '查看材料並確認進化' : '已達最終進化') + '</button></article>';
+    dom.growthContent.innerHTML = '<div class="growth-overview"><div class="growth-portrait" style="background-image:url(\'' + pet.evolution[stage - 1].portrait + '\')"></div><div><h3>' + pet.name + '｜' + pet.roleLabel + '　<span class="star-row">' + (star ? '★'.repeat(star) : '☆ 0 星') + '</span></h3><div class="growth-meta"><span>星級 ' + star + '/9</span><span>進化 ' + stage + '/3</span><span>融合 ' + fusion + '/3</span><span>技能點 ' + points + '</span></div></div></div><div class="growth-resource-ledger"><b>目前持有材料</b><span>🧩 ' + pet.name + '複製體 ' + copies + '</span><span>🪙 金幣 ' + progress.gold + '</span><span>🏅 戰術徽章 ' + progress.medals + '</span><span>🧬 融合核心 ' + progress.fusionCores + '</span><span>🔷 ' + elementLabel + '元素精華 ' + essence + '</span></div><div class="growth-actions">' + starCard + fuseCard + evolveCard + '</div><h3>技能樹</h3><div id="skill-tree" class="skill-tree"></div>';
+    document.getElementById('growth-star').onclick = function () {
+      openGrowthConfirmation({ title: '⭐ 確認升至 ' + (starCost ? starCost.nextStar : star) + ' 星', copy: '升星會永久消耗同名複製體與金幣，完成後無法降星或返還材料。', materials: starMaterials, ready: starReady, effect: '全能力永久增加 10%；累積星級加成變為 +' + (starCost ? starCost.nextStar * 10 : star * 10) + '%。', onConfirm: function () { var result = progression.starUp(pet.id); if (!result.ok) return growthMessage(result.reason); audio.play('unlock'); renderProgress(); renderGrowth(); growthMessage('升星成功！目前 ' + result.star + ' 星，全能力 +' + result.star * 10 + '%。'); } });
+    };
+    document.getElementById('growth-fuse').onclick = function () {
+      openGrowthConfirmation({ title: '🧬 確認融合升階', copy: '融合會永久消耗融合核心與同系元素精華，最高可提升至融合 3 階。', materials: fuseMaterials, ready: fuseReady, effect: '融合 ' + fusion + ' → ' + Math.min(3, fusion + 1) + '；全能力永久 +4%，並取得 1 技能點。', onConfirm: function () { var result = progression.fuse(pet); if (!result.ok) return growthMessage(result.reason); audio.play('unlock'); renderProgress(); renderGrowth(); growthMessage('融合成功，全能力提升並獲得 1 技能點。'); } });
+    };
+    document.getElementById('growth-evolve').onclick = function () {
+      openGrowthConfirmation({ title: '✨ 確認解鎖' + evolveLabel, copy: '進化會永久消耗戰術徽章與同系元素精華，並切換為下一階幻獸立繪與戰鬥型態。', materials: evolveMaterials, ready: evolveReady, effect: (nextStage <= 3 ? pet.evolution[stage - 1].label + ' → ' + evolveLabel + '；進化全能力加成提升為 +' + (nextStage - 1) * 12 + '%。' : '已達最終型。'), onConfirm: function () { var result = progression.unlockEvolution(pet, nextStage); if (!result.ok) return growthMessage(result.reason); audio.play('unlock'); renderProgress(); renderGrowth(); growthMessage('進化階段已永久解鎖。'); } });
+    };
     var tree = document.getElementById('skill-tree'), unlocked = progress.skillTree[pet.id] || [];
     progression.treeFor(pet).forEach(function (node) { var button = document.createElement('button'), active = unlocked.indexOf(node.id) >= 0; button.className = 'tree-node ' + (active ? 'unlocked' : node.requires && unlocked.indexOf(node.requires) < 0 ? 'locked' : ''); button.disabled = active; button.innerHTML = '<b>' + (active ? '✓ ' : '') + node.name + '</b><small>' + node.description + '<br>需要 ' + node.cost + ' 技能點</small>'; button.onclick = function () { var result = progression.unlockSkill(pet, node.id); if (!result.ok) return growthMessage(result.reason); audio.play('unlock'); renderGrowth(); growthMessage('技能節點已啟用。'); }; tree.appendChild(button); });
     renderQuests();
@@ -1102,8 +1179,8 @@
   function openDeploy() { if (!state.over && state.phase !== 'deploy' && state.round > 1) { note('進行中的戰鬥不可更換隊伍，請先完成或重新開始。'); return; } deploySelection = partyIds.slice(); renderDeploy(); dom.deployModal.hidden = false; }
   function renderDeploy() {
     var roster = progression.ownedPets();
-    dom.deployHelp.textContent = '已選 ' + deploySelection.length + '/' + PARTY_SIZE + ' 隻（1〜10 自由編制）｜已擁有 ' + roster.length + '/' + window.TACTICAL_PET_DATA.length + ' 隻，新幻獸可透過 🎰 召喚取得。'; dom.deployGrid.innerHTML = '';
-    roster.forEach(function (pet) { var button = document.createElement('button'), active = deploySelection.indexOf(pet.id) >= 0; button.className = 'deploy-card' + (active ? ' selected' : ''); button.innerHTML = '<span class="deploy-art" style="background-image:url(\'' + pet.evolution[portraitStage(pet.id) - 1].portrait + '\')"></span><b>' + pet.name + (pet.size > 1 ? ' ⬛' : '') + '</b><small>' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + (pet.size > 1 ? '｜2×2 佔 4 格' : '') + '</small>'; button.onclick = function () { var index = deploySelection.indexOf(pet.id); if (index >= 0) deploySelection.splice(index, 1); else if (deploySelection.length < PARTY_SIZE) deploySelection.push(pet.id); else { dom.deployHelp.textContent = '隊伍已滿（10 隻），請先取消一隻幻獸。'; return; } renderDeploy(); }; dom.deployGrid.appendChild(button); });
+    dom.deployHelp.textContent = '已選 ' + deploySelection.length + '/' + PARTY_SIZE + ' 隻（1〜6 自由編制）｜已擁有 ' + roster.length + '/' + window.TACTICAL_PET_DATA.length + ' 隻，新幻獸可透過 🎰 召喚取得。'; dom.deployGrid.innerHTML = '';
+    roster.forEach(function (pet) { var button = document.createElement('button'), active = deploySelection.indexOf(pet.id) >= 0; button.className = 'deploy-card' + (active ? ' selected' : ''); button.innerHTML = '<span class="deploy-art" style="background-image:url(\'' + pet.evolution[portraitStage(pet.id) - 1].portrait + '\')"></span><b>' + pet.name + (pet.size > 1 ? ' ⬛' : '') + '</b><small>' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + (pet.size > 1 ? '｜2×2 佔 4 格' : '') + '</small>'; button.onclick = function () { var index = deploySelection.indexOf(pet.id); if (index >= 0) deploySelection.splice(index, 1); else if (deploySelection.length < PARTY_SIZE) deploySelection.push(pet.id); else { dom.deployHelp.textContent = '隊伍已滿（6 隻），請先取消一隻幻獸。'; return; } renderDeploy(); }; dom.deployGrid.appendChild(button); });
   }
 
   /* ── 圖鑑：收集進度與全帳號加成 ── */
@@ -1263,6 +1340,9 @@
   });
   document.getElementById('deploy').onclick = openDeploy; document.getElementById('close-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('cancel-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('confirm-deploy').onclick = confirmDeploy;
   document.querySelectorAll('[data-close]').forEach(function (button) { button.onclick = function () { document.getElementById(button.dataset.close).hidden = true; }; });
+  document.getElementById('growth-confirm-close').onclick = closeGrowthConfirmation;
+  document.getElementById('growth-confirm-cancel').onclick = closeGrowthConfirmation;
+  dom.growthConfirmAccept.onclick = function () { var action = pendingGrowthAction; if (!action) return; closeGrowthConfirmation(); action(); };
   dom.growthPet.onchange = function () { growthPetId = dom.growthPet.value; renderGrowth(); };
   dom.enterBattle.onclick = function () { audio.unlock(); if (state.over || state.phase !== 'deploy') reset(currentStage.id); setView('battle'); audio.play('ui'); render(); focusDeployZone(true); };
   function stageRef() { return currentStage.tower ? towerStageFor(currentStage.floor) : currentStage.id; }
@@ -1276,7 +1356,7 @@
   };
   var towerButton = document.getElementById('open-tower');
   if (towerButton) towerButton.onclick = function () { audio.unlock(); enterTower(progress.tower.best + 1); };
-  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
 
   window.__TACTICS_DEBUG__ = {
     getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, over: state.over, allies: alive('ally').length, enemies: alive('enemy').length, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },

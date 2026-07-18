@@ -1,0 +1,2340 @@
+{
+  "abyss_dragon": {
+    "file": "assets/animations/units/abyss_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "abyss_god_dragon": {
+    "file": "assets/animations/units/abyss_god_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "abyss_serpent": {
+    "file": "assets/animations/units/abyss_serpent-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ancient_treant": {
+    "file": "assets/animations/units/ancient_treant-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "blazing_dragon": {
+    "file": "assets/animations/units/blazing_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "bubble_whale": {
+    "file": "assets/animations/units/bubble_whale-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "coral_fish": {
+    "file": "assets/animations/units/coral_fish-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "crimson_dragon": {
+    "file": "assets/animations/units/crimson_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "crimson_wolf": {
+    "file": "assets/animations/units/crimson_wolf-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "crystal_jellyfish": {
+    "file": "assets/animations/units/crystal_jellyfish-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "dawn_deer": {
+    "file": "assets/animations/units/dawn_deer-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "deep_sea_crab": {
+    "file": "assets/animations/units/deep_sea_crab-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "dusk_shark": {
+    "file": "assets/animations/units/dusk_shark-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "eclipse_dragon": {
+    "file": "assets/animations/units/eclipse_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "electric_eel": {
+    "file": "assets/animations/units/electric_eel-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "emerald_bird": {
+    "file": "assets/animations/units/emerald_bird-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "emerald_dragon": {
+    "file": "assets/animations/units/emerald_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "emerald_god_dragon": {
+    "file": "assets/animations/units/emerald_god_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "fire_fox": {
+    "file": "assets/animations/units/fire_fox-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "fire_lion": {
+    "file": "assets/animations/units/fire_lion-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "flame_emperor": {
+    "file": "assets/animations/units/flame_emperor-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "flame_god_lion": {
+    "file": "assets/animations/units/flame_god_lion-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "flame_spirit": {
+    "file": "assets/animations/units/flame_spirit-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "forest_deer": {
+    "file": "assets/animations/units/forest_deer-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "forest_god": {
+    "file": "assets/animations/units/forest_god-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "forest_king": {
+    "file": "assets/animations/units/forest_king-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "frost_leviathan": {
+    "file": "assets/animations/units/frost_leviathan-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "gold_qilin": {
+    "file": "assets/animations/units/gold_qilin-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "grass_bear": {
+    "file": "assets/animations/units/grass_bear-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "halo_jelly": {
+    "file": "assets/animations/units/halo_jelly-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "hell_hound": {
+    "file": "assets/animations/units/hell_hound-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "holy_rabbit": {
+    "file": "assets/animations/units/holy_rabbit-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ice_shark": {
+    "file": "assets/animations/units/ice_shark-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ice_spirit_fish": {
+    "file": "assets/animations/units/ice_spirit_fish-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "inferno_bat": {
+    "file": "assets/animations/units/inferno_bat-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "jade_qilin": {
+    "file": "assets/animations/units/jade_qilin-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "kraken_spawn": {
+    "file": "assets/animations/units/kraken_spawn-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "lava_crab": {
+    "file": "assets/animations/units/lava_crab-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "leaf_ear_rabbit": {
+    "file": "assets/animations/units/leaf_ear_rabbit-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "lumen_fox": {
+    "file": "assets/animations/units/lumen_fox-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "lumina_whale": {
+    "file": "assets/animations/units/lumina_whale-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "magma_hound": {
+    "file": "assets/animations/units/magma_hound-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "molten_ball": {
+    "file": "assets/animations/units/molten_ball-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "moss_turtle": {
+    "file": "assets/animations/units/moss_turtle-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nature_guardian": {
+    "file": "assets/animations/units/nature_guardian-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nether_eel": {
+    "file": "assets/animations/units/nether_eel-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "night_bat": {
+    "file": "assets/animations/units/night_bat-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "poison_mantis": {
+    "file": "assets/animations/units/poison_mantis-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "prism_dragon": {
+    "file": "assets/animations/units/prism_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "radiant_lion": {
+    "file": "assets/animations/units/radiant_lion-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "red_wing_bird": {
+    "file": "assets/animations/units/red_wing_bird-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "sea_emperor": {
+    "file": "assets/animations/units/sea_emperor-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "sea_god_beast": {
+    "file": "assets/animations/units/sea_god_beast-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "seraph_treant": {
+    "file": "assets/animations/units/seraph_treant-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "shadow_fang": {
+    "file": "assets/animations/units/shadow_fang-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "solar_phoenix": {
+    "file": "assets/animations/units/solar_phoenix-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "starfish_beast": {
+    "file": "assets/animations/units/starfish_beast-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "sun_phoenix": {
+    "file": "assets/animations/units/sun_phoenix-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "thorn_boar": {
+    "file": "assets/animations/units/thorn_boar-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "tsunami_dragon": {
+    "file": "assets/animations/units/tsunami_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "umbra_bear": {
+    "file": "assets/animations/units/umbra_bear-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "vine_snake": {
+    "file": "assets/animations/units/vine_snake-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "void_crab": {
+    "file": "assets/animations/units/void_crab-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "void_leviathan": {
+    "file": "assets/animations/units/void_leviathan-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "volcanic_titan": {
+    "file": "assets/animations/units/volcanic_titan-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "abyss_mammoth": {
+    "file": "assets/animations/units/abyss_mammoth-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "acorn_squirrel": {
+    "file": "assets/animations/units/acorn_squirrel-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "amber_antler_moose": {
+    "file": "assets/animations/units/amber_antler_moose-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "auric_stag_beetle": {
+    "file": "assets/animations/units/auric_stag_beetle-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "aurora_narwhal": {
+    "file": "assets/animations/units/aurora_narwhal-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "bamboo_panda": {
+    "file": "assets/animations/units/bamboo_panda-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "blast_ram": {
+    "file": "assets/animations/units/blast_ram-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "bramble_lynx": {
+    "file": "assets/animations/units/bramble_lynx-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "brine_crocodile": {
+    "file": "assets/animations/units/brine_crocodile-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "cathedral_elephant": {
+    "file": "assets/animations/units/cathedral_elephant-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "chain_centipede": {
+    "file": "assets/animations/units/chain_centipede-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "cinder_pangolin": {
+    "file": "assets/animations/units/cinder_pangolin-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "coal_mole": {
+    "file": "assets/animations/units/coal_mole-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "comet_heron": {
+    "file": "assets/animations/units/comet_heron-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "comet_tiger": {
+    "file": "assets/animations/units/comet_tiger-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "crown_unicorn": {
+    "file": "assets/animations/units/crown_unicorn-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "dawn_griffin": {
+    "file": "assets/animations/units/dawn_griffin-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "eclipse_moth": {
+    "file": "assets/animations/units/eclipse_moth-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "emberhorn_beetle": {
+    "file": "assets/animations/units/emberhorn_beetle-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "fern_ceratops": {
+    "file": "assets/animations/units/fern_ceratops-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "flare_hummingbird": {
+    "file": "assets/animations/units/flare_hummingbird-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "furnace_owl": {
+    "file": "assets/animations/units/furnace_owl-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "geyser_frog": {
+    "file": "assets/animations/units/geyser_frog-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "glacier_penguin": {
+    "file": "assets/animations/units/glacier_penguin-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "grave_badger": {
+    "file": "assets/animations/units/grave_badger-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "halo_capybara": {
+    "file": "assets/animations/units/halo_capybara-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "hollow_hyena": {
+    "file": "assets/animations/units/hollow_hyena-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ink_chameleon": {
+    "file": "assets/animations/units/ink_chameleon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "kelp_otter": {
+    "file": "assets/animations/units/kelp_otter-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "kiln_rhinoceros": {
+    "file": "assets/animations/units/kiln_rhinoceros-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "lantern_koi": {
+    "file": "assets/animations/units/lantern_koi-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "mirror_armadillo": {
+    "file": "assets/animations/units/mirror_armadillo-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "mushroom_bison": {
+    "file": "assets/animations/units/mushroom_bison-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nautilus_guardian": {
+    "file": "assets/animations/units/nautilus_guardian-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nectar_moth": {
+    "file": "assets/animations/units/nectar_moth-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nightmare_tapir": {
+    "file": "assets/animations/units/nightmare_tapir-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "obsidian_gorilla": {
+    "file": "assets/animations/units/obsidian_gorilla-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "orchid_gecko": {
+    "file": "assets/animations/units/orchid_gecko-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "pearl_seahorse": {
+    "file": "assets/animations/units/pearl_seahorse-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "phantom_raven": {
+    "file": "assets/animations/units/phantom_raven-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "prism_peacock": {
+    "file": "assets/animations/units/prism_peacock-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "reef_hammerhead": {
+    "file": "assets/animations/units/reef_hammerhead-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "scarlet_salamander": {
+    "file": "assets/animations/units/scarlet_salamander-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "spore_hedgehog": {
+    "file": "assets/animations/units/spore_hedgehog-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "star_ram": {
+    "file": "assets/animations/units/star_ram-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "star_tide_ray": {
+    "file": "assets/animations/units/star_tide_ray-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "sunscar_scorpion": {
+    "file": "assets/animations/units/sunscar_scorpion-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "tidal_axolotl": {
+    "file": "assets/animations/units/tidal_axolotl-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "void_anglerfish": {
+    "file": "assets/animations/units/void_anglerfish-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "willow_crane": {
+    "file": "assets/animations/units/willow_crane-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ember_imp": {
+    "file": "assets/animations/units/ember_imp-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ash_hound": {
+    "file": "assets/animations/units/ash_hound-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "cinder_bat": {
+    "file": "assets/animations/units/cinder_bat-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "flame_wisp": {
+    "file": "assets/animations/units/flame_wisp-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "blight_boar": {
+    "file": "assets/animations/units/blight_boar-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "thorn_creeper": {
+    "file": "assets/animations/units/thorn_creeper-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "venom_mantis": {
+    "file": "assets/animations/units/venom_mantis-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "gloom_turtle": {
+    "file": "assets/animations/units/gloom_turtle-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "murk_fish": {
+    "file": "assets/animations/units/murk_fish-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "tide_spawn": {
+    "file": "assets/animations/units/tide_spawn-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "frost_shell": {
+    "file": "assets/animations/units/frost_shell-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "void_eel": {
+    "file": "assets/animations/units/void_eel-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "dryad_thorn": {
+    "file": "assets/animations/units/dryad_thorn-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ent_sapling": {
+    "file": "assets/animations/units/ent_sapling-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "mist_banshee": {
+    "file": "assets/animations/units/mist_banshee-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "fog_wisp": {
+    "file": "assets/animations/units/fog_wisp-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "salamander_fiend": {
+    "file": "assets/animations/units/salamander_fiend-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "surtr_spawn": {
+    "file": "assets/animations/units/surtr_spawn-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "gargoyle_watcher": {
+    "file": "assets/animations/units/gargoyle_watcher-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "golem_sentinel": {
+    "file": "assets/animations/units/golem_sentinel-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "jotunn_frost": {
+    "file": "assets/animations/units/jotunn_frost-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "selkie_hunter": {
+    "file": "assets/animations/units/selkie_hunter-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "thunderbird_kin": {
+    "file": "assets/animations/units/thunderbird_kin-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "raiju_beast": {
+    "file": "assets/animations/units/raiju_beast-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "siren_lure": {
+    "file": "assets/animations/units/siren_lure-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "kraken_tentacle": {
+    "file": "assets/animations/units/kraken_tentacle-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "cherub_guard": {
+    "file": "assets/animations/units/cherub_guard-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "bennu_acolyte": {
+    "file": "assets/animations/units/bennu_acolyte-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "cerberus_whelp": {
+    "file": "assets/animations/units/cerberus_whelp-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "mara_fiend": {
+    "file": "assets/animations/units/mara_fiend-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "chimera_spawn": {
+    "file": "assets/animations/units/chimera_spawn-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "leviathan_brood": {
+    "file": "assets/animations/units/leviathan_brood-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "crown_cinderling": {
+    "file": "assets/animations/units/crown_cinderling-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "slag_hound": {
+    "file": "assets/animations/units/slag_hound-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "rotcap_rootling": {
+    "file": "assets/animations/units/rotcap_rootling-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "thorn_pollen_drone": {
+    "file": "assets/animations/units/thorn_pollen_drone-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "pearl_lantern_fry": {
+    "file": "assets/animations/units/pearl_lantern_fry-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "glacier_shellcrab": {
+    "file": "assets/animations/units/glacier_shellcrab-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "prism_wing_cub": {
+    "file": "assets/animations/units/prism_wing_cub-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "rosewindow_sentinel": {
+    "file": "assets/animations/units/rosewindow_sentinel-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "crescent_rib_whelp": {
+    "file": "assets/animations/units/crescent_rib_whelp-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "singularity_mite": {
+    "file": "assets/animations/units/singularity_mite-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "ash_crown_tyrant": {
+    "file": "assets/animations/units/ash_crown_tyrant-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "furnace_colossus": {
+    "file": "assets/animations/units/furnace_colossus-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "blightwood_sovereign": {
+    "file": "assets/animations/units/blightwood_sovereign-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "thorn_hive_queen": {
+    "file": "assets/animations/units/thorn_hive_queen-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "abyssal_kraken_emperor": {
+    "file": "assets/animations/units/abyssal_kraken_emperor-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "glacier_leviathan": {
+    "file": "assets/animations/units/glacier_leviathan-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "solar_seraph_chimera": {
+    "file": "assets/animations/units/solar_seraph_chimera-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "cathedral_titan": {
+    "file": "assets/animations/units/cathedral_titan-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "eclipse_bone_wyrm": {
+    "file": "assets/animations/units/eclipse_bone_wyrm-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "void_devourer": {
+    "file": "assets/animations/units/void_devourer-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  }
+}
