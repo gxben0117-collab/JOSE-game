@@ -159,6 +159,8 @@ try {
   for (let attempt = 0; attempt < 100 && !attackAnimation; attempt++) { await delay(100); attackAnimation = await evaluate(`window.__attackAnimation || ''`); }
   await evaluate(`window.__TACTICS_DEBUG__.stopAuto()`); await delay(400);
   assert.match(attackAnimation, /motion-(4dir-)?attack-(right|left|up|down)/);
+  const actionState = await evaluate(`(() => { const done = document.querySelector('.unit.ally.action-complete'), waiting = document.querySelector('.unit.ally:not(.action-complete)'), rosterDone = document.querySelector('.battle-roster-card.acted'); return { done: document.querySelectorAll('.unit.ally.action-complete').length, waiting: document.querySelectorAll('.unit.ally:not(.action-complete)').length, doneFilter: done ? getComputedStyle(done.querySelector('.portrait')).filter : '', waitingFilter: waiting ? getComputedStyle(waiting.querySelector('.portrait')).filter : '', rosterDone: !!rosterDone, rosterText: rosterDone?.innerText || '' }; })()`);
+  assert.ok(actionState.done > 0 && actionState.waiting > 0 && actionState.rosterDone); assert.notEqual(actionState.doneFilter, actionState.waitingFilter); assert.match(actionState.rosterText, /已行動/);
   const desktopBattleShot = await screenshot('jose-desktop-battle.png');
 
   await command('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true }); await delay(500);
@@ -184,7 +186,7 @@ try {
   assert.equal(towerDemon.slows, 0); assert.equal(towerDemon.size5, 1); assert.equal(towerDemon.cells, 210);
 
   assert.deepEqual(errors, [], `Browser errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, formationPreset, unitInspection, centralCommand, walkAnimation, attackAnimation, mobile, mobileCommand, hardStage, bossStage, towerElite, towerDemon, screenshots: [desktopShot, desktopBattleShot, centralCommandShot, mobileShot], errors }, null, 2));
+  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, formationPreset, unitInspection, centralCommand, walkAnimation, attackAnimation, actionState, mobile, mobileCommand, hardStage, bossStage, towerElite, towerDemon, screenshots: [desktopShot, desktopBattleShot, centralCommandShot, mobileShot], errors }, null, 2));
 } finally {
   try { socket?.close(); } catch {}
   browser.kill();

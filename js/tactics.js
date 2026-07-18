@@ -871,7 +871,7 @@
   }
 
   function unitElement(unit) {
-    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
+    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.team === 'ally' && unit.acted ? ' action-complete' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
     element.setAttribute('aria-pressed', state.inspected === unit.key ? 'true' : 'false');
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
     var statuses = (unit.shield > 0 ? '🛡️' : '') + (unit.burn > 0 ? '🔥' : '') + (unit.poison > 0 ? '☠️' : '') + (unit.freeze > 0 ? '❄️' : '') + (unit.atkBuff > 0 ? '⬆️' : '');
@@ -953,7 +953,7 @@
       var card = document.createElement('button');
       card.type = 'button';
       card.className = 'battle-roster-card' + (state.selected === unit.key ? ' selected' : '') + (unit.hp <= 0 ? ' defeated' : '') + (unit.acted ? ' acted' : '');
-      card.innerHTML = '<i style="background-image:url(\'' + portrait(unit) + '\')"></i><span><b>' + unit.p.name + '</b><small>' + unit.p.roleLabel + (unitSize(unit) > 1 ? '｜' + unitSize(unit) + '×' + unitSize(unit) : '') + '</small><em><u style="width:' + (100 * unit.hp / unit.maxHp) + '%"></u></em></span>';
+      card.innerHTML = '<i style="background-image:url(\'' + portrait(unit) + '\')"></i><span><b>' + unit.p.name + '</b><small>' + unit.p.roleLabel + (unitSize(unit) > 1 ? '｜' + unitSize(unit) + '×' + unitSize(unit) : '') + (unit.acted ? '｜✓ 已行動' : '') + '</small><em><u style="width:' + (100 * unit.hp / unit.maxHp) + '%"></u></em></span>';
       card.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp + '，點擊置中');
       card.onclick = function () {
         if (cameraSuppressed() || unit.hp <= 0) return;

@@ -512,5 +512,13 @@ test('骷髏系列八種魔物完整且包含 4×4 與 5×5 首領', () => {
   assert.equal(enemies.find(enemy => enemy.id === 'skeleton_king').size, 4);
   assert.equal(enemies.find(enemy => enemy.id === 'lich_king').size, 5);
 });
+test('已完成行動的我方棋子與隊伍卡會變暗，未行動者維持正常亮度', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  assert.match(source, /unit\.team === 'ally' && unit\.acted \? ' action-complete'/);
+  assert.match(source, /unit\.acted \? '｜✓ 已行動'/);
+  assert.match(css, /\.unit\.ally\.action-complete \.portrait\{filter:grayscale/);
+  assert.match(css, /\.battle-roster-card\.acted>i\{filter:grayscale/);
+});
 
 console.log(`\n${passed}/${total} regression checks passed.`);
