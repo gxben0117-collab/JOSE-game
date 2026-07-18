@@ -1,7 +1,7 @@
 {
   "fire_fox": {
     "file": "assets/animations/directional/fire_fox-motion-4dir-sheet.webp",
-    "columns": 4,
+    "columns": 6,
     "rows": 12,
     "frame": 112,
     "rowsOrder": [
@@ -28,7 +28,7 @@
   },
   "fire_lion": {
     "file": "assets/animations/directional/fire_lion-motion-4dir-sheet.webp",
-    "columns": 4,
+    "columns": 6,
     "rows": 12,
     "frame": 112,
     "rowsOrder": [
@@ -55,7 +55,7 @@
   },
   "leaf_ear_rabbit": {
     "file": "assets/animations/directional/leaf_ear_rabbit-motion-4dir-sheet.webp",
-    "columns": 4,
+    "columns": 6,
     "rows": 12,
     "frame": 112,
     "rowsOrder": [
@@ -82,7 +82,7 @@
   },
   "molten_ball": {
     "file": "assets/animations/directional/molten_ball-motion-4dir-sheet.webp",
-    "columns": 4,
+    "columns": 6,
     "rows": 12,
     "frame": 112,
     "rowsOrder": [

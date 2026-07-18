@@ -2,7 +2,7 @@
 """Build transparent four-direction motion frames from approved AI reference grids.
 
 Reference grid: 4 columns (down/right/up/left) × 3 rows (idle/move/attack).
-Runtime sheet: 4 animation frames × 12 semantic rows, each frame 112×112.
+Runtime sheet: 6 animation frames × 12 semantic rows, each frame 112×112.
 """
 from __future__ import annotations
 
@@ -16,6 +16,7 @@ SOURCE_DIR = ROOT / "assets" / "animations" / "directional" / "sources"
 OUTPUT_DIR = ROOT / "assets" / "animations" / "directional"
 FRAME_DIR = OUTPUT_DIR / "frames"
 FRAME = 112
+ANIMATION_FRAMES = 6
 DIRECTIONS = ("down", "right", "up", "left")
 ACTIONS = ("idle", "move", "attack")
 # 這三張 AI 參考圖的側面欄位是依「角色看向畫面中央」構圖，
@@ -42,11 +43,11 @@ def contain(image: Image.Image, scale: float = .93) -> Image.Image:
 def animate(base: Image.Image, action: str, direction: str, frame: int) -> Image.Image:
     direction_vector = {"down": (0, 1), "right": (1, 0), "up": (0, -1), "left": (-1, 0)}[direction]
     if action == "idle":
-        phases = ((0, 1, 1.0), (0, 0, 1.012), (0, -2, 1.025), (0, 0, 1.012))
+        phases = ((0, 1, 1.0), (0, 0, 1.008), (0, -1, 1.016), (0, -2, 1.025), (0, -1, 1.016), (0, 0, 1.008))
     elif action == "move":
-        phases = ((0, 1, 1.0), (-2, -3, .985), (0, 0, 1.0), (2, -3, 1.015))
+        phases = ((-1, 1, 1.0), (1, -2, .99), (2, -4, .98), (0, 0, 1.0), (-2, -3, 1.01), (-1, 0, 1.005))
     else:
-        phases = ((-2, 1, .98), (-5, 0, .95), (8, -1, 1.08), (2, 0, 1.02))
+        phases = ((-2, 1, .98), (-5, 1, .95), (-7, 0, .94), (8, -1, 1.08), (4, 0, 1.04), (0, 1, 1.0))
     phase_x, phase_y, scale = phases[frame]
     if action == "attack":
         dx, dy = direction_vector[0] * phase_x, direction_vector[1] * phase_x + phase_y
@@ -65,7 +66,7 @@ def animate(base: Image.Image, action: str, direction: str, frame: int) -> Image
 def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
     source = Image.open(source_path).convert("RGBA")
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
-    sheet = Image.new("RGBA", (FRAME * 4, FRAME * 12))
+    sheet = Image.new("RGBA", (FRAME * ANIMATION_FRAMES, FRAME * 12))
     row_order: list[str] = []
     for direction_index, direction in enumerate(DIRECTIONS):
         source_column = ({"right": 3, "left": 1}.get(direction, direction_index)
@@ -78,14 +79,14 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
             base = contain(source.crop((x0, y0, x1, y1)))
             row = direction_index * 3 + action_index
             row_order.append(f"{action}-{direction}")
-            for frame_index in range(4):
+            for frame_index in range(ANIMATION_FRAMES):
                 frame = animate(base, action, direction, frame_index)
                 sheet.alpha_composite(frame, (frame_index * FRAME, row * FRAME))
                 frame.save(FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index + 1:02d}.png", optimize=True)
     filename = f"{unit_id}-motion-4dir-sheet.webp"
     sheet.save(OUTPUT_DIR / filename, "WEBP", quality=88, method=6, exact=True)
     source_columns = [0, 3, 2, 1] if unit_id in SWAPPED_SIDE_UNITS else [0, 1, 2, 3]
-    return {"file": f"assets/animations/directional/{filename}", "columns": 4, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "source": f"assets/animations/directional/sources/{source_path.name}"}
+    return {"file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "source": f"assets/animations/directional/sources/{source_path.name}"}
 
 
 def main() -> None:
@@ -95,7 +96,7 @@ def main() -> None:
         unit_id = source.name.split("-four-direction-reference-")[0]
         manifest[unit_id] = build_reference(unit_id, source)
     (OUTPUT_DIR / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"Built {len(manifest)} four-direction unit sheets and {len(manifest) * 48} transparent frames.")
+    print(f"Built {len(manifest)} four-direction unit sheets and {len(manifest) * 12 * ANIMATION_FRAMES} transparent frames.")
 
 
 if __name__ == "__main__":

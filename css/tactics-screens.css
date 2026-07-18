@@ -361,23 +361,23 @@ body.map-rift .obstacle-icon{background-image:url('../assets/terrain/rock-rift.p
 @keyframes motion-idle-left{0%,24.9%{background-position:0 60%}25%,49.9%{background-position:33.333% 60%}50%,74.9%{background-position:66.667% 60%}75%,100%{background-position:100% 60%}}
 @keyframes motion-walk-left{0%,24.9%{background-position:0 80%}25%,49.9%{background-position:33.333% 80%}50%,74.9%{background-position:66.667% 80%}75%,100%{background-position:100% 80%}}
 @keyframes motion-attack-left{0%,24.9%{background-position:0 100%}25%,49.9%{background-position:33.333% 100%}50%,74.9%{background-position:66.667% 100%}75%,100%{background-position:100% 100%}}
-.unit.motion-sprite.motion-4dir .portrait{background-size:400% 1200%!important}
-.unit.motion-sprite.motion-4dir.facing-down .portrait{animation:motion-4dir-idle-down 1.65s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-down.walking .portrait{animation:motion-4dir-walk-down .42s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-down.cast .portrait{animation:motion-4dir-attack-down .52s linear both!important}
-.unit.motion-sprite.motion-4dir.facing-right .portrait{animation:motion-4dir-idle-right 1.65s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-right.walking .portrait{animation:motion-4dir-walk-right .42s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-right.cast .portrait{animation:motion-4dir-attack-right .52s linear both!important}
-.unit.motion-sprite.motion-4dir.facing-up .portrait{animation:motion-4dir-idle-up 1.65s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-up.walking .portrait{animation:motion-4dir-walk-up .42s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-up.cast .portrait{animation:motion-4dir-attack-up .52s linear both!important}
-.unit.motion-sprite.motion-4dir.facing-left .portrait{animation:motion-4dir-idle-left 1.65s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-left.walking .portrait{animation:motion-4dir-walk-left .42s linear infinite!important}.unit.motion-sprite.motion-4dir.facing-left.cast .portrait{animation:motion-4dir-attack-left .52s linear both!important}
-@keyframes motion-4dir-idle-down{0%,24.9%{background-position:0 0}25%,49.9%{background-position:33.333% 0}50%,74.9%{background-position:66.667% 0}75%,100%{background-position:100% 0}}
-@keyframes motion-4dir-walk-down{0%,24.9%{background-position:0 9.091%}25%,49.9%{background-position:33.333% 9.091%}50%,74.9%{background-position:66.667% 9.091%}75%,100%{background-position:100% 9.091%}}
-@keyframes motion-4dir-attack-down{0%,24.9%{background-position:0 18.182%}25%,49.9%{background-position:33.333% 18.182%}50%,74.9%{background-position:66.667% 18.182%}75%,100%{background-position:100% 18.182%}}
-@keyframes motion-4dir-idle-right{0%,24.9%{background-position:0 27.273%}25%,49.9%{background-position:33.333% 27.273%}50%,74.9%{background-position:66.667% 27.273%}75%,100%{background-position:100% 27.273%}}
-@keyframes motion-4dir-walk-right{0%,24.9%{background-position:0 36.364%}25%,49.9%{background-position:33.333% 36.364%}50%,74.9%{background-position:66.667% 36.364%}75%,100%{background-position:100% 36.364%}}
-@keyframes motion-4dir-attack-right{0%,24.9%{background-position:0 45.455%}25%,49.9%{background-position:33.333% 45.455%}50%,74.9%{background-position:66.667% 45.455%}75%,100%{background-position:100% 45.455%}}
-@keyframes motion-4dir-idle-up{0%,24.9%{background-position:0 54.545%}25%,49.9%{background-position:33.333% 54.545%}50%,74.9%{background-position:66.667% 54.545%}75%,100%{background-position:100% 54.545%}}
-@keyframes motion-4dir-walk-up{0%,24.9%{background-position:0 63.636%}25%,49.9%{background-position:33.333% 63.636%}50%,74.9%{background-position:66.667% 63.636%}75%,100%{background-position:100% 63.636%}}
-@keyframes motion-4dir-attack-up{0%,24.9%{background-position:0 72.727%}25%,49.9%{background-position:33.333% 72.727%}50%,74.9%{background-position:66.667% 72.727%}75%,100%{background-position:100% 72.727%}}
-@keyframes motion-4dir-idle-left{0%,24.9%{background-position:0 81.818%}25%,49.9%{background-position:33.333% 81.818%}50%,74.9%{background-position:66.667% 81.818%}75%,100%{background-position:100% 81.818%}}
-@keyframes motion-4dir-walk-left{0%,24.9%{background-position:0 90.909%}25%,49.9%{background-position:33.333% 90.909%}50%,74.9%{background-position:66.667% 90.909%}75%,100%{background-position:100% 90.909%}}
-@keyframes motion-4dir-attack-left{0%,24.9%{background-position:0 100%}25%,49.9%{background-position:33.333% 100%}50%,74.9%{background-position:66.667% 100%}75%,100%{background-position:100% 100%}}
+.unit.motion-sprite.motion-4dir .portrait{background-size:600% 1200%!important}
+.unit.motion-sprite.motion-4dir.facing-down .portrait{animation:motion-4dir-idle-down 1.8s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-down.walking .portrait{animation:motion-4dir-walk-down .6s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-down.cast .portrait{animation:motion-4dir-attack-down .72s steps(5,end) both!important}
+.unit.motion-sprite.motion-4dir.facing-right .portrait{animation:motion-4dir-idle-right 1.8s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-right.walking .portrait{animation:motion-4dir-walk-right .6s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-right.cast .portrait{animation:motion-4dir-attack-right .72s steps(5,end) both!important}
+.unit.motion-sprite.motion-4dir.facing-up .portrait{animation:motion-4dir-idle-up 1.8s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-up.walking .portrait{animation:motion-4dir-walk-up .6s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-up.cast .portrait{animation:motion-4dir-attack-up .72s steps(5,end) both!important}
+.unit.motion-sprite.motion-4dir.facing-left .portrait{animation:motion-4dir-idle-left 1.8s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-left.walking .portrait{animation:motion-4dir-walk-left .6s steps(5,end) infinite!important}.unit.motion-sprite.motion-4dir.facing-left.cast .portrait{animation:motion-4dir-attack-left .72s steps(5,end) both!important}
+@keyframes motion-4dir-idle-down{from{background-position:0 0}to{background-position:100% 0}}
+@keyframes motion-4dir-walk-down{from{background-position:0 9.091%}to{background-position:100% 9.091%}}
+@keyframes motion-4dir-attack-down{from{background-position:0 18.182%}to{background-position:100% 18.182%}}
+@keyframes motion-4dir-idle-right{from{background-position:0 27.273%}to{background-position:100% 27.273%}}
+@keyframes motion-4dir-walk-right{from{background-position:0 36.364%}to{background-position:100% 36.364%}}
+@keyframes motion-4dir-attack-right{from{background-position:0 45.455%}to{background-position:100% 45.455%}}
+@keyframes motion-4dir-idle-up{from{background-position:0 54.545%}to{background-position:100% 54.545%}}
+@keyframes motion-4dir-walk-up{from{background-position:0 63.636%}to{background-position:100% 63.636%}}
+@keyframes motion-4dir-attack-up{from{background-position:0 72.727%}to{background-position:100% 72.727%}}
+@keyframes motion-4dir-idle-left{from{background-position:0 81.818%}to{background-position:100% 81.818%}}
+@keyframes motion-4dir-walk-left{from{background-position:0 90.909%}to{background-position:100% 90.909%}}
+@keyframes motion-4dir-attack-left{from{background-position:0 100%}to{background-position:100% 100%}}
 
 /* 25×25 whole-map layer: grids are transparent interaction overlays, not repeated terrain tiles. */
 .idle-arena .board{position:relative;isolation:isolate;background-size:cover;background-image:radial-gradient(ellipse at 24% 73%,#6a945455 0 16%,transparent 17%),radial-gradient(ellipse at 75% 24%,#345d3555 0 19%,transparent 20%),linear-gradient(135deg,#425f38,#273d29 52%,#52653d)}

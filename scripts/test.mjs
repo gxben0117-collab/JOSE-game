@@ -140,18 +140,19 @@ test('地形以連續區塊生成而非零碎散點', () => {
   }
   assert.ok(content.maps.some(map => content.terrainAt(content.stages.find(stage => stage.mapId === map.id), 10, 5)), '所有章節中央都被分類成無地形');
 });
-test('初始四獸具有上下左右待機、移動、攻擊十二列動畫與 192 張透明散圖', () => {
+test('初始四獸具有上下左右待機、移動、攻擊十二列動畫與 288 張透明散圖', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
   const starter = ['molten_ball', 'fire_lion', 'fire_fox', 'leaf_ear_rabbit'];
   const rows = ['idle-down','move-down','attack-down','idle-right','move-right','attack-right','idle-up','move-up','attack-up','idle-left','move-left','attack-left'];
   for (const id of starter) {
-    assert.equal(manifest[id].columns, 4); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
+    assert.equal(manifest[id].columns, 6); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
     assert.deepEqual(Array.from(manifest[id].rowsOrder), rows); assert.ok(existsSync(join(root, manifest[id].file)));
     assert.deepEqual(Array.from(manifest[id].sourceColumns), id === 'molten_ball' ? [0,1,2,3] : [0,3,2,1]);
-    for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 4; frame++) {
+    for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 6; frame++) {
       assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
     }
   }
+  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 288);
 });
 test('六種定位都有三節點技能樹', () => assert.ok(Object.values(content.skillTrees).every(tree => tree.length === 3 && tree.every(node => node.id && node.bonus))));
 test('任務具有進度目標與實際獎勵', () => assert.ok(content.quests.length >= 6 && content.quests.every(quest => quest.target > 0 && Object.keys(quest.reward).length)));
