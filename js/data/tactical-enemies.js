@@ -251,5 +251,32 @@
     ], { boss: true, size: 3 })
   ];
 
-  global.TACTICAL_ENEMY_DATA = MINIONS.concat(BOSSES);
+  var SKELETONS = [
+    enemy('skeleton_soldier', '骷髏兵', 'dark', 'attacker', '骷髏軍團', { health: 760, power: 138, magic: 45, defense: 82, speed: 7 }, 3, [
+      skill('鏽骨斬', { kind: 'basic', multiplier: 0.92 }), skill('亡者突刺', { multiplier: 1.18, cooldown: 2, push: 1 })
+    ]),
+    enemy('skeleton_mage', '骷髏法師', 'dark', 'controller', '骷髏軍團', { health: 620, power: 52, magic: 178, defense: 60, speed: 6 }, 3, [
+      skill('骨火彈', { kind: 'basic', multiplier: 0.85, range: 4, attackStyle: 'ranged' }), skill('亡靈禁錮', { multiplier: 1.05, range: 4, attackStyle: 'ranged', cooldown: 2, status: 'freeze', statusTurns: 1 })
+    ]),
+    enemy('skeleton_knight', '骷髏騎士', 'dark', 'defender', '骷髏軍團', { health: 1450, power: 172, magic: 65, defense: 186, speed: 5 }, 3, [
+      skill('骨盾猛擊', { kind: 'basic', multiplier: 0.95 }), skill('死亡衝鋒', { multiplier: 1.25, cooldown: 3, push: 2 })
+    ], { size: 2 }),
+    enemy('skeleton_sergeant', '骷髏士官長', 'dark', 'allrounder', '骷髏軍團菁英', { health: 1780, power: 205, magic: 120, defense: 175, speed: 7 }, 4, [
+      skill('軍團斬', { kind: 'basic', multiplier: 1.0 }), skill('骸骨號令', { effect: 'shield', value: 0.7, range: 3, attackStyle: 'support', cooldown: 3 })
+    ], { size: 2 }),
+    enemy('skeleton_king', '骷髏王', 'dark', 'defender', '菁英級 BOSS', { health: 7200, power: 610, magic: 360, defense: 520, speed: 5 }, 3, [
+      skill('王骸巨劍', { kind: 'basic', multiplier: 1.0 }), skill('亡者王令', { multiplier: 1.0, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }), skill('白骨王座', { kind: 'ultimate', multiplier: 1.7, cooldown: 5, push: 3 })
+    ], { boss: true, size: 4, passives: [{ name: '亡者之王', effect: 'def_boost', value: 0.25 }] }),
+    enemy('bone_dragon', '骨龍', 'dark', 'attacker', '菁英級 BOSS', { health: 6800, power: 680, magic: 560, defense: 410, speed: 9 }, 5, [
+      skill('碎骨龍爪', { kind: 'basic', multiplier: 1.05 }), skill('腐亡吐息', { multiplier: 1.05, range: 5, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 3 }), skill('骸翼墜落', { kind: 'ultimate', multiplier: 1.8, range: 4, radius: 2, attackStyle: 'area', cooldown: 5 })
+    ], { boss: true, size: 4, passives: [{ name: '骨翼霸主', effect: 'atk_boost', value: 0.22 }] }),
+    enemy('lich', '巫妖', 'dark', 'controller', '菁英級 BOSS', { health: 6400, power: 310, magic: 760, defense: 390, speed: 8 }, 4, [
+      skill('靈魂箭', { kind: 'basic', multiplier: 0.95, range: 5, attackStyle: 'ranged' }), skill('寒墓領域', { multiplier: 0.95, range: 5, radius: 3, attackStyle: 'area', cooldown: 3, status: 'freeze', statusTurns: 1 }), skill('命匣爆裂', { kind: 'ultimate', multiplier: 1.75, range: 6, attackStyle: 'ranged', cooldown: 5, pull: 3 })
+    ], { boss: true, size: 4, passives: [{ name: '命匣不滅', effect: 'hp_boost', value: 0.3 }] }),
+    enemy('lich_king', '巫妖王', 'dark', 'allrounder', '魔神級 BOSS', { health: 11500, power: 720, magic: 920, defense: 620, speed: 8 }, 4, [
+      skill('霜亡王劍', { kind: 'basic', multiplier: 1.05, range: 2 }), skill('永夜冰墓', { multiplier: 1.0, range: 6, radius: 3, attackStyle: 'area', cooldown: 3, status: 'freeze', statusTurns: 1 }), skill('亡靈天災', { kind: 'ultimate', multiplier: 1.95, range: 7, radius: 3, attackStyle: 'area', cooldown: 5, pull: 4, status: 'poison', statusTurns: 3 })
+    ], { boss: true, size: 5, passives: [{ name: '魔神威壓', effect: 'all_boost', value: 0.35 }] })
+  ];
+
+  global.TACTICAL_ENEMY_DATA = MINIONS.concat(BOSSES, SKELETONS);
 }(typeof window !== 'undefined' ? window : globalThis));

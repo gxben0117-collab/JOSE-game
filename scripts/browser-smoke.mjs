@@ -56,6 +56,10 @@ async function reloadAtStage(stageId) {
   await loaded; await delay(700);
   return evaluate(`(() => ({ stage: document.querySelector('#stage-title').textContent, map: getComputedStyle(document.querySelector('#board')).backgroundImage, kind: document.querySelector('#board').dataset.mapKind, cells: document.querySelectorAll('#board .cell').length }))()`);
 }
+async function reloadAtTower(floor) {
+  await evaluate(`window.__TACTICS_DEBUG__.enterTower(${floor})`); await delay(300);
+  return evaluate(`(() => ({ stage: document.querySelector('#stage-title').textContent, slows: document.querySelectorAll('#board .slow-cell').length, size4: document.querySelectorAll('#board .unit.enemy.size-4').length, size5: document.querySelectorAll('#board .unit.enemy.size-5').length, cells: document.querySelectorAll('#board .cell').length }))()`);
+}
 
 const errors = [];
 const requests = new Map();
@@ -135,11 +139,17 @@ try {
   assert.match(deployed.deployStatus, /3×10/); assert.ok(deployed.allyAnchorColumns.every(column => column >= 0 && column <= 2));
   assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.evolvedMotion, /molten_ball-stage_3-motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
+  const formationPreset = await evaluate(`(() => { document.querySelector('#formation-save').click(); const save = JSON.parse(localStorage.getItem('jose-tactics-progression-v2')); return { party: save.formation.party.length, positions: save.formation.positions.length }; })()`);
+  assert.deepEqual(formationPreset, { party: 25, positions: 25 });
   const unitInspection = await evaluate(`(async () => { const enemy = document.querySelector('.unit.enemy'); enemy.click(); await new Promise(resolve => setTimeout(resolve, 80)); const enemyResult = { highlighted: !!document.querySelector('.unit.enemy.inspected'), tags: document.querySelectorAll('#unit-detail .detail-tags span').length, skills: document.querySelectorAll('#unit-detail .detail-skill-list li').length, text: document.querySelector('#unit-detail').innerText.length }; const ally = document.querySelector('.unit.ally'); ally.click(); await new Promise(resolve => setTimeout(resolve, 80)); return { enemy: enemyResult, allyHighlighted: !!document.querySelector('.unit.ally.inspected'), allyActions: document.querySelectorAll('#skill-buttons .skill').length, minimap: !!document.querySelector('#minimap') }; })()`);
   assert.ok(unitInspection.enemy.highlighted && unitInspection.enemy.tags >= 3 && unitInspection.enemy.skills > 0 && unitInspection.enemy.text > 80); assert.ok(unitInspection.allyHighlighted && unitInspection.allyActions > 0); assert.equal(unitInspection.minimap, false);
   const terrainToggle = await evaluate(`(async () => { const button = document.querySelector('#terrain-toggle'); button.click(); await new Promise(resolve => setTimeout(resolve, 180)); const result = { pressed: button.getAttribute('aria-pressed'), all: document.querySelector('#board').classList.contains('show-terrain'), stored: localStorage.getItem('jose-terrain-visibility'), opacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity }; button.click(); return result; })()`);
   assert.deepEqual(terrainToggle, { pressed: 'true', all: true, stored: 'all', opacity: '0.9' });
   await evaluate(`document.querySelector('#end-turn').click()`); await delay(300);
+  const centralCommand = await evaluate(`(() => { document.querySelector('.unit.ally').click(); const panel = document.querySelector('#battle-command'); return { visible: !panel.hidden, portrait: getComputedStyle(document.querySelector('#battle-command-portrait')).backgroundImage, skills: document.querySelectorAll('#battle-command-skills .battle-command-skill').length, actions: document.querySelectorAll('#battle-command-actions button').length, rightSkillsHidden: getComputedStyle(document.querySelector('#skill-buttons')).display }; })()`);
+  assert.ok(centralCommand.visible && centralCommand.skills > 0 && centralCommand.actions >= 2); assert.match(centralCommand.portrait, /url/); assert.equal(centralCommand.rightSkillsHidden, 'none');
+  const centralCommandShot = await screenshot('jose-central-command.png');
+  await evaluate(`document.querySelector('#battle-command-close').click()`);
   const moved = await evaluate(`(() => { const count = document.querySelectorAll('.unit.ally').length; for (let index = 0; index < count; index++) { const ally = document.querySelectorAll('.unit.ally')[index]; ally.click(); const target = document.querySelector('.cell.move-target'); if (target) { target.click(); return true; } } return false; })()`);
   assert.ok(moved); await delay(60);
   const walkAnimation = await evaluate(`(() => { const portrait = document.querySelector('.unit.ally.walking .portrait'); return portrait ? getComputedStyle(portrait).animationName : ''; })()`);
@@ -160,6 +170,8 @@ try {
     cells: document.querySelectorAll('#board .cell').length
   }))()`);
   assert.ok(mobile.width >= 390 && mobile.width <= 420); assert.ok(mobile.overflow <= 1); assert.ok(mobile.board && mobile.controls !== 'none'); assert.equal(mobile.cells, 210);
+  const mobileCommand = await evaluate(`(() => { document.querySelector('.unit.ally').click(); const panel = document.querySelector('#battle-command'), rect = panel.getBoundingClientRect(); const result = { visible: !panel.hidden, left: rect.left, right: rect.right, width: rect.width, viewport: innerWidth, skills: document.querySelectorAll('#battle-command-skills .battle-command-skill').length }; document.querySelector('#battle-command-close').click(); return result; })()`);
+  assert.ok(mobileCommand.visible && mobileCommand.skills > 0 && mobileCommand.left >= 0 && mobileCommand.right <= mobileCommand.viewport + 1);
   const mobileShot = await screenshot('jose-mobile-battle.png');
 
   await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -167,9 +179,12 @@ try {
   assert.match(hardStage.map, /chapter-06-hard-3-21x10\.jpg/); assert.match(hardStage.kind, /-hard$/); assert.equal(hardStage.cells, 210);
   const bossStage = await reloadAtStage('c10-boss');
   assert.match(bossStage.map, /chapter-10-boss-21x10\.jpg/); assert.match(bossStage.kind, /-boss$/); assert.equal(bossStage.cells, 210);
+  const towerElite = await reloadAtTower(5), towerDemon = await reloadAtTower(20);
+  assert.equal(towerElite.slows, 0); assert.equal(towerElite.size4, 1); assert.equal(towerElite.cells, 210);
+  assert.equal(towerDemon.slows, 0); assert.equal(towerDemon.size5, 1); assert.equal(towerDemon.cells, 210);
 
   assert.deepEqual(errors, [], `Browser errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, unitInspection, walkAnimation, attackAnimation, mobile, hardStage, bossStage, screenshots: [desktopShot, desktopBattleShot, mobileShot], errors }, null, 2));
+  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, formationPreset, unitInspection, centralCommand, walkAnimation, attackAnimation, mobile, mobileCommand, hardStage, bossStage, towerElite, towerDemon, screenshots: [desktopShot, desktopBattleShot, centralCommandShot, mobileShot], errors }, null, 2));
 } finally {
   try { socket?.close(); } catch {}
   browser.kill();

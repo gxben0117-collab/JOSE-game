@@ -2336,5 +2336,117 @@
       "move-left",
       "attack-left"
     ]
+  },
+  "skeleton_soldier": {
+    "file": "assets/animations/units/skeleton_soldier-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "skeleton_mage": {
+    "file": "assets/animations/units/skeleton_mage-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "skeleton_knight": {
+    "file": "assets/animations/units/skeleton_knight-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "skeleton_sergeant": {
+    "file": "assets/animations/units/skeleton_sergeant-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "skeleton_king": {
+    "file": "assets/animations/units/skeleton_king-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "bone_dragon": {
+    "file": "assets/animations/units/bone_dragon-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "lich": {
+    "file": "assets/animations/units/lich-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "lich_king": {
+    "file": "assets/animations/units/lich_king-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
   }
 }

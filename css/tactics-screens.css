@@ -304,13 +304,17 @@
 .unit.size-1{left:0;top:0;right:auto;bottom:auto;width:100%;height:100%}
 .unit.size-2{left:0;top:0;right:auto;bottom:auto;width:200%;height:200%;z-index:6}
 .unit.size-3{left:0;top:0;right:auto;bottom:auto;width:300%;height:300%;z-index:6}
+.unit.size-4{left:0;top:0;right:auto;bottom:auto;width:400%;height:400%;z-index:8}
+.unit.size-5{left:0;top:0;right:auto;bottom:auto;width:500%;height:500%;z-index:9}
 .idle-arena .unit{padding:0}
 .idle-arena .unit .portrait{position:absolute;inset:0 0 7px;width:100%;height:auto;min-height:0;background-position:center bottom;background-size:contain;background-repeat:no-repeat}
 .idle-arena .unit.size-2 .portrait{inset:-1% -1% 8px}
 .idle-arena .unit.size-3 .portrait{inset:-1% -1% 10px}
+.idle-arena .unit.size-4 .portrait,.idle-arena .unit.size-5 .portrait{inset:-2% -2% 12px}
 .idle-arena .unit .unit-info{position:absolute;inset:auto 0 0;width:100%;height:8px;padding:0}
 .idle-arena .unit .unit-health{top:auto;bottom:1px;width:90%;height:6px}
 .idle-arena .unit.size-2 .unit-health,.idle-arena .unit.size-3 .unit-health{height:7px}
+.idle-arena .unit.size-4 .unit-health,.idle-arena .unit.size-5 .unit-health{height:9px}
 .cell.covered{background:transparent}
 
 /* 發光 BOSS 標籤 */
@@ -386,3 +390,12 @@ body.map-rift .obstacle-icon{background-image:url('../assets/terrain/rock-rift.p
 .cell.terrain-fire .terrain-hint,.cell.obstacle .obstacle-icon{opacity:.55!important}
 .cell.terrain-relevant .terrain-hint,.board.show-terrain .terrain-hint{opacity:.9!important;transform:scale(1.08)}
 .board.show-terrain .cell.obstacle .obstacle-icon{opacity:.9!important}
+
+/* V0.24 central manual command palette */
+.battle-command{position:fixed;z-index:90;left:50%;bottom:max(18px,calc(12px + env(safe-area-inset-bottom)));translate:-50% 0;width:min(720px,calc(100vw - 28px));display:grid;grid-template-columns:150px 1fr;gap:16px;padding:15px 18px;border:2px solid #d7a54c;border-radius:14px;background:linear-gradient(145deg,#2b1a17f5,#101827f5 62%,#17243af5);box-shadow:0 20px 70px #000d,0 0 0 3px #25140d;backdrop-filter:blur(12px)}
+.battle-command[hidden]{display:none}.battle-command-close{position:absolute;right:9px;top:8px;width:34px;height:34px;padding:0;border:1px solid #765844;border-radius:50%;background:#241516;color:#ffe5bd;font-size:1.4rem}.battle-command-portrait{min-height:145px;background:center/contain no-repeat;filter:drop-shadow(0 8px 8px #000b)}.battle-command-main>small{color:#e8bd6d;font-weight:900;letter-spacing:.18em}.battle-command-main h2{margin:2px 38px 3px 0;color:#fff1ca}.battle-command-main p{margin:0 0 10px;color:#a9bdd6;font-size:.75rem}.battle-command-skills{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.battle-command-skill{position:relative;min-height:56px;padding:8px 10px;border:1px solid #527aa2;border-radius:9px;background:linear-gradient(145deg,#183653,#101d30);color:#edf6ff;text-align:left}.battle-command-skill b,.battle-command-skill small{display:block}.battle-command-skill small{margin-top:3px;color:#9fc3df;font-size:.67rem}.battle-command-skill.ready::after{content:'READY';position:absolute;right:7px;top:6px;color:#74efad;font-size:.57rem;font-weight:900}.battle-command-skill.cooling{opacity:.48}.battle-command-skill.active{border-color:#ffcf62;box-shadow:0 0 0 2px #ffc95344;background:linear-gradient(145deg,#65441d,#25344a)}.battle-command-actions{display:flex;gap:8px;margin-top:9px}.battle-command-actions button{flex:1;min-height:40px}.side-panel.detail #skill-buttons{display:none!important}
+.cell.slow-cell{background:repeating-linear-gradient(135deg,#181a2c55 0 5px,#5a456455 5px 10px)!important}.slow-icon{position:absolute;z-index:1;right:6%;bottom:6%;display:grid;place-items:center;width:1.15em;height:1.15em;border:1px solid #d1a8ff88;border-radius:50%;background:#241432cc;color:#e0bdff;font-size:calc(var(--cell)*.2);font-weight:900}.board.show-terrain .slow-icon{box-shadow:0 0 8px #c887ffcc}
+.battle-panel #skill-buttons{display:none!important}
+@media(max-width:650px){.battle-command{grid-template-columns:86px 1fr;gap:9px;padding:12px}.battle-command-portrait{min-height:100px}.battle-command-skills{grid-template-columns:1fr 1fr}.battle-command-skill{min-height:51px;padding:6px 8px}.battle-command-main h2{font-size:1.1rem}.battle-command-actions{display:grid;grid-template-columns:1fr 1fr}.battle-command-actions button:last-child{grid-column:1/-1}}
+.formation-preset-box{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 9px;padding:9px 11px;border:1px solid #4b6284;border-radius:8px;background:#111d31}.formation-preset-box>div{display:flex;flex-direction:column}.formation-preset-box b{color:#ffe09a}.formation-preset-box span{color:#9eb1ce;font-size:.7rem}.formation-preset-box button{width:auto;margin:0}
+.dex-passives{display:grid;gap:7px}.dex-passives article{padding:9px 10px;border-left:3px solid #ae7bdf;border-radius:6px;background:#171d35}.dex-passives b{color:#ead5ff}.dex-passives p{margin:3px 0 0;color:#b9c6dc;line-height:1.5}

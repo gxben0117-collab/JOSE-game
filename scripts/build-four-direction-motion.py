@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "assets" / "animations" / "directional" / "sources"
 OUTPUT_DIR = ROOT / "assets" / "animations" / "directional"
 FRAME_DIR = OUTPUT_DIR / "frames"
+VIEW_DIR = OUTPUT_DIR / "views"
 LEGACY_DIR = ROOT / "assets" / "animations" / "units"
 EVOLUTION_ROOT = ROOT / "assets" / "pets"
 FRAME = 112
@@ -126,19 +127,13 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
     return {"file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "sourceType": "authored-four-direction", "source": f"assets/animations/directional/sources/{source_path.name}"}
 
 
-def vertical_variant(image: Image.Image, direction: str, explicit_heading: bool = False) -> Image.Image:
+def vertical_variant(image: Image.Image, direction: str) -> Image.Image:
     """Create a centered vertical-view variant from approved existing art.
 
     Non-starter units do not have hand-painted back/front references yet. The
     narrower centered silhouette keeps down/up movement visually distinct from
     the broad side views while preserving the original unit identity.
     """
-    if explicit_heading:
-        # A quarter-turn makes the head point unambiguously toward the actual
-        # board direction. This is used for every 2x2 unit, where a merely
-        # narrowed side silhouette was too subtle at tactical-map scale.
-        angle = 90 if direction == "up" else -90
-        return contain(image.rotate(angle, Image.Resampling.BICUBIC, expand=True), .88)
     box = image.getchannel("A").getbbox()
     subject = image.crop(box) if box else image
     width_scale = .84 if direction == "down" else .78
@@ -187,6 +182,11 @@ def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[s
     """Build a full four-direction sheet from that stage's approved portrait."""
     portrait = contain(Image.open(source_path), .86)
     right_base = portrait if unit_id in SOURCE_ALREADY_RIGHT else ImageOps.mirror(portrait)
+    front_path = VIEW_DIR / f"{unit_id}-front.png"
+    back_path = VIEW_DIR / f"{unit_id}-back.png"
+    has_authored_vertical = stage == 1 and unit_id in SIZE2_IDS and front_path.exists() and back_path.exists()
+    front_base = contain(Image.open(front_path), .9) if has_authored_vertical else None
+    back_base = contain(Image.open(back_path), .9) if has_authored_vertical else None
     sheet = Image.new("RGBA", (FRAME * ANIMATION_FRAMES, FRAME * 12))
     row_order: list[str] = []
     for direction_index, direction in enumerate(DIRECTIONS):
@@ -194,8 +194,12 @@ def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[s
             direction_base = right_base
         elif direction == "left":
             direction_base = ImageOps.mirror(right_base)
+        elif direction == "down" and front_base is not None:
+            direction_base = front_base
+        elif direction == "up" and back_base is not None:
+            direction_base = back_base
         else:
-            direction_base = vertical_variant(right_base, direction, unit_id in SIZE2_IDS)
+            direction_base = vertical_variant(right_base, direction)
         for action_index, action in enumerate(ACTIONS):
             row = direction_index * 3 + action_index
             row_order.append(f"{action}-{direction}")
@@ -208,8 +212,10 @@ def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[s
     return {
         "file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES,
         "rows": 12, "frame": FRAME, "rowsOrder": row_order,
-        "sourceType": "approved-evolution-portrait",
+        "sourceType": "authored-front-back-and-approved-side" if has_authored_vertical else "approved-evolution-portrait",
         "source": f"assets/pets/{unit_id}/evolution/{source_path.name}",
+        "verticalViews": ({"down": front_path.relative_to(ROOT).as_posix(), "up": back_path.relative_to(ROOT).as_posix()}
+                          if has_authored_vertical else None),
     }
 
 
@@ -233,7 +239,7 @@ def build_size2_stage_one(unit_id: str, source_path: Path) -> dict[str, object]:
                 final_frame = FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index:02d}.png"
                 generated_frame.replace(final_frame)
     entry["file"] = f"assets/animations/directional/{final_sheet.name}"
-    entry["sourceType"] = "inspected-2x2-portrait-four-direction"
+    entry["sourceType"] = "authored-front-back-and-approved-side"
     entry["source"] = source_path.relative_to(ROOT).as_posix()
     return entry
 

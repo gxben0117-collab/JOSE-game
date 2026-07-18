@@ -55,6 +55,7 @@
       shop: null,
       home: { residents: [], lastCollect: 0 },
       tower: { best: 0 },
+      formation: { party: [], positions: [] },
       sound: true
     };
   }
@@ -124,6 +125,9 @@
     next.shards = {};
     if (!next.tower || typeof next.tower !== 'object' || Array.isArray(next.tower)) next.tower = { best: 0 };
     next.tower.best = Math.max(0, number(next.tower.best, 0));
+    if (!next.formation || typeof next.formation !== 'object' || Array.isArray(next.formation)) next.formation = { party: [], positions: [] };
+    if (!Array.isArray(next.formation.party)) next.formation.party = [];
+    if (!Array.isArray(next.formation.positions)) next.formation.positions = [];
     if (!next.home || typeof next.home !== 'object' || Array.isArray(next.home)) next.home = { residents: [], lastCollect: 0 };
     if (!Array.isArray(next.home.residents)) next.home.residents = [];
     next.home.residents = next.home.residents.filter(this.validPet.bind(this)).slice(0, 3);
@@ -165,6 +169,20 @@
     return (party || this.state.party || []).reduce(function (total, id) { return total + self.deploymentCost(id); }, 0);
   };
   TacticalProgression.prototype.partyCapacity = function () { return DEPLOY_CAPACITY; };
+  TacticalProgression.prototype.setFormation = function (party, positions) {
+    if (!Array.isArray(party) || !Array.isArray(positions)) return false;
+    this.state.formation = {
+      party: party.slice(),
+      positions: positions.filter(function (spot) { return spot && typeof spot.id === 'string' && Number.isInteger(spot.x) && Number.isInteger(spot.y); }).map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; })
+    };
+    this.save(); return true;
+  };
+  TacticalProgression.prototype.formationFor = function (party) {
+    var saved = this.state.formation || { party: [], positions: [] };
+    if (!Array.isArray(party) || saved.party.join('|') !== party.join('|')) return [];
+    return saved.positions.map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; });
+  };
+  TacticalProgression.prototype.clearFormation = function () { this.state.formation = { party: [], positions: [] }; this.save(); };
 
   /* ── 幻獸擁有制與召喚 ── */
   TacticalProgression.prototype.owns = function (id) { return Boolean(this.state.owned[id]); };
