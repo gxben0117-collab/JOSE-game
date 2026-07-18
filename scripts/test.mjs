@@ -147,6 +147,7 @@ test('初始四獸具有上下左右待機、移動、攻擊十二列動畫與 1
   for (const id of starter) {
     assert.equal(manifest[id].columns, 4); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
     assert.deepEqual(Array.from(manifest[id].rowsOrder), rows); assert.ok(existsSync(join(root, manifest[id].file)));
+    assert.deepEqual(Array.from(manifest[id].sourceColumns), id === 'molten_ball' ? [0,1,2,3] : [0,3,2,1]);
     for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 4; frame++) {
       assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
     }

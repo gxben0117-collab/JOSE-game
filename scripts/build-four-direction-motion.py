@@ -18,6 +18,9 @@ FRAME_DIR = OUTPUT_DIR / "frames"
 FRAME = 112
 DIRECTIONS = ("down", "right", "up", "left")
 ACTIONS = ("idle", "move", "attack")
+# 這三張 AI 參考圖的側面欄位是依「角色看向畫面中央」構圖，
+# 實際內容與提示標籤相反，因此合圖時交換第 2、4 欄。
+SWAPPED_SIDE_UNITS = {"fire_lion", "fire_fox", "leaf_ear_rabbit"}
 
 
 def contain(image: Image.Image, scale: float = .93) -> Image.Image:
@@ -65,9 +68,11 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
     sheet = Image.new("RGBA", (FRAME * 4, FRAME * 12))
     row_order: list[str] = []
     for direction_index, direction in enumerate(DIRECTIONS):
+        source_column = ({"right": 3, "left": 1}.get(direction, direction_index)
+                         if unit_id in SWAPPED_SIDE_UNITS else direction_index)
         for action_index, action in enumerate(ACTIONS):
-            x0 = round(source.width * direction_index / 4) + 4
-            x1 = round(source.width * (direction_index + 1) / 4) - 4
+            x0 = round(source.width * source_column / 4) + 4
+            x1 = round(source.width * (source_column + 1) / 4) - 4
             y0 = round(source.height * action_index / 3) + 4
             y1 = round(source.height * (action_index + 1) / 3) - 4
             base = contain(source.crop((x0, y0, x1, y1)))
@@ -79,7 +84,8 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
                 frame.save(FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index + 1:02d}.png", optimize=True)
     filename = f"{unit_id}-motion-4dir-sheet.webp"
     sheet.save(OUTPUT_DIR / filename, "WEBP", quality=88, method=6, exact=True)
-    return {"file": f"assets/animations/directional/{filename}", "columns": 4, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "source": f"assets/animations/directional/sources/{source_path.name}"}
+    source_columns = [0, 3, 2, 1] if unit_id in SWAPPED_SIDE_UNITS else [0, 1, 2, 3]
+    return {"file": f"assets/animations/directional/{filename}", "columns": 4, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "source": f"assets/animations/directional/sources/{source_path.name}"}
 
 
 def main() -> None:

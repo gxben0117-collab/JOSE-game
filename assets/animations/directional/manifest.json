@@ -18,6 +18,12 @@
       "move-left",
       "attack-left"
     ],
+    "sourceColumns": [
+      0,
+      3,
+      2,
+      1
+    ],
     "source": "assets/animations/directional/sources/fire_fox-four-direction-reference-v1-alpha.png"
   },
   "fire_lion": {
@@ -38,6 +44,12 @@
       "idle-left",
       "move-left",
       "attack-left"
+    ],
+    "sourceColumns": [
+      0,
+      3,
+      2,
+      1
     ],
     "source": "assets/animations/directional/sources/fire_lion-four-direction-reference-v1-alpha.png"
   },
@@ -60,6 +72,12 @@
       "move-left",
       "attack-left"
     ],
+    "sourceColumns": [
+      0,
+      3,
+      2,
+      1
+    ],
     "source": "assets/animations/directional/sources/leaf_ear_rabbit-four-direction-reference-v1-alpha.png"
   },
   "molten_ball": {
@@ -80,6 +98,12 @@
       "idle-left",
       "move-left",
       "attack-left"
+    ],
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
     ],
     "source": "assets/animations/directional/sources/molten_ball-four-direction-reference-v1-alpha.png"
   }
