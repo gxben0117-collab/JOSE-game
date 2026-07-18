@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import math
 import os
+import random
 import re
 from pathlib import Path
 
@@ -128,53 +129,58 @@ def map_overlay(image: Image.Image, chapter: int, variant: str) -> Image.Image:
     draw = ImageDraw.Draw(image, "RGBA")
     w, h = image.size
     accent = CHAPTERS[chapter][2]
-    # Broad chapter landmarks, kept away from the lower-left deployment area.
-    if chapter in (3, 6, 9, 10):
-        points = [(int(w * t / 18), int(h * (.35 + .08 * math.sin(t * .85 + chapter)))) for t in range(19)]
-        draw.line(points, fill=accent + (125,), width=26 if chapter == 3 else 14)
-        draw.line(points, fill=(255, 225, 160, 110), width=5)
-    elif chapter in (5, 7):
-        for offset in (-36, 0, 40):
-            points = [(0, int(h * .28 + offset))] + [(int(w * t / 12), int(h * (.27 + .04 * math.sin(t + chapter)) + offset)) for t in range(1, 13)]
-            draw.line(points, fill=accent + (80,), width=12)
-    elif chapter in (4, 8):
-        for x in (int(w * .46), int(w * .62), int(w * .78)):
-            draw.rectangle((x, int(h * .18), x + 42, int(h * .48)), fill=(35, 31, 35, 100), outline=accent + (150,), width=4)
-    else:
-        for x, y, rx, ry in ((.48, .19, .12, .12), (.72, .66, .15, .14), (.86, .27, .08, .17)):
-            draw.ellipse((w*(x-rx), h*(y-ry), w*(x+rx), h*(y+ry)), fill=accent + (38,))
+    rng = random.Random(chapter * 100 + (0 if variant == "field" else 9))
+
+    # Chapter identity is carried by palette and lighting. Normal fields stay
+    # clean so no decorative mark can be mistaken for a gameplay tile.
 
     if variant == "boss":
         cx, cy = int(w * .74), int(h * .48)
-        for radius, alpha in ((170, 24), (125, 38), (78, 62)):
-            draw.ellipse((cx-radius, cy-radius, cx+radius, cy+radius), outline=accent + (alpha,), width=12)
-        draw.polygon([(cx, cy-92), (cx+80, cy+52), (cx-80, cy+52)], fill=(15, 12, 20, 105), outline=accent + (180,))
+        for radius, alpha, width in ((176, 26, 7), (126, 34, 5), (78, 42, 4)):
+            draw.ellipse((cx-radius, cy-radius, cx+radius, cy+radius), outline=accent + (alpha,), width=width)
+        for index in range(8):
+            angle = math.tau * index / 8
+            x, y = int(cx + math.cos(angle) * 151), int(cy + math.sin(angle) * 151)
+            draw.ellipse((x-7, y-4, x+7, y+4), fill=accent + (46,))
     elif variant.startswith("hard-"):
         trial = int(variant[-1])
-        # Each trial has a different readable hazard rhythm: diagonal gates,
-        # alternating pylons, encirclement, then a central crucible.
+        rock = tuple(max(12, int(channel * .28)) for channel in accent)
+        edge = tuple(min(235, int(channel * 1.12)) for channel in accent)
+
+        def stone(x: int, y: int, radius: int = 24) -> None:
+            points = []
+            for index in range(8):
+                angle = math.tau * index / 8
+                jitter = radius * rng.uniform(.78, 1.16)
+                points.append((int(x + math.cos(angle) * jitter), int(y + math.sin(angle) * jitter * .72)))
+            draw.ellipse((x-radius, y+radius//3, x+radius, y+radius), fill=(7, 8, 13, 70))
+            draw.polygon(points, fill=rock + (205,), outline=edge + (135,))
+            draw.line((x-radius//2, y-radius//4, x+radius//3, y-radius//2), fill=(255, 244, 212, 42), width=3)
+
+        # Four trials retain distinct tactical rhythms using natural rocks and
+        # ruined stones rather than opaque diamonds, bars or target symbols.
         if trial == 1:
             for index in range(6):
                 x = int(w * (.36 + index * .09)); y = int(h * (.2 + index * .1))
-                draw.polygon([(x, y-30), (x+24, y), (x, y+30), (x-24, y)], fill=(20, 13, 25, 125), outline=accent + (180,))
+                stone(x, y, 20 + index % 3 * 3)
         elif trial == 2:
             for index in range(7):
                 x = int(w * (.34 + index * .085)); y = int(h * (.2 + (index % 2) * .56))
-                draw.rectangle((x-18, y-32, x+18, y+32), fill=(18, 14, 24, 130), outline=accent + (185,), width=3)
+                stone(x, y, 22)
         elif trial == 3:
             cx, cy = int(w * .64), int(h * .5)
             for index in range(10):
                 angle = math.tau * index / 10
                 x, y = int(cx + math.cos(angle) * w * .18), int(cy + math.sin(angle) * h * .31)
-                draw.polygon([(x, y-24), (x+20, y), (x, y+24), (x-20, y)], fill=(16, 11, 22, 135), outline=accent + (190,))
+                stone(x, y, 19 + index % 2 * 4)
         else:
             cx, cy = int(w * .68), int(h * .5)
-            draw.ellipse((cx-145, cy-145, cx+145, cy+145), fill=(13, 8, 18, 120), outline=accent + (200,), width=8)
             for index in range(8):
                 angle = math.tau * index / 8
                 x, y = int(cx + math.cos(angle) * 112), int(cy + math.sin(angle) * 112)
-                draw.line((cx, cy, x, y), fill=accent + (135,), width=6)
-    return image.filter(ImageFilter.GaussianBlur(.25))
+                stone(x, y, 21)
+            draw.ellipse((cx-118, cy-86, cx+118, cy+86), outline=accent + (42,), width=5)
+    return image.filter(ImageFilter.GaussianBlur(.18))
 
 
 def generate_maps() -> None:

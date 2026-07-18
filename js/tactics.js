@@ -127,7 +127,40 @@
     var stage = Math.max(1, Math.min(3, Number(unit.evolution) || 1));
     var stagePortrait = unit.p.evolution[Math.min(stage, unit.p.evolution.length) - 1]?.portrait || '';
     var stageSuffix = stage > 1 && stagePortrait.indexOf('assets/pets/' + unit.id + '/evolution/stage_' + stage + '.png') === 0 ? '-stage_' + stage : '';
-    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=24';
+    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=25';
+  }
+  function motionManifestEntry(unit) { return (window.TACTICAL_MOTION_MANIFEST || {})[unit.id] || {}; }
+  function animationSpec(unit, action, override) {
+    var entry = motionManifestEntry(unit), authored = entry.animations?.[action] || {};
+    var columns = Math.max(1, Math.min(12, Number(entry.columns) || Number(authored.frameCount) || 6));
+    var source = Object.assign({}, authored, override || {});
+    if (source.frameCount === undefined) source.frameCount = Math.min(columns, 6);
+    var spec = window.TACTICAL_ANIMATION_CONFIG.action(action, source);
+    spec.columns = columns;
+    spec.steps = Math.max(1, spec.frameCount - 1);
+    spec.endX = columns <= 1 ? 0 : 100 * (spec.frameCount - 1) / (columns - 1);
+    return spec;
+  }
+  function motionVariables(unit) {
+    var result = { columns: animationSpec(unit, 'idle').columns };
+    ['idle', 'move', 'attack', 'hit', 'death', 'victory'].forEach(function (action) { result[action] = animationSpec(unit, action); });
+    return result;
+  }
+  function applyMotionVariables(element, unit) {
+    var specs = motionVariables(unit);
+    element.style.setProperty('--motion-columns', specs.columns);
+    Object.keys(specs).filter(function (key) { return key !== 'columns'; }).forEach(function (action) {
+      var spec = specs[action];
+      element.style.setProperty('--' + action + '-frames', spec.frameCount);
+      element.style.setProperty('--' + action + '-steps', spec.steps);
+      element.style.setProperty('--' + action + '-duration', spec.durationMs + 'ms');
+      element.style.setProperty('--' + action + '-end-x', spec.endX.toFixed(4) + '%');
+      element.style.setProperty('--' + action + '-iteration', spec.loop ? 'infinite' : '1');
+    });
+  }
+  function animationHitDelay(unit, action, skill) {
+    var spec = skill?.kind === 'ultimate' ? window.TACTICAL_ANIMATION_CONFIG.action('ultimate', skill.animation) : animationSpec(unit, action, skill?.animation);
+    return spec.hitFrame ? Math.round((spec.hitFrame - 1) / spec.fps * 1000) : 0;
   }
   function bonuses(unit) { return unit.team === 'ally' ? progression.bonusesFor(unit.p) : {}; }
   function bonusValue(unit, key) { var value = bonuses(unit); return (value.all || 0) + (value[key] || 0); }
@@ -246,7 +279,9 @@
     var target = Math.min(30, base.length + added), pool = base.filter(function (id) { return !(profile(id) || {}).boss; });
     if (!pool.length) pool = base.slice();
     for (var index = base.length; index < target; index++) base.push(pool[(index + (stage.seed || 0)) % pool.length]);
-    return { roster: base, added: Math.max(0, target - originalCount), scale: 1 + Math.max(0, partyCost - 12) * 0.008, label: partyCost >= 23 ? '滿編迎擊' : partyCost >= 16 ? '增援迎擊' : partyCost >= 9 ? '警戒迎擊' : '標準迎擊' };
+    var scale = 1 + Math.max(0, partyCost - 8) * 0.015;
+    var minimumScale = 0.42 + Math.max(0, partyCost - 4) * 0.05;
+    return { roster: base, added: Math.max(0, target - originalCount), scale: scale, minimumScale: minimumScale, label: partyCost >= 23 ? '滿編迎擊' : partyCost >= 16 ? '增援迎擊' : partyCost >= 9 ? '警戒迎擊' : '標準迎擊' };
   }
 
   /* 敵方布陣：名冊拆成 3~5 人小隊，依關卡 seed 決定性散布在全地圖多個集結點；
@@ -319,7 +354,7 @@
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
     state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, commandOpen: false, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
-      enemyScale: scale * balance.scale, partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {} };
+      enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {} };
     state.obstacles = currentStage.tower ? [] : (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
     clearDeploymentObstacles();
@@ -604,8 +639,11 @@
   function addVisual(target, element, skill, amount, healing, absorbed, crit) {
     var cell = cellAt(target.x, target.y); if (!cell) return;
     var fxClass = skill.status === 'freeze' ? 'fx-freeze' : skill.status === 'poison' ? 'fx-poison' : skill.status === 'burn' ? 'fx-burn' : (skill.push || skill.pull) ? 'fx-force' : '';
+    var vfxSpec = window.TACTICAL_ANIMATION_CONFIG.vfx(skill);
     var fx = document.createElement('i'); fx.className = 'vfx ' + (element || 'fire') + ' variant-' + (skill.vfxVariant || 0) + (fxClass ? ' ' + fxClass : ''); fx.style.setProperty('--vfx', 'hsl(' + skill.vfxHue + ' 92% 62%)'); fx.setAttribute('aria-label', skill.name + ' 特效'); cell.appendChild(fx);
     var number = document.createElement('b'); number.className = 'damage-number ' + (healing ? 'heal' : '') + (crit ? ' crit' : ''); number.textContent = absorbed && !amount ? '護盾' : (crit ? '爆擊 ' : '') + (healing ? '+' : '−') + amount;
+    fx.style.setProperty('--vfx-frames', vfxSpec.frameCount); fx.style.setProperty('--vfx-duration', vfxSpec.durationMs + 'ms'); fx.dataset.frameCount = String(vfxSpec.frameCount);
+    if (skill.kind === 'ultimate' || skill.boss) fx.classList.add('vfx-featured');
     number.style.setProperty('--drift', ((Math.random() - 0.5) * 34).toFixed(0) + 'px'); cell.appendChild(number);
     var piece = cell.querySelector('.unit'); if (piece) piece.classList.add(healing ? 'recover' : 'hit');
     if (skill.kind !== 'basic' && !healing) {
@@ -615,7 +653,7 @@
     }
     if (healing) burst(target, 140, 'heal', 7);
     else { burst(target, skill.vfxHue, 'hit', crit ? 14 : 8); if (crit || skill.attackStyle === 'melee') impactRing(target, skill.vfxHue); }
-    setTimeout(function () { fx.remove(); number.remove(); if (piece) piece.classList.remove(healing ? 'recover' : 'hit'); }, duration(620));
+    setTimeout(function () { fx.remove(); number.remove(); if (piece) piece.classList.remove(healing ? 'recover' : 'hit'); }, duration(Math.max(620, vfxSpec.durationMs)));
   }
   function statusLabel(target, text) {
     var cell = cellAt(target.x, target.y); if (!cell) return;
@@ -783,7 +821,7 @@
     if (skill.attackStyle === 'melee' && casterPiece) {
       casterPiece.style.setProperty('--dash-x', (target.x - unit.x) * 42 + 'px'); casterPiece.style.setProperty('--dash-y', (target.y - unit.y) * 42 + 'px'); casterPiece.classList.add('dash');
     }
-    await pause(150); effects.forEach(function (effect) { addVisual(effect.target, unit.p.element, skill, effect.amount, effect.healing, effect.absorbed, effect.crit); });
+    await pause(Math.max(0, animationHitDelay(unit, 'attack', skill) - projectileDelay)); effects.forEach(function (effect) { addVisual(effect.target, unit.p.element, skill, effect.amount, effect.healing, effect.absorbed, effect.crit); });
     if (effects.some(function (effect) { return !effect.healing; })) {
       combatShake(skill.kind === 'ultimate' ? 'ultimate' : anyCrit ? 'crit' : 'light');
       await hitStop(anyCrit ? 120 : skill.kind === 'ultimate' ? 90 : 75);
@@ -872,6 +910,7 @@
 
   function unitElement(unit) {
     var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.team === 'ally' && unit.acted ? ' action-complete' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
+    applyMotionVariables(element, unit);
     element.setAttribute('aria-pressed', state.inspected === unit.key ? 'true' : 'false');
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
     var statuses = (unit.shield > 0 ? '🛡️' : '') + (unit.burn > 0 ? '🔥' : '') + (unit.poison > 0 ? '☠️' : '') + (unit.freeze > 0 ? '❄️' : '') + (unit.atkBuff > 0 ? '⬆️' : '');

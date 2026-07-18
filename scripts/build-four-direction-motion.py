@@ -19,7 +19,18 @@ VIEW_DIR = OUTPUT_DIR / "views"
 LEGACY_DIR = ROOT / "assets" / "animations" / "units"
 EVOLUTION_ROOT = ROOT / "assets" / "pets"
 FRAME = 112
-ANIMATION_FRAMES = 6
+MIN_ANIMATION_FRAMES = 1
+MAX_ANIMATION_FRAMES = 12
+# Production character art uses eight frames. Each action can independently
+# move anywhere from 1 to 12; the sheet uses the largest configured row width.
+ACTION_ANIMATIONS = {
+    "idle": {"frameCount": 8, "fps": 8, "loop": True, "hitFrame": None},
+    "move": {"frameCount": 8, "fps": 12, "loop": True, "hitFrame": None},
+    "attack": {"frameCount": 8, "fps": 14, "loop": False, "hitFrame": 6},
+}
+if any(not MIN_ANIMATION_FRAMES <= spec["frameCount"] <= MAX_ANIMATION_FRAMES for spec in ACTION_ANIMATIONS.values()):
+    raise ValueError("Each animation action must contain between 1 and 12 frames.")
+SHEET_COLUMNS = max(spec["frameCount"] for spec in ACTION_ANIMATIONS.values())
 SAFE_MARGIN = 3
 DIRECTIONS = ("down", "right", "up", "left")
 ACTIONS = ("idle", "move", "attack")
@@ -60,7 +71,7 @@ def contain(image: Image.Image, scale: float = .93) -> Image.Image:
     return canvas
 
 
-def animate(base: Image.Image, action: str, direction: str, frame: int) -> Image.Image:
+def animate(base: Image.Image, action: str, direction: str, frame: int, frame_count: int = 6) -> Image.Image:
     direction_vector = {"down": (0, 1), "right": (1, 0), "up": (0, -1), "left": (-1, 0)}[direction]
     if action == "idle":
         phases = ((0, 1, 1.0), (0, 0, 1.008), (0, -1, 1.016), (0, -2, 1.025), (0, -1, 1.016), (0, 0, 1.008))
@@ -68,7 +79,8 @@ def animate(base: Image.Image, action: str, direction: str, frame: int) -> Image
         phases = ((-1, 1, 1.0), (1, -2, .99), (2, -4, .98), (0, 0, 1.0), (-2, -3, 1.01), (-1, 0, 1.005))
     else:
         phases = ((-2, 1, .98), (-5, 1, .95), (-7, 0, .94), (8, -1, 1.08), (4, 0, 1.04), (0, 1, 1.0))
-    phase_x, phase_y, scale = phases[frame]
+    phase_index = 0 if frame_count <= 1 else round(frame * (len(phases) - 1) / (frame_count - 1))
+    phase_x, phase_y, scale = phases[phase_index]
     if action == "attack":
         dx, dy = direction_vector[0] * phase_x, direction_vector[1] * phase_x + phase_y
     elif direction in ("left", "right"):
@@ -104,7 +116,7 @@ def save_frame(frame: Image.Image, path: Path) -> None:
 def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
     source = Image.open(source_path).convert("RGBA")
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
-    sheet = Image.new("RGBA", (FRAME * ANIMATION_FRAMES, FRAME * 12))
+    sheet = Image.new("RGBA", (FRAME * SHEET_COLUMNS, FRAME * 12))
     row_order: list[str] = []
     for direction_index, direction in enumerate(DIRECTIONS):
         source_column = ({"right": 3, "left": 1}.get(direction, direction_index)
@@ -117,14 +129,15 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
             base = contain(source.crop((x0, y0, x1, y1)))
             row = direction_index * 3 + action_index
             row_order.append(f"{action}-{direction}")
-            for frame_index in range(ANIMATION_FRAMES):
-                frame = animate(base, action, direction, frame_index)
+            frame_count = ACTION_ANIMATIONS[action]["frameCount"]
+            for frame_index in range(frame_count):
+                frame = animate(base, action, direction, frame_index, frame_count)
                 sheet.alpha_composite(frame, (frame_index * FRAME, row * FRAME))
                 save_frame(frame, FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index + 1:02d}.png")
     filename = f"{unit_id}-motion-4dir-sheet.webp"
     sheet.save(OUTPUT_DIR / filename, "WEBP", quality=88, method=4, exact=True)
     source_columns = [0, 3, 2, 1] if unit_id in SWAPPED_SIDE_UNITS else [0, 1, 2, 3]
-    return {"file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "sourceColumns": source_columns, "sourceType": "authored-four-direction", "source": f"assets/animations/directional/sources/{source_path.name}"}
+    return {"file": f"assets/animations/directional/{filename}", "columns": SHEET_COLUMNS, "rows": 12, "frame": FRAME, "rowsOrder": row_order, "animations": ACTION_ANIMATIONS, "sourceColumns": source_columns, "sourceType": "authored-four-direction", "source": f"assets/animations/directional/sources/{source_path.name}"}
 
 
 def vertical_variant(image: Image.Image, direction: str) -> Image.Image:
@@ -150,7 +163,7 @@ def vertical_variant(image: Image.Image, direction: str) -> Image.Image:
 def build_legacy(unit_id: str, source_path: Path) -> dict[str, object]:
     """Upgrade an approved 4x6 left/right sheet into the 6x12 contract."""
     source = Image.open(source_path).convert("RGBA")
-    sheet = Image.new("RGBA", (FRAME * ANIMATION_FRAMES, FRAME * 12))
+    sheet = Image.new("RGBA", (FRAME * SHEET_COLUMNS, FRAME * 12))
     row_order: list[str] = []
     source_frames = (0, 1, 2, 3, 2, 1)
     for direction_index, direction in enumerate(DIRECTIONS):
@@ -159,19 +172,22 @@ def build_legacy(unit_id: str, source_path: Path) -> dict[str, object]:
             source_row = side_row_offset + action_index
             row = direction_index * 3 + action_index
             row_order.append(f"{action}-{direction}")
-            for frame_index, source_column in enumerate(source_frames):
+            frame_count = ACTION_ANIMATIONS[action]["frameCount"]
+            for frame_index in range(frame_count):
+                source_index = 0 if frame_count <= 1 else round(frame_index * (len(source_frames) - 1) / (frame_count - 1))
+                source_column = source_frames[source_index]
                 cell = source.crop((source_column * FRAME, source_row * FRAME, (source_column + 1) * FRAME, (source_row + 1) * FRAME))
                 base = contain(cell, .88)
                 if direction in ("down", "up"):
                     base = vertical_variant(base, direction)
-                frame = animate(base, action, direction, frame_index)
+                frame = animate(base, action, direction, frame_index, frame_count)
                 sheet.alpha_composite(frame, (frame_index * FRAME, row * FRAME))
                 save_frame(frame, FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index + 1:02d}.png")
     filename = f"{unit_id}-motion-4dir-sheet.webp"
     sheet.save(OUTPUT_DIR / filename, "WEBP", quality=86, method=4, exact=True)
     return {
-        "file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES,
-        "rows": 12, "frame": FRAME, "rowsOrder": row_order,
+        "file": f"assets/animations/directional/{filename}", "columns": SHEET_COLUMNS,
+        "rows": 12, "frame": FRAME, "rowsOrder": row_order, "animations": ACTION_ANIMATIONS,
         "sourceColumns": ["derived-down", "legacy-right", "derived-up", "legacy-left"],
         "sourceType": "derived-from-approved-motion",
         "source": f"assets/animations/units/{source_path.name}",
@@ -187,7 +203,7 @@ def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[s
     has_authored_vertical = stage == 1 and unit_id in SIZE2_IDS and front_path.exists() and back_path.exists()
     front_base = contain(Image.open(front_path), .9) if has_authored_vertical else None
     back_base = contain(Image.open(back_path), .9) if has_authored_vertical else None
-    sheet = Image.new("RGBA", (FRAME * ANIMATION_FRAMES, FRAME * 12))
+    sheet = Image.new("RGBA", (FRAME * SHEET_COLUMNS, FRAME * 12))
     row_order: list[str] = []
     for direction_index, direction in enumerate(DIRECTIONS):
         if direction == "right":
@@ -203,15 +219,16 @@ def build_evolution_stage(unit_id: str, stage: int, source_path: Path) -> dict[s
         for action_index, action in enumerate(ACTIONS):
             row = direction_index * 3 + action_index
             row_order.append(f"{action}-{direction}")
-            for frame_index in range(ANIMATION_FRAMES):
-                frame = animate(direction_base, action, direction, frame_index)
+            frame_count = ACTION_ANIMATIONS[action]["frameCount"]
+            for frame_index in range(frame_count):
+                frame = animate(direction_base, action, direction, frame_index, frame_count)
                 sheet.alpha_composite(frame, (frame_index * FRAME, row * FRAME))
                 save_frame(frame, FRAME_DIR / f"{unit_id}-stage_{stage}-{action}-{direction}-frame_{frame_index + 1:02d}.png")
     filename = f"{unit_id}-stage_{stage}-motion-4dir-sheet.webp"
     sheet.save(OUTPUT_DIR / filename, "WEBP", quality=86, method=4, exact=True)
     return {
-        "file": f"assets/animations/directional/{filename}", "columns": ANIMATION_FRAMES,
-        "rows": 12, "frame": FRAME, "rowsOrder": row_order,
+        "file": f"assets/animations/directional/{filename}", "columns": SHEET_COLUMNS,
+        "rows": 12, "frame": FRAME, "rowsOrder": row_order, "animations": ACTION_ANIMATIONS,
         "sourceType": "authored-front-back-and-approved-side" if has_authored_vertical else "approved-evolution-portrait",
         "source": f"assets/pets/{unit_id}/evolution/{source_path.name}",
         "verticalViews": ({"down": front_path.relative_to(ROOT).as_posix(), "up": back_path.relative_to(ROOT).as_posix()}
@@ -234,7 +251,7 @@ def build_size2_stage_one(unit_id: str, source_path: Path) -> dict[str, object]:
     generated_sheet.replace(final_sheet)
     for action in ACTIONS:
         for direction in DIRECTIONS:
-            for frame_index in range(1, ANIMATION_FRAMES + 1):
+            for frame_index in range(1, ACTION_ANIMATIONS[action]["frameCount"] + 1):
                 generated_frame = FRAME_DIR / f"{unit_id}-stage_1-{action}-{direction}-frame_{frame_index:02d}.png"
                 final_frame = FRAME_DIR / f"{unit_id}-{action}-{direction}-frame_{frame_index:02d}.png"
                 generated_frame.replace(final_frame)
@@ -272,7 +289,11 @@ def main() -> None:
             if stage_path.exists():
                 stage_entry = build_evolution_stage(unit_id, stage, stage_path)
                 manifest[unit_id]["evolutionSheets"][str(stage)] = stage_entry["file"]
-    (OUTPUT_DIR / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    manifest_json = json.dumps(manifest, ensure_ascii=False, indent=2)
+    (OUTPUT_DIR / "manifest.json").write_text(manifest_json, encoding="utf-8")
+    (OUTPUT_DIR / "manifest.js").write_text(
+        "window.TACTICAL_MOTION_MANIFEST = " + manifest_json + ";\n", encoding="utf-8"
+    )
     sheet_count = len(list(OUTPUT_DIR.glob("*-motion-4dir-sheet.webp")))
     frame_count = len(list(FRAME_DIR.glob("*.png")))
     print(f"Built {sheet_count} four-direction unit/evolution sheets and {frame_count} transparent frames.")

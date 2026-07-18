@@ -11,9 +11,21 @@ function test(name, fn) { total++; try { fn(); passed++; console.log(`✓ ${name
 const context = { console };
 context.window = context;
 vm.createContext(context);
-for (const file of ['js/data/pets.js', 'js/data/pets-lightdark.js', 'js/data/pets-pack.js', 'js/data/tactical-pets.js', 'js/data/tactical-enemies.js', 'js/data/map-terrain.js', 'js/data/tactical-content.js']) vm.runInContext(readFileSync(join(root, file), 'utf8'), context, { filename: file });
+for (const file of ['js/data/pets.js', 'js/data/pets-lightdark.js', 'js/data/pets-pack.js', 'js/data/tactical-pets.js', 'js/data/tactical-enemies.js', 'js/data/map-terrain.js', 'js/data/tactical-content.js', 'js/data/animation-config.js']) vm.runInContext(readFileSync(join(root, file), 'utf8'), context, { filename: file });
 const pets = context.PET_DATA, tactical = context.TACTICAL_PET_DATA, enemies = context.TACTICAL_ENEMY_DATA, content = context.TACTICAL_CONTENT;
 const profiles = tactical.concat(enemies);
+
+test('動畫播放器支援每個動作 1～12 幀並安全限制設定', () => {
+  const animations = context.TACTICAL_ANIMATION_CONFIG;
+  assert.equal(animations.MIN_FRAMES, 1); assert.equal(animations.MAX_FRAMES, 12);
+  assert.equal(animations.DEFAULT_CHARACTER_FRAMES, 8); assert.equal(animations.FEATURE_FRAMES, 12);
+  assert.equal(animations.normalizeAnimationAction({ frameCount: 0 }).frameCount, 1);
+  assert.equal(animations.normalizeAnimationAction({ frameCount: 99 }).frameCount, 12);
+  assert.equal(animations.normalizeAnimationAction({ frames: ['1.png', '2.png', '3.png'], fps: 11, loop: false, hitFrame: 9 }).frameCount, 3);
+  assert.equal(animations.normalizeAnimationAction({ frames: ['1.png', '2.png', '3.png'], hitFrame: 9 }).hitFrame, 3);
+  assert.equal(animations.vfx({ kind: 'ultimate' }).frameCount, 12);
+  assert.equal(animations.vfx({ kind: 'basic' }).frameCount, 8);
+});
 
 test('資料庫包含 115 隻幻獸（45 原生 + 20 光暗 + 50 素材包）', () => { assert.equal(pets.length, 115); assert.equal(pets.filter(pet => pet.element === 'light').length, 20); assert.equal(pets.filter(pet => pet.element === 'dark').length, 20); });
 test('戰棋資料與主資料數量一致', () => assert.equal(tactical.length, pets.length));
@@ -140,16 +152,29 @@ test('地形以連續區塊生成而非零碎散點', () => {
   }
   assert.ok(content.maps.some(map => content.terrainAt(content.stages.find(stage => stage.mapId === map.id), 10, 5)), '所有章節中央都被分類成無地形');
 });
-test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向六幀動作圖集', () => {
+test('滿編 25 單位會同步提高前期敵軍數量與戰力下限', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  assert.match(source, /minimumScale = 0\.42 \+ Math\.max\(0, partyCost - 4\) \* 0\.05/);
+  assert.match(source, /enemyScale: Math\.max\(scale \* balance\.scale, balance\.minimumScale\)/);
+  const fullPartyMinimum = 0.42 + (25 - 4) * 0.05;
+  assert.equal(Math.round(fullPartyMinimum * 100) / 100, 1.47);
+  assert.ok(fullPartyMinimum > content.stageById('c1-boss').power, '滿編前期戰力下限必須高於第一章首領基準');
+});
+test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向八幀動作圖集', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
   const unitIds = Array.from(profiles, unit => unit.id).sort();
   const rows = ['idle-down','move-down','attack-down','idle-right','move-right','attack-right','idle-up','move-up','attack-up','idle-left','move-left','attack-left'];
   assert.deepEqual(Object.keys(manifest).sort(), unitIds);
   for (const id of unitIds) {
-    assert.equal(manifest[id].columns, 6); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
+    assert.equal(manifest[id].columns, 8); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
+    for (const action of ['idle', 'move', 'attack']) {
+      assert.equal(manifest[id].animations[action].frameCount, 8);
+      assert.ok(manifest[id].animations[action].fps > 0 && manifest[id].animations[action].fps <= 60);
+      if (manifest[id].animations[action].hitFrame) assert.ok(manifest[id].animations[action].hitFrame <= 8);
+    }
     assert.deepEqual(Array.from(manifest[id].rowsOrder), rows); assert.ok(existsSync(join(root, manifest[id].file)));
     assert.ok(['authored-four-direction', 'derived-from-approved-motion', 'authored-front-back-and-approved-side'].includes(manifest[id].sourceType));
-    for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 6; frame++) {
+    for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 8; frame++) {
       assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
     }
     const profile = profiles.find(unit => unit.id === id);
@@ -157,13 +182,13 @@ test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向六幀�
     assert.deepEqual(Object.keys(manifest[id].evolutionSheets), hasEvolutionArt ? ['1','2','3'] : ['1']);
     if (hasEvolutionArt) for (const stage of [2, 3]) {
       assert.ok(existsSync(join(root, manifest[id].evolutionSheets[String(stage)])));
-      for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 6; frame++) {
+      for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 8; frame++) {
         assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-stage_${stage}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
       }
     }
   }
   assert.equal(Object.values(manifest).filter(entry => Object.keys(entry.evolutionSheets).length === 3).length, 65);
-  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 21960);
+  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 29280);
   const bounds = spawnSync('python', ['scripts/check-directional-frame-bounds.py'], { cwd: root, encoding: 'utf8' });
   assert.equal(bounds.status, 0, bounds.stderr || bounds.stdout);
 });

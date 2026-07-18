@@ -128,6 +128,10 @@ try {
     fourDirectionAllies: document.querySelectorAll('.unit.ally.motion-4dir').length,
     fourDirectionEnemies: document.querySelectorAll('.unit.enemy.motion-4dir').length,
     fourDirectionSheetSize: getComputedStyle(document.querySelector('.unit.ally.motion-4dir .portrait')).backgroundSize,
+    motionColumns: document.querySelector('.unit.ally.motion-4dir').style.getPropertyValue('--motion-columns'),
+    idleFrames: document.querySelector('.unit.ally.motion-4dir').style.getPropertyValue('--idle-frames'),
+    moveFrames: document.querySelector('.unit.ally.motion-4dir').style.getPropertyValue('--move-frames'),
+    attackFrames: document.querySelector('.unit.ally.motion-4dir').style.getPropertyValue('--attack-frames'),
     deployToolbar: !document.querySelector('#deploy-toolbar').hidden,
     balance: window.__TACTICS_DEBUG__.getState().balanceLabel,
     partyCost: window.__TACTICS_DEBUG__.getState().partyCost,
@@ -137,7 +141,7 @@ try {
   assert.ok(deployed.battleVisible && deployed.allies === 25 && deployed.enemies >= 25);
   assert.ok(deployed.deployToolbar); assert.equal(deployed.balance, '滿編迎擊'); assert.equal(deployed.partyCost, 25);
   assert.match(deployed.deployStatus, /3×10/); assert.ok(deployed.allyAnchorColumns.every(column => column >= 0 && column <= 2));
-  assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '600% 1200%'); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.evolvedMotion, /molten_ball-stage_3-motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
+  assert.equal(deployed.fourDirectionAllies, deployed.allies); assert.equal(deployed.fourDirectionEnemies, deployed.enemies); assert.equal(deployed.fourDirectionSheetSize, '800% 1200%'); assert.deepEqual([deployed.motionColumns, deployed.idleFrames, deployed.moveFrames, deployed.attackFrames], ['8', '8', '8', '8']); assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-4dir-sheet\.webp/); assert.match(deployed.evolvedMotion, /molten_ball-stage_3-motion-4dir-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-4dir-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
   const formationPreset = await evaluate(`(() => { document.querySelector('#formation-save').click(); const save = JSON.parse(localStorage.getItem('jose-tactics-progression-v2')); return { party: save.formation.party.length, positions: save.formation.positions.length }; })()`);
   assert.deepEqual(formationPreset, { party: 25, positions: 25 });

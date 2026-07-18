@@ -1,6 +1,6 @@
 {
   "name": "jose-phantom-beast-expedition",
-  "version": "0.24.1",
+  "version": "0.25.0",
   "private": true,
   "description": "Static tactical RPG with directional motion combat, element projectiles, a 21x10 battlefield, campaign progression, fusion and skill trees.",
   "scripts": {
@@ -8,6 +8,7 @@
     "build": "node scripts/build.mjs",
     "lint": "node scripts/lint.mjs",
     "test": "node scripts/test.mjs",
+    "test:difficulty": "node scripts/audit-difficulty.mjs",
     "test:browser": "node scripts/browser-smoke.mjs"
   },
   "engines": { "node": ">=18" }

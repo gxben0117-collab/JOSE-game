@@ -65,6 +65,15 @@
 .vfx.fx-force{background:radial-gradient(circle,#ffffff 0%,var(--vfx,#8fb7ff) 26%,transparent 62%)!important;border-radius:50%;animation:fx-force calc(.5s*var(--battle-rate,1)) ease-out forwards}
 @keyframes fx-force{0%{opacity:.95;transform:scale(.2)}100%{opacity:0;transform:scale(1.9)}}
 
+/* 8～12 幀特效共用的二段光暈。角色命中層、元素核心與碎光各自
+   有獨立節奏，避免技能只是一張漸層放大。 */
+.vfx:not(.fx-freeze)::before{content:'';position:absolute;inset:-18%;border:2px solid var(--vfx,#ffd36a);border-radius:50%;box-shadow:0 0 12px var(--vfx,#ffd36a),inset 0 0 8px var(--vfx,#ffd36a);opacity:0;animation:vfx-halo var(--vfx-duration,572ms) steps(var(--vfx-frames,8),end) forwards}
+.vfx:not(.fx-freeze)::after{content:'';position:absolute;inset:-28%;background:conic-gradient(from 12deg,transparent 0 8%,#fff 9% 10%,transparent 11% 27%,var(--vfx,#ffd36a) 28% 30%,transparent 31% 52%,#fff 53% 54%,transparent 55% 78%,var(--vfx,#ffd36a) 79% 81%,transparent 82%);clip-path:polygon(46% 0,54% 0,58% 38%,100% 46%,100% 54%,60% 58%,54% 100%,46% 100%,42% 60%,0 54%,0 46%,40% 42%);opacity:0;animation:vfx-shards var(--vfx-duration,572ms) steps(var(--vfx-frames,8),end) forwards;mix-blend-mode:screen}
+.vfx.vfx-featured{width:88px;height:88px;margin:-44px;filter:drop-shadow(0 0 14px var(--vfx,#ffd36a)) drop-shadow(0 0 24px var(--vfx,#ffd36a))}
+.vfx.vfx-featured::before{inset:-30%;border-width:3px}.vfx.vfx-featured::after{inset:-42%}
+@keyframes vfx-halo{0%{opacity:0;transform:scale(.15)}24%{opacity:.95;transform:scale(.72)}58%{opacity:.62;transform:scale(1.08)}100%{opacity:0;transform:scale(1.65)}}
+@keyframes vfx-shards{0%,18%{opacity:0;transform:rotate(-18deg) scale(.25)}38%{opacity:.9;transform:rotate(4deg) scale(.82)}100%{opacity:0;transform:rotate(26deg) scale(1.35)}}
+
 /* Boss 血條 */
 .boss-bar{display:flex;align-items:center;gap:12px;margin:0 0 10px;padding:9px 14px;border:1px solid #8a4a5a;border-radius:12px;background:linear-gradient(120deg,#301622ee,#1a0e18ee)}
 .boss-bar b{color:#ffd9e2;font-size:.9rem;white-space:nowrap;letter-spacing:.04em}
