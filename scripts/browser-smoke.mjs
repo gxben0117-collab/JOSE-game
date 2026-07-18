@@ -6,6 +6,7 @@ import { join } from 'node:path';
 
 const chrome = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 const port = 9337;
+const baseUrl = (process.env.JOSE_BASE_URL || 'http://127.0.0.1:4173').replace(/\/$/, '');
 const profile = mkdtempSync(join(tmpdir(), 'jose-chrome-'));
 const browser = spawn(chrome, [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
@@ -78,7 +79,7 @@ try {
   await Promise.all(['Page.enable', 'Runtime.enable', 'Network.enable', 'Log.enable'].map(method => command(method)));
   await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
   const loaded = waitEvent('Page.loadEventFired');
-  await command('Page.navigate', { url: 'http://127.0.0.1:4173/tactics.html' }); await loaded; await delay(1000);
+  await command('Page.navigate', { url: `${baseUrl}/tactics.html` }); await loaded; await delay(1000);
 
   const home = await evaluate(`(() => ({
     title: document.title,
