@@ -12,6 +12,8 @@
   var audio = new window.TacticalAudio(progress.sound);
   var partyIds = progress.party.slice(), currentStage = content.stageById(progress.currentStage), state;
   var deploySelection = [], growthPetId = partyIds[0], autoTimer = null, battleSpeed = 1;
+  var formationSnapshot = [], deployFilters = { search: '', element: '', role: '', size: '' };
+  var dexFilters = { search: '', element: '', role: '', owned: '' }, dexSelectedId = '';
 
   var dom = {
     app: document.querySelector('.tactics-app'), board: document.getElementById('board'), list: document.getElementById('party-list'),
@@ -22,6 +24,7 @@
     mapEyebrow: document.getElementById('map-eyebrow'), stageTitle: document.getElementById('stage-title'), stageDescription: document.getElementById('stage-description'),
     stageBadge: document.getElementById('stage-badge'), stageObjective: document.getElementById('stage-objective'), stageProgress: document.getElementById('stage-progress'),
     questSummary: document.getElementById('quest-summary'), deployModal: document.getElementById('deploy-modal'), deployGrid: document.getElementById('deploy-grid'), deployHelp: document.getElementById('deploy-help'),
+    deployToolbar: document.getElementById('deploy-toolbar'), deployStatus: document.getElementById('deploy-status'), deployBudgetLabel: document.getElementById('deploy-budget-label'), deployBudgetFill: document.getElementById('deploy-budget-fill'),
     campaignModal: document.getElementById('campaign-modal'), campaignGrid: document.getElementById('campaign-grid'), growthModal: document.getElementById('growth-modal'),
     growthPet: document.getElementById('growth-pet'), growthFeedback: document.getElementById('growth-feedback'), growthContent: document.getElementById('growth-content'), questList: document.getElementById('quest-list'),
     growthConfirmModal: document.getElementById('growth-confirm-modal'), growthConfirmTitle: document.getElementById('growth-confirm-title'), growthConfirmCopy: document.getElementById('growth-confirm-copy'), growthConfirmMaterials: document.getElementById('growth-confirm-materials'), growthConfirmEffect: document.getElementById('growth-confirm-effect'), growthConfirmAccept: document.getElementById('growth-confirm-accept'),
@@ -158,6 +161,49 @@
     return benched;
   }
 
+  function captureFormation() {
+    formationSnapshot = state.units.filter(function (unit) { return unit.team === 'ally'; }).map(function (unit) { return { key: unit.key, x: unit.x, y: unit.y }; });
+  }
+  function restoreFormation() {
+    if (state.phase !== 'deploy' || !formationSnapshot.length) return;
+    formationSnapshot.forEach(function (spot) { var unit = state.units.find(function (entry) { return entry.key === spot.key; }); if (unit) { unit.x = spot.x; unit.y = spot.y; } });
+    state.selected = null; audio.play('ui'); note('已還原進入關卡時的部署位置。'); render();
+  }
+  function formationRoleRank(unit, mode) {
+    var balanced = { defender: 0, allrounder: 1, controller: 2, attacker: 3, support: 4, healer: 5 };
+    var assault = { attacker: 0, controller: 1, allrounder: 2, defender: 3, support: 4, healer: 5 };
+    var ranks = mode === 'assault' ? assault : balanced;
+    return Object.prototype.hasOwnProperty.call(ranks, unit.p.role) ? ranks[unit.p.role] : 3;
+  }
+  function arrangeFormation(mode) {
+    if (state.phase !== 'deploy') return;
+    var allies = state.units.filter(function (unit) { return unit.team === 'ally'; });
+    allies.forEach(function (unit) { unit.x = -9; unit.y = -9; });
+    var large = allies.filter(function (unit) { return unitSize(unit) === 3; }).sort(function (a, b) { return formationRoleRank(a, mode) - formationRoleRank(b, mode); });
+    var big = allies.filter(function (unit) { return unitSize(unit) === 2; }).sort(function (a, b) { return formationRoleRank(a, mode) - formationRoleRank(b, mode); });
+    var small = allies.filter(function (unit) { return unitSize(unit) === 1; }).sort(function (a, b) { return formationRoleRank(a, mode) - formationRoleRank(b, mode); });
+    var reserve = mode === 'assault' ? [[9,3],[6,3],[3,3],[9,0],[6,0],[3,0],[0,3],[0,0]] : [[6,3],[3,3],[6,0],[3,0],[9,3],[0,3],[9,0],[0,0]];
+    var bigAnchors = mode === 'assault' ? [[7,6],[7,8],[5,6],[5,8],[3,6],[3,8]] : [[7,6],[7,8],[5,6],[5,8],[3,6],[3,8]];
+    large.forEach(function (unit, index) { var spot = reserve[index]; if (spot && deployFits(unit, spot[0], spot[1])) { unit.x = spot[0]; unit.y = spot[1]; } });
+    big.forEach(function (unit, index) { var spot = bigAnchors[index]; if (spot && deployFits(unit, spot[0], spot[1])) { unit.x = spot[0]; unit.y = spot[1]; } });
+    var cells = [];
+    for (var x = DEPLOY_MAX_X; x >= DEPLOY_MIN_X; x--) for (var y = DEPLOY_MIN_Y; y <= DEPLOY_MAX_Y; y++) if (inDeployZone(x, y)) cells.push([x, y]);
+    cells.push([9, 9]);
+    if (mode !== 'assault') cells.sort(function (a, b) { return Math.abs(a[1] - 7.5) - Math.abs(b[1] - 7.5) || b[0] - a[0]; });
+    small.forEach(function (unit) { var spot = cells.find(function (entry) { return deployFits(unit, entry[0], entry[1]); }); if (spot) { unit.x = spot[0]; unit.y = spot[1]; } });
+    state.selected = null; audio.play('ui'); note(mode === 'assault' ? '已套用突擊陣：輸出與控場靠前，快速接敵。' : '已套用均衡陣：防禦在前、治療與輔助在後。'); render();
+  }
+
+  function balancedEnemyRoster(stage, partyCost) {
+    var base = (content.rosterFor ? content.rosterFor(stage) : stage.enemies).slice();
+    var originalCount = base.length;
+    var added = Math.max(0, Math.round((partyCost - 8) * 0.9));
+    var target = Math.min(30, base.length + added), pool = base.filter(function (id) { return !(profile(id) || {}).boss; });
+    if (!pool.length) pool = base.slice();
+    for (var index = base.length; index < target; index++) base.push(pool[(index + (stage.seed || 0)) % pool.length]);
+    return { roster: base, added: Math.max(0, target - originalCount), scale: 1 + Math.max(0, partyCost - 12) * 0.008, label: partyCost >= 23 ? '滿編迎擊' : partyCost >= 16 ? '增援迎擊' : partyCost >= 9 ? '警戒迎擊' : '標準迎擊' };
+  }
+
   /* 敵方布陣：名冊拆成 3~5 人小隊，依關卡 seed 決定性散布在全地圖多個集結點；
      頭目小隊固定佔據最深處的錨點。 */
   function findFreeSpot(cx, cy, occupied, size) {
@@ -222,15 +268,15 @@
     if (stageId && typeof stageId === 'object') currentStage = stageId;
     else if (stageId) currentStage = content.stageById(stageId);
     if (!currentStage.tower) { progress.currentStage = currentStage.id; progression.save(); }
-    var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055);
+    var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
     state = { round: 1, phase: 'deploy', selected: null, mode: 'move', skill: 0, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
-      enemyScale: scale, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {} };
+      enemyScale: scale * balance.scale, partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {} };
     state.obstacles = (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
     clearDeploymentObstacles();
     var benched = placeAllies();
-    var roster = content.rosterFor ? content.rosterFor(currentStage) : currentStage.enemies;
+    var roster = balance.roster;
     enemyFormation(roster).forEach(function (spot, index) {
       var unit = clone(spot.id, 'enemy', spot.x, spot.y, index); unit.squad = spot.squad; state.units.push(unit);
     });
@@ -241,7 +287,8 @@
     dom.board.dataset.mapKind = content.mapLayout ? content.mapLayout(currentStage) : currentStage.mapId;
     dom.board.style.backgroundImage = "url('" + (content.mapAsset ? content.mapAsset(currentStage) : 'assets/maps/chapter-01-field-21x10.jpg') + "')";
     document.body.className = 'map-' + mapData().theme + ' view-' + currentView;
-    note('部署階段：點選我方幻獸，再點左下角藍色部署格（6×6）調整站位，完成後按「開始戰鬥」。敵軍共 ' + roster.length + ' 隻分小隊散布全圖。' +
+    captureFormation();
+    note('部署階段：點選我方幻獸，再點藍色部署格調整站位，或套用預設陣型。' + balance.label + '，敵軍共 ' + roster.length + ' 隻。' +
       (benched.length ? '⚠ 布陣空間不足，候補未出戰：' + benched.join('、') + '。' : ''));
     renderProgress(); renderCampaignMeta(); render();
     focusDeployZone(true);
@@ -822,6 +869,8 @@
       if (threatUnit) threatTileMap = computeThreat(threatUnit); else state.threatKey = null;
     }
     dom.board.classList.toggle('is-deploying', state.phase === 'deploy');
+    if (dom.deployToolbar) dom.deployToolbar.hidden = state.phase !== 'deploy';
+    if (dom.deployStatus) dom.deployStatus.textContent = '出陣 ' + alive('ally').length + ' 隻｜' + state.partyCost + '/25 單位｜' + state.balance.label + '・敵軍 ' + alive('enemy').length + ' 隻' + (active && active.team === 'ally' ? '｜已選 ' + active.p.name : '');
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
@@ -859,7 +908,7 @@
     var livingEnemies = enemies.filter(function (unit) { return unit.hp > 0; });
     dom.battleAllyCount.textContent = livingAllies.length + ' / ' + allies.length;
     dom.battleEnemyCount.textContent = livingEnemies.length + ' / ' + enemies.length;
-    dom.battleObjective.textContent = '目標｜' + currentStage.objective;
+    dom.battleObjective.textContent = '目標｜' + currentStage.objective + '｜' + state.balance.label + '（' + state.partyCost + '/25）';
     var trait = traitFor('ally');
     dom.battleTeamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>';
     dom.battleAllyList.innerHTML = '';
@@ -878,7 +927,7 @@
     });
     var boss = livingEnemies.find(function (unit) { return unit.boss; });
     if (boss) dom.battleEnemySummary.textContent = '首領 ' + boss.p.name + '｜生命 ' + boss.hp + ' / ' + boss.maxHp;
-    else if (livingEnemies.length) dom.battleEnemySummary.textContent = '剩餘 ' + livingEnemies.length + ' 隻｜點選敵軍可置中並查看威脅範圍';
+    else if (livingEnemies.length) dom.battleEnemySummary.textContent = state.balance.label + '｜剩餘 ' + livingEnemies.length + ' 隻｜戰力倍率 ×' + state.enemyScale.toFixed(2);
     else dom.battleEnemySummary.textContent = '敵軍已全數擊破';
   }
   function renderTrait() { var trait = traitFor('ally'); dom.teamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>'; }
@@ -1259,12 +1308,19 @@
 
   function openDeploy() { if (!state.over && state.phase !== 'deploy' && state.round > 1) { note('進行中的戰鬥不可更換隊伍，請先完成或重新開始。'); return; } deploySelection = partyIds.slice(); renderDeploy(); dom.deployModal.hidden = false; }
   function renderDeploy() {
-    var roster = progression.ownedPets(), used = selectedDeploymentCost();
-    dom.deployHelp.innerHTML = '<b>出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY + '</b>｜已選 ' + deploySelection.length + ' 隻｜1×1＝1、2×2＝4、3×3＝3｜已擁有 ' + roster.length + '/' + window.TACTICAL_PET_DATA.length + ' 隻。'; dom.deployGrid.innerHTML = '';
+    var allOwned = progression.ownedPets(), used = selectedDeploymentCost();
+    var roster = allOwned.filter(function (pet) {
+      var search = deployFilters.search.toLowerCase();
+      return (!search || pet.name.toLowerCase().indexOf(search) >= 0) && (!deployFilters.element || pet.element === deployFilters.element) && (!deployFilters.role || pet.role === deployFilters.role) && (!deployFilters.size || String(pet.size) === deployFilters.size);
+    }).sort(function (a, b) { return (deploySelection.indexOf(b.id) >= 0) - (deploySelection.indexOf(a.id) >= 0) || deploymentCost(a) - deploymentCost(b) || a.name.localeCompare(b.name, 'zh-Hant'); });
+    dom.deployBudgetLabel.textContent = '出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY;
+    dom.deployBudgetFill.style.width = Math.min(100, used / DEPLOY_CAPACITY * 100) + '%';
+    dom.deployBudgetFill.classList.toggle('near-limit', used >= 22);
+    dom.deployHelp.innerHTML = '<b>出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY + '</b>｜已選 ' + deploySelection.length + ' 隻｜定位：' + partyRoleSummary(deploySelection) + '｜顯示 ' + roster.length + '/' + allOwned.length + ' 隻。'; dom.deployGrid.innerHTML = '';
     roster.forEach(function (pet) {
       var button = document.createElement('button'), active = deploySelection.indexOf(pet.id) >= 0, cost = deploymentCost(pet), nextCost = used + cost;
       button.className = 'deploy-card' + (active ? ' selected' : '') + (!active && nextCost > DEPLOY_CAPACITY ? ' over-capacity' : '');
-      button.innerHTML = '<span class="deploy-art" style="background-image:url(\'' + pet.evolution[portraitStage(pet.id) - 1].portrait + '\')"></span><b>' + pet.name + (pet.size > 1 ? ' ⬛' : '') + '</b><small>' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + '｜' + pet.size + '×' + pet.size + ' 佔 ' + cost + ' 單位</small>';
+      button.innerHTML = '<span class="deploy-cost">' + cost + '</span><span class="deploy-art" style="background-image:url(\'' + pet.evolution[portraitStage(pet.id) - 1].portrait + '\')"></span><b>' + pet.name + (pet.size > 1 ? ' ⬛' : '') + '</b><small>' + (ELEMENT_ICONS[pet.element] || '') + ' ' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + '<br>' + pet.size + '×' + pet.size + '・佔 ' + cost + ' 單位</small>';
       button.setAttribute('aria-pressed', active ? 'true' : 'false');
       button.onclick = function () {
         var index = deploySelection.indexOf(pet.id);
@@ -1275,10 +1331,28 @@
       };
       dom.deployGrid.appendChild(button);
     });
+    if (!roster.length) dom.deployGrid.innerHTML = '<p class="empty-filter">找不到符合條件的幻獸。</p>';
+  }
+  function partyRoleSummary(ids) {
+    var counts = {};
+    ids.forEach(function (id) { var pet = profile(id); if (pet) counts[pet.roleLabel] = (counts[pet.roleLabel] || 0) + 1; });
+    return Object.keys(counts).map(function (label) { return label + counts[label]; }).join('、') || '尚未選擇';
+  }
+  function recommendParty() {
+    var candidates = progression.ownedPets().slice().sort(function (a, b) {
+      var priority = { defender: 0, healer: 1, attacker: 2, controller: 3, support: 4, allrounder: 5 };
+      var rankA = Object.prototype.hasOwnProperty.call(priority, a.role) ? priority[a.role] : 5;
+      var rankB = Object.prototype.hasOwnProperty.call(priority, b.role) ? priority[b.role] : 5;
+      return rankA - rankB || (progression.starOf(b.id) - progression.starOf(a.id)) || deploymentCost(a) - deploymentCost(b);
+    });
+    var picked = [], used = 0;
+    ['defender','healer','attacker','controller','support'].forEach(function (role) { var pet = candidates.find(function (entry) { return entry.role === role && used + deploymentCost(entry) <= DEPLOY_CAPACITY; }); if (pet && picked.indexOf(pet.id) < 0) { picked.push(pet.id); used += deploymentCost(pet); } });
+    candidates.forEach(function (pet) { var cost = deploymentCost(pet); if (picked.indexOf(pet.id) < 0 && used + cost <= DEPLOY_CAPACITY) { picked.push(pet.id); used += cost; } });
+    deploySelection = picked; audio.play('ui'); renderDeploy();
   }
 
   /* ── 圖鑑：收集進度與全帳號加成 ── */
-  function openDex() { renderDex(); document.getElementById('dex-modal').hidden = false; audio.play('ui'); }
+  function openDex() { if (!dexSelectedId) { var first = progression.ownedPets()[0]; dexSelectedId = first ? first.id : window.TACTICAL_PET_DATA[0].id; } renderDex(); document.getElementById('dex-modal').hidden = false; audio.play('ui'); }
   function renderDex() {
     var dex = progression.dexSummary();
     document.getElementById('dex-summary').innerHTML =
@@ -1288,12 +1362,27 @@
       (dex.elementBonus.fire ? '｜火系攻擊 +3%' : '') + (dex.elementBonus.forest ? '｜森系攻擊 +3%' : '') + (dex.elementBonus.ocean ? '｜海系攻擊 +3%' : '') + (dex.elementBonus.light ? '｜光系攻擊 +3%' : '') + (dex.elementBonus.dark ? '｜暗系攻擊 +3%' : '') +
       '｜每收集 10 隻全能力 +1%，單一元素滿 10 隻該系攻擊 +3%</span>';
     var grid = document.getElementById('dex-grid'); grid.innerHTML = '';
-    window.TACTICAL_PET_DATA.forEach(function (pet) {
-      var owned = progression.owns(pet.id), card = document.createElement('div');
-      card.className = 'dex-card' + (owned ? '' : ' unknown');
-      card.innerHTML = '<span class="deploy-art" style="background-image:url(\'' + pet.evolution[0].portrait + '\')"></span><b>' + (owned ? pet.name : '？？？') + '</b><small>' + (owned ? pet.roleLabel + '｜★' + progression.starOf(pet.id) + (progress.copies[pet.id] ? '｜複製 ' + progress.copies[pet.id] : '') : '未取得') + '</small>';
+    var filtered = window.TACTICAL_PET_DATA.filter(function (pet) { var owned = progression.owns(pet.id), search = dexFilters.search.toLowerCase(), skillText = pet.skills.map(function (skill) { return skill.name; }).join(' '); return (!search || pet.name.toLowerCase().indexOf(search) >= 0 || skillText.toLowerCase().indexOf(search) >= 0) && (!dexFilters.element || pet.element === dexFilters.element) && (!dexFilters.role || pet.role === dexFilters.role) && (!dexFilters.owned || (dexFilters.owned === 'owned') === owned); });
+    filtered.forEach(function (pet) {
+      var owned = progression.owns(pet.id), card = document.createElement('button'); card.type = 'button';
+      card.className = 'dex-card' + (owned ? '' : ' unknown') + (dexSelectedId === pet.id ? ' selected' : '');
+      card.innerHTML = '<span class="deploy-art" style="background-image:url(\'' + pet.evolution[0].portrait + '\')"></span><b>' + (owned ? pet.name : '？？？') + '</b><small>' + (owned ? (ELEMENT_ICONS[pet.element] || '') + ' ' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + '<br>' + pet.size + '×' + pet.size + '・' + deploymentCost(pet) + ' 單位' : '未取得') + '</small>';
+      card.onclick = function () { dexSelectedId = pet.id; audio.play('ui'); renderDex(); };
       grid.appendChild(card);
     });
+    if (!filtered.length) grid.innerHTML = '<p class="empty-filter">沒有符合條件的圖鑑資料。</p>';
+    renderDexDetail(window.TACTICAL_PET_DATA.find(function (pet) { return pet.id === dexSelectedId; }));
+  }
+  function renderDexDetail(pet) {
+    var detail = document.getElementById('dex-detail'); if (!pet) { detail.innerHTML = '<p>選擇幻獸查看詳情。</p>'; return; }
+    var owned = progression.owns(pet.id);
+    if (!owned) { detail.innerHTML = '<div class="dex-detail-hero unknown"><span style="background-image:url(\'' + pet.evolution[0].portrait + '\')"></span><div><small>尚未發現</small><h3>？？？</h3><p>可透過召喚與關卡獎勵取得，取得後解鎖完整能力與技能資料。</p></div></div>'; return; }
+    var stage = portraitStage(pet.id), stats = pet.stats;
+    detail.innerHTML = '<div class="dex-detail-hero"><span style="background-image:url(\'' + pet.evolution[stage - 1].portrait + '\')"></span><div><small>' + (ELEMENT_ICONS[pet.element] || '') + ' ' + pet.roleLabel + '｜' + (pet.rarity || 'normal') + '</small><h3>' + pet.name + '</h3><p>★' + progression.starOf(pet.id) + '｜' + pet.evolution[stage - 1].label + '｜融合 ' + (progress.fusion[pet.id] || 0) + '｜複製體 ' + (progress.copies[pet.id] || 0) + '</p></div></div>' +
+      '<div class="dex-tags"><span>體型 ' + pet.size + '×' + pet.size + '</span><span>出陣 ' + deploymentCost(pet) + ' 單位</span><span>移動 ' + pet.move + '</span><span>' + (pet.attackStyle === 'melee' ? '近戰' : pet.attackStyle === 'support' ? '支援' : '遠程') + '</span></div>' +
+      '<div class="dex-stats"><span><b>' + stats.health + '</b>生命</span><span><b>' + stats.power + '</b>力量</span><span><b>' + stats.magic + '</b>魔力</span><span><b>' + stats.defense + '</b>防衛</span><span><b>' + stats.speed + '</b>速度</span></div>' +
+      '<h4>技能資料</h4><div class="dex-skills">' + pet.skills.map(function (skill) { var effect = skill.attackStyle === 'support' ? '輔助' : skill.attackStyle === 'area' ? '範圍' : '射程 ' + skill.range; return '<article><b>' + skill.name + '</b><small>' + effect + '｜冷卻 ' + skill.cooldown + (skill.status ? '｜異常 ' + skill.status : '') + (skill.push ? '｜擊退 ' + skill.push : '') + (skill.pull ? '｜拉近 ' + skill.pull : '') + '</small></article>'; }).join('') + '</div>' +
+      (pet.passives.length ? '<h4>被動能力</h4><p>' + pet.passives.map(function (passive) { return passive.name; }).join('、') + '</p>' : '');
   }
 
   /* ── 召喚 ── */
@@ -1439,6 +1528,17 @@
     button.onclick = function () { audio.play('ui'); note('「' + button.dataset.soon + '」功能開發中，敬請期待！（規劃見 docs/遊戲企劃藍圖.md）'); };
   });
   document.getElementById('deploy').onclick = openDeploy; document.getElementById('close-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('cancel-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('confirm-deploy').onclick = confirmDeploy;
+  document.getElementById('deploy-search').oninput = function () { deployFilters.search = this.value.trim(); renderDeploy(); };
+  document.getElementById('deploy-element').onchange = function () { deployFilters.element = this.value; renderDeploy(); };
+  document.getElementById('deploy-role').onchange = function () { deployFilters.role = this.value; renderDeploy(); };
+  document.getElementById('deploy-size').onchange = function () { deployFilters.size = this.value; renderDeploy(); };
+  document.getElementById('deploy-recommend').onclick = recommendParty;
+  document.getElementById('deploy-clear').onclick = function () { deploySelection = []; audio.play('ui'); renderDeploy(); };
+  ['search','element','role','owned'].forEach(function (key) { var control = document.getElementById('dex-' + key); control[key === 'search' ? 'oninput' : 'onchange'] = function () { dexFilters[key] = this.value.trim(); renderDex(); }; });
+  document.getElementById('formation-balanced').onclick = function () { arrangeFormation('balanced'); };
+  document.getElementById('formation-assault').onclick = function () { arrangeFormation('assault'); };
+  document.getElementById('formation-reset').onclick = restoreFormation;
+  document.getElementById('deploy-start').onclick = startBattle;
   document.querySelectorAll('[data-close]').forEach(function (button) { button.onclick = function () { document.getElementById(button.dataset.close).hidden = true; }; });
   document.getElementById('growth-confirm-close').onclick = closeGrowthConfirmation;
   document.getElementById('growth-confirm-cancel').onclick = closeGrowthConfirmation;
@@ -1459,7 +1559,7 @@
   document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
 
   window.__TACTICS_DEBUG__ = {
-    getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, over: state.over, allies: alive('ally').length, enemies: alive('enemy').length, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },
+    getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, over: state.over, allies: alive('ally').length, enemies: alive('enemy').length, partyCost: state.partyCost, enemyScale: state.enemyScale, balanceLabel: state.balance.label, enemyReinforcements: state.balance.added, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },
     setView: setView,
     reset: function (stageId) { if (stageId && progression.isStageUnlocked(stageId)) currentStage = content.stageById(stageId); reset(currentStage.id); },
     startBattle: startBattle,

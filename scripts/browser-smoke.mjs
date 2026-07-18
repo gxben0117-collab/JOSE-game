@@ -102,8 +102,12 @@ try {
   const capacityLoaded = waitEvent('Page.loadEventFired');
   await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); const ids = TACTICAL_PET_DATA.filter(pet => pet.size === 1).slice(0, 25).map(pet => pet.id); ids.forEach(id => { save.owned[id] = true; }); save.party = ids; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
   await capacityLoaded; await delay(700);
-  const capacityRoster = await evaluate(`(() => { document.querySelector('#hub-party').click(); const result = { help: document.querySelector('#deploy-help').textContent, selected: document.querySelectorAll('#deploy-grid .deploy-card.selected').length }; document.querySelector('#close-deploy').click(); return result; })()`);
+  const capacityRoster = await evaluate(`(() => { document.querySelector('#hub-party').click(); const search = document.querySelector('#deploy-search'); search.value = '熔球'; search.dispatchEvent(new Event('input')); const filtered = document.querySelectorAll('#deploy-grid .deploy-card').length; search.value = ''; search.dispatchEvent(new Event('input')); const result = { help: document.querySelector('#deploy-help').textContent, selected: document.querySelectorAll('#deploy-grid .deploy-card.selected').length, filtered, budget: document.querySelector('#deploy-budget-label').textContent }; document.querySelector('#close-deploy').click(); return result; })()`);
   assert.equal(capacityRoster.selected, 25); assert.match(capacityRoster.help, /出陣單位 25 \/ 25/);
+  assert.equal(capacityRoster.filtered, 1); assert.match(capacityRoster.budget, /25 \/ 25/);
+
+  const dexUi = await evaluate(`(() => { document.querySelector('#open-dex').click(); const search = document.querySelector('#dex-search'); search.value = '基本攻擊'; search.dispatchEvent(new Event('input')); const result = { cards: document.querySelectorAll('#dex-grid .dex-card').length, detail: document.querySelector('#dex-detail').innerText, layout: getComputedStyle(document.querySelector('.dex-layout')).display }; document.querySelector('[data-close="dex-modal"]').click(); return result; })()`);
+  assert.ok(dexUi.cards > 0); assert.match(dexUi.detail, /技能資料|尚未發現/); assert.equal(dexUi.layout, 'grid');
 
   await evaluate(`document.querySelector('#enter-battle').click()`); await delay(500);
   const deployed = await evaluate(`(() => ({
@@ -115,9 +119,13 @@ try {
     motion: getComputedStyle(document.querySelector('.unit.ally .portrait')).backgroundImage,
     idleAnimation: getComputedStyle(document.querySelector('.unit.ally .portrait')).animationName,
     terrainToggle: document.querySelector('#terrain-toggle')?.textContent,
-    terrainOpacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity
+    terrainOpacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity,
+    deployToolbar: !document.querySelector('#deploy-toolbar').hidden,
+    balance: window.__TACTICS_DEBUG__.getState().balanceLabel,
+    partyCost: window.__TACTICS_DEBUG__.getState().partyCost
   }))()`);
-  assert.ok(deployed.battleVisible && deployed.allies === 25 && deployed.enemies >= 10);
+  assert.ok(deployed.battleVisible && deployed.allies === 25 && deployed.enemies >= 25);
+  assert.ok(deployed.deployToolbar); assert.equal(deployed.balance, '滿編迎擊'); assert.equal(deployed.partyCost, 25);
   assert.ok(deployed.allyRight && deployed.enemyLeft); assert.match(deployed.motion, /motion-sheet\.webp/); assert.match(deployed.idleAnimation, /motion-idle-right/);
   assert.match(deployed.terrainToggle, /自動/); assert.equal(deployed.terrainOpacity, '0.25');
   const terrainToggle = await evaluate(`(async () => { const button = document.querySelector('#terrain-toggle'); button.click(); await new Promise(resolve => setTimeout(resolve, 180)); const result = { pressed: button.getAttribute('aria-pressed'), all: document.querySelector('#board').classList.contains('show-terrain'), stored: localStorage.getItem('jose-terrain-visibility'), opacity: getComputedStyle(document.querySelector('.terrain-hint')).opacity }; button.click(); return result; })()`);
