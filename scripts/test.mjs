@@ -414,6 +414,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=7/); assert.match(html, /js\/tactics\.js\?v=34/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
+  assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/);
 });
 test('三畫面架構：準備、戰鬥、結算各自獨立', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');

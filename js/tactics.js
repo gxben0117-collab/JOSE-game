@@ -1610,7 +1610,6 @@
     if (!entry) { finishGachaCeremony(); return; }
     var quality = entry.pet.rarity || entry.pet.quality || 'normal';
     var quote = entry.pet.summonQuote || GACHA_QUOTES[quality];
-    if (!entry.isNew) quote = '吾主，再次相逢。' + quote.replace(/^吾主，?/, '');
     var card = document.getElementById('gacha-reveal-card');
     card.className = 'gacha-reveal-card quality-' + quality + (entry.isNew ? ' fresh' : '');
     card.innerHTML = '<span class="gacha-reveal-art" style="background-image:url(\'' + entry.pet.evolution[0].portrait + '\')"></span>' +
