@@ -408,14 +408,14 @@
   /* 無限塔：10 波守護塔生存戰。 */
   function towerStageFor(floor) {
     var chapter = content.maps[(floor - 1) % content.maps.length];
-    var skeletonMinions = ['skeleton_soldier', 'skeleton_mage', 'skeleton_knight', 'skeleton_sergeant'];
-    var skeletonBosses = ['skeleton_king', 'bone_dragon', 'lich', 'lich_king'];
-    var towerBoss = skeletonBosses[Math.floor(Math.max(0, floor - 5) / 5) % skeletonBosses.length];
+    /* 無限塔是跨界戰場：一般波可遇到所有幻獸與非首領魔獸；第 5、10 波由所有魔獸首領輪替壓陣。 */
+    var towerUnits = profiles.filter(function (entry) { return !entry.boss; }).map(function (entry) { return entry.id; });
+    var towerBosses = profiles.filter(function (entry) { return entry.boss; }).map(function (entry) { return entry.id; });
     return {
       id: 'tower-' + floor, tower: true, floor: floor, mapId: chapter.id, chapter: 0, index: floor, order: 0,
       name: '無限塔・第 ' + floor + ' 層', difficulty: '守護塔防衛', boss: false,
       power: Math.round((0.3 + floor * 0.16) * 100) / 100,
-      enemies: floor >= 3 ? skeletonMinions : chapter.minions, towerBoss: towerBoss,
+      enemies: towerUnits, towerBosses: towerBosses,
       enemyCount: Math.min(30, 8 + floor), seed: floor * 97 + 13,
       objective: '守住守護塔，抵擋 10 波魔物進攻', turnLimit: 30,
       rewards: { medals: 0, essence: 0, fusionCore: 0 }
@@ -575,8 +575,10 @@
   function towerUnits() { return state.units.filter(function (unit) { return unit.team === 'ally' && !unit.guardian; }); }
   function towerWaveRoster(wave) {
     var pool = currentStage.enemies, count = Math.min(14, 3 + wave + Math.floor(currentStage.floor / 3)), roster = [];
-    for (var index = 0; index < count; index++) roster.push(pool[(wave * 3 + index * 5 + currentStage.floor) % pool.length]);
-    if (wave === 5 || wave === 10) roster.unshift(currentStage.towerBoss);
+    var offset = (currentStage.floor * 31 + wave * 17) % pool.length;
+    /* 37 與目前名冊長度互質，能讓相鄰波次跨越不同元素、定位與體型，而非只輪到少數單位。 */
+    for (var index = 0; index < count; index++) roster.push(pool[(offset + index * 37) % pool.length]);
+    if (wave === 5 || wave === 10) roster.unshift(currentStage.towerBosses[(currentStage.floor * 7 + wave) % currentStage.towerBosses.length]);
     return roster;
   }
   function spawnTowerWave(wave) {
