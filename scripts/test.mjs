@@ -440,7 +440,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=54/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=55/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/); assert.doesNotMatch(source, /吾主，請下令/);
@@ -560,10 +560,10 @@ test('隊伍部署預設可儲存、讀取與清除', () => {
   assert.equal(service.formationFor(party).length, party.length);
   service.clearFormation(); assert.deepEqual(Array.from(service.formationFor(party)), []);
 });
-test('減速格可通行且花費 2 點行動力，無限塔不產生減速格', () => {
+test('減速格可通行且大型幻獸單次最多花費 1 點行動力，無限塔不產生減速格', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   assert.match(source, /function movementCost\(unit, x, y\)/);
-  assert.match(source, /if \(slowAt\(x \+ dx, y \+ dy\)\) return 2/);
+  assert.match(source, /if \(slowAt\(x \+ dx, y \+ dy\)\) return 1/);
   assert.match(source, /currentStage\.tower \? \[\]/); assert.match(source, /slow-cell/);
   assert.doesNotMatch(source.slice(source.indexOf('function canStand'), source.indexOf('function inBoard')), /slowAt/);
 });
@@ -625,7 +625,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=13/); assert.match(html, /js\/tactics\.js\?v=54/);
+  assert.match(html, /tactics-battle\.css\?v=13/); assert.match(html, /js\/tactics\.js\?v=55/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
   assert.match(battle, /\.projectile-muzzle\{/); assert.match(battle, /\.unit\.evading\{/); assert.match(battle, /\.dodge-number\{/);

@@ -59,10 +59,10 @@
   function updateSlowTerrainCopy() {
     document.querySelectorAll('.terrain-rules li').forEach(function (item) {
       if (item.textContent.indexOf('障礙') < 0) return;
-      item.innerHTML = '<i>▽</i><span><b>減速格</b>：可通行；進入時消耗 2 點行動力，不阻擋遠距視線</span>';
+      item.innerHTML = '<i>▽</i><span><b>減速格</b>：可通行；單次移動最多消耗 1 點行動力，不阻擋遠距視線</span>';
     });
     document.querySelectorAll('.board-legend span').forEach(function (item) {
-      if (item.textContent.indexOf('障礙') >= 0) item.textContent = '▽ 減速：進入消耗 2 點行動力；不阻擋視線';
+      if (item.textContent.indexOf('障礙') >= 0) item.textContent = '▽ 減速：單次移動最多消耗 1 點行動力；不阻擋視線';
     });
   }
 
@@ -180,7 +180,8 @@
   function slowAt(x, y) { return Boolean(state && state.obstacleMap[x + ',' + y]); }
   function movementCost(unit, x, y) {
     var size = unitSize(unit);
-    for (var dy = 0; dy < size; dy++) for (var dx = 0; dx < size; dx++) if (slowAt(x + dx, y + dy)) return 2;
+    /* 大型幻獸只要任一佔格踏到減速地形，也只消耗本次移動的 1 點，絕不依體積重複扣除。 */
+    for (var dy = 0; dy < size; dy++) for (var dx = 0; dx < size; dx++) if (slowAt(x + dx, y + dy)) return 1;
     return 1;
   }
   function unitName(unit) { return unit.p.name; }
@@ -1097,7 +1098,7 @@
   function cell(x, y) {
     var element = document.createElement('div'), unit = at(x, y), active = selected(), tile = terrain(x, y); element.className = 'cell';
     if (slowAt(x, y)) {
-      element.classList.add('slow-cell'); element.title = '減速：進入此格消耗 2 點行動力';
+      element.classList.add('slow-cell'); element.title = '減速：進入此格最多消耗 1 點行動力';
       element.innerHTML = '<span class="slow-icon" aria-label="減速">▽</span>';
     }
     if (tile) {
@@ -1801,7 +1802,7 @@
     });
     dom.battleCommandActions.innerHTML = '';
     var move = document.createElement('button'); move.type = 'button'; move.className = 'secondary'; move.textContent = unit.moved ? '✓ 已移動' : '移動'; move.disabled = unit.moved || state.animating;
-    move.onclick = function () { state.mode = 'move'; state.commandOpen = false; clearForecast(); audio.play('ui'); note('請點選藍色可移動格；減速格會消耗 2 點行動力。'); render(); };
+    move.onclick = function () { state.mode = 'move'; state.commandOpen = false; clearForecast(); audio.play('ui'); note('請點選藍色可移動格；減速格單次最多消耗 1 點行動力。'); render(); };
     var wait = document.createElement('button'); wait.type = 'button'; wait.className = 'secondary'; wait.textContent = '待機'; wait.disabled = unit.acted || state.animating;
     wait.onclick = function () { unit.moved = true; unit.acted = true; state.commandOpen = false; clearForecast(); audio.play('ui'); note(unitName(unit) + ' 完成本回合。'); render(); maybeAutoEndAfterMoves(); };
     var info = document.createElement('button'); info.type = 'button'; info.className = 'secondary'; info.textContent = '查看資訊'; info.onclick = function () { state.inspected = unit.key; state.commandOpen = false; render(); };
