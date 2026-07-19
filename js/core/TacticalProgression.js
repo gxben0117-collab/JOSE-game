@@ -54,6 +54,10 @@
       daily: null,
       shop: null,
       home: { residents: [], lastCollect: 0 },
+      /* 首頁展示只影響機庫立繪，不等同於取得／出戰該幻獸。 */
+      homeDisplay: { petId: 'crimson_dragon', mode: 'fixed' },
+      /* 劇情閱讀與一次性救援獎勵；以 key 保留給後續章節擴充。 */
+      story: { seen: {}, rewards: {} },
       tower: { best: 0 },
       formation: { party: [], positions: [] },
       sound: true
@@ -132,6 +136,11 @@
     if (!Array.isArray(next.home.residents)) next.home.residents = [];
     next.home.residents = next.home.residents.filter(this.validPet.bind(this)).slice(0, 3);
     next.home.lastCollect = Math.max(0, number(next.home.lastCollect, 0));
+    if (!next.homeDisplay || typeof next.homeDisplay !== 'object' || Array.isArray(next.homeDisplay)) next.homeDisplay = { petId: 'crimson_dragon', mode: 'fixed' };
+    if (!this.validPet(next.homeDisplay.petId)) next.homeDisplay.petId = 'crimson_dragon';
+    next.homeDisplay.mode = next.homeDisplay.mode === 'leader' ? 'leader' : 'fixed';
+    if (!next.story || typeof next.story !== 'object' || Array.isArray(next.story)) next.story = { seen: {}, rewards: {} };
+    ['seen', 'rewards'].forEach(function (key) { if (!next.story[key] || typeof next.story[key] !== 'object' || Array.isArray(next.story[key])) next.story[key] = {}; });
     // 擁有制遷移：初始 8 隻 + 隊伍成員 + 任何投入過養成的幻獸自動視為已擁有。
     STARTER_PETS.forEach(function (id) { next.owned[id] = true; });
     (Array.isArray(next.party) ? next.party : []).forEach(function (id) { next.owned[id] = true; });
@@ -183,6 +192,25 @@
     return saved.positions.map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; });
   };
   TacticalProgression.prototype.clearFormation = function () { this.state.formation = { party: [], positions: [] }; this.save(); };
+
+  /* ── 首頁展示／劇情進度 ── */
+  TacticalProgression.prototype.setHomeDisplay = function (petId, mode) {
+    if (!this.validPet(petId)) return false;
+    this.state.homeDisplay = { petId: petId, mode: mode === 'leader' ? 'leader' : 'fixed' };
+    this.save(); return true;
+  };
+  TacticalProgression.prototype.homeDisplayPetId = function () {
+    if (this.state.homeDisplay.mode === 'leader' && this.state.party[0]) return this.state.party[0];
+    return this.state.homeDisplay.petId;
+  };
+  TacticalProgression.prototype.hasSeenStory = function (key) { return Boolean(this.state.story.seen[key]); };
+  TacticalProgression.prototype.markStorySeen = function (key) { this.state.story.seen[key] = true; this.save(); };
+  TacticalProgression.prototype.grantStoryPet = function (rewardKey, petId) {
+    if (!rewardKey || !this.validPet(petId) || this.state.story.rewards[rewardKey]) return false;
+    this.state.story.rewards[rewardKey] = petId;
+    this.state.owned[petId] = true;
+    this.save(); return true;
+  };
 
   /* ── 幻獸擁有制與召喚 ── */
   TacticalProgression.prototype.owns = function (id) { return Boolean(this.state.owned[id]); };
