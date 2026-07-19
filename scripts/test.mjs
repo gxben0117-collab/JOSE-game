@@ -313,7 +313,7 @@ test('最終進化需要成長體、材料與融合', () => { const { sandbox } 
 test('主頁只導向唯一戰棋模式', () => { const home = readFileSync(join(root, 'index.html'), 'utf8'); assert.match(home, /url=tactics\.html/); assert.match(home, /href="tactics\.html"/); });
 test('旗艦機庫首頁提供五隻展示、橫向遊玩規格與第一章可擴充故事資料', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const progression = readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8'); const story = readFileSync(join(root, 'js/data/story-content.js'), 'utf8'); const hangar = readFileSync(join(root, 'css/tactics-hangar.css'), 'utf8');
-  assert.match(html, /id="home-display-open"/); assert.match(html, /id="home-screenshot"/); assert.match(html, /id="story-modal"/); assert.match(html, /story-content\.js\?v=1/); assert.match(html, /tactics-hangar\.css\?v=5/);
+  assert.match(html, /id="home-display-open"/); assert.match(html, /id="home-screenshot"/); assert.match(html, /id="story-modal"/); assert.match(html, /story-content\.js\?v=1/); assert.match(html, /tactics-hangar\.css\?v=6/);
   assert.match(source, /HOME_DISPLAY_IDS = \['crimson_dragon', 'emerald_god_dragon', 'abyss_god_dragon', 'solar_phoenix', 'eclipse_dragon'\]/); assert.match(source, /function showStory/); assert.match(source, /grantStoryPet/);
   assert.match(progression, /homeDisplay: \{ petId: 'crimson_dragon', mode: 'fixed' \}/); assert.match(progression, /grantStoryPet/);
   assert.match(story, /'c1-1:before'/); assert.match(story, /'c1-boss:before'/); assert.match(story, /'c1-boss:after'/); assert.match(story, /forest_deer/);
