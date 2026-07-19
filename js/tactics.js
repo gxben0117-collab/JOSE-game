@@ -1983,7 +1983,7 @@
   document.getElementById('home-hero-voice').onclick = function () { var pet = displayPet(); document.getElementById('home-hero-quote').textContent = '「' + displayQuote(pet) + '」'; audio.play('ui'); };
   document.getElementById('home-hero-art').onclick = document.getElementById('home-hero-voice').onclick;
   document.getElementById('home-screenshot').onclick = function () { document.body.classList.toggle('home-capture'); this.textContent = document.body.classList.contains('home-capture') ? '× 結束截圖' : '▣ 截圖模式'; };
-  document.getElementById('home-continue').onclick = function () { document.getElementById('open-campaign').click(); };
+  document.getElementById('home-continue').onclick = function () { dom.enterBattle.click(); };
   [['crystals','open-gacha'], ['gold','open-shop'], ['medals','open-growth'], ['essences','open-growth'], ['fusion-cores','open-growth']].forEach(function (pair) { var chip = document.getElementById(pair[0]); if (chip) { chip.tabIndex = 0; chip.setAttribute('role', 'button'); chip.onclick = function () { document.getElementById(pair[1]).click(); }; chip.onkeydown = function (event) { if (event.key === 'Enter' || event.key === ' ') chip.click(); }; } });
   document.getElementById('home-collect').onclick = function () { var result = progression.collectHome(); if (!result.ok) { note(result.reason); return; } audio.play('unlock'); renderProgress(); renderHome(); note('收成完成：獲得 ' + result.total + ' 點元素精華。'); };
   document.getElementById('hub-party').onclick = openDeploy;
