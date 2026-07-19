@@ -2168,8 +2168,6 @@
   document.querySelectorAll('[data-hangar-action]').forEach(function (button) { button.onclick = function () { var target = document.getElementById(button.dataset.hangarAction); if (target) target.click(); }; });
   document.querySelectorAll('[data-hangar-soon]').forEach(function (button) { button.onclick = function () { audio.play('ui'); note('「' + button.dataset.hangarSoon + '」正在規劃探索地圖與事件，敬請期待。'); }; });
   document.getElementById('home-display-open').onclick = openHomeDisplay;
-  document.getElementById('home-hero-voice').onclick = function () { var pet = displayPet(); document.getElementById('home-hero-quote').textContent = '「' + displayQuote(pet) + '」'; audio.play('ui'); };
-  document.getElementById('home-hero-art').onclick = document.getElementById('home-hero-voice').onclick;
   document.getElementById('home-screenshot').onclick = function () { document.body.classList.toggle('home-capture'); this.textContent = document.body.classList.contains('home-capture') ? '× 結束截圖' : '▣ 截圖模式'; };
   document.getElementById('home-continue').onclick = function () { dom.enterBattle.click(); };
   [['crystals','open-gacha'], ['gold','open-shop'], ['medals','open-growth'], ['essences','open-growth'], ['fusion-cores','open-growth']].forEach(function (pair) { var chip = document.getElementById(pair[0]); if (chip) { chip.tabIndex = 0; chip.setAttribute('role', 'button'); chip.onclick = function () { document.getElementById(pair[1]).click(); }; chip.onkeydown = function (event) { if (event.key === 'Enter' || event.key === ' ') chip.click(); }; } });
