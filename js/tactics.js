@@ -630,7 +630,7 @@
 
   /* 粒子爆散：hit 向外飛散、heal 向上飄升、death 大範圍炸開。 */
   function burst(target, hue, kind, count) {
-    var cell = cellAt(target.x, target.y); if (!cell) return;
+    var cell = visualHost(target); if (!cell) return;
     for (var index = 0; index < count; index++) {
       var spark = document.createElement('i'); spark.className = 'spark ' + kind;
       var angle = kind === 'heal' ? (-Math.PI / 2 + (Math.random() - 0.5) * 1.2) : Math.random() * Math.PI * 2;
@@ -644,8 +644,14 @@
       setTimeout(function (node) { node.remove(); }, duration(760), spark);
     }
   }
+  /* Every battle effect uses the rendered unit rather than its top-left grid
+     anchor.  That keeps 2×2+ units centred and gives projectiles a real
+     caster-to-target trajectory. */
+  function visualHost(unit) {
+    return dom.board.querySelector('[data-key="' + unit.key + '"]') || cellAt(unit.x, unit.y);
+  }
   function impactRing(target, hue) {
-    var cell = cellAt(target.x, target.y); if (!cell) return;
+    var cell = visualHost(target); if (!cell) return;
     var ring = document.createElement('i'); ring.className = 'impact-ring'; ring.style.setProperty('--vfx', 'hsl(' + hue + ' 92% 66%)');
     cell.appendChild(ring); setTimeout(function () { ring.remove(); }, duration(520));
   }
@@ -659,13 +665,13 @@
   }
   /* 近戰揮砍弧光與施法魔法陣 */
   function slashFx(target) {
-    var cell = cellAt(target.x, target.y); if (!cell) return;
+    var cell = visualHost(target); if (!cell) return;
     var slash = document.createElement('i'); slash.className = 'slash-fx';
     slash.style.setProperty('--slash-rot', (Math.random() * 70 - 35).toFixed(0) + 'deg');
     cell.appendChild(slash); setTimeout(function () { slash.remove(); }, duration(430));
   }
   function castCircle(unit, hue) {
-    var cell = cellAt(unit.x, unit.y); if (!cell) return;
+    var cell = visualHost(unit); if (!cell) return;
     var circle = document.createElement('i'); circle.className = 'cast-circle';
     circle.style.setProperty('--vfx', 'hsl(' + hue + ' 92% 66%)');
     cell.appendChild(circle); setTimeout(function () { circle.remove(); }, duration(620));
@@ -676,7 +682,7 @@
   }
 
   function addVisual(target, element, skill, amount, healing, absorbed, crit) {
-    var cell = cellAt(target.x, target.y); if (!cell) return;
+    var cell = visualHost(target); if (!cell) return;
     var fxClass = skill.status === 'freeze' ? 'fx-freeze' : skill.status === 'poison' ? 'fx-poison' : skill.status === 'burn' ? 'fx-burn' : (skill.push || skill.pull) ? 'fx-force' : '';
     var vfxSpec = window.TACTICAL_ANIMATION_CONFIG.vfx(skill);
     var fx = document.createElement('i'); fx.className = 'vfx ' + (element || 'fire') + ' variant-' + (skill.vfxVariant || 0) + (fxClass ? ' ' + fxClass : '') + (healing ? ' support-vfx' : ''); fx.style.setProperty('--vfx', 'hsl(' + skill.vfxHue + ' 92% 62%)'); fx.setAttribute('aria-label', skill.name + ' 特效'); cell.appendChild(fx);
@@ -684,7 +690,7 @@
     fx.style.setProperty('--vfx-frames', vfxSpec.frameCount); fx.style.setProperty('--vfx-duration', vfxSpec.durationMs + 'ms'); fx.dataset.frameCount = String(vfxSpec.frameCount);
     if (skill.kind === 'ultimate' || skill.boss) fx.classList.add('vfx-featured');
     number.style.setProperty('--drift', ((Math.random() - 0.5) * 34).toFixed(0) + 'px'); cell.appendChild(number);
-    var piece = cell.querySelector('.unit'); if (piece) piece.classList.add(healing ? 'recover' : 'hit');
+    var piece = cell.classList.contains('unit') ? cell : cell.querySelector('.unit'); if (piece) piece.classList.add(healing ? 'recover' : 'hit');
     if (skill.kind !== 'basic' && !healing) {
       var stamp = document.createElement('i'); stamp.className = 'impact-art';
       stamp.style.backgroundImage = 'url(assets/vfx/impact-' + (element || 'fire') + '.png)';
@@ -695,23 +701,27 @@
     setTimeout(function () { fx.remove(); number.remove(); if (piece) piece.classList.remove(healing ? 'recover' : 'hit'); }, duration(Math.max(620, vfxSpec.durationMs)));
   }
   function statusLabel(target, text) {
-    var cell = cellAt(target.x, target.y); if (!cell) return;
+    var cell = visualHost(target); if (!cell) return;
     var label = document.createElement('b'); label.className = 'status-label'; label.textContent = text; cell.appendChild(label);
     setTimeout(function () { label.remove(); }, duration(760));
   }
 
   function addProjectile(caster, target, skill) {
     if (skill.attackStyle === 'melee' || skill.attackStyle === 'support') return 0;
-    var cell = cellAt(target.x, target.y); if (!cell) return 0;
+    var casterHost = visualHost(caster), targetHost = visualHost(target); if (!casterHost || !targetHost) return 0;
     var element = caster.p.element || 'arcane';
     var projectile = document.createElement('i');
     projectile.className = 'projectile projectile-' + element + (skill.kind === 'basic' ? ' projectile-basic' : ' projectile-skill');
-    var deltaX = (caster.x - target.x) * cell.offsetWidth, deltaY = (caster.y - target.y) * cell.offsetHeight;
+    var boardRect = dom.board.getBoundingClientRect(), casterRect = casterHost.getBoundingClientRect(), targetRect = targetHost.getBoundingClientRect();
+    var startX = casterRect.left - boardRect.left + casterRect.width / 2, startY = casterRect.top - boardRect.top + casterRect.height / 2;
+    var endX = targetRect.left - boardRect.left + targetRect.width / 2, endY = targetRect.top - boardRect.top + targetRect.height / 2;
+    var deltaX = endX - startX, deltaY = endY - startY;
     projectile.style.setProperty('--projectile', 'hsl(' + skill.vfxHue + ' 92% 68%)');
-    projectile.style.setProperty('--from-x', deltaX + 'px'); projectile.style.setProperty('--from-y', deltaY + 'px');
-    projectile.style.setProperty('--angle', Math.atan2(-deltaY, -deltaX) + 'rad');
+    projectile.style.left = startX + 'px'; projectile.style.top = startY + 'px';
+    projectile.style.setProperty('--travel-x', deltaX + 'px'); projectile.style.setProperty('--travel-y', deltaY + 'px');
+    projectile.style.setProperty('--angle', Math.atan2(deltaY, deltaX) + 'rad');
     projectile.setAttribute('aria-label', skill.name + '的' + ({ fire: '火球', forest: '自然彈', ocean: '水流彈', light: '光矢', dark: '暗影彈' }[element] || '魔法彈'));
-    cell.appendChild(projectile); setTimeout(function () { projectile.remove(); }, duration(420));
+    dom.board.appendChild(projectile); setTimeout(function () { projectile.remove(); }, duration(420));
     return 330;
   }
 

@@ -559,4 +559,17 @@ test('四方向圖集與自動部署使用完整方向列、保存最後站位',
   assert.match(source, /\['idle', 'move', 'attack', 'hit', 'victory', 'death'\]\.forEach\(function \(action\)/);
 });
 
+test('遠距技能由施術者中心飛向目標中心，命中特效不使用錨點格', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const campaign = readFileSync(join(root, 'css/tactics-campaign.css'), 'utf8');
+  assert.match(source, /function visualHost\(unit\)/);
+  assert.match(source, /casterHost\.getBoundingClientRect\(\), targetRect = targetHost\.getBoundingClientRect\(\)/);
+  assert.match(source, /startX = casterRect\.left - boardRect\.left \+ casterRect\.width \/ 2/);
+  assert.match(source, /endX = targetRect\.left - boardRect\.left \+ targetRect\.width \/ 2/);
+  assert.match(source, /projectile\.style\.left = startX \+ 'px'/);
+  assert.match(source, /--travel-x/);
+  assert.match(source, /dom\.board\.appendChild\(projectile\)/);
+  assert.match(campaign, /translate\(var\(--travel-x\),var\(--travel-y\)\)/);
+});
+
 console.log(`\n${passed}/${total} regression checks passed.`);
