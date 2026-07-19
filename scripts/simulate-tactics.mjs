@@ -64,14 +64,23 @@ function battle(seed, stage, partyIds) {
 const starterParty = ['molten_ball', 'fire_lion', 'fire_fox', 'leaf_ear_rabbit'];
 const midParty = ['crimson_dragon', 'ancient_treant', 'sun_phoenix', 'frost_leviathan', 'jade_qilin', 'emerald_dragon', 'blazing_dragon', 'tsunami_dragon'];
 const endgameParty = ['flame_emperor', 'forest_god', 'sea_emperor', 'flame_god_lion', 'emerald_god_dragon', 'abyss_god_dragon', 'solar_phoenix', 'void_leviathan', 'gold_qilin', 'eclipse_dragon'];
-const plan = [
+const regressionPlan = [
   ['c1-1', starterParty], ['c1-2', starterParty], ['c1-5', starterParty], ['c1-boss', starterParty],
   ['c2-1', starterParty], ['c3-1', midParty], ['c5-1', midParty], ['c5-boss', midParty],
   ['c8-boss', endgameParty], ['c10-boss', endgameParty]
 ];
+const requestedRuns = Number((process.argv.find(arg => arg.startsWith('--runs=')) || '--runs=10').slice(7));
+if (!Number.isInteger(requestedRuns) || requestedRuns < 1 || requestedRuns > 500) throw new Error('--runs 必須是 1～500 的整數');
+const plan = requestedRuns === 10 ? regressionPlan : Array.from({ length: requestedRuns }, (_, index) => {
+  const stage = content.stages[Math.floor(index * content.stages.length / requestedRuns)];
+  const chapter = Number((stage.id.match(/^c(\d+)/) || [])[1] || 1);
+  return [stage.id, chapter <= 2 ? starterParty : chapter <= 5 ? midParty : endgameParty];
+});
 const selectedStages = plan.map(entry => content.stageById(entry[0]));
 const results = plan.map((entry, index) => battle(index + 1, content.stageById(entry[0]), entry[1]));
-const starterWins = results.filter((result, index) => ['c1-1', 'c1-2'].includes(selectedStages[index].id) && result.winner === '我方').length;
-if (starterWins < 1) throw new Error('初始 4 人隊連第一章前兩關都無法取勝，難度曲線失衡');
-console.log('✅ 戰棋內部遊玩 10 場通過');
+if (requestedRuns === 10) {
+  const starterWins = results.filter((result, index) => ['c1-1', 'c1-2'].includes(selectedStages[index].id) && result.winner === '我方').length;
+  if (starterWins < 1) throw new Error('初始 4 人隊連第一章前兩關都無法取勝，難度曲線失衡');
+}
+console.log(`✅ 戰棋內部遊玩 ${requestedRuns} 場通過`);
 results.forEach((result, index) => console.log(`第 ${index + 1} 場（${result.stage}）：${result.winner}勝利，${result.rounds} 回合，施放 ${result.skills} 次技能`));
