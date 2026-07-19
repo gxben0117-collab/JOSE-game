@@ -279,6 +279,22 @@
 .gacha-card.fresh small{color:#ffd36a;font-weight:900}
 .gacha-card.quality-legendary{border-color:#ff9d2f}
 .gacha-card.quality-mythical{border-color:#ff5d73;box-shadow:0 0 14px #ff5d7366}
+.gacha-reveal{position:fixed;inset:0;z-index:120;display:grid;place-items:center;overflow:hidden;background:radial-gradient(circle at center,#243466 0%,#101a35 44%,#050915 100%);isolation:isolate}
+.gacha-reveal[hidden]{display:none}
+.gacha-reveal-aura{position:absolute;inset:-25%;z-index:-1;background:conic-gradient(from 20deg,#688fff22,#ffd36a55,#ff789955,#688fff22);filter:blur(26px);animation:gacha-aura 5s linear infinite}
+@keyframes gacha-aura{to{transform:rotate(1turn)}}
+.gacha-skip{position:absolute;top:max(16px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));z-index:2;padding:8px 12px;border:1px solid #bcd0ff88;border-radius:999px;background:#111b35cc;color:#eaf1ff;font-size:.76rem;font-weight:900;letter-spacing:.1em;cursor:pointer}
+.gacha-skip small{margin-left:3px;color:#9fb4dc;letter-spacing:0}
+.gacha-reveal-card{position:relative;width:min(372px,82vw);min-height:510px;display:flex;flex-direction:column;justify-content:flex-end;overflow:hidden;border:2px solid #809ee5;border-radius:22px;background:linear-gradient(155deg,#1c315c,#0a1228 70%);box-shadow:0 22px 68px #000a,0 0 46px #7aa0ff99;opacity:0;transform:perspective(900px) rotateY(-22deg) scale(.72)}
+.gacha-reveal-card.is-revealed{animation:gacha-reveal .7s cubic-bezier(.16,.9,.24,1) forwards}
+@keyframes gacha-reveal{60%{opacity:1;transform:perspective(900px) rotateY(3deg) scale(1.035)}100%{opacity:1;transform:perspective(900px) rotateY(0) scale(1)}}
+.gacha-reveal-art{position:absolute;inset:20px 12px 112px;background-position:center bottom;background-size:contain;background-repeat:no-repeat;filter:drop-shadow(0 12px 14px #000b);transform:scale(.92);animation:gacha-art-breathe 1.6s ease-in-out infinite alternate}
+@keyframes gacha-art-breathe{to{transform:scale(1)}}
+.gacha-reveal-copy{position:relative;padding:18px 22px 20px;background:linear-gradient(transparent,#080d1e 30%);text-align:center;text-shadow:0 2px 4px #000}
+.gacha-reveal-copy small{color:#bed0ff;font-weight:800;letter-spacing:.08em}.gacha-reveal-copy h2{margin:4px 0 7px;color:#fff4d1;font-size:1.65rem}.gacha-reveal-copy p{margin:0;color:#d6e2ff;font-size:.9rem;line-height:1.5}
+.gacha-reveal-card.quality-legendary{border-color:#ffbd52;box-shadow:0 22px 68px #000a,0 0 55px #ffad4299}.gacha-reveal-card.quality-mythical{border-color:#ff7990;box-shadow:0 22px 68px #000a,0 0 60px #ff5d73aa}.gacha-reveal-card.fresh .gacha-reveal-copy small{color:#ffe18c}
+.gacha-reveal-progress{position:absolute;bottom:max(22px,env(safe-area-inset-bottom));margin:0;color:#c9d8f5;font-size:.85rem;font-weight:800;letter-spacing:.12em}
+@media (max-width:480px){.gacha-reveal-card{min-height:430px}.gacha-reveal-art{inset:18px 8px 100px}.gacha-reveal-copy{padding:14px 16px}.gacha-reveal-copy h2{font-size:1.4rem}}
 
 /* 節點地圖版面修正：蓋掉舊 campaign-grid 網格、加寬對話框 */
 .campaign-dialog{width:min(880px,96vw);max-width:96vw}

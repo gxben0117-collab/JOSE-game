@@ -1586,20 +1586,60 @@
   }
 
   /* ── 召喚 ── */
-  function openGacha() { renderGacha(); document.getElementById('gacha-results').innerHTML = ''; document.getElementById('gacha-modal').hidden = false; audio.play('ui'); }
+  var gachaCeremony = { results: [], index: 0, timer: null };
+  var GACHA_QUALITY_LABELS = { normal: '普通', rare: '稀有', elite: '菁英', epic: '史詩', legendary: '傳說', mythical: '神話' };
+  var GACHA_QUOTES = {
+    normal: '吾主，請下令。', rare: '吾主，我願成為您的利刃。', elite: '吾主，讓我們一同突破命運。',
+    epic: '吾主，這份力量將為您而戰。', legendary: '吾主，傳說的誓約已在此刻締結。', mythical: '吾主，命運終於讓我們相遇。'
+  };
+  function openGacha() { finishGachaCeremony(); renderGacha(); document.getElementById('gacha-results').innerHTML = ''; document.getElementById('gacha-modal').hidden = false; audio.play('ui'); }
   function renderGacha() {
     document.getElementById('gacha-info').innerHTML = '持有 <b>💎 ' + progress.crystals + '</b> 召喚水晶。首次通關與每日任務可獲得水晶。已收集 ' + progression.dexSummary().total + '/' + window.TACTICAL_PET_DATA.length + ' 隻。';
+  }
+  function renderGachaResults(results) {
+    var box = document.getElementById('gacha-results');
+    box.innerHTML = results.map(function (entry, index) {
+      var quality = entry.pet.rarity || entry.pet.quality || 'normal';
+      return '<div class="gacha-card quality-' + quality + (entry.isNew ? ' fresh' : '') + '" style="animation-delay:' + index * 90 + 'ms">' +
+        '<span class="deploy-art" style="background-image:url(\'' + entry.pet.evolution[0].portrait + '\')"></span>' +
+        '<b>' + entry.pet.name + '</b><small>' + (entry.isNew ? '✨ NEW!' : '碎片 +1') + '</small></div>';
+    }).join('');
+  }
+  function revealGachaCard() {
+    var entry = gachaCeremony.results[gachaCeremony.index];
+    if (!entry) { finishGachaCeremony(); return; }
+    var quality = entry.pet.rarity || entry.pet.quality || 'normal';
+    var card = document.getElementById('gacha-reveal-card');
+    card.className = 'gacha-reveal-card quality-' + quality + (entry.isNew ? ' fresh' : '');
+    card.innerHTML = '<span class="gacha-reveal-art" style="background-image:url(\'' + entry.pet.evolution[0].portrait + '\')"></span>' +
+      '<div class="gacha-reveal-copy"><small>' + GACHA_QUALITY_LABELS[quality] + '幻獸' + (entry.isNew ? ' ・ 初次契約' : ' ・ 靈魂共鳴') + '</small>' +
+      '<h2>' + entry.pet.name + '</h2><p>「' + (entry.isNew ? GACHA_QUOTES[quality] : '吾主，再次相逢。我的力量仍為您效命。') + '」</p></div>';
+    document.getElementById('gacha-reveal-progress').textContent = '第 ' + (gachaCeremony.index + 1) + '／' + gachaCeremony.results.length + ' 張';
+    window.requestAnimationFrame(function () { card.classList.add('is-revealed'); });
+    clearTimeout(gachaCeremony.timer);
+    gachaCeremony.timer = setTimeout(function () {
+      gachaCeremony.index += 1;
+      revealGachaCard();
+    }, 1600);
+  }
+  function startGachaCeremony(results) {
+    clearTimeout(gachaCeremony.timer);
+    gachaCeremony = { results: results, index: 0, timer: null };
+    document.getElementById('gacha-results').innerHTML = '';
+    document.getElementById('gacha-reveal').hidden = false;
+    revealGachaCard();
+  }
+  function finishGachaCeremony() {
+    clearTimeout(gachaCeremony.timer);
+    if (gachaCeremony.results.length) renderGachaResults(gachaCeremony.results);
+    gachaCeremony = { results: [], index: 0, timer: null };
+    document.getElementById('gacha-reveal').hidden = true;
   }
   function doPull(count) {
     var result = progression.pull(count);
     if (!result.ok) { document.getElementById('gacha-info').innerHTML = '<b class="fc-warn">' + result.reason + '</b>'; audio.play('ui'); return; }
     audio.play('unlock'); renderProgress(); renderGacha(); renderParty(); renderTrait();
-    var box = document.getElementById('gacha-results');
-    box.innerHTML = result.results.map(function (entry, index) {
-      return '<div class="gacha-card quality-' + entry.pet.quality + (entry.isNew ? ' fresh' : '') + '" style="animation-delay:' + index * 90 + 'ms">' +
-        '<span class="deploy-art" style="background-image:url(\'' + entry.pet.evolution[0].portrait + '\')"></span>' +
-        '<b>' + entry.pet.name + '</b><small>' + (entry.isNew ? '✨ NEW!' : '碎片 +1') + '</small></div>';
-    }).join('');
+    startGachaCeremony(result.results);
   }
 
   /* ── 幻獸之家：駐守與收成 ── */
@@ -1725,6 +1765,7 @@
   document.getElementById('hub-party').onclick = openDeploy;
   document.getElementById('gacha-one').onclick = function () { doPull(1); };
   document.getElementById('gacha-ten').onclick = function () { doPull(10); };
+  document.getElementById('gacha-skip').onclick = finishGachaCeremony;
   document.querySelectorAll('.hub-soon').forEach(function (button) {
     button.onclick = function () { audio.play('ui'); note('「' + button.dataset.soon + '」功能開發中，敬請期待！（規劃見 docs/遊戲企劃藍圖.md）'); };
   });

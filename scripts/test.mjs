@@ -402,6 +402,14 @@ test('主城功能格：關卡、編隊、強化、圖鑑、召喚、每日任�
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   assert.match(source, /function renderDex/); assert.match(source, /function doPull/); assert.match(source, /function renderDaily/); assert.match(source, /function renderCampaign/); assert.match(source, /chapter-tab/);
 });
+test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
+  const html = readFileSync(join(root, 'tactics.html'), 'utf8');
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /js\/tactics\.js\?v=34/);
+  assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
+  assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
+});
 test('三畫面架構：準備、戰鬥、結算各自獨立', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   assert.match(html, /id="screen-home"/); assert.match(html, /id="screen-battle"[^>]*hidden/); assert.match(html, /id="screen-result"[^>]*hidden/);
