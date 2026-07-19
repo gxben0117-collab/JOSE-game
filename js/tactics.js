@@ -1950,13 +1950,20 @@
   function renderDexDetail(pet) {
     var detail = document.getElementById('dex-detail'); if (!pet) { detail.innerHTML = '<p>選擇幻獸查看詳情。</p>'; return; }
     var owned = progression.owns(pet.id);
-    if (!owned) { detail.innerHTML = '<div class="dex-detail-hero unknown"><span style="background-image:url(\'' + pet.evolution[0].portrait + '\')"></span><div><small>尚未發現</small><h3>？？？</h3><p>可透過召喚與關卡獎勵取得，取得後解鎖完整能力與技能資料。</p></div></div>'; return; }
+    if (!owned) { detail.innerHTML = '<div class="dex-detail-hero unknown"><span style="background-image:url(\'' + pet.evolution[0].portrait + '\')"></span><div><small>尚未發現</small><h3>？？？</h3><p>可透過召喚與關卡獎勵取得，取得後解鎖完整能力與技能資料。</p></div></div>' + dexEvolutionRoute(pet, 0, false); return; }
     var stage = portraitStage(pet.id), stats = pet.stats;
     detail.innerHTML = '<div class="dex-detail-hero"><span style="background-image:url(\'' + pet.evolution[stage - 1].portrait + '\')"></span><div><small>' + (ELEMENT_ICONS[pet.element] || '') + ' ' + pet.roleLabel + '｜' + (pet.rarity || 'normal') + '</small><h3>' + pet.name + '</h3><p>★' + progression.starOf(pet.id) + '｜' + pet.evolution[stage - 1].label + '｜融合 ' + (progress.fusion[pet.id] || 0) + '｜複製體 ' + (progress.copies[pet.id] || 0) + '</p></div></div>' +
+      dexEvolutionRoute(pet, stage, true) +
       '<div class="dex-tags"><span>體型 ' + pet.size + '×' + pet.size + '</span><span>出陣 ' + deploymentCost(pet) + ' 單位</span><span>移動 ' + pet.move + '</span><span>' + (pet.attackStyle === 'melee' ? '近戰' : pet.attackStyle === 'support' ? '支援' : '遠程') + '</span></div>' +
       '<div class="dex-stats"><span><b>' + stats.health + '</b>生命</span><span><b>' + stats.power + '</b>力量</span><span><b>' + stats.magic + '</b>魔力</span><span><b>' + stats.defense + '</b>防衛</span><span><b>' + stats.speed + '</b>速度</span></div>' +
       '<h4>技能資料</h4><div class="dex-skills">' + pet.skills.map(function (skill) { var effect = skill.attackStyle === 'support' ? '輔助' : skill.attackStyle === 'area' ? '範圍' : '射程 ' + skill.range; return '<article><b>' + skill.name + '</b><small>' + effect + '｜冷卻 ' + skill.cooldown + (skill.status ? '｜異常 ' + skill.status : '') + (skill.push ? '｜擊退 ' + skill.push : '') + (skill.pull ? '｜拉近 ' + skill.pull : '') + '</small></article>'; }).join('') + '</div>' +
       (pet.passives.length ? '<h4>被動能力</h4><div class="dex-passives">' + pet.passives.map(function (passive) { return '<article><b>' + passive.name + '</b><p>' + passiveDescription(passive) + '</p></article>'; }).join('') + '</div>' : '');
+  }
+  function dexEvolutionRoute(pet, unlockedStage, owned) {
+    return '<h4>進階路線</h4><div class="dex-evolution-route">' + pet.evolution.map(function (entry, index) {
+      var stage = index + 1, unlocked = owned && stage <= unlockedStage;
+      return '<article class="' + (unlocked ? 'unlocked' : 'locked') + '"><span style="background-image:url(\'' + entry.portrait + '\')"></span><b>' + entry.label + '</b><small>' + (unlocked ? (stage === unlockedStage ? '目前階段' : '已解鎖') : (owned ? '尚未進階' : '尚未發現')) + '</small></article>';
+    }).join('<i aria-hidden="true">→</i>') + '</div>';
   }
 
   /* ── 召喚 ── */
