@@ -158,7 +158,7 @@
         element.style.setProperty('--' + action + '-' + direction + '-y', (specs.rows <= 1 ? 0 : row * 100 / (specs.rows - 1)).toFixed(4) + '%');
       });
     });
-    Object.keys(specs).filter(function (key) { return key !== 'columns'; }).forEach(function (action) {
+    ['idle', 'move', 'attack', 'hit', 'victory', 'death'].forEach(function (action) {
       var spec = specs[action];
       element.style.setProperty('--' + action + '-frames', spec.frameCount);
       element.style.setProperty('--' + action + '-steps', spec.steps);
