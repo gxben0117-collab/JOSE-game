@@ -886,7 +886,11 @@
     if (defeated.length) render();
 
     if (!options.counter && skill.attackStyle !== 'support' && target.hp > 0 && canCounter(target, unit) && !state.over) {
-      note(unitName(target) + ' 抓住破綻，發動反擊！'); render(); await act(target, unit, target.p.skills[0], 0, { counter: true, nested: true });
+      /* 先讓上一擊的受擊特效消失，再開始反擊；否則受擊光效和施法圈會重疊在
+         同一隻我方幻獸上，看起來像它在攻擊自己。 */
+      state.selected = target.key; note(unitName(target) + ' 準備反擊。'); render();
+      await pause(300);
+      if (target.hp > 0 && unit.hp > 0 && canCounter(target, unit) && !state.over) await act(target, unit, target.p.skills[0], 0, { counter: true, nested: true });
     }
     if (!options.nested) { state.animating = false; checkEnd(); if (!state.over) render(); }
   }
