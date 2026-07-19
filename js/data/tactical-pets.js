@@ -43,6 +43,11 @@ var TACTICAL_SUMMON_QUOTES = {
   ink_chameleon:'吾主，墨影變幻，但我的忠心不變。', grave_badger:'吾主，墓土之下也藏不住敵人的行蹤。', eclipse_moth:'吾主，月蝕的粉塵會讓敵人迷失方向。', hollow_hyena:'吾主，空洞的笑聲將先一步瓦解對手。', obsidian_gorilla:'吾主，黑曜之拳會為您擊碎高牆。', nightmare_tapir:'吾主，讓敵人在夢裡先學會恐懼。', chain_centipede:'吾主，鎖鏈每一節都聽從您的意志。', phantom_raven:'吾主，幽相之羽會帶回無人知曉的情報。', void_anglerfish:'吾主，虛空微燈已引來獵物。', abyss_mammoth:'吾主，深淵的重蹄將替您踏出新紀元。'
 };
 
+/* 契約語氣保留個別內容；不以「吾主」稱呼玩家。 */
+Object.keys(TACTICAL_SUMMON_QUOTES).forEach(function (id) {
+  TACTICAL_SUMMON_QUOTES[id] = TACTICAL_SUMMON_QUOTES[id].replace(/^吾主，/, '');
+});
+
 function tacticalProfile(pet, index) {
   var role = TACTICAL_ROLE_BY_ID[pet.id] || 'allrounder';
   var style = role === 'defender' ? 'melee' : role === 'healer' || role === 'support' ? 'support' : (pet.id.indexOf('bird') >= 0 || pet.id.indexOf('fish') >= 0 || pet.id.indexOf('spirit') >= 0 || pet.id.indexOf('jelly') >= 0 || pet.id.indexOf('eel') >= 0) ? 'ranged' : 'melee';

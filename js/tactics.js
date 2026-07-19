@@ -1919,8 +1919,8 @@
   var gachaCeremony = { results: [], index: 0, timer: null };
   var GACHA_QUALITY_LABELS = { normal: '普通', rare: '稀有', elite: '菁英', epic: '史詩', legendary: '傳說', mythical: '神話' };
   var GACHA_QUOTES = {
-    normal: '吾主，請下令。', rare: '吾主，我願成為您的利刃。', elite: '吾主，讓我們一同突破命運。',
-    epic: '吾主，這份力量將為您而戰。', legendary: '吾主，傳說的誓約已在此刻締結。', mythical: '吾主，命運終於讓我們相遇。'
+    normal: '請下令。', rare: '我願成為您的利刃。', elite: '讓我們一同突破命運。',
+    epic: '這份力量將為您而戰。', legendary: '傳說的誓約已在此刻締結。', mythical: '命運終於讓我們相遇。'
   };
   function openGacha() { finishGachaCeremony(); renderGacha(); document.getElementById('gacha-results').innerHTML = ''; document.getElementById('gacha-modal').hidden = false; audio.play('ui'); }
   function renderGacha() {
