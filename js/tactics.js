@@ -1390,7 +1390,7 @@
     if (state.phase === 'deploy') { await startBattle(); scheduleAuto(); return; }
     if (state.animating || state.autoEnding || state.phase !== 'player') { scheduleAuto(); return; }
     var unit = alive('ally').find(function (entry) { return !entry.guardian && !entry.acted; });
-    if (!unit) { await endTurn(); scheduleAuto(); return; }
+    if (!unit) { await endTurn(true); scheduleAuto(); return; }
     if (unit.freeze > 0) { unit.moved = true; unit.acted = true; note(unitName(unit) + ' 被冰凍，無法行動。'); render(); scheduleAuto(); return; }
     state.selected = unit.key;
     var plan = planFor(unit);
@@ -1421,8 +1421,8 @@
   }
   function cycleSpeed() { var speeds = [1, 1.5, 2], index = speeds.indexOf(battleSpeed); battleSpeed = speeds[(index + 1) % speeds.length]; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed); dom.speed.textContent = '⚡ ' + battleSpeed + '×'; if (autoTimer) scheduleAuto(); audio.play('ui'); }
 
-  async function endTurn() {
-    if (currentStage.tower) return;
+  async function endTurn(fromAuto) {
+    if (currentStage.tower && !fromAuto) return;
     if (state.phase === 'deploy') { await startBattle(); return; }
     if (state.phase !== 'player' || state.over || state.animating) return;
     clearForecast(); state.threatKey = null;
