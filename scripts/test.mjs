@@ -422,7 +422,7 @@ test('幻獸使用 1×1～3×3，敵方首領支援 4×4 與 5×5，立繪填滿
   assert.match(css, /\.unit\.size-3[^}]*width:300%[^}]*height:300%/);
   assert.match(css, /\.unit\.size-4[^}]*width:400%[^}]*height:400%/);
   assert.match(css, /\.unit\.size-5[^}]*width:500%[^}]*height:500%/);
-  assert.match(css, /\.idle-arena \.unit \.portrait[^}]*inset:0 0 7px[^}]*width:100%/);
+  assert.match(css, /\.idle-arena \.unit \.portrait[^}]*inset:0[^}]*width:100%[^}]*height:100%[^}]*aspect-ratio:1 \/ 1/);
   assert.match(css, /background-position:center bottom/);
 });
 test('戰前主城可垂直捲動，進入戰鬥操作列固定可見', () => {
@@ -570,6 +570,12 @@ test('遠距技能由施術者中心飛向目標中心，命中特效不使用�
   assert.match(source, /--travel-x/);
   assert.match(source, /dom\.board\.appendChild\(projectile\)/);
   assert.match(campaign, /translate\(var\(--travel-x\),var\(--travel-y\)\)/);
+});
+
+test('iPad 戰場維持 21×10 比例且幻獸立繪不會被壓扁', () => {
+  const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  assert.match(screens, /\.idle-arena \.unit \.portrait\{[^}]*height:100%[^}]*aspect-ratio:1 \/ 1/);
+  assert.match(screens, /@media \(min-width:700px\) and \(max-width:980px\)[\s\S]*width:max\(720px,100%\)[\s\S]*aspect-ratio:21 \/ 10/);
 });
 
 console.log(`\n${passed}/${total} regression checks passed.`);
