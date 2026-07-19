@@ -2,21 +2,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "abyss_dragon": {
     "file": "assets/animations/directional/abyss_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -36,6 +48,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -55,21 +85,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "abyss_god_dragon": {
     "file": "assets/animations/directional/abyss_god_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -89,6 +131,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -106,21 +166,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "abyss_mammoth": {
     "file": "assets/animations/directional/abyss_mammoth-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -140,6 +212,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -155,21 +245,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "abyss_serpent": {
     "file": "assets/animations/directional/abyss_serpent-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -189,6 +291,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -208,21 +328,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "abyssal_kraken_emperor": {
     "file": "assets/animations/directional/abyssal_kraken_emperor-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -242,6 +374,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -259,21 +409,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "acorn_squirrel": {
     "file": "assets/animations/directional/acorn_squirrel-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -293,6 +455,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -310,21 +490,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "amber_antler_moose": {
     "file": "assets/animations/directional/amber_antler_moose-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -344,6 +536,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -359,21 +569,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ancient_treant": {
     "file": "assets/animations/directional/ancient_treant-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -393,6 +615,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -410,21 +650,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ash_crown_tyrant": {
     "file": "assets/animations/directional/ash_crown_tyrant-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -444,6 +696,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -461,21 +731,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ash_hound": {
     "file": "assets/animations/directional/ash_hound-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -495,6 +777,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -512,21 +812,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "auric_stag_beetle": {
     "file": "assets/animations/directional/auric_stag_beetle-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -546,6 +858,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -563,21 +893,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "aurora_narwhal": {
     "file": "assets/animations/directional/aurora_narwhal-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -597,6 +939,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -612,21 +972,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "bamboo_panda": {
     "file": "assets/animations/directional/bamboo_panda-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -646,6 +1018,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -663,21 +1053,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "bennu_acolyte": {
     "file": "assets/animations/directional/bennu_acolyte-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -697,6 +1099,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -714,21 +1134,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "blast_ram": {
     "file": "assets/animations/directional/blast_ram-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -748,6 +1180,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -765,21 +1215,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "blazing_dragon": {
     "file": "assets/animations/directional/blazing_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -799,6 +1261,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -816,21 +1296,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "blight_boar": {
     "file": "assets/animations/directional/blight_boar-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -850,6 +1342,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -867,21 +1377,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "blightwood_sovereign": {
     "file": "assets/animations/directional/blightwood_sovereign-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -901,6 +1423,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -918,21 +1458,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "bone_dragon": {
     "file": "assets/animations/directional/bone_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -952,6 +1504,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -969,21 +1539,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "bramble_lynx": {
     "file": "assets/animations/directional/bramble_lynx-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1003,6 +1585,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1020,21 +1620,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "brine_crocodile": {
     "file": "assets/animations/directional/brine_crocodile-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1054,6 +1666,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -1069,21 +1699,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "bubble_whale": {
     "file": "assets/animations/directional/bubble_whale-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1103,6 +1745,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1122,21 +1782,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "cathedral_elephant": {
     "file": "assets/animations/directional/cathedral_elephant-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1156,6 +1828,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -1171,21 +1861,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "cathedral_titan": {
     "file": "assets/animations/directional/cathedral_titan-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1205,6 +1907,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1222,21 +1942,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "cerberus_whelp": {
     "file": "assets/animations/directional/cerberus_whelp-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1256,6 +1988,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1273,21 +2023,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "chain_centipede": {
     "file": "assets/animations/directional/chain_centipede-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1307,6 +2069,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1324,21 +2104,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "cherub_guard": {
     "file": "assets/animations/directional/cherub_guard-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1358,6 +2150,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1375,21 +2185,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "chimera_spawn": {
     "file": "assets/animations/directional/chimera_spawn-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1409,6 +2231,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1426,21 +2266,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "cinder_bat": {
     "file": "assets/animations/directional/cinder_bat-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1460,6 +2312,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1477,21 +2347,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "cinder_pangolin": {
     "file": "assets/animations/directional/cinder_pangolin-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1511,6 +2393,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1528,21 +2428,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "coal_mole": {
     "file": "assets/animations/directional/coal_mole-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1562,6 +2474,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1579,21 +2509,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "comet_heron": {
     "file": "assets/animations/directional/comet_heron-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1613,6 +2555,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1630,21 +2590,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "comet_tiger": {
     "file": "assets/animations/directional/comet_tiger-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1664,6 +2636,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1681,21 +2671,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "coral_fish": {
     "file": "assets/animations/directional/coral_fish-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1715,6 +2717,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1734,21 +2754,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "crescent_rib_whelp": {
     "file": "assets/animations/directional/crescent_rib_whelp-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1768,6 +2800,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1785,21 +2835,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "crimson_dragon": {
     "file": "assets/animations/directional/crimson_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1819,6 +2881,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -1836,21 +2916,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "crimson_wolf": {
     "file": "assets/animations/directional/crimson_wolf-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1870,6 +2962,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1889,21 +2999,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "crown_cinderling": {
     "file": "assets/animations/directional/crown_cinderling-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1923,6 +3045,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -1940,21 +3080,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "crown_unicorn": {
     "file": "assets/animations/directional/crown_unicorn-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -1974,6 +3126,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -1989,21 +3159,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "crystal_jellyfish": {
     "file": "assets/animations/directional/crystal_jellyfish-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2023,6 +3205,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2042,21 +3242,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "dawn_deer": {
     "file": "assets/animations/directional/dawn_deer-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2076,6 +3288,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2095,21 +3325,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "dawn_griffin": {
     "file": "assets/animations/directional/dawn_griffin-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2129,6 +3371,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2146,21 +3406,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "deep_sea_crab": {
     "file": "assets/animations/directional/deep_sea_crab-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2180,6 +3452,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2199,21 +3489,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "dryad_thorn": {
     "file": "assets/animations/directional/dryad_thorn-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2233,6 +3535,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2250,21 +3570,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "dusk_shark": {
     "file": "assets/animations/directional/dusk_shark-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2284,6 +3616,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2303,21 +3653,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "eclipse_bone_wyrm": {
     "file": "assets/animations/directional/eclipse_bone_wyrm-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2337,6 +3699,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2354,21 +3734,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "eclipse_dragon": {
     "file": "assets/animations/directional/eclipse_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2388,6 +3780,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -2405,21 +3815,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "eclipse_moth": {
     "file": "assets/animations/directional/eclipse_moth-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2439,6 +3861,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2456,21 +3896,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "electric_eel": {
     "file": "assets/animations/directional/electric_eel-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2490,6 +3942,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2509,21 +3979,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ember_imp": {
     "file": "assets/animations/directional/ember_imp-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2543,6 +4025,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2560,21 +4060,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "emberhorn_beetle": {
     "file": "assets/animations/directional/emberhorn_beetle-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2594,6 +4106,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2611,21 +4141,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "emerald_bird": {
     "file": "assets/animations/directional/emerald_bird-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2645,6 +4187,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2664,21 +4224,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "emerald_dragon": {
     "file": "assets/animations/directional/emerald_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2698,6 +4270,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -2715,21 +4305,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "emerald_god_dragon": {
     "file": "assets/animations/directional/emerald_god_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2749,6 +4351,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -2766,21 +4386,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ent_sapling": {
     "file": "assets/animations/directional/ent_sapling-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2800,6 +4432,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2817,21 +4467,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "fern_ceratops": {
     "file": "assets/animations/directional/fern_ceratops-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2851,6 +4513,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -2866,21 +4546,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "fire_fox": {
     "file": "assets/animations/directional/fire_fox-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2900,6 +4592,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2919,21 +4629,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "fire_lion": {
     "file": "assets/animations/directional/fire_lion-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -2953,6 +4675,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -2972,21 +4712,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "flame_emperor": {
     "file": "assets/animations/directional/flame_emperor-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3006,6 +4758,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -3023,21 +4793,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "flame_god_lion": {
     "file": "assets/animations/directional/flame_god_lion-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3057,6 +4839,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -3074,21 +4874,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "flame_spirit": {
     "file": "assets/animations/directional/flame_spirit-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3108,6 +4920,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3127,21 +4957,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "flame_wisp": {
     "file": "assets/animations/directional/flame_wisp-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3161,6 +5003,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3178,21 +5038,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "flare_hummingbird": {
     "file": "assets/animations/directional/flare_hummingbird-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3212,6 +5084,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3229,21 +5119,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "fog_wisp": {
     "file": "assets/animations/directional/fog_wisp-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3263,6 +5165,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3280,21 +5200,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "forest_deer": {
     "file": "assets/animations/directional/forest_deer-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3314,6 +5246,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3333,21 +5283,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "forest_god": {
     "file": "assets/animations/directional/forest_god-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3367,6 +5329,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -3384,21 +5364,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "forest_king": {
     "file": "assets/animations/directional/forest_king-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3418,6 +5410,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3437,21 +5447,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "frost_leviathan": {
     "file": "assets/animations/directional/frost_leviathan-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3471,6 +5493,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -3488,21 +5528,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "frost_shell": {
     "file": "assets/animations/directional/frost_shell-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3522,6 +5574,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3539,21 +5609,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "furnace_colossus": {
     "file": "assets/animations/directional/furnace_colossus-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3573,6 +5655,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3590,21 +5690,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "furnace_owl": {
     "file": "assets/animations/directional/furnace_owl-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3624,6 +5736,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3641,21 +5771,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "gargoyle_watcher": {
     "file": "assets/animations/directional/gargoyle_watcher-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3675,6 +5817,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3692,21 +5852,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "geyser_frog": {
     "file": "assets/animations/directional/geyser_frog-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3726,6 +5898,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3743,21 +5933,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "glacier_leviathan": {
     "file": "assets/animations/directional/glacier_leviathan-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3777,6 +5979,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3794,21 +6014,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "glacier_penguin": {
     "file": "assets/animations/directional/glacier_penguin-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3828,6 +6060,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3845,21 +6095,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "glacier_shellcrab": {
     "file": "assets/animations/directional/glacier_shellcrab-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3879,6 +6141,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3896,21 +6176,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "gloom_turtle": {
     "file": "assets/animations/directional/gloom_turtle-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3930,6 +6222,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -3947,21 +6257,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "gold_qilin": {
     "file": "assets/animations/directional/gold_qilin-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -3981,6 +6303,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -3998,21 +6338,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "golem_sentinel": {
     "file": "assets/animations/directional/golem_sentinel-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4032,6 +6384,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4049,21 +6419,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "grass_bear": {
     "file": "assets/animations/directional/grass_bear-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4083,6 +6465,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4102,21 +6502,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "grave_badger": {
     "file": "assets/animations/directional/grave_badger-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4136,6 +6548,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4153,21 +6583,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "halo_capybara": {
     "file": "assets/animations/directional/halo_capybara-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4187,6 +6629,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4204,21 +6664,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "halo_jelly": {
     "file": "assets/animations/directional/halo_jelly-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4238,6 +6710,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4257,21 +6747,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "hell_hound": {
     "file": "assets/animations/directional/hell_hound-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4291,6 +6793,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4310,21 +6830,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "hollow_hyena": {
     "file": "assets/animations/directional/hollow_hyena-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4344,6 +6876,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4361,21 +6911,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "holy_rabbit": {
     "file": "assets/animations/directional/holy_rabbit-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4395,6 +6957,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4414,21 +6994,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ice_shark": {
     "file": "assets/animations/directional/ice_shark-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4448,6 +7040,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4467,21 +7077,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ice_spirit_fish": {
     "file": "assets/animations/directional/ice_spirit_fish-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4501,6 +7123,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4520,21 +7160,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "inferno_bat": {
     "file": "assets/animations/directional/inferno_bat-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4554,6 +7206,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4573,21 +7243,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "ink_chameleon": {
     "file": "assets/animations/directional/ink_chameleon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4607,6 +7289,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4624,21 +7324,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "jade_qilin": {
     "file": "assets/animations/directional/jade_qilin-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4658,6 +7370,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -4675,21 +7405,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "jotunn_frost": {
     "file": "assets/animations/directional/jotunn_frost-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4709,6 +7451,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4726,21 +7486,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "kelp_otter": {
     "file": "assets/animations/directional/kelp_otter-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4760,6 +7532,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4777,21 +7567,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "kiln_rhinoceros": {
     "file": "assets/animations/directional/kiln_rhinoceros-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4811,6 +7613,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -4826,21 +7646,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "kraken_spawn": {
     "file": "assets/animations/directional/kraken_spawn-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4860,6 +7692,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4879,21 +7729,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "kraken_tentacle": {
     "file": "assets/animations/directional/kraken_tentacle-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4913,6 +7775,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4930,21 +7810,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "lantern_koi": {
     "file": "assets/animations/directional/lantern_koi-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -4964,6 +7856,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -4981,21 +7891,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "lava_crab": {
     "file": "assets/animations/directional/lava_crab-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5015,6 +7937,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5034,21 +7974,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "leaf_ear_rabbit": {
     "file": "assets/animations/directional/leaf_ear_rabbit-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5068,6 +8020,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5087,21 +8057,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "leviathan_brood": {
     "file": "assets/animations/directional/leviathan_brood-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5121,6 +8103,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5138,21 +8138,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "lich": {
     "file": "assets/animations/directional/lich-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5172,6 +8184,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5189,21 +8219,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "lich_king": {
     "file": "assets/animations/directional/lich_king-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5223,6 +8265,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5240,21 +8300,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "lumen_fox": {
     "file": "assets/animations/directional/lumen_fox-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5274,6 +8346,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5293,21 +8383,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "lumina_whale": {
     "file": "assets/animations/directional/lumina_whale-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5327,6 +8429,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5346,21 +8466,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "magma_hound": {
     "file": "assets/animations/directional/magma_hound-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5380,6 +8512,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5399,21 +8549,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "mara_fiend": {
     "file": "assets/animations/directional/mara_fiend-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5433,6 +8595,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5450,21 +8630,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "mirror_armadillo": {
     "file": "assets/animations/directional/mirror_armadillo-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5484,6 +8676,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5501,21 +8711,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "mist_banshee": {
     "file": "assets/animations/directional/mist_banshee-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5535,6 +8757,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5552,21 +8792,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "molten_ball": {
     "file": "assets/animations/directional/molten_ball-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5586,6 +8838,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5605,21 +8875,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "moss_turtle": {
     "file": "assets/animations/directional/moss_turtle-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5639,6 +8921,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5658,21 +8958,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "murk_fish": {
     "file": "assets/animations/directional/murk_fish-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5692,6 +9004,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5709,21 +9039,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "mushroom_bison": {
     "file": "assets/animations/directional/mushroom_bison-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5743,6 +9085,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -5758,21 +9118,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "nature_guardian": {
     "file": "assets/animations/directional/nature_guardian-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5792,6 +9164,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5811,21 +9201,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "nautilus_guardian": {
     "file": "assets/animations/directional/nautilus_guardian-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5845,6 +9247,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5862,21 +9282,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "nectar_moth": {
     "file": "assets/animations/directional/nectar_moth-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5896,6 +9328,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5913,21 +9363,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "nether_eel": {
     "file": "assets/animations/directional/nether_eel-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -5947,6 +9409,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -5966,21 +9446,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "night_bat": {
     "file": "assets/animations/directional/night_bat-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6000,6 +9492,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6019,21 +9529,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "nightmare_tapir": {
     "file": "assets/animations/directional/nightmare_tapir-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6053,6 +9575,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6070,21 +9610,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "obsidian_gorilla": {
     "file": "assets/animations/directional/obsidian_gorilla-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6104,6 +9656,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -6119,21 +9689,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "orchid_gecko": {
     "file": "assets/animations/directional/orchid_gecko-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6153,6 +9735,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6170,21 +9770,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "pearl_lantern_fry": {
     "file": "assets/animations/directional/pearl_lantern_fry-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6204,6 +9816,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6221,21 +9851,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "pearl_seahorse": {
     "file": "assets/animations/directional/pearl_seahorse-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6255,6 +9897,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6272,21 +9932,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "phantom_raven": {
     "file": "assets/animations/directional/phantom_raven-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6306,6 +9978,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6323,21 +10013,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "poison_mantis": {
     "file": "assets/animations/directional/poison_mantis-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6357,6 +10059,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6376,21 +10096,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "prism_dragon": {
     "file": "assets/animations/directional/prism_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6410,6 +10142,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6429,21 +10179,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "prism_peacock": {
     "file": "assets/animations/directional/prism_peacock-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6463,6 +10225,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6480,21 +10260,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "prism_wing_cub": {
     "file": "assets/animations/directional/prism_wing_cub-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6514,6 +10306,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6531,21 +10341,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "radiant_lion": {
     "file": "assets/animations/directional/radiant_lion-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6565,6 +10387,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6584,21 +10424,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "raiju_beast": {
     "file": "assets/animations/directional/raiju_beast-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6618,6 +10470,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6635,21 +10505,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "red_wing_bird": {
     "file": "assets/animations/directional/red_wing_bird-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6669,6 +10551,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6688,21 +10588,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "reef_hammerhead": {
     "file": "assets/animations/directional/reef_hammerhead-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6722,6 +10634,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6739,21 +10669,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "rosewindow_sentinel": {
     "file": "assets/animations/directional/rosewindow_sentinel-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6773,6 +10715,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6790,21 +10750,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "rotcap_rootling": {
     "file": "assets/animations/directional/rotcap_rootling-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6824,6 +10796,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6841,21 +10831,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "salamander_fiend": {
     "file": "assets/animations/directional/salamander_fiend-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6875,6 +10877,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6892,21 +10912,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "scarlet_salamander": {
     "file": "assets/animations/directional/scarlet_salamander-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6926,6 +10958,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -6943,21 +10993,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "sea_emperor": {
     "file": "assets/animations/directional/sea_emperor-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -6977,6 +11039,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -6994,21 +11074,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "sea_god_beast": {
     "file": "assets/animations/directional/sea_god_beast-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7028,6 +11120,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -7045,21 +11155,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "selkie_hunter": {
     "file": "assets/animations/directional/selkie_hunter-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7079,6 +11201,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7096,21 +11236,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "seraph_treant": {
     "file": "assets/animations/directional/seraph_treant-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7130,6 +11282,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7149,21 +11319,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "shadow_fang": {
     "file": "assets/animations/directional/shadow_fang-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7183,6 +11365,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7202,21 +11402,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "singularity_mite": {
     "file": "assets/animations/directional/singularity_mite-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7236,6 +11448,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7253,21 +11483,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "siren_lure": {
     "file": "assets/animations/directional/siren_lure-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7287,6 +11529,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7304,21 +11564,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "skeleton_king": {
     "file": "assets/animations/directional/skeleton_king-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7338,6 +11610,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7355,21 +11645,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "skeleton_knight": {
     "file": "assets/animations/directional/skeleton_knight-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7389,6 +11691,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7406,21 +11726,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "skeleton_mage": {
     "file": "assets/animations/directional/skeleton_mage-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7440,6 +11772,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7457,21 +11807,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "skeleton_sergeant": {
     "file": "assets/animations/directional/skeleton_sergeant-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7491,6 +11853,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7508,21 +11888,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "skeleton_soldier": {
     "file": "assets/animations/directional/skeleton_soldier-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7542,6 +11934,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7559,21 +11969,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "slag_hound": {
     "file": "assets/animations/directional/slag_hound-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7593,6 +12015,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7610,21 +12050,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "solar_phoenix": {
     "file": "assets/animations/directional/solar_phoenix-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7644,6 +12096,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -7661,21 +12131,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "solar_seraph_chimera": {
     "file": "assets/animations/directional/solar_seraph_chimera-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7695,6 +12177,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7712,21 +12212,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "spore_hedgehog": {
     "file": "assets/animations/directional/spore_hedgehog-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7746,6 +12258,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7763,21 +12293,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "star_ram": {
     "file": "assets/animations/directional/star_ram-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7797,6 +12339,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7814,21 +12374,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "star_tide_ray": {
     "file": "assets/animations/directional/star_tide_ray-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7848,6 +12420,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7865,21 +12455,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "starfish_beast": {
     "file": "assets/animations/directional/starfish_beast-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7899,6 +12501,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7918,21 +12538,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "sun_phoenix": {
     "file": "assets/animations/directional/sun_phoenix-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -7952,6 +12584,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -7971,21 +12621,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "sunscar_scorpion": {
     "file": "assets/animations/directional/sunscar_scorpion-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8005,6 +12667,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8022,21 +12702,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "surtr_spawn": {
     "file": "assets/animations/directional/surtr_spawn-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8056,6 +12748,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8073,21 +12783,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "thorn_boar": {
     "file": "assets/animations/directional/thorn_boar-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8107,6 +12829,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8126,21 +12866,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "thorn_creeper": {
     "file": "assets/animations/directional/thorn_creeper-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8160,6 +12912,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8177,21 +12947,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "thorn_hive_queen": {
     "file": "assets/animations/directional/thorn_hive_queen-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8211,6 +12993,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8228,21 +13028,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "thorn_pollen_drone": {
     "file": "assets/animations/directional/thorn_pollen_drone-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8262,6 +13074,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8279,21 +13109,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "thunderbird_kin": {
     "file": "assets/animations/directional/thunderbird_kin-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8313,6 +13155,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8330,21 +13190,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "tidal_axolotl": {
     "file": "assets/animations/directional/tidal_axolotl-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8364,6 +13236,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8381,21 +13271,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "tide_spawn": {
     "file": "assets/animations/directional/tide_spawn-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8415,6 +13317,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8432,21 +13352,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "tsunami_dragon": {
     "file": "assets/animations/directional/tsunami_dragon-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8466,6 +13398,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -8483,21 +13433,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "umbra_bear": {
     "file": "assets/animations/directional/umbra_bear-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8517,6 +13479,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8536,21 +13516,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "venom_mantis": {
     "file": "assets/animations/directional/venom_mantis-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8570,6 +13562,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8587,21 +13597,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "vine_snake": {
     "file": "assets/animations/directional/vine_snake-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8621,6 +13643,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8640,21 +13680,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "void_anglerfish": {
     "file": "assets/animations/directional/void_anglerfish-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8674,6 +13726,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8691,21 +13761,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "void_crab": {
     "file": "assets/animations/directional/void_crab-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8725,6 +13807,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8744,21 +13844,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "void_devourer": {
     "file": "assets/animations/directional/void_devourer-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8778,6 +13890,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8795,21 +13925,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "void_eel": {
     "file": "assets/animations/directional/void_eel-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8829,6 +13971,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
@@ -8846,21 +14006,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "void_leviathan": {
     "file": "assets/animations/directional/void_leviathan-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8880,6 +14052,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -8897,21 +14087,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "volcanic_titan": {
     "file": "assets/animations/directional/volcanic_titan-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8931,6 +14133,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceType": "authored-front-back-and-approved-side",
@@ -8948,21 +14168,33 @@ window.TACTICAL_MOTION_MANIFEST = {
   "willow_crane": {
     "file": "assets/animations/directional/willow_crane-motion-4dir-sheet.webp",
     "columns": 8,
-    "rows": 12,
+    "rows": 24,
     "frame": 112,
     "rowsOrder": [
       "idle-down",
       "move-down",
       "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
       "idle-right",
       "move-right",
       "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
       "idle-up",
       "move-up",
       "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
       "idle-left",
       "move-left",
-      "attack-left"
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
     ],
     "animations": {
       "idle": {
@@ -8982,6 +14214,24 @@ window.TACTICAL_MOTION_MANIFEST = {
         "fps": 14,
         "loop": false,
         "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
       }
     },
     "sourceColumns": [
