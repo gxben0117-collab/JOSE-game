@@ -1969,8 +1969,13 @@
   function openGacha() { finishGachaCeremony(); renderGacha(); document.getElementById('gacha-results').innerHTML = ''; document.getElementById('gacha-modal').hidden = false; audio.play('ui'); }
   function openBossRaid() {
     var info = bossRaidInfo(), raid = info.raid, boss = info.boss, hp = raid.hp && raid.maxHp ? Math.max(0, Math.round(raid.hp / raid.maxHp * 100)) : 100;
-    document.getElementById('boss-raid-content').innerHTML = '<article class="boss-raid-card"><span class="boss-raid-art" style="background-image:url(\'' + displayPortrait(boss) + '\')"></span><div><p class="eyebrow">每日輪替・' + (window.ELEMENT_CONFIG[boss.element] || {}).label + '屬性</p><h3>' + boss.name + '</h3><p>' + (raid.cleared ? '今日五段難度已全數討伐。明日 00:00 將輪替新的 Boss。' : BOSS_RAID_TIERS[info.tier] + '｜大型 4×4 單位｜目前 HP ' + hp + '%') + '</p><div class="boss-raid-track"><i style="width:' + hp + '%"></i></div><small>勝利獎勵：💎 ' + (12 + info.tier * 8) + '・🪙 ' + (140 + info.tier * 100) + '・🏅 ' + (4 + info.tier * 4) + '・🧬 ' + (1 + Math.floor(info.tier / 2)) + '・元素精華・召喚碎片</small></div></article>';
-    var enter = document.getElementById('boss-raid-enter'); enter.disabled = raid.cleared; enter.textContent = raid.cleared ? '今日討伐完成' : '👑 支付 ' + info.cost + ' 金幣開始討伐';
+    var tiers = BOSS_RAID_TIERS.map(function (label, tier) {
+      var status = raid.cleared || tier < info.tier ? 'cleared' : tier === info.tier ? 'active' : 'locked';
+      var reward = '💎' + (12 + tier * 8) + '　🪙' + (140 + tier * 100) + '　🏅' + (4 + tier * 4) + '　🧬' + (1 + Math.floor(tier / 2));
+      return '<article class="boss-tier ' + status + '"><b>' + (status === 'cleared' ? '✓ ' : status === 'locked' ? '🔒 ' : '⚔ ') + label + '</b><small>' + (status === 'cleared' ? '已討伐' : status === 'locked' ? '完成前一難度解鎖' : '目前挑戰・HP ' + hp + '%') + '</small><em>' + reward + '</em></article>';
+    }).join('');
+    document.getElementById('boss-raid-content').innerHTML = '<article class="boss-raid-card"><span class="boss-raid-art" style="background-image:url(\'' + displayPortrait(boss) + '\')"></span><div><p class="eyebrow">每日輪替・' + (window.ELEMENT_CONFIG[boss.element] || {}).label + '屬性</p><h3>' + boss.name + '</h3><p>' + (raid.cleared ? '今日五段難度已全數討伐。明日 00:00 將輪替新的 Boss。' : '大型 4×4 單位｜目前挑戰：' + BOSS_RAID_TIERS[info.tier]) + '</p><div class="boss-raid-track"><i style="width:' + hp + '%"></i></div></div></article><section class="boss-tier-grid" aria-label="Boss 五段難度解鎖">' + tiers + '</section>';
+    var enter = document.getElementById('boss-raid-enter'); enter.disabled = raid.cleared; enter.textContent = raid.cleared ? '今日討伐完成' : '👑 挑戰「' + BOSS_RAID_TIERS[info.tier] + '」・支付 ' + info.cost + ' 金幣';
     document.getElementById('boss-raid-modal').hidden = false; audio.play('ui');
   }
   function enterBossRaid() {
