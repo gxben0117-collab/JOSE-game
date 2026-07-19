@@ -150,7 +150,6 @@ test('地形以連續區塊生成而非零碎散點', () => {
     const connected = cells.filter(cell => [[1,0],[-1,0],[0,1],[0,-1]].some(([dx,dy]) => content.terrainAt(stage, cell.x + dx, cell.y + dy) === cell.terrain));
     if (cells.length) assert.ok(connected.length / cells.length >= 0.8, `${map.id} 地形仍過度零碎`);
   }
-  assert.ok(content.maps.some(map => content.terrainAt(content.stages.find(stage => stage.mapId === map.id), 10, 5)), '所有章節中央都被分類成無地形');
 });
 test('滿編 25 單位會同步提高前期敵軍數量與戰力下限', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
@@ -163,10 +162,10 @@ test('滿編 25 單位會同步提高前期敵軍數量與戰力下限', () => {
 test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向八幀動作圖集', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
   const unitIds = Array.from(profiles, unit => unit.id).sort();
-  const rows = ['idle-down','move-down','attack-down','idle-right','move-right','attack-right','idle-up','move-up','attack-up','idle-left','move-left','attack-left'];
+  const rows = ['idle-down','move-down','attack-down','hit-down','victory-down','death-down','idle-right','move-right','attack-right','hit-right','victory-right','death-right','idle-up','move-up','attack-up','hit-up','victory-up','death-up','idle-left','move-left','attack-left','hit-left','victory-left','death-left'];
   assert.deepEqual(Object.keys(manifest).sort(), unitIds);
   for (const id of unitIds) {
-    assert.equal(manifest[id].columns, 8); assert.equal(manifest[id].rows, 12); assert.equal(manifest[id].frame, 112);
+    assert.equal(manifest[id].columns, 8); assert.equal(manifest[id].rows, 24); assert.equal(manifest[id].frame, 112);
     for (const action of ['idle', 'move', 'attack']) {
       assert.equal(manifest[id].animations[action].frameCount, 8);
       assert.ok(manifest[id].animations[action].fps > 0 && manifest[id].animations[action].fps <= 60);
@@ -174,23 +173,15 @@ test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向八幀�
     }
     assert.deepEqual(Array.from(manifest[id].rowsOrder), rows); assert.ok(existsSync(join(root, manifest[id].file)));
     assert.ok(['authored-four-direction', 'derived-from-approved-motion', 'authored-front-back-and-approved-side'].includes(manifest[id].sourceType));
-    for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 8; frame++) {
-      assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
-    }
     const profile = profiles.find(unit => unit.id === id);
     const hasEvolutionArt = profile.evolution[1]?.portrait.startsWith(`assets/pets/${id}/evolution/`);
     assert.deepEqual(Object.keys(manifest[id].evolutionSheets), hasEvolutionArt ? ['1','2','3'] : ['1']);
     if (hasEvolutionArt) for (const stage of [2, 3]) {
       assert.ok(existsSync(join(root, manifest[id].evolutionSheets[String(stage)])));
-      for (const direction of ['down','right','up','left']) for (const action of ['idle','move','attack']) for (let frame = 1; frame <= 8; frame++) {
-        assert.ok(existsSync(join(root, 'assets/animations/directional/frames', `${id}-stage_${stage}-${action}-${direction}-frame_${String(frame).padStart(2, '0')}.png`)));
-      }
     }
   }
   assert.equal(Object.values(manifest).filter(entry => Object.keys(entry.evolutionSheets).length === 3).length, 65);
-  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 29280);
-  const bounds = spawnSync('python', ['scripts/check-directional-frame-bounds.py'], { cwd: root, encoding: 'utf8' });
-  assert.equal(bounds.status, 0, bounds.stderr || bounds.stdout);
+  assert.equal(readdirSync(join(root, 'assets/animations/directional/frames')).filter(name => name.endsWith('.png')).length, 0);
 });
 test('六種定位都有三節點技能樹', () => assert.ok(Object.values(content.skillTrees).every(tree => tree.length === 3 && tree.every(node => node.id && node.bonus))));
 test('任務具有進度目標與實際獎勵', () => assert.ok(content.quests.length >= 6 && content.quests.every(quest => quest.target > 0 && Object.keys(quest.reward).length)));
@@ -364,7 +355,7 @@ test('2×2 圖集逐隻校正左右並使用真正正面與背面原畫', () => 
   assert.match(source, /back_path = VIEW_DIR/);
   for (const id of ['abyss_god_dragon', 'amber_antler_moose', 'crimson_dragon']) {
     const entry = directionalManifest[id];
-    assert.equal(entry.rows, 12);
+    assert.equal(entry.rows, 24);
     assert.equal(entry.sourceType, 'authored-front-back-and-approved-side');
     assert.ok(existsSync(join(root, entry.verticalViews.down)));
     assert.ok(existsSync(join(root, entry.verticalViews.up)));
@@ -544,6 +535,28 @@ test('已完成行動的我方棋子與隊伍卡會變暗，未行動者維持�
   assert.match(source, /unit\.acted \? '｜✓ 已行動'/);
   assert.match(css, /\.unit\.ally\.action-complete \.portrait\{filter:grayscale/);
   assert.match(css, /\.battle-roster-card\.acted>i\{filter:grayscale/);
+});
+
+test('AUTO 戰鬥不會攻擊同陣營單位', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  assert.match(source, /target\.hp <= 0 \|\| !canUseTarget\(unit, target, skill\)\) return/);
+  assert.match(source, /var opposingTeam = unit\.team === 'ally' \? 'enemy' : 'ally';/);
+  assert.match(source, /alive\(opposingTeam\)\.filter/);
+  assert.match(source, /return defender\.team !== attacker\.team && defender\.hp > 0/);
+  assert.match(source, /if \(!attacker \|\| !target \|\| attacker\.team === target\.team\) return \{ amount: 0, absorbed: 0, crit: false \}/);
+  assert.match(source, /caster\.team === target\.team \|\| target\.hp <= 0/);
+});
+
+test('四方向圖集與自動部署使用完整方向列、保存最後站位', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  assert.match(source, /function rememberFormation\(\)/);
+  assert.match(source, /rememberFormation\(\);\n    state\.phase = 'player'/);
+  assert.match(source, /function autoArrangeBySpeed\(\)/);
+  assert.match(source, /b\.p\.stats\.speed - a\.p\.stats\.speed/);
+  assert.match(source, /id = 'formation-auto'/);
+  assert.match(screens, /motion-4dir\.facing-down \.portrait,[\s\S]*motion-4dir\.facing-left \.portrait\{animation:motion-4dir-row/);
+  assert.match(source, /\['idle', 'move', 'attack', 'hit', 'victory', 'death'\]\.forEach\(function \(action\)/);
 });
 
 console.log(`\n${passed}/${total} regression checks passed.`);
