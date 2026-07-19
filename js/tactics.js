@@ -1874,7 +1874,12 @@
     dom.deployHelp.parentElement.insertBefore(box, dom.deployHelp);
     return box;
   }
-  function openDeploy() { if (!state.over && state.phase !== 'deploy' && state.round > 1) { note('進行中的戰鬥不可更換隊伍，請先完成或重新開始。'); return; } deploySelection = partyIds.slice(); ensureDeployPresetBox(); renderDeploy(); renderDeployPresetStatus(); dom.deployModal.hidden = false; }
+  function openDeploy() {
+    if (!state.over && state.phase !== 'deploy' && state.round > 1) { note('進行中的戰鬥不可更換隊伍，請先完成或重新開始。'); return; }
+    deploySelection = partyIds.slice(); ensureDeployPresetBox(); renderDeploy(); renderDeployPresetStatus();
+    dom.deployModal.hidden = false; dom.deployModal.scrollTop = 0;
+    requestAnimationFrame(function () { var close = document.getElementById('close-deploy'); if (close) close.focus({ preventScroll: true }); });
+  }
   function renderDeploy() {
     var allOwned = progression.ownedPets(), used = selectedDeploymentCost();
     var roster = allOwned.filter(function (pet) {
@@ -2175,6 +2180,8 @@
     button.onclick = function () { audio.play('ui'); note('「' + button.dataset.soon + '」功能開發中，敬請期待！（規劃見 docs/遊戲企劃藍圖.md）'); };
   });
   document.getElementById('deploy').onclick = openDeploy; document.getElementById('close-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('cancel-deploy').onclick = function () { dom.deployModal.hidden = true; }; document.getElementById('confirm-deploy').onclick = confirmDeploy;
+  /* Safari/iPad 在滿版橫向頁偶爾會把 tap 判成頁面手勢而不派發 click；隊伍編輯以 pointerup 作為同一條開啟路徑。 */
+  ['deploy', 'hub-party'].forEach(function (id) { var button = document.getElementById(id); if (button) button.addEventListener('pointerup', function (event) { if (event.pointerType !== 'touch') return; event.preventDefault(); openDeploy(); }, { passive: false }); });
   document.getElementById('deploy-search').oninput = function () { deployFilters.search = this.value.trim(); renderDeploy(); };
   document.getElementById('deploy-element').onchange = function () { deployFilters.element = this.value; renderDeploy(); };
   document.getElementById('deploy-role').onchange = function () { deployFilters.role = this.value; renderDeploy(); };

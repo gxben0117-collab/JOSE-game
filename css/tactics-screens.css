@@ -85,6 +85,19 @@
 .screen-battle .board{width:100%;min-width:0;aspect-ratio:21 / 10;height:auto}
 .screen-battle .cell{min-height:0}
 
+/* iPad 橫向：戰場是主角。資訊欄保留可操作的最低寬度，將可用空間優先交給 21×10 棋盤。 */
+@media (min-width:981px) and (max-width:1180px){
+  .screen-battle{padding-inline:7px}
+  .battle-main{grid-template-columns:150px minmax(0,1fr) 220px;gap:7px;padding:6px}
+  .battle-ally-panel,.battle-panel{gap:6px;padding:7px}
+  .battle-roster-card{grid-template-columns:31px minmax(0,1fr);gap:4px;min-height:42px;padding:3px 4px}
+  .battle-roster-card>i{width:29px;height:29px}
+  .battle-roster-card b{font-size:.67rem}.battle-roster-card small,.battle-objective{font-size:.57rem}
+  .battle-team-trait{padding:6px;font-size:.59rem}.battle-enemy-overview{padding:6px}
+  .battle-panel .skill-help,.battle-panel .unit-detail{font-size:.7rem}.battle-panel .stat-grid{font-size:.66rem}
+  .screen-battle .board-wrap{padding:5px}
+}
+
 @media (max-width:980px){
   .battle-main{grid-template-columns:1fr}
   .battle-ally-panel{display:none}

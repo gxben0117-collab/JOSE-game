@@ -630,10 +630,16 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   assert.match(battle, /\.projectile-muzzle\{/); assert.match(battle, /\.unit\.evading\{/); assert.match(battle, /\.dodge-number\{/);
 });
 
-test('iPad 戰場維持 21×10 比例且幻獸立繪不會被壓扁', () => {
+test('iPad 戰場維持 21×10 比例、中央棋盤優先且隊伍編輯可觸控開啟', () => {
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const html = readFileSync(join(root, 'tactics.html'), 'utf8');
+  assert.match(html, /tactics-screens\.css\?v=27/);
   assert.match(screens, /\.idle-arena \.unit \.portrait\{[^}]*height:100%[^}]*aspect-ratio:1 \/ 1/);
   assert.match(screens, /@media \(min-width:700px\) and \(max-width:980px\)[\s\S]*width:max\(720px,100%\)[\s\S]*aspect-ratio:21 \/ 10/);
+  assert.match(screens, /@media \(min-width:981px\) and \(max-width:1180px\)[\s\S]*grid-template-columns:150px minmax\(0,1fr\) 220px/);
+  assert.match(source, /\['deploy', 'hub-party'\][\s\S]*addEventListener\('pointerup'/);
+  assert.match(html, /id="deploy"[^>]*type="button"/);
 });
 
 console.log(`\n${passed}/${total} regression checks passed.`);
