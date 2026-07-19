@@ -156,13 +156,15 @@ test('地形以連續區塊生成而非零碎散點', () => {
     if (cells.length) assert.ok(connected.length / cells.length >= 0.8, `${map.id} 地形仍過度零碎`);
   }
 });
-test('滿編 25 單位會同步提高前期敵軍數量與戰力下限', () => {
+test('滿編前五章維持舒適曲線，第六章後才逐步提高壓力', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
-  assert.match(source, /minimumScale = 0\.42 \+ Math\.max\(0, partyCost - 4\) \* 0\.05/);
+  assert.match(source, /var earlyChapter = !stage\.tower && Number\(stage\.chapter\) <= 5/);
+  assert.match(source, /minimumScale = \(earlyChapter \? 0\.48 : 0\.62\)/);
   assert.match(source, /enemyScale: Math\.max\(scale \* balance\.scale, balance\.minimumScale\)/);
-  const fullPartyMinimum = 0.42 + (25 - 4) * 0.05;
-  assert.equal(Math.round(fullPartyMinimum * 100) / 100, 1.47);
-  assert.ok(fullPartyMinimum > content.stageById('c1-boss').power, '滿編前期戰力下限必須高於第一章首領基準');
+  const fullPartyMinimum = 0.48 + (25 - 8) * 0.025;
+  assert.equal(Math.round(fullPartyMinimum * 100) / 100, 0.91);
+  assert.ok(content.stageById('c5-1').power < content.stageById('c6-1').power);
+  assert.ok(content.stageById('c6-1').power < content.stageById('c10-1').power);
 });
 test('全部戰鬥單位與 65 隻原生幻獸進化階段具有四方向八幀動作圖集', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
@@ -317,6 +319,16 @@ test('旗艦機庫首頁提供五隻展示、橫向遊玩規格與第一章可�
   assert.match(story, /'c1-1:before'/); assert.match(story, /'c1-boss:before'/); assert.match(story, /'c1-boss:after'/); assert.match(story, /forest_deer/);
   assert.match(hangar, /統一遊玩畫布/); assert.match(hangar, /orientation:portrait/); assert.match(hangar, /min-width:720px/);
 });
+test('每週無限塔任務以不同樓層計算並提供豐富獎勵', () => {
+  const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content });
+  for (let floor = 1; floor <= 10; floor++) service.completeTower(floor, true);
+  const quest = service.weeklyQuests()[0];
+  assert.equal(service.weeklyProgress(quest), 10);
+  const before = service.state.crystals;
+  assert.equal(service.claimWeekly(quest.id).ok, true);
+  assert.ok(service.state.crystals >= before + quest.reward.crystals);
+  assert.equal(service.claimWeekly(quest.id).ok, false);
+});
 test('戰棋使用 21×10 地圖、25 出陣單位、路徑搜尋與分體型部署', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /COLS = 21, ROWS = 10/); assert.match(source, /DEPLOY_CAPACITY = 25/); assert.match(source, /function pathTo/); assert.match(source, /function placeAllies/); assert.match(source, /function canStand/); assert.match(source, /function unitSize/); assert.match(source, /function inLargeDeployReserve/); assert.match(source, /function enemyFormation/); assert.match(source, /function squadActive/); assert.match(source, /function canMove\(unit, x, y\).*pathTo/); });
 test('全部戰鬥單位使用四方向新版動作圖', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
@@ -332,7 +344,7 @@ test('無限塔改為十波守護塔防衛，含波間加護、復甦與塔之�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(source, /maxWaves: 10/); assert.match(source, /function guardianTower\(floor\)/); assert.match(source, /profiles\.filter\(function \(entry\) \{ return !entry\.boss; \}\)/); assert.match(source, /towerBosses: towerBosses/); assert.match(source, /function spawnTowerWave\(wave\)/); assert.match(source, /function completeTowerWave\(\)/); assert.match(source, /var TOWER_REVIVE_MS = 12000/); assert.match(source, /reviveRemaining/); assert.match(source, /\* battleSpeed/); assert.match(source, /function queueTowerRevival\(unit\)/); assert.match(source, /function processTowerRevives\(\)/); assert.match(source, /function towerCommand\(\)/);
+  assert.match(source, /maxWaves: 10/); assert.match(source, /function guardianTower\(floor\)/); assert.match(source, /function towerBasePower\(floor\)/); assert.match(source, /function towerEnemyBuffs\(floor\)/); assert.match(source, /enemyBuffs: towerEnemyBuffs\(currentStage\.floor\)/); assert.match(source, /profiles\.filter\(function \(entry\) \{ return !entry\.boss; \}\)/); assert.match(source, /towerBosses: towerBosses/); assert.match(source, /function spawnTowerWave\(wave\)/); assert.match(source, /function completeTowerWave\(\)/); assert.match(source, /var TOWER_REVIVE_MS = 12000/); assert.match(source, /reviveRemaining/); assert.match(source, /\* battleSpeed/); assert.match(source, /function queueTowerRevival\(unit\)/); assert.match(source, /function processTowerRevives\(\)/); assert.match(source, /function towerCommand\(\)/);
   assert.match(source, /function chooseTowerBoon\(boon, automatic\)/); assert.match(source, /setTimeout\(function \(\) \{ chooseTowerBoon\(autoTowerBoon\(boons\), true\); \}, 5000\)/); assert.match(source, /function towerDefenseTarget\(unit\)/); assert.match(source, /autoEnabled: false/); assert.match(source, /state\.tower\.autoEnabled = true; spawnTowerWave\(1\); return;/); assert.match(source, /if \(currentStage\.tower\) return;/); assert.match(source, /stopAuto\(true\)/);
   assert.match(html, /id="tower-command"/); assert.match(html, /id="tower-choice"/); assert.match(battle, /\.guardian-tower\{/); assert.match(battle, /\.tower-choice\{/); assert.match(battle, /guardian-spire/);
 });
@@ -427,7 +439,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=7/); assert.match(html, /js\/tactics\.js\?v=44/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=7/); assert.match(html, /js\/tactics\.js\?v=45/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/);
@@ -606,7 +618,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=13/); assert.match(html, /js\/tactics\.js\?v=44/);
+  assert.match(html, /tactics-battle\.css\?v=13/); assert.match(html, /js\/tactics\.js\?v=45/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
   assert.match(battle, /\.projectile-muzzle\{/); assert.match(battle, /\.unit\.evading\{/); assert.match(battle, /\.dodge-number\{/);

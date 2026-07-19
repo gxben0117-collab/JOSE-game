@@ -16,6 +16,9 @@
     { id: 'd-control', name: '控場訓練', description: '施放 4 次控場技能', stat: 'controls', target: 4, reward: { crystals: 10 } },
     { id: 'd-chest', name: '活躍寶箱', description: '完成上列全部每日任務', stat: 'chest', target: 3, reward: { crystals: 20, fusionCore: 1 } }
   ];
+  var WEEKLY_QUESTS = [
+    { id: 'w-tower-10', name: '守護塔週報', description: '本週成功通關 10 個不同無限塔樓層', stat: 'towerFloors', target: 10, reward: { crystals: 120, medals: 30, fusionCore: 5, gold: 800, essence: 30 } }
+  ];
   var ELEMENTS = ['fire', 'forest', 'ocean', 'light', 'dark'];
 
   function deploymentCost(profile) {
@@ -52,6 +55,7 @@
       stars: {},
       shards: {},
       daily: null,
+      weekly: null,
       shop: null,
       home: { residents: [], lastCollect: 0 },
       /* 首頁展示只影響機庫立繪，不等同於取得／出戰該幻獸。 */
@@ -129,6 +133,7 @@
     next.shards = {};
     if (!next.tower || typeof next.tower !== 'object' || Array.isArray(next.tower)) next.tower = { best: 0 };
     next.tower.best = Math.max(0, number(next.tower.best, 0));
+    if (!next.weekly || typeof next.weekly !== 'object' || Array.isArray(next.weekly)) next.weekly = null;
     if (!next.formation || typeof next.formation !== 'object' || Array.isArray(next.formation)) next.formation = { party: [], positions: [] };
     if (!Array.isArray(next.formation.party)) next.formation.party = [];
     if (!Array.isArray(next.formation.positions)) next.formation.positions = [];
@@ -264,6 +269,8 @@
   TacticalProgression.prototype.completeTower = function (floor, win) {
     if (!win) { this.save(); return { ok: true, win: false }; }
     if (floor > this.state.tower.best) this.state.tower.best = floor;
+    var weekly = this.weeklyState();
+    weekly.towerFloors[String(floor)] = true;
     var reward = { crystals: 8 + floor * 2, gold: 30 + floor * 8, essence: 3 + Math.floor(floor / 2), element: ELEMENTS[floor % ELEMENTS.length] };
     this.state.crystals += reward.crystals;
     this.state.gold += reward.gold;
@@ -372,6 +379,38 @@
 
   /* ── 每日任務（依本地日期重置） ── */
   TacticalProgression.prototype.dailyQuests = function () { return DAILY_QUESTS.slice(); };
+  TacticalProgression.prototype.weekKey = function () {
+    var date = new Date(); date.setHours(0, 0, 0, 0);
+    date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
+    return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+  };
+  TacticalProgression.prototype.weeklyQuests = function () { return WEEKLY_QUESTS.slice(); };
+  TacticalProgression.prototype.weeklyState = function () {
+    var key = this.weekKey();
+    if (!this.state.weekly || this.state.weekly.key !== key) {
+      this.state.weekly = { key: key, towerFloors: {}, claims: {} };
+      this.save();
+    }
+    if (!this.state.weekly.towerFloors || typeof this.state.weekly.towerFloors !== 'object') this.state.weekly.towerFloors = {};
+    if (!this.state.weekly.claims || typeof this.state.weekly.claims !== 'object') this.state.weekly.claims = {};
+    return this.state.weekly;
+  };
+  TacticalProgression.prototype.weeklyProgress = function (quest) {
+    var weekly = this.weeklyState();
+    return quest.stat === 'towerFloors' ? Object.keys(weekly.towerFloors).length : 0;
+  };
+  TacticalProgression.prototype.claimWeekly = function (questId) {
+    var quest = WEEKLY_QUESTS.find(function (entry) { return entry.id === questId; }), weekly = this.weeklyState();
+    if (!quest || weekly.claims[questId]) return { ok: false, reason: '任務不存在或已領取' };
+    if (this.weeklyProgress(quest) < quest.target) return { ok: false, reason: '任務尚未完成' };
+    this.state.crystals += quest.reward.crystals || 0;
+    this.state.medals += quest.reward.medals || 0;
+    this.state.fusionCores += quest.reward.fusionCore || 0;
+    this.state.gold += quest.reward.gold || 0;
+    if (quest.reward.essence) ELEMENTS.forEach(function (element) { this.state.essences[element] += quest.reward.essence; }, this);
+    weekly.claims[questId] = true;
+    this.save(); return { ok: true, reward: quest.reward };
+  };
   TacticalProgression.prototype.dailyState = function () {
     var key = new Date().toISOString().slice(0, 10);
     if (!this.state.daily || this.state.daily.key !== key) {

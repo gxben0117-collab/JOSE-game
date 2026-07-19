@@ -22,9 +22,11 @@
 
   function round2(value) { return Math.round(value * 100) / 100; }
 
+  /* 前五章讓玩家熟悉角色、元素與劇情；第六章起才逐步要求養成與編隊配合。 */
+  var CHAPTER_BASE_POWER = [0.58, 0.66, 0.75, 0.85, 0.96, 1.12, 1.32, 1.55, 1.82, 2.14];
   var stages = [];
   chapters.forEach(function (chapter, chapterIndex) {
-    var base = 0.42 + chapterIndex * 0.47;
+    var base = CHAPTER_BASE_POWER[chapterIndex];
     for (var index = 1; index <= 10; index++) {
       var elite = index >= 9;
       stages.push({
@@ -32,7 +34,7 @@
         order: chapterIndex * 11 + index,
         name: chapter.name + '・' + STAGE_NAMES[index - 1],
         difficulty: elite ? '精英' : '普通', elite: elite,
-        power: round2(base * (1 + (index - 1) * 0.03)),
+        power: round2(base * (1 + (index - 1) * 0.022)),
         enemies: chapter.minions, enemyCount: Math.min(28, 10 + chapterIndex + Math.floor(index / 3)),
         seed: chapterIndex * 53 + index * 17 + 7,
         objective: index % 3 === 0 ? '在 ' + (18 + chapterIndex + Math.ceil(index / 2)) + ' 回合內獲勝' : index % 3 === 1 ? '殲滅所有魔物小隊' : '至少保留半數幻獸',
@@ -44,7 +46,7 @@
       id: chapter.id + '-boss', mapId: chapter.id, chapter: chapterIndex + 1, index: 11,
       order: chapterIndex * 11 + 11, boss: true,
       name: chapter.name + '・魔王 ' + BOSS_NAMES[chapter.boss],
-      difficulty: '首領', power: round2(base * 1.34),
+      difficulty: '首領', power: round2(base * 1.22),
       enemies: [chapter.boss].concat(chapter.minions), enemyCount: Math.min(30, 14 + chapterIndex),
       seed: chapterIndex * 53 + 199,
       objective: '擊敗 ' + BOSS_NAMES[chapter.boss] + '，開啟下一章',
@@ -56,7 +58,7 @@
         id: chapter.id + '-h' + hard, mapId: chapter.id, chapter: chapterIndex + 1, index: 11 + hard,
         order: 900 + chapterIndex * 10 + hard, hard: true, elite: true,
         name: chapter.name + '・HARD ' + HARD_NAMES[hard - 1],
-        difficulty: 'HARD', power: round2(base * 1.34 * (1.04 + hard * 0.05)),
+        difficulty: 'HARD', power: round2(base * 1.22 * (1.04 + hard * 0.04)),
         enemies: chapter.minions, enemyCount: Math.min(30, 16 + chapterIndex + hard * 2),
         seed: chapterIndex * 53 + hard * 29 + 401,
         objective: 'HARD 試煉：殲滅高強度魔物大軍',

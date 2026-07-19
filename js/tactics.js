@@ -225,9 +225,11 @@
     if (key === 'power') value *= 1 + bonusValue(unit, 'offense');
     if (key === 'magic') value *= 1 + bonusValue(unit, 'magic') + (bonuses(unit).offense || 0);
     if (key === 'defense') value *= 1 + bonusValue(unit, 'defense');
+    if (unit.team === 'enemy' && currentStage.tower && (key === 'power' || key === 'magic')) value *= 1 + towerBuffStack('frenzy') * 0.08;
+    if (unit.team === 'enemy' && currentStage.tower && key === 'speed') value += towerBuffStack('swift');
     return value * (unit.team === 'enemy' ? state.enemyScale : 1);
   }
-  function moveRange(unit) { return unit.p.move + (bonuses(unit).move || 0) + (unit.p.element === 'ocean' && terrain(unit.x, unit.y) === 'water' ? 1 : 0); }
+  function moveRange(unit) { return unit.p.move + (bonuses(unit).move || 0) + (unit.team === 'enemy' && currentStage.tower ? towerBuffStack('swift') : 0) + (unit.p.element === 'ocean' && terrain(unit.x, unit.y) === 'water' ? 1 : 0); }
   function skillRange(unit, skill) { return skill.range + (skill.attackStyle === 'support' ? (bonuses(unit).supportRange || 0) : (bonuses(unit).range || 0)); }
   function portraitStage(id) { return Math.max(1, Math.min(3, Number(progress.evolution[id]) || 1)); }
   function isControlSkill(skill) { return Boolean(skill.status || skill.push || skill.pull); }
@@ -248,6 +250,11 @@
       cooldowns: pet.skills.map(function () { return 0; }), shield: 0, burn: 0, poison: 0, freeze: 0, atkBuff: 0, boss: Boolean(pet.boss) };
     unit.maxHp = Math.round(pet.stats.health * evolutionMultiplier(unit) * starMultiplier(unit) * (1 + bonusValue(unit, 'health')) * (team === 'enemy' ? state.enemyScale * (unit.boss ? 1.1 : 1) : 1));
     unit.hp = unit.maxHp;
+    if (team === 'enemy' && currentStage.tower) {
+      unit.maxHp = Math.round(unit.maxHp * (1 + towerBuffStack('fortified') * 0.12));
+      unit.hp = unit.maxHp;
+      if (towerBuffStack('barrier')) unit.shield = Math.round(unit.maxHp * 0.08 * towerBuffStack('barrier'));
+    }
     return unit;
   }
 
@@ -357,12 +364,13 @@
   function balancedEnemyRoster(stage, partyCost) {
     var base = (content.rosterFor ? content.rosterFor(stage) : stage.enemies).slice();
     var originalCount = base.length;
-    var added = Math.max(0, Math.round((partyCost - 8) * 0.9));
+    var earlyChapter = !stage.tower && Number(stage.chapter) <= 5;
+    var added = Math.max(0, Math.round((partyCost - 10) * (earlyChapter ? 0.35 : 0.6)));
     var target = Math.min(30, base.length + added), pool = base.filter(function (id) { return !(profile(id) || {}).boss; });
     if (!pool.length) pool = base.slice();
     for (var index = base.length; index < target; index++) base.push(pool[(index + (stage.seed || 0)) % pool.length]);
-    var scale = 1 + Math.max(0, partyCost - 8) * 0.015;
-    var minimumScale = 0.42 + Math.max(0, partyCost - 4) * 0.05;
+    var scale = 1 + Math.max(0, partyCost - 10) * (earlyChapter ? 0.008 : 0.012);
+    var minimumScale = (earlyChapter ? 0.48 : 0.62) + Math.max(0, partyCost - 8) * (earlyChapter ? 0.025 : 0.035);
     return { roster: base, added: Math.max(0, target - originalCount), scale: scale, minimumScale: minimumScale, label: partyCost >= 23 ? '滿編迎擊' : partyCost >= 16 ? '增援迎擊' : partyCost >= 9 ? '警戒迎擊' : '標準迎擊' };
   }
 
@@ -406,6 +414,18 @@
   }
 
   /* 無限塔：10 波守護塔生存戰。 */
+  function towerBasePower(floor) { return Math.round((0.62 + Math.min(floor, 20) * 0.025 + Math.max(0, floor - 20) * 0.015) * 100) / 100; }
+  function towerEnemyBuffs(floor) {
+    var cycle = ['fortified', 'frenzy', 'swift', 'barrier'], buffs = {}, tiers = Math.floor(Math.max(0, floor - 1) / 5);
+    for (var index = 0; index < tiers; index++) buffs[cycle[index % cycle.length]] = (buffs[cycle[index % cycle.length]] || 0) + 1;
+    return buffs;
+  }
+  function towerBuffStack(id) { return currentStage && currentStage.tower && state && state.tower ? (state.tower.enemyBuffs[id] || 0) : 0; }
+  function towerBuffSummary() {
+    var labels = { fortified: '🛡 堅甲', frenzy: '⚔ 狂暴', swift: '⚡ 迅捷', barrier: '✦ 護幕' }, buffs = state.tower.enemyBuffs;
+    var text = Object.keys(buffs).map(function (id) { return labels[id] + '×' + buffs[id]; });
+    return text.length ? text.join(' ') : '無（第 6 層開始）';
+  }
   function towerStageFor(floor) {
     var chapter = content.maps[(floor - 1) % content.maps.length];
     /* 無限塔是跨界戰場：一般波可遇到所有幻獸與非首領魔獸；第 5、10 波由所有魔獸首領輪替壓陣。 */
@@ -414,9 +434,9 @@
     return {
       id: 'tower-' + floor, tower: true, floor: floor, mapId: chapter.id, chapter: 0, index: floor, order: 0,
       name: '無限塔・第 ' + floor + ' 層', difficulty: '守護塔防衛', boss: false,
-      power: Math.round((0.3 + floor * 0.16) * 100) / 100,
+      power: towerBasePower(floor),
       enemies: towerUnits, towerBosses: towerBosses,
-      enemyCount: Math.min(30, 8 + floor), seed: floor * 97 + 13,
+      enemyCount: Math.min(30, 8 + Math.floor(floor * 0.45)), seed: floor * 97 + 13,
       objective: '守住守護塔，抵擋 10 波魔物進攻', turnLimit: 30,
       rewards: { medals: 0, essence: 0, fusionCore: 0 }
     };
@@ -437,7 +457,7 @@
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
     state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, commandOpen: false, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
-      enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {}, tower: currentStage.tower ? { wave: 0, maxWaves: 10, commandUsed: false, awaitingChoice: false, attackBonus: 0, healBonus: 0, reviveRemaining: {}, reviveLastTick: 0, autoEnabled: false, boons: [] } : null };
+      enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {}, tower: currentStage.tower ? { wave: 0, maxWaves: 10, commandUsed: false, awaitingChoice: false, attackBonus: 0, healBonus: 0, reviveRemaining: {}, reviveLastTick: 0, autoEnabled: false, boons: [], enemyBuffs: towerEnemyBuffs(currentStage.floor) } : null };
     state.obstacles = currentStage.tower ? [] : (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
     clearDeploymentObstacles();
@@ -586,7 +606,7 @@
     enemyFormation(towerWaveRoster(wave)).forEach(function (spot, index) { var unit = clone(spot.id, 'enemy', spot.x, spot.y, index); unit.squad = 0; state.units.push(unit); });
     state.tower.wave = wave; state.tower.commandUsed = false; state.phase = 'player';
     towerUnits().filter(function (unit) { return unit.hp > 0; }).forEach(function (unit) { unit.moved = false; unit.acted = false; });
-    note('第 ' + wave + '／10 波來襲！守護塔受到攻擊即為失敗條件。'); render(); phaseBanner('🛡 第 ' + wave + ' 波｜守護塔防衛', 'player');
+    note('第 ' + wave + '／10 波來襲！敵軍 Buff：' + towerBuffSummary() + '。守護塔受到攻擊即為失敗條件。'); render(); phaseBanner('🛡 第 ' + wave + ' 波｜守護塔防衛', 'player');
     if (state.tower.autoEnabled && !autoTimer) startAuto();
   }
 
@@ -1170,7 +1190,7 @@
     var livingEnemies = enemies.filter(function (unit) { return unit.hp > 0; });
     dom.battleAllyCount.textContent = livingAllies.length + ' / ' + allies.length;
     dom.battleEnemyCount.textContent = livingEnemies.length + ' / ' + enemies.length;
-    dom.battleObjective.textContent = currentStage.tower ? '目標｜守護塔 ' + state.units.find(function (unit) { return unit.guardian; }).hp + ' / ' + state.units.find(function (unit) { return unit.guardian; }).maxHp + '｜第 ' + state.tower.wave + '／10 波' : '目標｜' + currentStage.objective + '｜' + state.balance.label + '（' + state.partyCost + '/25）';
+    dom.battleObjective.textContent = currentStage.tower ? '目標｜守護塔 ' + state.units.find(function (unit) { return unit.guardian; }).hp + ' / ' + state.units.find(function (unit) { return unit.guardian; }).maxHp + '｜第 ' + state.tower.wave + '／10 波｜敵軍 Buff：' + towerBuffSummary() : '目標｜' + currentStage.objective + '｜' + state.balance.label + '（' + state.partyCost + '/25）';
     var trait = traitFor('ally');
     dom.battleTeamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>';
     dom.battleAllyList.innerHTML = '';
@@ -2028,6 +2048,17 @@
       card.innerHTML = '<div><b>' + quest.name + '</b><small>' + quest.description + '｜' + Math.min(value, quest.target) + '/' + quest.target + '｜獎勵 ' + rewardText + '</small><div class="quest-progress"><i style="width:' + Math.min(100, value / quest.target * 100) + '%"></i></div></div><button ' + (!ready || claimed ? 'disabled' : '') + '>' + (claimed ? '已領取' : ready ? '領取' : '進行中') + '</button>';
       card.querySelector('button').onclick = function () { var result = progression.claimDaily(quest.id); if (!result.ok) { note(result.reason); return; } audio.play('unlock'); renderProgress(); renderDaily(); note('每日任務獎勵已領取。'); };
       list.appendChild(card);
+    });
+    var weeklyList = document.getElementById('weekly-list'), weekly = progression.weeklyState();
+    document.getElementById('weekly-reset-copy').textContent = '本週週期：' + weekly.key + '（週一 00:00 重置）。不同樓層各計一次，重複挑戰不會重複累積。';
+    weeklyList.innerHTML = '';
+    progression.weeklyQuests().forEach(function (quest) {
+      var value = progression.weeklyProgress(quest), claimed = Boolean(weekly.claims[quest.id]), ready = value >= quest.target;
+      var rewardText = (quest.reward.crystals ? quest.reward.crystals + '💎 ' : '') + (quest.reward.gold ? quest.reward.gold + '🪙 ' : '') + (quest.reward.medals ? quest.reward.medals + '🏅 ' : '') + (quest.reward.fusionCore ? quest.reward.fusionCore + '🧬 ' : '') + (quest.reward.essence ? '五系各 ' + quest.reward.essence + '🔷' : '');
+      var card = document.createElement('article'); card.className = 'quest-card';
+      card.innerHTML = '<div><b>🗼 ' + quest.name + '</b><small>' + quest.description + '｜' + Math.min(value, quest.target) + '/' + quest.target + '｜獎勵 ' + rewardText + '</small><div class="quest-progress"><i style="width:' + Math.min(100, value / quest.target * 100) + '%"></i></div></div><button ' + (!ready || claimed ? 'disabled' : '') + '>' + (claimed ? '已領取' : ready ? '領取豐富獎勵' : '進行中') + '</button>';
+      card.querySelector('button').onclick = function () { var result = progression.claimWeekly(quest.id); if (!result.ok) { note(result.reason); return; } audio.play('unlock'); renderProgress(); renderDaily(); note('每週無限塔獎勵已領取。'); };
+      weeklyList.appendChild(card);
     });
   }
   function confirmDeploy() {
