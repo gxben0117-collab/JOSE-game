@@ -430,13 +430,14 @@
   function reset(stageId) {
     stopAuto();
     stopTowerChoiceTimer();
+    stopTowerReviveTimer();
     if (stageId && typeof stageId === 'object') currentStage = stageId;
     else if (stageId) currentStage = content.stageById(stageId);
     if (!currentStage.tower) { progress.currentStage = currentStage.id; progression.save(); }
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
     state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, commandOpen: false, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
-      enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {}, tower: currentStage.tower ? { wave: 0, maxWaves: 10, commandUsed: false, awaitingChoice: false, attackBonus: 0, healBonus: 0, reviveAt: {}, autoEnabled: false, boons: [] } : null };
+      enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {}, tower: currentStage.tower ? { wave: 0, maxWaves: 10, commandUsed: false, awaitingChoice: false, attackBonus: 0, healBonus: 0, reviveRemaining: {}, reviveLastTick: 0, autoEnabled: false, boons: [] } : null };
     state.obstacles = currentStage.tower ? [] : (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
     clearDeploymentObstacles();
@@ -1101,7 +1102,7 @@
         note(state.threatKey ? unitName(unit) + ' 的威脅範圍：橘色＝可移動、紅色＝射程涵蓋。再點一次取消。' : '已關閉威脅範圍顯示。');
         render(); return;
       }
-      if (unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = true; clearForecast(); note('已選擇 ' + unitName(unit) + '，請從中央指令面板選擇移動或技能。'); render(); }
+      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = true; clearForecast(); note('已選擇 ' + unitName(unit) + '，請從中央指令面板選擇移動或技能。'); render(); }
     }); return element;
   }
 
@@ -1128,7 +1129,17 @@
     dom.banner.textContent = state.over ? '戰鬥結束' : state.phase === 'tower-choice' ? '波間整備' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波｜' + (state.phase === 'player' ? '我方 AI 防守' : '魔物進攻') : state.phase === 'deploy' ? '部署階段' : '第 ' + state.round + ' 回合｜' + (state.phase === 'player' ? '我方行動' : '敵方行動');
     dom.roundStatus.textContent = state.over ? '結算完成' : state.phase === 'tower-choice' ? '選擇加護' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波' : state.phase === 'deploy' ? '自由部署' : state.phase === 'player' ? '我方回合' : '敵方回合';
     dom.endTurn.textContent = state.phase === 'deploy' ? '⚔️ 開始戰鬥' : '結束本回合';
+    dom.endTurn.hidden = Boolean(currentStage.tower);
     dom.endTurn.disabled = state.over || state.animating || (state.phase !== 'player' && state.phase !== 'deploy');
+    if (currentStage.tower) {
+      dom.auto.disabled = true;
+      dom.auto.classList.add('active');
+      dom.auto.textContent = state.phase === 'tower-choice' ? '🤖 守護 AI・整備中' : '🤖 守護 AI・啟動中';
+      dom.auto.setAttribute('aria-label', '守護 AI 已固定啟動');
+    } else {
+      dom.auto.disabled = false;
+      dom.auto.removeAttribute('aria-label');
+    }
   }
 
   function renderBossBar() {
@@ -1171,7 +1182,7 @@
       card.setAttribute('aria-label', unit.p.name + (unit.hp <= 0 && currentStage.tower ? '，復活倒數 ' + reviveCountdown(unit) + ' 秒' : '，生命 ' + unit.hp + ' / ' + unit.maxHp) + '，點擊置中');
       card.onclick = function () {
         if (cameraSuppressed() || unit.hp <= 0) return;
-        if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = state.phase === 'player'; render(); }
+        if (!currentStage.tower && (state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = state.phase === 'player'; render(); }
         focusUnit(unit, false);
       };
       dom.battleAllyList.appendChild(card);
@@ -1404,13 +1415,14 @@
   }
   function toggleAuto() {
     audio.unlock();
+    if (currentStage.tower) return;
     if (autoTimer) { stopAuto(false); render(); return; }
-    if (currentStage.tower && state && state.tower) state.tower.autoEnabled = true;
     startAuto(); note('AUTO 啟動：AI 會評估走位、視線、集火與控場時機。');
   }
   function cycleSpeed() { var speeds = [1, 1.5, 2], index = speeds.indexOf(battleSpeed); battleSpeed = speeds[(index + 1) % speeds.length]; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed); dom.speed.textContent = '⚡ ' + battleSpeed + '×'; if (autoTimer) scheduleAuto(); audio.play('ui'); }
 
   async function endTurn() {
+    if (currentStage.tower) return;
     if (state.phase === 'deploy') { await startBattle(); return; }
     if (state.phase !== 'player' || state.over || state.animating) return;
     clearForecast(); state.threatKey = null;
@@ -1490,31 +1502,36 @@
   }
   var TOWER_REVIVE_MS = 12000;
   function queueTowerRevival(unit) {
-    if (!currentStage.tower || !state.tower || !unit || unit.hp > 0 || state.tower.reviveAt[unit.key]) return;
-    state.tower.reviveAt[unit.key] = Date.now() + TOWER_REVIVE_MS;
+    if (!currentStage.tower || !state.tower || !unit || unit.hp > 0 || Object.prototype.hasOwnProperty.call(state.tower.reviveRemaining, unit.key)) return;
+    state.tower.reviveRemaining[unit.key] = TOWER_REVIVE_MS;
+    state.tower.reviveLastTick = Date.now();
     ensureTowerReviveTimer();
   }
   function reviveCountdown(unit) {
-    var reviveAt = state && state.tower && state.tower.reviveAt[unit.key];
-    return reviveAt ? Math.max(0, Math.ceil((reviveAt - Date.now()) / 1000)) : 0;
+    var remaining = state && state.tower && state.tower.reviveRemaining[unit.key];
+    return typeof remaining === 'number' ? Math.max(0, Math.ceil(remaining / 1000)) : 0;
   }
   function reviveTowerUnit(unit) {
     unit.hp = Math.round(unit.maxHp * 0.38); unit.shield = Math.round(unit.maxHp * 0.08);
     unit.burn = 0; unit.poison = 0; unit.freeze = 0; unit.defeating = false; unit.acted = false;
-    delete state.tower.reviveAt[unit.key]; statusLabel(unit, '✦ 塔之復甦');
+    delete state.tower.reviveRemaining[unit.key]; statusLabel(unit, '✦ 塔之復甦');
   }
   function processTowerRevives() {
-    if (!state || !state.tower || state.over) return;
+    if (!state || !state.tower || state.over || state.phase === 'tower-choice') return;
+    var now = Date.now(), previousTick = state.tower.reviveLastTick || now;
+    var elapsed = Math.max(0, now - previousTick) * battleSpeed;
+    state.tower.reviveLastTick = now;
     var changed = false;
     towerUnits().filter(function (unit) { return unit.hp <= 0; }).forEach(function (unit) {
-      queueTowerRevival(unit);
-      if (reviveCountdown(unit) <= 0 && state.tower.reviveAt[unit.key]) { reviveTowerUnit(unit); changed = true; }
+      if (!Object.prototype.hasOwnProperty.call(state.tower.reviveRemaining, unit.key)) { queueTowerRevival(unit); return; }
+      state.tower.reviveRemaining[unit.key] = Math.max(0, state.tower.reviveRemaining[unit.key] - elapsed);
+      if (state.tower.reviveRemaining[unit.key] <= 0) { reviveTowerUnit(unit); changed = true; }
     });
     if (changed) { note('守護塔完成靈魂修復：倒下的幻獸已重返戰場。'); render(); }
   }
   function ensureTowerReviveTimer() {
     if (towerReviveTick) return;
-    towerReviveTick = setInterval(function () { processTowerRevives(); if (!state || !state.tower || state.over || !Object.keys(state.tower.reviveAt).length) stopTowerReviveTimer(); else renderBattleSides(); }, 250);
+    towerReviveTick = setInterval(function () { processTowerRevives(); if (!state || !state.tower || state.over || !Object.keys(state.tower.reviveRemaining).length) stopTowerReviveTimer(); else renderBattleSides(); }, 250);
   }
   function stopTowerReviveTimer() { if (towerReviveTick) clearInterval(towerReviveTick); towerReviveTick = null; }
   function completeTowerWave() {
@@ -1679,7 +1696,7 @@
   function renderBattleCommand() {
     if (!dom.battleCommand) return;
     var unit = selected();
-    var visible = Boolean(unit && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !autoTimer && state.commandOpen);
+    var visible = Boolean(!currentStage.tower && unit && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !autoTimer && state.commandOpen);
     dom.battleCommand.hidden = !visible;
     if (!visible) return;
     dom.battleCommandPortrait.style.backgroundImage = "url('" + portrait(unit) + "')";
