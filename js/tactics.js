@@ -1150,8 +1150,11 @@
     }
     return score;
   }
-  function planFor(unit, targetTeam) {
-    var opponents = alive(targetTeam), friends = alive(unit.team), tiles = reachableTiles(unit), best = null;
+  function planFor(unit) {
+    /* 目標陣營由施放者本身推導，不能由呼叫端傳入。
+       這樣 AUTO 的選目標階段永遠不會把同陣營單位列入攻擊候選。 */
+    var opponents = state.units.filter(function (entry) { return entry.hp > 0 && entry.team !== unit.team; });
+    var friends = alive(unit.team), tiles = reachableTiles(unit), best = null;
     if (unit.moved) tiles = [{ x: unit.x, y: unit.y, steps: 0 }];
     tiles.forEach(function (tile) {
       var positionScore = tilePositionScore(unit, tile, opponents);
@@ -1171,6 +1174,8 @@
           return;
         }
         opponents.forEach(function (target) {
+          /* 防禦性保護：即使日後候選清單變更，攻擊技能也不評估友軍。 */
+          if (target.team === unit.team) return;
           if (distance(virtual, target) > skillRange(unit, skill)) return;
           if (!hasSight(virtual, target, skill, tile.x, tile.y)) return;
           var expected = estimateDamage(unit, target, skill, tile.x, tile.y), score = positionScore + expected / Math.max(1, target.maxHp) * 55;
@@ -1212,13 +1217,13 @@
     if (!unit) { await endTurn(); scheduleAuto(); return; }
     if (unit.freeze > 0) { unit.moved = true; unit.acted = true; note(unitName(unit) + ' 被冰凍，無法行動。'); render(); scheduleAuto(); return; }
     state.selected = unit.key;
-    var plan = planFor(unit, 'enemy');
+    var plan = planFor(unit);
     if (plan) await executePlan(unit, plan);
     else if (!unit.moved && unit.hp < unit.maxHp * 0.4 && nearestHealer(unit) && distance(unit, closest(unit, alive('enemy')) || unit) > 2) {
       /* 殘血且未接戰：撤向治療者等待救援。 */
       await advanceToward(unit, nearestHealer(unit)); unit.acted = true; note(unitName(unit) + ' 撤向後方尋求治療。'); render();
     }
-    else if (!unit.moved && alive('enemy').length) { await advanceToward(unit, closest(unit, alive('enemy'))); var retry = planFor(unit, 'enemy'); if (retry) await executePlan(unit, retry); else { unit.acted = true; render(); } }
+    else if (!unit.moved && alive('enemy').length) { await advanceToward(unit, closest(unit, alive('enemy'))); var retry = planFor(unit); if (retry) await executePlan(unit, retry); else { unit.acted = true; render(); } }
     else { unit.acted = true; note(unitName(unit) + ' 沒有可用目標，結束本次行動。'); render(); }
     scheduleAuto();
   }
@@ -1254,9 +1259,9 @@
       var targets = alive('ally'); if (!targets.length) break;
       if (!squadActive(enemy, targets)) continue; /* 未進入警戒圈：駐守 */
       if (enemy.freeze > 0) { enemy.freeze--; note(unitName(enemy) + ' 被冰凍，無法行動。'); statusLabel(enemy, '❄ 冰凍中'); render(); await pause(240); continue; }
-      var plan = planFor(enemy, 'ally');
+      var plan = planFor(enemy);
       if (plan) await executePlan(enemy, plan);
-      else if (!enemy.moved) { await advanceToward(enemy, closest(enemy, targets)); var retry = planFor(enemy, 'ally'); if (retry) await executePlan(enemy, retry); else { enemy.acted = true; note(unitName(enemy) + ' 逼近我方陣線。'); render(); await pause(100); } }
+      else if (!enemy.moved) { await advanceToward(enemy, closest(enemy, targets)); var retry = planFor(enemy); if (retry) await executePlan(enemy, retry); else { enemy.acted = true; note(unitName(enemy) + ' 逼近我方陣線。'); render(); await pause(100); } }
       else { enemy.acted = true; note(unitName(enemy) + ' 無法接近目標。'); render(); await pause(100); }
     }
     if (!state.over) {
