@@ -1258,6 +1258,9 @@
       var enemy = enemies[index]; if (enemy.hp <= 0 || state.over) break;
       var targets = alive('ally'); if (!targets.length) break;
       if (!squadActive(enemy, targets)) continue; /* 未進入警戒圈：駐守 */
+      /* 敵方施法時必須將畫面焦點交給真正的施放者，避免保留上一隻我方
+         幻獸的選取光圈，造成「我方在攻擊自己」的錯覺。 */
+      state.selected = enemy.key; state.commandOpen = false; clearForecast(); render();
       if (enemy.freeze > 0) { enemy.freeze--; note(unitName(enemy) + ' 被冰凍，無法行動。'); statusLabel(enemy, '❄ 冰凍中'); render(); await pause(240); continue; }
       var plan = planFor(enemy);
       if (plan) await executePlan(enemy, plan);
@@ -1265,7 +1268,7 @@
       else { enemy.acted = true; note(unitName(enemy) + ' 無法接近目標。'); render(); await pause(100); }
     }
     if (!state.over) {
-      state.phase = 'player'; state.round++;
+      state.phase = 'player'; state.selected = null; state.round++;
       alive('ally').concat(alive('enemy')).forEach(function (unit) {
         unit.moved = false; unit.acted = false; unit.cooldowns = unit.cooldowns.map(function (cooldown) { return Math.max(0, cooldown - 1); });
         if (unit.team === 'ally' && unit.freeze > 0) { unit.moved = true; unit.acted = true; unit.freeze--; }
