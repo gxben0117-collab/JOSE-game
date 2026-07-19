@@ -554,6 +554,8 @@
 
   function damage(attacker, target, skill, options) {
     options = options || {};
+    /* 最後一道友軍傷害保護：任何呼叫端都不能讓同陣營單位扣血。 */
+    if (!attacker || !target || attacker.team === target.team) return { amount: 0, absorbed: 0, crit: false };
     var magic = skill.attackStyle === 'ranged' || skill.attackStyle === 'area';
     var raw = (magic ? stat(attacker, 'magic') : stat(attacker, 'power')) * combatMultiplier(attacker) * terrainAttackMultiplier(attacker) * (skill.multiplier || 1.05);
     raw *= elementalMultiplier(attacker, target);
@@ -733,7 +735,7 @@
 
   /* 位移：擊退沿施術者→目標方向推移；拉扯反向。撞到牆、障礙或單位時，剩餘每格轉為碰撞傷害。 */
   async function displace(caster, target, skill) {
-    var tiles = skill.push || skill.pull; if (!tiles || target.hp <= 0 || target.boss || unitSize(target) > 1) return;
+    var tiles = skill.push || skill.pull; if (!tiles || caster.team === target.team || target.hp <= 0 || target.boss || unitSize(target) > 1) return;
     var dx = target.x - caster.x, dy = target.y - caster.y;
     var stepX = Math.abs(dx) >= Math.abs(dy) ? Math.sign(dx) || 1 : 0, stepY = stepX ? 0 : Math.sign(dy) || 1;
     if (skill.pull) { stepX = -stepX; stepY = -stepY; }
