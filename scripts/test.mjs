@@ -29,6 +29,11 @@ test('動畫播放器支援每個動作 1～12 幀並安全限制設定', () => 
 
 test('資料庫包含 115 隻幻獸（45 原生 + 20 光暗 + 50 素材包）', () => { assert.equal(pets.length, 115); assert.equal(pets.filter(pet => pet.element === 'light').length, 20); assert.equal(pets.filter(pet => pet.element === 'dark').length, 20); });
 test('戰棋資料與主資料數量一致', () => assert.equal(tactical.length, pets.length));
+test('每隻幻獸都有專屬且不重複的水晶召喚台詞', () => {
+  const quotes = tactical.map(pet => pet.summonQuote);
+  assert.equal(quotes.length, 115); assert.ok(quotes.every(quote => typeof quote === 'string' && quote.length >= 12));
+  assert.equal(new Set(quotes).size, quotes.length);
+});
 test('每隻戰棋幻獸皆有三段進化', () => assert.ok(tactical.every(pet => pet.evolution?.length === 3)));
 test('每隻戰棋幻獸皆有可用技能與正數數值', () => assert.ok(tactical.every(pet => pet.skills?.length && Object.values(pet.stats).every(value => value > 0))));
 test('敵我所有戰棋單位皆以無冷卻傷害普攻作為第一技能', () => assert.ok(profiles.every(pet => pet.skills[0]?.kind === 'basic' && pet.skills[0].attackStyle !== 'support' && pet.skills[0].cooldown === 0 && pet.skills[0].multiplier > 0)));
@@ -406,7 +411,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /js\/tactics\.js\?v=34/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=7/); assert.match(html, /js\/tactics\.js\?v=34/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
 });

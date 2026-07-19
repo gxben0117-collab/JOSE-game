@@ -1609,11 +1609,13 @@
     var entry = gachaCeremony.results[gachaCeremony.index];
     if (!entry) { finishGachaCeremony(); return; }
     var quality = entry.pet.rarity || entry.pet.quality || 'normal';
+    var quote = entry.pet.summonQuote || GACHA_QUOTES[quality];
+    if (!entry.isNew) quote = '吾主，再次相逢。' + quote.replace(/^吾主，?/, '');
     var card = document.getElementById('gacha-reveal-card');
     card.className = 'gacha-reveal-card quality-' + quality + (entry.isNew ? ' fresh' : '');
     card.innerHTML = '<span class="gacha-reveal-art" style="background-image:url(\'' + entry.pet.evolution[0].portrait + '\')"></span>' +
       '<div class="gacha-reveal-copy"><small>' + GACHA_QUALITY_LABELS[quality] + '幻獸' + (entry.isNew ? ' ・ 初次契約' : ' ・ 靈魂共鳴') + '</small>' +
-      '<h2>' + entry.pet.name + '</h2><p>「' + (entry.isNew ? GACHA_QUOTES[quality] : '吾主，再次相逢。我的力量仍為您效命。') + '」</p></div>';
+      '<h2>' + entry.pet.name + '</h2><p>「' + quote + '」</p></div>';
     document.getElementById('gacha-reveal-progress').textContent = '第 ' + (gachaCeremony.index + 1) + '／' + gachaCeremony.results.length + ' 張';
     window.requestAnimationFrame(function () { card.classList.add('is-revealed'); });
     clearTimeout(gachaCeremony.timer);
