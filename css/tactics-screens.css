@@ -15,10 +15,6 @@
 .terrain-rules li span b{color:#ffd9a0}
 
 /* 戰鬥頁棋盤下方的地形效果速覽 */
-.board-legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px;padding:8px 12px;border-radius:9px;background:#0e172bcc;border:1px solid #2c4168;color:#9db3d9;font-size:.72rem;line-height:1.5}
-.board-legend span{white-space:nowrap}
-.terrain-toggle{padding:3px 9px;border:1px solid #5573a9;border-radius:999px;background:#17233d;color:#dbe8ff;font:inherit;font-weight:800;cursor:pointer;white-space:nowrap}
-.terrain-toggle[aria-pressed="true"]{border-color:#76c892;background:#173225;color:#caffd8;box-shadow:0 0 0 1px #76c844}
 .deploy-help b,#deploy-help b{color:#ffe29a}.deploy-card.over-capacity:not(.selected){filter:grayscale(.75);opacity:.48}.deploy-card.over-capacity:not(.selected)::after{content:'容量不足';color:#ff9c91;font-size:.62rem;font-weight:900}
 .boss-tier-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:12px}.boss-tier{min-height:86px;padding:8px;border:1px solid #654831;border-radius:6px;background:#211616}.boss-tier b,.boss-tier small,.boss-tier em{display:block}.boss-tier b{color:#ffe1a0;font-size:.78rem}.boss-tier small{min-height:2.5em;margin-top:5px;color:#c9ae8d;font-size:.62rem;line-height:1.3}.boss-tier em{margin-top:4px;color:#f6cf78;font-size:.6rem;font-style:normal;line-height:1.35}.boss-tier.active{border-color:#ffd36a;background:linear-gradient(145deg,#58351e,#2a1a16);box-shadow:0 0 0 1px #ffd36a55,0 0 14px #e29a3c44}.boss-tier.cleared{border-color:#62b980;background:#1d3727}.boss-tier.cleared b{color:#aaf1c0}.boss-tier.locked{filter:grayscale(.8);opacity:.58}@media(max-width:650px){.boss-tier-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.boss-tier:last-child{grid-column:1/-1}}
 .gacha-featured{grid-column:1/-1;display:grid;grid-template-columns:66px minmax(0,1fr) auto;align-items:center;gap:10px;padding:9px 11px;border:1px solid #e5bb61;border-radius:9px;background:linear-gradient(105deg,#44321a,#1e263f 58%,#34261a);box-shadow:inset 0 0 18px #ffd76b20}.gacha-featured-art{width:62px;height:62px;background:center/contain no-repeat;filter:drop-shadow(0 3px 4px #000)}.gacha-featured b,.gacha-featured small{display:block}.gacha-featured b{color:#fff0ae}.gacha-featured small{margin-top:4px;color:#c6d6f1;font-size:.72rem}.gacha-featured-actions{display:flex;gap:6px}.gacha-featured-actions button{min-height:38px;padding:6px 9px;border-color:#c99a48;background:#3a2b1b;color:#fff0bd;font-size:.75rem;font-weight:800}.featured-guaranteed{border-color:#ffe170!important;box-shadow:0 0 16px #ffd85288}@media(max-width:650px){.gacha-featured{grid-template-columns:52px 1fr}.gacha-featured-art{width:48px;height:48px}.gacha-featured-actions{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}.gacha-featured-actions button{min-height:42px}}
@@ -52,7 +48,7 @@
 .battle-topbar .round-status{white-space:nowrap;flex:0 0 auto}
 .boss-bar[hidden],.battle-hud[hidden]{display:none!important}
 .battle-stage-label{color:#ffd9a0;font-size:1rem;letter-spacing:.08em;text-align:center;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.battle-main{display:grid;grid-template-columns:190px minmax(0,1fr) 292px;gap:10px;align-items:start;flex:0 0 auto;width:100%;max-width:1800px;margin:0 auto;padding:9px;border:1px solid #93613b;border-radius:5px;background:linear-gradient(145deg,#2b1916,#140e10);box-shadow:0 18px 54px #000b,0 0 0 2px #42271d inset}
+.battle-main{display:grid;grid-template-columns:160px minmax(0,1fr) 242px;gap:8px;align-items:start;flex:0 0 auto;width:100%;max-width:1800px;margin:0 auto;padding:7px;border:1px solid #93613b;border-radius:5px;background:linear-gradient(145deg,#2b1916,#140e10);box-shadow:0 18px 54px #000b,0 0 0 2px #42271d inset}
 .screen-battle .board-wrap{min-width:0;padding:7px;border:1px solid #7f5335;border-radius:3px;background:#120c0d;box-shadow:0 0 0 1px #1b100d inset!important}
 .screen-battle .board{margin-inline:auto}
 .battle-ally-panel{position:sticky;top:10px;display:flex;flex-direction:column;gap:9px;max-height:calc(100vh - 92px);overflow:hidden;padding:10px;border:1px solid #775036;border-radius:4px;background:linear-gradient(160deg,#2d1d19,#171113);box-shadow:3px 4px 0 #0e090a}
@@ -90,7 +86,7 @@
 /* iPad 橫向：戰場是主角。資訊欄保留可操作的最低寬度，將可用空間優先交給 21×10 棋盤。 */
 @media (min-width:981px) and (max-width:1180px){
   .screen-battle{padding-inline:7px}
-  .battle-main{grid-template-columns:150px minmax(0,1fr) 220px;gap:7px;padding:6px}
+  .battle-main{grid-template-columns:132px minmax(0,1fr) 190px;gap:6px;padding:5px}
   .battle-ally-panel,.battle-panel{gap:6px;padding:7px}
   .battle-roster-card{grid-template-columns:31px minmax(0,1fr);gap:4px;min-height:42px;padding:3px 4px}
   .battle-roster-card>i{width:29px;height:29px}

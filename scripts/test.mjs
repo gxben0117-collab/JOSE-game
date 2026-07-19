@@ -363,7 +363,7 @@ test('移動、地形顯示與打擊感採新版戰鬥演出', () => {
   const css = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
   assert.match(source, /function animateWaypoints/); assert.match(source, /piece\.animate\(keyframes/);
   assert.match(source, /function hitStop/); assert.match(source, /combatShake\(skill\.kind === 'ultimate'/);
-  assert.match(source, /jose-terrain-visibility/); assert.match(html, /id="terrain-toggle"/);
+  assert.match(source, /jose-terrain-visibility/); assert.match(html, /class="terrain-rules"/);
   assert.match(css, /\.board\.hitstop \*/); assert.match(css, /impact-shake-ultimate/); assert.match(css, /unit-death-sink/); assert.match(css, /opacity:\.25!important/);
 });
 test('行動裝置只在使用者互動後觸發震動', () => {
@@ -456,7 +456,7 @@ test('三畫面架構：準備、戰鬥、結算各自獨立', () => {
   assert.match(html, /id="screen-home"/); assert.match(html, /id="screen-battle"[^>]*hidden/); assert.match(html, /id="screen-result"[^>]*hidden/);
   assert.match(html, /id="enter-battle"/); assert.match(html, /id="battle-exit"/); assert.match(html, /id="result-home"/);
   assert.match(html, /tactics-screens\.css/);
-  assert.match(html, /class="terrain-rules"/); assert.match(html, /class="board-legend"/);
+  assert.match(html, /class="terrain-rules"/); assert.doesNotMatch(html, /class="board-legend"/);
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   assert.match(source, /function setView\(view\)/);
 });
@@ -491,7 +491,7 @@ test('戰鬥框架使用左方戰隊、中央棋盤、右方敵情與指令三�
   assert.match(html, /class="board-wrap"/); assert.match(html, /class="side-panel battle-panel"/);
   assert.match(html, /id="battle-enemy-count"/); assert.match(html, /id="battle-enemy-summary"/);
   assert.match(source, /function renderBattleSides/); assert.match(source, /renderBattleSides\(\)/);
-  assert.match(screens, /grid-template-columns:190px minmax\(0,1fr\) 292px/);
+  assert.match(screens, /grid-template-columns:160px minmax\(0,1fr\) 242px/);
   assert.match(screens, /\.battle-main\{[^}]*flex:0 0 auto/);
   assert.match(screens, /\.screen-battle \.board\{margin-inline:auto\}/);
   assert.match(screens, /@media \(max-width:980px\)[\s\S]*\.battle-ally-panel\{display:none\}/);
@@ -635,10 +635,10 @@ test('iPad 戰場維持 21×10 比例、中央棋盤優先且隊伍編輯可觸�
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
-  assert.match(html, /tactics-screens\.css\?v=29/);
+  assert.match(html, /tactics-screens\.css\?v=30/);
   assert.match(screens, /\.idle-arena \.unit \.portrait\{[^}]*height:100%[^}]*aspect-ratio:1 \/ 1/);
   assert.match(screens, /@media \(min-width:700px\) and \(max-width:980px\)[\s\S]*width:max\(720px,100%\)[\s\S]*aspect-ratio:21 \/ 10/);
-  assert.match(screens, /@media \(min-width:981px\) and \(max-width:1180px\)[\s\S]*grid-template-columns:150px minmax\(0,1fr\) 220px/);
+  assert.match(screens, /@media \(min-width:981px\) and \(max-width:1180px\)[\s\S]*grid-template-columns:132px minmax\(0,1fr\) 190px/);
   assert.match(source, /\['deploy', 'hub-party'\][\s\S]*addEventListener\('pointerup'/);
   assert.match(html, /id="deploy"[^>]*type="button"/);
 });
