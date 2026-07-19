@@ -1666,8 +1666,16 @@
   }
 
   /* 關卡地圖：章節分頁 + 節點路徑（參考手遊 SRPG 的關卡選擇畫面）。 */
-  var campaignChapter = null;
-  function openCampaign() { campaignChapter = currentStage.mapId; renderCampaign(); dom.campaignModal.hidden = false; audio.play('ui'); }
+  var campaignChapter = null, campaignView = 'overview';
+  function openCampaign() { campaignChapter = currentStage.mapId; campaignView = 'overview'; renderCampaign(); dom.campaignModal.hidden = false; audio.play('ui'); }
+  function chapterInfo(map) {
+    var boss = profile(map.boss), modal = document.getElementById('chapter-info-modal');
+    document.getElementById('chapter-info-art').style.backgroundImage = boss ? "url('" + portrait({ p: boss, evolution: 1 }) + "')" : '';
+    document.getElementById('chapter-info-kicker').textContent = map.icon + ' 章節情報';
+    document.getElementById('chapter-info-title').textContent = map.name + '｜Boss：' + (boss ? boss.name : '未知');
+    document.getElementById('chapter-info-copy').textContent = map.description + ' 本章將在 10 個主線節點後迎戰首領；通關後解鎖 4 個 HARD 特別關。';
+    modal.hidden = false; audio.play('ui');
+  }
   function stageNode(stage) {
     var unlocked = progression.isStageUnlocked(stage.id), cleared = Boolean(progress.cleared[stage.id]);
     var stars = cleared ? '★'.repeat(progress.bestStars[stage.id] || 1) + '☆'.repeat(3 - (progress.bestStars[stage.id] || 1)) : unlocked ? '—' : '';
@@ -1679,26 +1687,30 @@
   }
   function renderCampaign() {
     var chapter = content.mapById(campaignChapter) || content.maps[0];
-    var tabs = content.maps.map(function (map, index) {
+    if (campaignView === 'overview') {
+      dom.campaignGrid.innerHTML = '<div class="campaign-overview">' + content.maps.map(function (map, index) {
       var main = content.stages.filter(function (stage) { return stage.mapId === map.id && !stage.hard; });
       var clearedCount = main.filter(function (stage) { return progress.cleared[stage.id]; }).length;
       var unlocked = progression.isStageUnlocked(main[0].id);
-      return '<button type="button" class="chapter-tab' + (map.id === chapter.id ? ' active' : '') + '" data-chapter="' + map.id + '" ' + (unlocked ? '' : 'disabled') + '>' +
-        '<i>' + map.icon + '</i><b>第 ' + (index + 1) + ' 章</b><small>' + map.name + '</small><span>' + clearedCount + '/11</span></button>';
-    }).join('');
+      var boss = profile(map.boss), art = boss ? portrait({ p: boss, evolution: 1 }) : '';
+      return '<article class="chapter-overview-card' + (unlocked ? '' : ' locked') + '" style="--chapter-art:url(\'' + art + '\')"><div><small>第 ' + (index + 1) + ' 章｜' + clearedCount + '/11</small><h3>' + map.icon + ' ' + map.name + '</h3><p>' + map.description + '</p><b>Boss：' + (boss ? boss.name : '未知') + '</b></div><footer><button data-chapter-info="' + map.id + '">情報</button><button class="primary" data-chapter-open="' + map.id + '" ' + (unlocked ? '' : 'disabled') + '>進入章節</button></footer></article>';
+      }).join('') + '</div>';
+      dom.campaignGrid.querySelectorAll('[data-chapter-open]').forEach(function (button) { button.onclick = function () { campaignChapter = button.dataset.chapterOpen; campaignView = 'chapter'; renderCampaign(); }; });
+      dom.campaignGrid.querySelectorAll('[data-chapter-info]').forEach(function (button) { button.onclick = function () { chapterInfo(content.mapById(button.dataset.chapterInfo)); }; });
+      return;
+    }
     var mainStages = content.stages.filter(function (stage) { return stage.mapId === chapter.id && !stage.hard; });
     var hardStages = content.stages.filter(function (stage) { return stage.mapId === chapter.id && stage.hard; });
     var mainNodes = mainStages.map(stageNode).join('<i class="node-link"></i>');
     var hardNodes = hardStages.map(stageNode).join('<i class="node-link hard-link"></i>');
     var bossCleared = Boolean(progress.cleared[chapter.id + '-boss']);
-    dom.campaignGrid.innerHTML = '<div class="chapter-tabs">' + tabs + '</div>' +
-      '<p class="chapter-copy">' + chapter.icon + ' ' + chapter.description + '</p>' +
+    var boss = profile(chapter.boss), bossArt = boss ? portrait({ p: boss, evolution: 1 }) : '';
+    dom.campaignGrid.innerHTML = '<div class="chapter-detail-head"><button id="campaign-back" class="secondary">← 全部章節</button><div class="chapter-detail-boss" style="background-image:url(\'' + bossArt + '\')"></div><div><p class="eyebrow">第 ' + (content.maps.indexOf(chapter) + 1) + ' 章</p><h3>' + chapter.icon + ' ' + chapter.name + '</h3><p>' + chapter.description + '</p><button id="campaign-boss-info">👑 Boss 與故事情報</button></div></div>' +
       '<div class="stage-path map-path-' + chapter.theme + '">' + mainNodes + '</div>' +
       '<p class="hard-title">🔥 HARD 特別關' + (bossCleared ? '（已解鎖）' : '（擊敗本章魔王後解鎖）') + '</p>' +
       '<div class="stage-path hard-path">' + hardNodes + '</div>';
-    dom.campaignGrid.querySelectorAll('.chapter-tab').forEach(function (tab) {
-      tab.onclick = function () { campaignChapter = tab.dataset.chapter; audio.play('ui'); renderCampaign(); };
-    });
+    document.getElementById('campaign-back').onclick = function () { campaignView = 'overview'; renderCampaign(); };
+    document.getElementById('campaign-boss-info').onclick = function () { chapterInfo(chapter); };
     dom.campaignGrid.querySelectorAll('.stage-node').forEach(function (node) {
       node.onclick = function () {
         var stage = content.stageById(node.dataset.stage);
