@@ -436,7 +436,7 @@
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
     state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, commandOpen: false, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
-      enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {}, tower: currentStage.tower ? { wave: 0, maxWaves: 10, commandUsed: false, awaitingChoice: false, attackBonus: 0, healBonus: 0, reviveAt: {}, autoEnabled: false } : null };
+      enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0 }, units: [], obstacles: [], obstacleMap: {}, tower: currentStage.tower ? { wave: 0, maxWaves: 10, commandUsed: false, awaitingChoice: false, attackBonus: 0, healBonus: 0, reviveAt: {}, autoEnabled: false, boons: [] } : null };
     state.obstacles = currentStage.tower ? [] : (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
     state.obstacles.forEach(function (spot) { state.obstacleMap[spot.x + ',' + spot.y] = true; });
     clearDeploymentObstacles();
@@ -1124,7 +1124,7 @@
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
-    renderParty(); renderTrait(); renderBattleSides(); renderDetail(); renderBattleCommand(); renderBossBar();
+    renderParty(); renderTrait(); renderBattleSides(); renderTowerBoonSummary(); renderDetail(); renderBattleCommand(); renderBossBar();
     dom.banner.textContent = state.over ? '戰鬥結束' : state.phase === 'tower-choice' ? '波間整備' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波｜' + (state.phase === 'player' ? '我方 AI 防守' : '魔物進攻') : state.phase === 'deploy' ? '部署階段' : '第 ' + state.round + ' 回合｜' + (state.phase === 'player' ? '我方行動' : '敵方行動');
     dom.roundStatus.textContent = state.over ? '結算完成' : state.phase === 'tower-choice' ? '選擇加護' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波' : state.phase === 'deploy' ? '自由部署' : state.phase === 'player' ? '我方回合' : '敵方回合';
     dom.endTurn.textContent = state.phase === 'deploy' ? '⚔️ 開始戰鬥' : '結束本回合';
@@ -1180,6 +1180,15 @@
     if (boss) dom.battleEnemySummary.textContent = '首領 ' + boss.p.name + '｜生命 ' + boss.hp + ' / ' + boss.maxHp;
     else if (livingEnemies.length) dom.battleEnemySummary.textContent = state.balance.label + '｜剩餘 ' + livingEnemies.length + ' 隻｜戰力倍率 ×' + state.enemyScale.toFixed(2);
     else dom.battleEnemySummary.textContent = '敵軍已全數擊破';
+  }
+  function renderTowerBoonSummary() {
+    var label = document.querySelector('.battle-hud .ally-label');
+    if (!label) return;
+    var summary = document.getElementById('tower-boon-summary');
+    if (!summary) { summary = document.createElement('small'); summary.id = 'tower-boon-summary'; summary.className = 'tower-boon-summary'; label.appendChild(summary); }
+    if (!currentStage.tower || !state.tower || !state.tower.boons.length) { summary.hidden = true; summary.textContent = ''; return; }
+    var labels = { attack: '⚔ +12%', heal: '💚 治療', fortify: '🛡 塔壁' };
+    summary.hidden = false; summary.textContent = '｜' + state.tower.boons.map(function (id) { return labels[id] || id; }).join(' ');
   }
   function renderTrait() { var trait = traitFor('ally'); dom.teamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>'; }
   function renderTurnOrder() {
@@ -1542,7 +1551,7 @@
   }
   function chooseTowerBoon(boon, automatic) {
     if (!boon || !state.tower.awaitingChoice || state.over) return;
-    stopTowerChoiceTimer(); boon.apply(); dom.towerChoice.hidden = true; state.tower.awaitingChoice = false;
+    stopTowerChoiceTimer(); boon.apply(); state.tower.boons.push(boon.id); dom.towerChoice.hidden = true; state.tower.awaitingChoice = false;
     note(automatic ? '守護塔自動選擇「' + boon.title.replace(/^[^\s]+\s*/, '') + '」。' : '已選擇「' + boon.title.replace(/^[^\s]+\s*/, '') + '」。');
     spawnTowerWave(state.tower.wave + 1);
   }
