@@ -1533,7 +1533,21 @@
     var remaining = state && state.tower && state.tower.reviveRemaining[unit.key];
     return typeof remaining === 'number' ? Math.max(0, Math.ceil(remaining / 1000)) : 0;
   }
+  function placeTowerRevival(unit) {
+    var guardian = state.units.find(function (entry) { return entry.guardian; });
+    if (!guardian) return;
+    var size = unitSize(unit), candidates = [];
+    /* 先嘗試守護塔右側，無空位才按距離向外展開。 */
+    for (var x = guardian.x + unitSize(guardian); x < Math.min(COLS - size + 1, guardian.x + 9); x++) {
+      for (var y = 0; y <= ROWS - size; y++) candidates.push({ x: x, y: y, distance: Math.abs(x - (guardian.x + unitSize(guardian))) + Math.abs(y - guardian.y) });
+    }
+    candidates.sort(function (a, b) { return a.distance - b.distance; });
+    unit.x = -99; unit.y = -99;
+    var spot = candidates.find(function (candidate) { return canStand(unit, candidate.x, candidate.y); });
+    if (spot) { unit.x = spot.x; unit.y = spot.y; }
+  }
   function reviveTowerUnit(unit) {
+    placeTowerRevival(unit);
     unit.hp = Math.round(unit.maxHp * 0.38); unit.shield = Math.round(unit.maxHp * 0.08);
     unit.burn = 0; unit.poison = 0; unit.freeze = 0; unit.defeating = false; unit.acted = false;
     delete state.tower.reviveRemaining[unit.key]; statusLabel(unit, '✦ 塔之復甦');
