@@ -556,6 +556,7 @@
     options = options || {};
     /* 最後一道友軍傷害保護：任何呼叫端都不能讓同陣營單位扣血。 */
     if (!attacker || !target || attacker.team === target.team) return { amount: 0, absorbed: 0, crit: false };
+    if (options.dodged) return { amount: 0, absorbed: 0, crit: false, dodged: true };
     var magic = skill.attackStyle === 'ranged' || skill.attackStyle === 'area';
     var raw = (magic ? stat(attacker, 'magic') : stat(attacker, 'power')) * combatMultiplier(attacker) * terrainAttackMultiplier(attacker) * (skill.multiplier || 1.05);
     raw *= elementalMultiplier(attacker, target);
@@ -572,8 +573,19 @@
     target.hp = Math.max(0, target.hp - amount);
     if (target.hp <= 0) target.defeating = true;
     if (attacker.team === 'ally') state.stats.damage += amount;
-    return { amount: amount, absorbed: absorbed, crit: crit };
+    return { amount: amount, absorbed: absorbed, crit: crit, dodged: false };
   }
+
+  /* 速度較快者較能閃避；冰凍時無法閃避，必殺技與近戰則較難避開。 */
+  function dodgeChance(attacker, target, skill) {
+    if (!attacker || !target || target.freeze > 0 || skill.attackStyle === 'support') return 0;
+    var speedLead = Math.max(0, stat(target, 'speed') - stat(attacker, 'speed'));
+    var chance = Math.min(0.28, speedLead * 0.035 + Math.max(0, stat(target, 'speed') - 5) * 0.006);
+    if (skill.attackStyle === 'melee') chance *= 0.55;
+    if (skill.kind === 'ultimate') chance *= 0.6;
+    return Number(chance.toFixed(3));
+  }
+  function willDodge(attacker, target, skill) { return Math.random() < dodgeChance(attacker, target, skill); }
 
   function healAmount(caster, target, skill) {
     var multiplier = 1 + bonusValue(caster, 'healing');
@@ -700,13 +712,22 @@
     else { burst(target, skill.vfxHue, 'hit', crit ? 14 : 8); if (crit || skill.attackStyle === 'melee') impactRing(target, skill.vfxHue); }
     setTimeout(function () { fx.remove(); number.remove(); if (piece) piece.classList.remove(healing ? 'recover' : 'hit'); }, duration(Math.max(620, vfxSpec.durationMs)));
   }
+  function addDodgeVisual(attacker, target) {
+    var host = visualHost(target); if (!host) return;
+    var dx = target.x - attacker.x, dy = target.y - attacker.y;
+    var evadeX = Math.abs(dx) >= Math.abs(dy) ? (dx >= 0 ? 18 : -18) : 0;
+    var evadeY = evadeX ? 0 : (dy >= 0 ? 12 : -12);
+    host.style.setProperty('--evade-x', evadeX + 'px'); host.style.setProperty('--evade-y', evadeY + 'px'); host.classList.add('evading');
+    var label = document.createElement('b'); label.className = 'dodge-number'; label.textContent = '閃避！'; host.appendChild(label);
+    setTimeout(function () { label.remove(); host.classList.remove('evading'); }, duration(620));
+  }
   function statusLabel(target, text) {
     var cell = visualHost(target); if (!cell) return;
     var label = document.createElement('b'); label.className = 'status-label'; label.textContent = text; cell.appendChild(label);
     setTimeout(function () { label.remove(); }, duration(760));
   }
 
-  function addProjectile(caster, target, skill) {
+  function addProjectile(caster, target, skill, misses) {
     if (skill.attackStyle === 'melee' || skill.attackStyle === 'support') return 0;
     var casterHost = visualHost(caster), targetHost = visualHost(target); if (!casterHost || !targetHost) return 0;
     var element = caster.p.element || 'arcane';
@@ -716,12 +737,19 @@
     var startX = casterRect.left - boardRect.left + casterRect.width / 2, startY = casterRect.top - boardRect.top + casterRect.height / 2;
     var endX = targetRect.left - boardRect.left + targetRect.width / 2, endY = targetRect.top - boardRect.top + targetRect.height / 2;
     var deltaX = endX - startX, deltaY = endY - startY;
+    if (misses) {
+      var length = Math.max(1, Math.hypot(deltaX, deltaY)), offset = Math.min(34, Math.max(18, targetRect.width * 0.32));
+      var missX = -deltaY / length * offset, missY = deltaX / length * offset;
+      deltaX += missX; deltaY += missY;
+      projectile.classList.add('projectile-miss');
+    }
     projectile.style.setProperty('--projectile', 'hsl(' + skill.vfxHue + ' 92% 68%)');
     projectile.style.left = startX + 'px'; projectile.style.top = startY + 'px';
     projectile.style.setProperty('--travel-x', deltaX + 'px'); projectile.style.setProperty('--travel-y', deltaY + 'px');
     projectile.style.setProperty('--angle', Math.atan2(deltaY, deltaX) + 'rad');
     projectile.setAttribute('aria-label', skill.name + '的' + ({ fire: '火球', forest: '自然彈', ocean: '水流彈', light: '光矢', dark: '暗影彈' }[element] || '魔法彈'));
-    dom.board.appendChild(projectile); setTimeout(function () { projectile.remove(); }, duration(420));
+    var muzzle = document.createElement('i'); muzzle.className = 'projectile-muzzle'; muzzle.style.setProperty('--projectile', 'hsl(' + skill.vfxHue + ' 92% 68%)'); casterHost.appendChild(muzzle);
+    dom.board.appendChild(projectile); setTimeout(function () { projectile.remove(); muzzle.remove(); }, duration(420));
     return 330;
   }
 
@@ -832,6 +860,10 @@
     var targetDx = target.x - unit.x, targetDy = target.y - unit.y;
     if (Math.abs(targetDx) >= Math.abs(targetDy) && targetDx !== 0) unit.facing = targetDx > 0 ? 'right' : 'left';
     else if (targetDy !== 0) unit.facing = targetDy > 0 ? 'down' : 'up';
+    var opposingTeam = unit.team === 'ally' ? 'enemy' : 'ally';
+    var plannedTargets = skill.attackStyle === 'support' ? [] : (skill.attackStyle === 'area' ? alive(opposingTeam).filter(function (entry) { return distance(entry, target) <= (skill.radius || 1); }) : [target]);
+    var dodgePlan = {};
+    plannedTargets.forEach(function (entry) { dodgePlan[entry.key] = willDodge(unit, entry, skill); });
     render();
     /* 支援技能不能沿用攻擊動作圖；它的目標是友軍，若播放 attack row
        便會視覺上像對自己人出手。 */
@@ -841,7 +873,7 @@
     if (skill.attackStyle === 'area') telegraphArea(target, skill.radius || 1, skill.vfxHue);
     if (skill.attackStyle !== 'melee') castCircle(unit, skill.attackStyle === 'support' ? 145 : skill.vfxHue); /* 遠程／輔助：腳下魔法陣 */
     else slashFx(target); /* 近戰：目標身上的揮砍弧光 */
-    var projectileDelay = addProjectile(unit, target, skill);
+    var projectileDelay = addProjectile(unit, target, skill, Boolean(dodgePlan[target.key]));
     if (projectileDelay) await pause(projectileDelay);
 
     var message, effects = [], anyCrit = false;
@@ -860,16 +892,16 @@
       audio.play('heal');
     } else {
       /* 範圍傷害一律以施放者的敵隊為準，避免目標資料異常時誤傷我方幻獸。 */
-      var opposingTeam = unit.team === 'ally' ? 'enemy' : 'ally';
-      var targetsHit = skill.attackStyle === 'area' ? alive(opposingTeam).filter(function (entry) { return distance(entry, target) <= (skill.radius || 1); }) : [target];
+      var targetsHit = plannedTargets;
       var totalDamage = 0;
       targetsHit.forEach(function (enemy, index) {
-        var result = damage(unit, enemy, skill, { counter: options.counter, secondary: index > 0 }); totalDamage += result.amount;
+        var result = damage(unit, enemy, skill, { counter: options.counter, secondary: index > 0, dodged: dodgePlan[enemy.key] }); totalDamage += result.amount;
         anyCrit = anyCrit || result.crit;
-        effects.push({ target: enemy, amount: result.amount, absorbed: result.absorbed, crit: result.crit, healing: false });
-        passiveBurn(unit, enemy); applyStatus(unit, enemy, skill);
+        effects.push({ target: enemy, amount: result.amount, absorbed: result.absorbed, crit: result.crit, dodged: result.dodged, healing: false });
+        if (!result.dodged) { passiveBurn(unit, enemy); applyStatus(unit, enemy, skill); }
       });
-      message = (options.counter ? '反擊！' : '') + unitName(unit) + ' 施放「' + skill.name + '」，造成 ' + totalDamage + ' 點傷害' + (anyCrit ? '（爆擊！）' : '') + (targetsHit.length > 1 ? '（命中 ' + targetsHit.length + ' 個目標）' : '') + '。';
+      var dodgeCount = effects.filter(function (effect) { return effect.dodged; }).length;
+      message = (options.counter ? '反擊！' : '') + unitName(unit) + ' 施放「' + skill.name + '」，造成 ' + totalDamage + ' 點傷害' + (anyCrit ? '（爆擊！）' : '') + (dodgeCount ? '（' + dodgeCount + ' 次閃避）' : '') + (targetsHit.length > 1 ? '（命中 ' + (targetsHit.length - dodgeCount) + ' 個目標）' : '') + '。';
       audio.play(skill.attackStyle === 'melee' ? 'attack' : 'ranged');
     }
     note(message); render();
@@ -878,10 +910,11 @@
       casterPiece.style.setProperty('--dash-x', (target.x - unit.x) * 42 + 'px'); casterPiece.style.setProperty('--dash-y', (target.y - unit.y) * 42 + 'px'); casterPiece.classList.add('dash');
     }
     await pause(Math.max(0, animationHitDelay(unit, 'attack', skill) - projectileDelay)); effects.forEach(function (effect) {
+      if (effect.dodged) { addDodgeVisual(unit, effect.target); return; }
       var visualSkill = effect.healing ? Object.assign({}, skill, { vfxHue: 145, vfxVariant: 3 }) : skill;
       addVisual(effect.target, effect.healing ? 'forest' : unit.p.element, visualSkill, effect.amount, effect.healing, effect.absorbed, effect.crit);
     });
-    if (effects.some(function (effect) { return !effect.healing; })) {
+    if (effects.some(function (effect) { return !effect.healing && !effect.dodged; })) {
       combatShake(skill.kind === 'ultimate' ? 'ultimate' : anyCrit ? 'crit' : 'light');
       await hitStop(anyCrit ? 120 : skill.kind === 'ultimate' ? 90 : 75);
       audio.play(anyCrit ? 'crit' : 'hit');

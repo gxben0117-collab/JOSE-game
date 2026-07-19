@@ -586,6 +586,16 @@ test('遠距技能由施術者中心飛向目標中心，命中特效不使用�
   assert.match(campaign, /translate\(var\(--travel-x\),var\(--travel-y\)\)/);
 });
 
+test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命中演出', () => {
+  const html = readFileSync(join(root, 'tactics.html'), 'utf8');
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
+  assert.match(html, /tactics-battle\.css\?v=11/); assert.match(html, /js\/tactics\.js\?v=35/);
+  assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
+  assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
+  assert.match(battle, /\.projectile-muzzle\{/); assert.match(battle, /\.unit\.evading\{/); assert.match(battle, /\.dodge-number\{/);
+});
+
 test('iPad 戰場維持 21×10 比例且幻獸立繪不會被壓扁', () => {
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   assert.match(screens, /\.idle-arena \.unit \.portrait\{[^}]*height:100%[^}]*aspect-ratio:1 \/ 1/);

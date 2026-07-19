@@ -132,6 +132,12 @@
 .projectile-dark{background:radial-gradient(circle at 55% 42%,#111 0 18%,#5b218d 38%,#b952e3 62%,#240b3e 75%);box-shadow:0 0 9px 4px #8d37bd,0 0 22px #431465}
 .projectile-dark::after{background:linear-gradient(270deg,#b85ae1,#57147d88,transparent)}
 @keyframes projectile-flicker{50%{transform:rotate(16deg) scale(1.12);filter:brightness(1.45)}}
+.projectile-muzzle{position:absolute;left:50%;top:50%;z-index:14;width:18px;height:18px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,#fff 0 13%,var(--projectile,#ffd36a) 30%,transparent 72%);box-shadow:0 0 8px 3px var(--projectile,#ffd36a);animation:projectile-muzzle calc(.24s*var(--battle-rate,1)) ease-out forwards}
+@keyframes projectile-muzzle{from{opacity:1;transform:translate(-50%,-50%) scale(.45)}to{opacity:0;transform:translate(-50%,-50%) scale(2.1)}}
+.unit.evading{animation:unit-evade calc(.42s*var(--battle-rate,1)) cubic-bezier(.18,.8,.28,1) both!important}
+@keyframes unit-evade{0%{transform:translate(0,0)}38%{transform:translate(var(--evade-x,18px),var(--evade-y,0)) scale(1.04)}72%{transform:translate(calc(var(--evade-x,18px)*.35),calc(var(--evade-y,0)*.35))}100%{transform:translate(0,0)}}
+.dodge-number{position:absolute;z-index:15;left:50%;top:20%;transform:translateX(-50%);color:#b9f5ff;font-size:clamp(14px,2vw,23px);font-weight:1000;letter-spacing:.08em;white-space:nowrap;text-shadow:0 2px 2px #08304c,0 0 9px #48d9ff;pointer-events:none;animation:dodge-pop calc(.64s*var(--battle-rate,1)) ease-out forwards}
+@keyframes dodge-pop{0%{opacity:0;transform:translate(-50%,10px) scale(.58)}22%{opacity:1;transform:translate(-50%,-6px) scale(1.12)}100%{opacity:0;transform:translate(-50%,-32px) scale(.92)}}
 
 /* 友軍治療／護盾不使用元素攻擊的爆裂感，避免和敵方命中特效混淆。 */
 .vfx.support-vfx{border:2px solid #baffc9;border-radius:50%;background:radial-gradient(circle,#f0fff5 0 10%,#75ef9b88 28%,transparent 67%)!important;box-shadow:0 0 14px #64e98c,0 0 26px #b9ffd077;filter:drop-shadow(0 0 9px #7bffac)!important}
