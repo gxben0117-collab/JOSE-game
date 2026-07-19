@@ -1298,7 +1298,9 @@
       var summary = { win: win, round: state.round, survivors: alive('ally').length, partySize: partyIds.length, bossKill: bossDefeated };
       reward = progression.completeBattle(currentStage, summary);
     }
-    state.reward = reward; state.victoryCinematic = win;
+    /* 目前上線圖集沒有一致的勝利專用動作列；切換該列會讀到錯誤圖格，
+       因此結算前維持正常待機圖，避免勝利瞬間出現殘影／破圖。 */
+    state.reward = reward; state.victoryCinematic = false;
     renderProgress(); render(); note(reason || (win ? '勝利！獎勵已加入戰棋資源。' : '戰敗。調整隊伍、進化或技能樹後再次挑戰。'));
     audio.play(win ? 'victory' : 'defeat'); setTimeout(function () { showResult(win); }, duration(win ? 1000 : 700));
   }
