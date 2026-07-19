@@ -46,7 +46,7 @@
 .battle-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:1800px;margin:0 auto;padding:4px 2px 10px}
 .battle-topbar button{width:auto;flex:0 0 auto;padding:8px 16px}
 .battle-topbar .round-status{white-space:nowrap;flex:0 0 auto}
-.boss-bar[hidden],.battle-hud[hidden]{display:none!important}
+.battle-hud[hidden]{display:none!important}
 .battle-stage-label{color:#ffd9a0;font-size:1rem;letter-spacing:.08em;text-align:center;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .battle-main{display:grid;grid-template-columns:160px minmax(0,1fr) 242px;gap:8px;align-items:start;flex:0 0 auto;width:100%;max-width:1800px;margin:0 auto;padding:7px;border:1px solid #93613b;border-radius:5px;background:linear-gradient(145deg,#2b1916,#140e10);box-shadow:0 18px 54px #000b,0 0 0 2px #42271d inset}
 .screen-battle .board-wrap{min-width:0;padding:7px;border:1px solid #7f5335;border-radius:3px;background:#120c0d;box-shadow:0 0 0 1px #1b100d inset!important}

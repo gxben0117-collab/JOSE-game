@@ -34,7 +34,7 @@
     growthConfirmModal: document.getElementById('growth-confirm-modal'), growthConfirmTitle: document.getElementById('growth-confirm-title'), growthConfirmCopy: document.getElementById('growth-confirm-copy'), growthConfirmMaterials: document.getElementById('growth-confirm-materials'), growthConfirmEffect: document.getElementById('growth-confirm-effect'), growthConfirmAccept: document.getElementById('growth-confirm-accept'),
     resultIcon: document.getElementById('result-icon'), resultStage: document.getElementById('result-stage'),
     resultTitle: document.getElementById('result-title'), resultCopy: document.getElementById('result-copy'), resultStats: document.getElementById('result-stats'), resultRewards: document.getElementById('result-rewards'),
-    bossBar: document.getElementById('boss-bar'), bossName: document.getElementById('boss-name'), bossHpFill: document.getElementById('boss-hp-fill'), bossIntro: document.getElementById('boss-intro'),
+    enemyLabel: document.getElementById('enemy-label'), bossIntro: document.getElementById('boss-intro'),
     screenHome: document.getElementById('screen-home'), screenBattle: document.getElementById('screen-battle'), screenResult: document.getElementById('screen-result'),
     enterBattle: document.getElementById('enter-battle'), battleExit: document.getElementById('battle-exit'), battleStageLabel: document.getElementById('battle-stage-label'),
     battleAllyList: document.getElementById('battle-ally-list'), battleAllyCount: document.getElementById('battle-ally-count'), battleTeamTrait: document.getElementById('battle-team-trait'), battleObjective: document.getElementById('battle-objective'),
@@ -1195,13 +1195,12 @@
   }
 
   function renderBossBar() {
-    if (!dom.bossBar) return;
     var boss = state.units.find(function (unit) { return unit.boss; });
-    if (!boss || !currentStage.boss) { dom.bossBar.hidden = true; return; }
-    dom.bossBar.hidden = false;
-    dom.bossName.textContent = '👑 ' + boss.p.name;
-    dom.bossHpFill.style.width = (100 * boss.hp / boss.maxHp) + '%';
-    dom.bossBar.classList.toggle('boss-low', boss.hp / boss.maxHp < 0.35);
+    if (!dom.enemyLabel) return;
+    if (!boss || !currentStage.boss) { dom.enemyLabel.textContent = '魔物軍團 ◆'; dom.enemyLabel.classList.remove('boss-low'); return; }
+    var hpPercent = Math.max(0, Math.ceil(100 * boss.hp / boss.maxHp));
+    dom.enemyLabel.textContent = '魔物軍團 ◆｜BOSS ' + hpPercent + '%';
+    dom.enemyLabel.classList.toggle('boss-low', hpPercent < 35);
   }
 
   function renderParty() {
