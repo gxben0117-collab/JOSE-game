@@ -1220,7 +1220,7 @@
     var summary = document.getElementById('tower-boon-summary');
     if (!summary) { summary = document.createElement('small'); summary.id = 'tower-boon-summary'; summary.className = 'tower-boon-summary'; label.appendChild(summary); }
     if (!currentStage.tower || !state.tower || !state.tower.boons.length) { summary.hidden = true; summary.textContent = ''; return; }
-    var labels = { attack: '⚔ +12%', heal: '💚 治療', fortify: '🛡 塔壁' };
+    var labels = { attack: '⚔', heal: '💚', fortify: '🛡' };
     summary.hidden = false; summary.textContent = '｜' + state.tower.boons.map(function (id) { return labels[id] || id; }).join(' ');
   }
   function renderTrait() { var trait = traitFor('ally'); dom.teamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>'; }
