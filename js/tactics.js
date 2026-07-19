@@ -86,6 +86,26 @@
     return pet.evolution && pet.evolution[stage - 1] ? pet.evolution[stage - 1].portrait : '';
   }
   function displayQuote(pet) { return (window.TACTICAL_SUMMON_QUOTES || {})[pet.id] || '機庫已完成同步，隨時可以出發。'; }
+  var BOSS_RAID_TIERS = ['簡單', '普通', '困難', '菁英', '魔神'];
+  function bossRaidIds() { return profiles.filter(function (entry) { return entry.boss && entry.size === 4; }).map(function (entry) { return entry.id; }); }
+  function bossRaidInfo() {
+    var raid = progression.bossRaidState(bossRaidIds()), boss = profile(raid.bossId) || profiles.filter(function (entry) { return entry.boss; })[0];
+    return { raid: raid, boss: boss, tier: Math.min(4, Number(raid.tier) || 0), cost: 90 + Math.min(4, Number(raid.tier) || 0) * 45 };
+  }
+  function bossRaidStage(info) {
+    var base = content.stages[0];
+    return { id: 'daily-boss-' + info.raid.key, bossRaid: true, mapId: base.mapId, chapter: 0, index: 0, order: 0,
+      name: 'Boss 來襲・' + BOSS_RAID_TIERS[info.tier], difficulty: BOSS_RAID_TIERS[info.tier], boss: true,
+      power: 1.12 + info.tier * 0.32, enemies: [info.boss.id], enemyCount: 1, seed: 800 + info.tier,
+      objective: '討伐今日 Boss，殘血可於今日持續追擊', turnLimit: 30, rewards: { medals: 0, essence: 0, fusionCore: 0 } };
+  }
+  function renderBossRaidSummary() {
+    var host = document.getElementById('home-boss-summary'); if (!host) return;
+    var info = bossRaidInfo(), raid = info.raid, boss = info.boss, hpText = raid.hp && raid.maxHp ? Math.max(0, Math.round(raid.hp / raid.maxHp * 100)) + '%' : '尚未受損';
+    host.innerHTML = '<span class="command-boss-art" style="background-image:url(\'' + displayPortrait(boss) + '\')"></span><div><b>' + boss.name + '｜' + (window.ELEMENT_CONFIG[boss.element] || {}).label + '</b><small>' + (raid.cleared ? '今日討伐完成' : BOSS_RAID_TIERS[info.tier] + '｜HP ' + hpText + '｜入場 ' + info.cost + '🪙') + '</small></div>';
+    document.getElementById('home-boss-open').textContent = raid.cleared ? '👑 今日已討伐' : '👑 前往討伐';
+    document.getElementById('home-boss-open').disabled = raid.cleared;
+  }
   function renderHangarHome() {
     var pet = displayPet(), map = mapData(), hero = document.getElementById('home-hero-art');
     if (!pet || !hero) return;
@@ -99,6 +119,7 @@
     document.getElementById('home-command-copy').textContent = homeReturnFeedback || ('下一站：' + currentStage.name + '。' + currentStage.objective);
     var dailyReady = progression.dailyQuests().filter(function (quest) { return progression.dailyProgress(quest) >= quest.target && !progression.dailyState().claims[quest.id]; }).length;
     document.getElementById('home-focus').innerHTML = '<span>◈ 章節背景：' + map.name + '</span><span>◈ ' + (dailyReady ? dailyReady + ' 個每日獎勵可領取' : '每日任務進行中') + '</span><span>◈ 無限塔最高 ' + progress.tower.best + ' 層</span>';
+    renderBossRaidSummary();
   }
   function openHomeDisplay() {
     var grid = document.getElementById('home-display-grid'), follow = document.getElementById('home-display-follow');
@@ -468,6 +489,15 @@
     enemyFormation(roster).forEach(function (spot, index) {
       var unit = clone(spot.id, 'enemy', spot.x, spot.y, index); unit.squad = spot.squad; state.units.push(unit);
     });
+    if (currentStage.bossRaid) {
+      var raidInfo = bossRaidInfo(), raidBoss = state.units.find(function (unit) { return unit.boss; });
+      if (raidBoss) {
+        var raidMaxHp = Math.round(raidBoss.maxHp * (2.4 + raidInfo.tier * 0.9));
+        raidBoss.maxHp = raidMaxHp;
+        raidBoss.hp = raidInfo.raid.hp && raidInfo.raid.maxHp ? Math.min(raidMaxHp, Math.round(raidInfo.raid.hp / raidInfo.raid.maxHp * raidMaxHp)) : raidMaxHp;
+        state.bossRaid = { raid: raidInfo.raid, maxHp: raidMaxHp, element: raidInfo.boss.element };
+      }
+    }
     dom.board.style.width = '100%';
     dom.board.style.aspectRatio = COLS + ' / ' + ROWS;
     dom.board.style.gridTemplateColumns = 'repeat(' + COLS + ', minmax(0, 1fr))';
@@ -1622,7 +1652,11 @@
     if (state.resultRecorded) return; state.resultRecorded = true; state.over = true; stopAuto(); stopTowerReviveTimer();
     var bossDefeated = win && currentStage.boss;
     var reward;
-    if (currentStage.tower) {
+    if (currentStage.bossRaid) {
+      var raidBoss = state.units.find(function (unit) { return unit.boss; });
+      var raidResult = progression.recordBossRaid(bossRaidIds(), win, raidBoss ? raidBoss.hp : 0, raidBoss ? raidBoss.maxHp : 1, state.bossRaid && state.bossRaid.element);
+      reward = win ? Object.assign({ stars: 1, firstClear: false, cleared: raidResult.cleared }, raidResult.reward) : {};
+    } else if (currentStage.tower) {
       var towerResult = progression.completeTower(currentStage.floor, win);
       reward = win ? { stars: 1, medals: 0, essence: towerResult.reward.essence, fusionCore: 0, crystals: towerResult.reward.crystals, gold: towerResult.reward.gold, firstClear: false } : {};
     } else {
@@ -1643,9 +1677,15 @@
     dom.resultCopy.textContent = win ? (reward.firstClear ? '首次通關完成，已解鎖下一個關卡。' : '重複挑戰完成，取得部分固定資源。') : '可先調整隊伍、融合階級與技能樹再挑戰。';
     dom.resultStats.innerHTML = '<span><b>' + state.round + '</b>回合</span><span><b>' + state.stats.damage + '</b>傷害</span><span><b>' + survivors + '/' + partyIds.length + '</b>存活</span>';
     dom.resultRewards.textContent = win
-      ? '★'.repeat(reward.stars || 1) + (reward.medals ? '　🏅 +' + reward.medals : '') + (reward.essence ? '　🔷 +' + reward.essence : '') + (reward.fusionCore ? '　🧬 +' + reward.fusionCore : '') + (reward.crystals ? '　💎 +' + reward.crystals : '') + (reward.gold ? '　🪙 +' + reward.gold : '') + (reward.storyPet ? '　🦌 新夥伴：' + profile(reward.storyPet).name : '')
+      ? '★'.repeat(reward.stars || 1) + (reward.medals ? '　🏅 +' + reward.medals : '') + (reward.essence ? '　🔷 +' + reward.essence : '') + (reward.fusionCore ? '　🧬 +' + reward.fusionCore : '') + (reward.crystals ? '　💎 +' + reward.crystals : '') + (reward.gold ? '　🪙 +' + reward.gold : '') + (reward.summonShards ? '　🧩 +' + reward.summonShards + ' 召喚碎片' : '') + (reward.storyPet ? '　🦌 新夥伴：' + profile(reward.storyPet).name : '')
       : '本次沒有取得掉落物';
-    if (currentStage.tower) {
+    if (currentStage.bossRaid) {
+      var bossResult = state.reward || {};
+      dom.resultStage.textContent = '每日 Boss 來襲｜' + currentStage.name;
+      dom.resultCopy.textContent = win ? (bossResult.cleared ? '五段難度全部討伐完成，明日將輪替新的 Boss。' : '討伐成功！已解鎖下一個難度。') : 'Boss 保留目前剩餘 HP；支付金幣即可在今日繼續討伐。';
+      document.getElementById('result-next').textContent = win && !bossResult.cleared ? '👑 挑戰下一難度' : '回到機庫';
+      document.getElementById('result-next').hidden = false;
+    } else if (currentStage.tower) {
       dom.resultCopy.textContent = win ? '第 ' + currentStage.floor + ' 層攻略完成！歷史最高 ' + progress.tower.best + ' 層。' : '止步於第 ' + currentStage.floor + ' 層，強化後再來挑戰。';
       document.getElementById('result-next').textContent = '⬆ 挑戰第 ' + (currentStage.floor + 1) + ' 層';
       document.getElementById('result-next').hidden = !win;
@@ -1923,8 +1963,22 @@
     epic: '這份力量將為您而戰。', legendary: '傳說的誓約已在此刻締結。', mythical: '命運終於讓我們相遇。'
   };
   function openGacha() { finishGachaCeremony(); renderGacha(); document.getElementById('gacha-results').innerHTML = ''; document.getElementById('gacha-modal').hidden = false; audio.play('ui'); }
+  function openBossRaid() {
+    var info = bossRaidInfo(), raid = info.raid, boss = info.boss, hp = raid.hp && raid.maxHp ? Math.max(0, Math.round(raid.hp / raid.maxHp * 100)) : 100;
+    document.getElementById('boss-raid-content').innerHTML = '<article class="boss-raid-card"><span class="boss-raid-art" style="background-image:url(\'' + displayPortrait(boss) + '\')"></span><div><p class="eyebrow">每日輪替・' + (window.ELEMENT_CONFIG[boss.element] || {}).label + '屬性</p><h3>' + boss.name + '</h3><p>' + (raid.cleared ? '今日五段難度已全數討伐。明日 00:00 將輪替新的 Boss。' : BOSS_RAID_TIERS[info.tier] + '｜大型 4×4 單位｜目前 HP ' + hp + '%') + '</p><div class="boss-raid-track"><i style="width:' + hp + '%"></i></div><small>勝利獎勵：💎 ' + (12 + info.tier * 8) + '・🪙 ' + (140 + info.tier * 100) + '・🏅 ' + (4 + info.tier * 4) + '・🧬 ' + (1 + Math.floor(info.tier / 2)) + '・元素精華・召喚碎片</small></div></article>';
+    var enter = document.getElementById('boss-raid-enter'); enter.disabled = raid.cleared; enter.textContent = raid.cleared ? '今日討伐完成' : '👑 支付 ' + info.cost + ' 金幣開始討伐';
+    document.getElementById('boss-raid-modal').hidden = false; audio.play('ui');
+  }
+  function enterBossRaid() {
+    var info = bossRaidInfo(), result = progression.startBossRaid(bossRaidIds(), info.cost);
+    if (!result.ok) { document.getElementById('boss-raid-content').insertAdjacentHTML('afterbegin', '<p class="fc-warn">' + result.reason + '</p>'); audio.play('ui'); return; }
+    document.getElementById('boss-raid-modal').hidden = true; currentStage = bossRaidStage(info); reset(currentStage); setView('battle'); audio.play('boss');
+  }
   function renderGacha() {
     document.getElementById('gacha-info').innerHTML = '持有 <b>💎 ' + progress.crystals + '</b> 召喚水晶。首次通關與每日任務可獲得水晶。已收集 ' + progression.dexSummary().total + '/' + window.TACTICAL_PET_DATA.length + ' 隻。';
+    var icons = { fire: '🔥 火', forest: '🌿 森', ocean: '🌊 海', light: '✨ 光', dark: '🌑 暗' };
+    document.getElementById('gacha-element-pulls').innerHTML = ['fire', 'forest', 'ocean', 'light', 'dark'].map(function (element) { return '<button type="button" data-element-pull="' + element + '">' + icons[element] + '屬性召喚 <small>50 💎</small></button>'; }).join('');
+    document.querySelectorAll('[data-element-pull]').forEach(function (button) { button.onclick = function () { doPull(1, button.dataset.elementPull); }; });
   }
   function renderGachaResults(results) {
     var box = document.getElementById('gacha-results');
@@ -1966,8 +2020,8 @@
     gachaCeremony = { results: [], index: 0, timer: null };
     document.getElementById('gacha-reveal').hidden = true;
   }
-  function doPull(count) {
-    var result = progression.pull(count);
+  function doPull(count, element) {
+    var result = progression.pull(count, element);
     if (!result.ok) { document.getElementById('gacha-info').innerHTML = '<b class="fc-warn">' + result.reason + '</b>'; audio.play('ui'); return; }
     audio.play('unlock'); renderProgress(); renderGacha(); renderParty(); renderTrait();
     startGachaCeremony(result.results);
@@ -2104,6 +2158,7 @@
   document.getElementById('open-campaign').onclick = openCampaign; document.getElementById('open-growth').onclick = openGrowth;
   document.getElementById('open-dex').onclick = openDex; document.getElementById('open-gacha').onclick = openGacha; document.getElementById('open-daily').onclick = openDaily;
   document.getElementById('open-home').onclick = openHome; document.getElementById('open-shop').onclick = openShop; document.getElementById('open-bag').onclick = openBag;
+  document.getElementById('open-boss-raid').onclick = openBossRaid; document.getElementById('home-boss-open').onclick = openBossRaid; document.getElementById('boss-raid-enter').onclick = enterBossRaid;
   document.querySelectorAll('[data-hangar-action]').forEach(function (button) { button.onclick = function () { var target = document.getElementById(button.dataset.hangarAction); if (target) target.click(); }; });
   document.querySelectorAll('[data-hangar-soon]').forEach(function (button) { button.onclick = function () { audio.play('ui'); note('「' + button.dataset.hangarSoon + '」正在規劃探索地圖與事件，敬請期待。'); }; });
   document.getElementById('home-display-open').onclick = openHomeDisplay;
@@ -2140,18 +2195,20 @@
   dom.growthConfirmAccept.onclick = function () { var action = pendingGrowthAction; if (!action) return; closeGrowthConfirmation(); action(); };
   dom.growthPet.onchange = function () { growthPetId = dom.growthPet.value; renderGrowth(); };
   dom.enterBattle.onclick = function () { audio.unlock(); if (state.over || state.phase !== 'deploy') reset(currentStage.id); setView('battle'); audio.play('ui'); render(); focusDeployZone(true); };
-  function stageRef() { return currentStage.tower ? towerStageFor(currentStage.floor) : currentStage.id; }
-  dom.battleExit.onclick = function () { stopAuto(); reset(currentStage.tower ? progress.currentStage : currentStage.id); homeReturnFeedback = '已撤退回機庫；調整隊伍後再出發。'; setView('home'); renderHangarHome(); note('已撤退回遠征準備頁。'); };
-  document.getElementById('result-home').onclick = function () { reset(currentStage.tower ? progress.currentStage : currentStage.id); homeReturnFeedback = state.reward && state.reward.storyPet ? '救援完成：' + profile(state.reward.storyPet).name + ' 已加入圖鑑與編隊名單。' : (state.reward && state.reward.firstClear ? '首次通關回報已同步，新的章節節點已開啟。' : '戰鬥資料已回傳機庫，準備下一次出擊。'); setView('home'); renderHangarHome(); };
-  document.getElementById('result-retry').onclick = function () { reset(stageRef()); setView('battle'); };
-  document.getElementById('result-deploy').onclick = function () { reset(currentStage.tower ? progress.currentStage : currentStage.id); setView('home'); openDeploy(); };
+  function stageRef() { return currentStage.tower ? towerStageFor(currentStage.floor) : currentStage.bossRaid ? null : currentStage.id; }
+  function returnToHomeStage() { reset(progress.currentStage); setView('home'); renderHangarHome(); }
+  dom.battleExit.onclick = function () { stopAuto(); returnToHomeStage(); homeReturnFeedback = '已撤退回機庫；調整隊伍後再出發。'; note('已撤退回遠征準備頁。'); };
+  document.getElementById('result-home').onclick = function () { returnToHomeStage(); homeReturnFeedback = state.reward && state.reward.storyPet ? '救援完成：' + profile(state.reward.storyPet).name + ' 已加入圖鑑與編隊名單。' : (state.reward && state.reward.firstClear ? '首次通關回報已同步，新的章節節點已開啟。' : '戰鬥資料已回傳機庫，準備下一次出擊。'); };
+  document.getElementById('result-retry').onclick = function () { if (currentStage.bossRaid) { returnToHomeStage(); openBossRaid(); return; } reset(stageRef()); setView('battle'); };
+  document.getElementById('result-deploy').onclick = function () { returnToHomeStage(); openDeploy(); };
   document.getElementById('result-next').onclick = function () {
+    if (currentStage.bossRaid) { if (state.reward && state.reward.firstClear === false && state.reward.crystals && !state.reward.cleared) { returnToHomeStage(); openBossRaid(); } else returnToHomeStage(); return; }
     if (currentStage.tower) { enterTower(currentStage.floor + 1); return; }
     currentStage = content.stageById(progress.currentStage); reset(currentStage.id); setView('battle');
   };
   var towerButton = document.getElementById('open-tower');
   if (towerButton) towerButton.onclick = function () { audio.unlock(); enterTower(progress.tower.best + 1); };
-  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal', 'home-display-modal', 'story-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal', 'boss-raid-modal', 'home-display-modal', 'story-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
 
   window.__TACTICS_DEBUG__ = {
     getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, over: state.over, allies: alive('ally').length, enemies: alive('enemy').length, partyCost: state.partyCost, enemyScale: state.enemyScale, balanceLabel: state.balance.label, enemyReinforcements: state.balance.added, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },

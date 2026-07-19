@@ -313,7 +313,7 @@ test('最終進化需要成長體、材料與融合', () => { const { sandbox } 
 test('主頁只導向唯一戰棋模式', () => { const home = readFileSync(join(root, 'index.html'), 'utf8'); assert.match(home, /url=tactics\.html/); assert.match(home, /href="tactics\.html"/); });
 test('旗艦機庫首頁提供五隻展示、橫向遊玩規格與第一章可擴充故事資料', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const progression = readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8'); const story = readFileSync(join(root, 'js/data/story-content.js'), 'utf8'); const hangar = readFileSync(join(root, 'css/tactics-hangar.css'), 'utf8');
-  assert.match(html, /id="home-display-open"/); assert.match(html, /id="home-screenshot"/); assert.match(html, /id="story-modal"/); assert.match(html, /story-content\.js\?v=1/); assert.match(html, /tactics-hangar\.css\?v=6/);
+  assert.match(html, /id="home-display-open"/); assert.match(html, /id="home-screenshot"/); assert.match(html, /id="story-modal"/); assert.match(html, /story-content\.js\?v=1/); assert.match(html, /tactics-hangar\.css\?v=7/);
   assert.match(source, /HOME_DISPLAY_IDS = \['crimson_dragon', 'emerald_god_dragon', 'abyss_god_dragon', 'solar_phoenix', 'eclipse_dragon'\]/); assert.match(source, /function showStory/); assert.match(source, /grantStoryPet/);
   assert.match(progression, /homeDisplay: \{ petId: 'crimson_dragon', mode: 'fixed' \}/); assert.match(progression, /grantStoryPet/);
   assert.match(story, /'c1-1:before'/); assert.match(story, /'c1-boss:before'/); assert.match(story, /'c1-boss:after'/); assert.match(story, /forest_deer/);
@@ -439,10 +439,16 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=49/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=50/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/); assert.doesNotMatch(source, /吾主，請下令/);
+});
+test('元素限定召喚與每日 Boss 來襲可保存殘血並依五段難度解鎖', () => {
+  const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const progression = readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8');
+  assert.match(html, /id="gacha-element-pulls"/); assert.match(html, /id="open-boss-raid"/); assert.match(html, /id="boss-raid-modal"/); assert.match(html, /js\/core\/TacticalProgression\.js\?v=11/);
+  assert.match(source, /function bossRaidStage/); assert.match(source, /function enterBossRaid/); assert.match(source, /BOSS_RAID_TIERS = \['簡單', '普通', '困難', '菁英', '魔神'\]/); assert.match(source, /progression\.pull\(count, element\)/);
+  assert.match(progression, /TacticalProgression\.prototype\.bossRaidState/); assert.match(progression, /TacticalProgression\.prototype\.recordBossRaid/); assert.match(progression, /var cost = element \? 50/);
 });
 test('三畫面架構：準備、戰鬥、結算各自獨立', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
@@ -618,7 +624,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=13/); assert.match(html, /js\/tactics\.js\?v=49/);
+  assert.match(html, /tactics-battle\.css\?v=13/); assert.match(html, /js\/tactics\.js\?v=50/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
   assert.match(battle, /\.projectile-muzzle\{/); assert.match(battle, /\.unit\.evading\{/); assert.match(battle, /\.dodge-number\{/);

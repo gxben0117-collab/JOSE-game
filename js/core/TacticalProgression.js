@@ -63,6 +63,7 @@
       /* 劇情閱讀與一次性救援獎勵；以 key 保留給後續章節擴充。 */
       story: { seen: {}, rewards: {} },
       tower: { best: 0 },
+      bossRaid: null,
       formation: { party: [], positions: [] },
       sound: true
     };
@@ -133,6 +134,7 @@
     next.shards = {};
     if (!next.tower || typeof next.tower !== 'object' || Array.isArray(next.tower)) next.tower = { best: 0 };
     next.tower.best = Math.max(0, number(next.tower.best, 0));
+    if (!next.bossRaid || typeof next.bossRaid !== 'object' || Array.isArray(next.bossRaid)) next.bossRaid = null;
     if (!next.weekly || typeof next.weekly !== 'object' || Array.isArray(next.weekly)) next.weekly = null;
     if (!next.formation || typeof next.formation !== 'object' || Array.isArray(next.formation)) next.formation = { party: [], positions: [] };
     if (!Array.isArray(next.formation.party)) next.formation.party = [];
@@ -279,13 +281,15 @@
     return { ok: true, win: true, reward: reward, best: this.state.tower.best };
   };
   TacticalProgression.prototype.pullCost = function (count) { return count === 10 ? PULL10_COST : PULL_COST * count; };
-  TacticalProgression.prototype.pull = function (count) {
+  TacticalProgression.prototype.pull = function (count, element) {
     count = count === 10 ? 10 : 1;
-    var cost = this.pullCost(count);
+    element = ELEMENTS.indexOf(element) >= 0 ? element : null;
+    if (element) count = 1;
+    var cost = element ? 50 : this.pullCost(count);
     if (this.state.crystals < cost) return { ok: false, reason: '召喚水晶不足（需要 ' + cost + '💎）' };
     var tierCounts = {};
     this.profiles.forEach(function (pet) { tierCounts[pet.quality] = (tierCounts[pet.quality] || 0) + 1; });
-    var pool = this.profiles.map(function (pet) { return { pet: pet, weight: (GACHA_TIER_WEIGHT[pet.quality] || 10) / tierCounts[pet.quality] }; });
+    var pool = this.profiles.filter(function (pet) { return !element || pet.element === element; }).map(function (pet) { return { pet: pet, weight: (GACHA_TIER_WEIGHT[pet.quality] || 10) / tierCounts[pet.quality] }; });
     var totalWeight = pool.reduce(function (sum, entry) { return sum + entry.weight; }, 0);
     this.state.crystals -= cost;
     var results = [];
@@ -297,6 +301,37 @@
     }
     this.save();
     return { ok: true, results: results, crystals: this.state.crystals };
+  };
+
+  TacticalProgression.prototype.bossRaidState = function (bossIds) {
+    var key = new Date().toISOString().slice(0, 10), seed = key.replace(/-/g, '').split('').reduce(function (sum, digit) { return sum + Number(digit); }, 0);
+    bossIds = Array.isArray(bossIds) && bossIds.length ? bossIds : [];
+    var bossId = bossIds[seed % bossIds.length] || '';
+    if (!this.state.bossRaid || this.state.bossRaid.key !== key || this.state.bossRaid.bossId !== bossId) {
+      this.state.bossRaid = { key: key, bossId: bossId, tier: 0, hp: null, maxHp: null, cleared: false, challenges: 0 };
+      this.save();
+    }
+    return this.state.bossRaid;
+  };
+  TacticalProgression.prototype.startBossRaid = function (bossIds, cost) {
+    var raid = this.bossRaidState(bossIds); cost = Math.max(0, number(cost, 0));
+    if (raid.cleared) return { ok: false, reason: '今日五個難度已全部討伐完成' };
+    if (this.state.gold < cost) return { ok: false, reason: '金幣不足（需要 ' + cost + '）' };
+    this.state.gold -= cost; raid.challenges++; this.save();
+    return { ok: true, raid: raid };
+  };
+  TacticalProgression.prototype.recordBossRaid = function (bossIds, win, hp, maxHp, element) {
+    var raid = this.bossRaidState(bossIds);
+    if (!win) { raid.hp = Math.max(1, Math.round(number(hp, maxHp))); raid.maxHp = Math.max(1, Math.round(number(maxHp, raid.hp))); this.save(); return { win: false }; }
+    var tier = Math.min(4, number(raid.tier, 0));
+    var reward = { crystals: 12 + tier * 8, gold: 140 + tier * 100, medals: 4 + tier * 4, fusionCore: 1 + Math.floor(tier / 2), essence: 8 + tier * 5, element: ELEMENTS.indexOf(element) >= 0 ? element : 'fire' };
+    var shardPool = this.profiles.filter(function (pet) { return pet.element === reward.element; });
+    reward.shardPetId = shardPool.length ? shardPool[tier % shardPool.length].id : '';
+    reward.summonShards = 2 + tier;
+    this.state.crystals += reward.crystals; this.state.gold += reward.gold; this.state.medals += reward.medals; this.state.fusionCores += reward.fusionCore; this.state.essences[reward.element] += reward.essence;
+    if (reward.shardPetId) this.state.copies[reward.shardPetId] = number(this.state.copies[reward.shardPetId], 0) + reward.summonShards;
+    raid.hp = null; raid.maxHp = null; raid.tier = tier + 1; raid.cleared = raid.tier >= 5; this.save();
+    return { win: true, reward: reward, nextTier: raid.tier, cleared: raid.cleared };
   };
 
   /* ── 圖鑑收集加成：每 10 隻全能力 +1%；單一元素滿 10 隻該系攻擊 +3%。 ── */
