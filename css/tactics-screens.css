@@ -341,7 +341,7 @@
 .cell.covered{background:transparent}
 
 /* 發光 BOSS 標籤 */
-.unit.boss-unit::before{content:'BOSS';position:absolute;top:-14px;left:50%;transform:translateX(-50%);z-index:9;padding:1px 8px;border-radius:999px;font-size:.62rem;font-weight:900;letter-spacing:.22em;color:#fff;background:linear-gradient(90deg,#ff2d4d,#ff8a3c);box-shadow:0 0 10px #ff5d73,0 0 22px #ff5d73aa;animation:boss-tag 1.4s ease-in-out infinite;pointer-events:none}
+.unit.boss-unit::before{content:none}
 @keyframes boss-tag{0%,100%{box-shadow:0 0 8px #ff5d73,0 0 16px #ff5d7388;filter:brightness(1)}50%{box-shadow:0 0 14px #ff7d8f,0 0 30px #ff5d73;filter:brightness(1.3)}}
 
 /* 素材包地形圖塊：熔岩／森林／水域格與障礙 */

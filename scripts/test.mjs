@@ -325,7 +325,8 @@ test('無限塔改為十波守護塔防衛，含波間加護、復甦與塔之�
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
   assert.match(source, /maxWaves: 10/); assert.match(source, /function guardianTower\(floor\)/); assert.match(source, /function spawnTowerWave\(wave\)/); assert.match(source, /function completeTowerWave\(\)/); assert.match(source, /function reviveTowerAllies\(nextWave\)/); assert.match(source, /function towerCommand\(\)/);
-  assert.match(html, /id="tower-command"/); assert.match(html, /id="tower-choice"/); assert.match(battle, /\.guardian-tower\{/); assert.match(battle, /\.tower-choice\{/);
+  assert.match(source, /function chooseTowerBoon\(boon, automatic\)/); assert.match(source, /setTimeout\(function \(\) \{ chooseTowerBoon\(autoTowerBoon\(boons\), true\); \}, 5000\)/); assert.match(source, /function towerDefenseTarget\(unit\)/); assert.match(source, /currentStage\.tower\) \{ spawnTowerWave\(1\); toggleAuto\(\); return; \}/);
+  assert.match(html, /id="tower-command"/); assert.match(html, /id="tower-choice"/); assert.match(battle, /\.guardian-tower\{/); assert.match(battle, /\.tower-choice\{/); assert.match(battle, /guardian-spire/);
 });
 test('戰鬥地圖可點選敵我單位查看完整資訊且已移除小地圖', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');

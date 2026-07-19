@@ -12,7 +12,7 @@
   var progress = progression.state;
   var audio = new window.TacticalAudio(progress.sound);
   var partyIds = progress.party.slice(), currentStage = content.stageById(progress.currentStage), state;
-  var deploySelection = [], growthPetId = partyIds[0], autoTimer = null, battleSpeed = 1;
+  var deploySelection = [], growthPetId = partyIds[0], autoTimer = null, towerChoiceTimer = null, towerChoiceTick = null, battleSpeed = 1;
   var formationSnapshot = [], deployFilters = { search: '', element: '', role: '', size: '' };
   var dexFilters = { search: '', element: '', role: '', owned: '' }, dexSelectedId = '';
 
@@ -383,6 +383,7 @@
 
   function reset(stageId) {
     stopAuto();
+    stopTowerChoiceTimer();
     if (stageId && typeof stageId === 'object') currentStage = stageId;
     else if (stageId) currentStage = content.stageById(stageId);
     if (!currentStage.tower) { progress.currentStage = currentStage.id; progression.save(); }
@@ -418,7 +419,7 @@
     if (state.phase !== 'deploy') return;
     rememberFormation();
     state.phase = 'player'; state.selected = null; audio.play('ui');
-    if (currentStage.tower) { spawnTowerWave(1); return; }
+    if (currentStage.tower) { spawnTowerWave(1); toggleAuto(); return; }
     if (currentStage.boss) {
       var boss = state.units.find(function (unit) { return unit.boss && unit.hp > 0; });
       if (boss && dom.bossIntro) {
@@ -1030,7 +1031,7 @@
     var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.team === 'ally' && unit.acted ? ' action-complete' : '') + (state.victoryCinematic && unit.team === 'ally' && unit.hp > 0 ? ' victorious' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
     if (unit.guardian) {
       element.className += ' guardian-tower'; element.setAttribute('aria-label', '守護塔，生命 ' + unit.hp + ' / ' + unit.maxHp);
-      element.innerHTML = '<span class="guardian-core" aria-hidden="true">✦</span><span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
+      element.innerHTML = '<span class="guardian-spire" aria-hidden="true"><span class="guardian-core">✦</span></span><span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
       element.addEventListener('click', function (event) { event.stopPropagation(); }); return element;
     }
     applyMotionVariables(element, unit);
@@ -1229,7 +1230,27 @@
         score += Math.min(closestEnemy, 5) * 2;
       }
     }
+    if (currentStage.tower && unit.team === 'ally') {
+      var guardian = state.units.find(function (entry) { return entry.guardian && entry.hp > 0; });
+      if (guardian) {
+        var towerDistance = distance(tile, guardian);
+        if (fragileRole(unit)) score += Math.max(0, 7 - towerDistance) * 3;
+        else if (opponents.length) {
+          var closestThreat = opponents.slice().sort(function (a, b) { return distance(a, guardian) - distance(b, guardian); })[0];
+          var guardLine = Math.max(2, Math.min(6, distance(closestThreat, guardian) - 1));
+          score += Math.max(0, 12 - Math.abs(towerDistance - guardLine) * 3);
+        }
+      }
+    }
     return score;
+  }
+  function towerDefenseTarget(unit) {
+    var guardian = state.units.find(function (entry) { return entry.guardian && entry.hp > 0; });
+    var enemies = alive('enemy');
+    if (!guardian || !enemies.length) return closest(unit, enemies);
+    return enemies.slice().sort(function (a, b) {
+      return distance(a, guardian) - distance(b, guardian) || distance(unit, a) - distance(unit, b);
+    })[0];
   }
   function planFor(unit) {
     /* 目標陣營由施放者本身推導，不能由呼叫端傳入。
@@ -1247,7 +1268,7 @@
             var needs = friend.hp < friend.maxHp * 0.92 || skill.effect === 'shield' || skill.effect === 'buff_atk';
             if (!needs || distance(virtual, friend) > skillRange(unit, skill)) return;
             var missing = 1 - friend.hp / friend.maxHp;
-            var score = positionScore + (skill.effect === 'heal' || skill.effect === 'heal_all' ? 12 + missing * 80 : 16 + missing * 12) + (friend.boss ? 4 : 0);
+            var score = positionScore + (skill.effect === 'heal' || skill.effect === 'heal_all' ? 12 + missing * 80 : 16 + missing * 12) + (friend.boss ? 4 : 0) + (friend.guardian ? 56 + missing * 90 : 0);
             if (skill.effect === 'heal_all') score += friends.filter(function (entry) { return entry.hp < entry.maxHp; }).length * 8;
             if (missing < 0.08 && skill.effect !== 'shield' && skill.effect !== 'buff_atk') return;
             if (!best || score > best.score) best = { tile: tile, skill: skill, index: index, target: friend, score: score };
@@ -1270,6 +1291,10 @@
           if ((skill.push || skill.pull) && !target.boss) score += 6;
           if (target.boss) score += 5;
           if (skill.kind === 'ultimate') score += 4;
+          if (currentStage.tower && unit.team === 'ally') {
+            var guardian = state.units.find(function (entry) { return entry.guardian && entry.hp > 0; });
+            if (guardian) score += Math.max(0, 9 - distance(target, guardian)) * 11;
+          }
           if (!best || score > best.score) best = { tile: tile, skill: skill, index: index, target: target, score: score };
         });
       });
@@ -1304,7 +1329,7 @@
       /* 殘血且未接戰：撤向治療者等待救援。 */
       await advanceToward(unit, nearestHealer(unit)); unit.acted = true; note(unitName(unit) + ' 撤向後方尋求治療。'); render();
     }
-    else if (!unit.moved && alive('enemy').length) { await advanceToward(unit, closest(unit, alive('enemy'))); var retry = planFor(unit); if (retry) await executePlan(unit, retry); else { unit.acted = true; render(); } }
+    else if (!unit.moved && alive('enemy').length) { await advanceToward(unit, currentStage.tower ? towerDefenseTarget(unit) : closest(unit, alive('enemy'))); var retry = planFor(unit); if (retry) await executePlan(unit, retry); else { unit.acted = true; render(); } }
     else { unit.acted = true; note(unitName(unit) + ' 沒有可用目標，結束本次行動。'); render(); }
     scheduleAuto();
   }
@@ -1397,10 +1422,39 @@
     state.tower.awaitingChoice = true; stopAuto();
     towerUnits().filter(function (unit) { return unit.hp <= 0 && !state.tower.reviveWave[unit.key]; }).forEach(function (unit) { state.tower.reviveWave[unit.key] = state.tower.wave + 2; });
     towerHealAll(0.22); state.phase = 'tower-choice'; render();
-    dom.towerChoiceTitle.textContent = '第 ' + state.tower.wave + ' 波防守成功'; dom.towerChoiceCopy.textContent = '守護塔已治療倖存幻獸；倒下的幻獸將在後續波次由塔復甦。選擇下一波的加護。';
+    dom.towerChoiceTitle.textContent = '第 ' + state.tower.wave + ' 波防守成功';
     dom.towerChoiceOptions.innerHTML = '';
-    towerBoonOptions().forEach(function (boon) { var button = document.createElement('button'); button.type = 'button'; button.innerHTML = '<b>' + boon.title + '</b><small>' + boon.copy + '</small>'; button.onclick = function () { boon.apply(); dom.towerChoice.hidden = true; state.tower.awaitingChoice = false; reviveTowerAllies(state.tower.wave + 1); spawnTowerWave(state.tower.wave + 1); }; dom.towerChoiceOptions.appendChild(button); });
+    var boons = towerBoonOptions();
+    boons.forEach(function (boon) { var button = document.createElement('button'); button.type = 'button'; button.innerHTML = '<b>' + boon.title + '</b><small>' + boon.copy + '</small>'; button.onclick = function () { chooseTowerBoon(boon, false); }; dom.towerChoiceOptions.appendChild(button); });
     dom.towerChoice.hidden = false;
+    state.tower.choiceEndsAt = Date.now() + 5000;
+    updateTowerChoiceCountdown();
+    towerChoiceTick = setInterval(updateTowerChoiceCountdown, 200);
+    towerChoiceTimer = setTimeout(function () { chooseTowerBoon(autoTowerBoon(boons), true); }, 5000);
+  }
+  function stopTowerChoiceTimer() {
+    if (towerChoiceTimer) clearTimeout(towerChoiceTimer);
+    if (towerChoiceTick) clearInterval(towerChoiceTick);
+    towerChoiceTimer = null; towerChoiceTick = null;
+  }
+  function updateTowerChoiceCountdown() {
+    if (!state || !state.tower || !state.tower.awaitingChoice) return;
+    var seconds = Math.max(0, Math.ceil((state.tower.choiceEndsAt - Date.now()) / 1000));
+    dom.towerChoiceCopy.textContent = '守護塔已治療倖存幻獸；倒下的幻獸將在後續波次由塔復甦。請在 ' + seconds + ' 秒內選擇，逾時由守護塔自動決定加護。';
+  }
+  function autoTowerBoon(boons) {
+    var tower = state.units.find(function (unit) { return unit.guardian; });
+    var allies = towerUnits().filter(function (unit) { return unit.hp > 0; });
+    var missing = allies.length ? allies.reduce(function (sum, unit) { return sum + (1 - unit.hp / unit.maxHp); }, 0) / allies.length : 0;
+    if (tower && tower.hp < tower.maxHp * 0.62) return boons.find(function (boon) { return boon.id === 'fortify'; });
+    if (missing > 0.22) return boons.find(function (boon) { return boon.id === 'heal'; });
+    return boons.find(function (boon) { return boon.id === 'attack'; });
+  }
+  function chooseTowerBoon(boon, automatic) {
+    if (!boon || !state.tower.awaitingChoice || state.over) return;
+    stopTowerChoiceTimer(); boon.apply(); dom.towerChoice.hidden = true; state.tower.awaitingChoice = false;
+    note(automatic ? '守護塔自動選擇「' + boon.title.replace(/^[^\s]+\s*/, '') + '」。' : '已選擇「' + boon.title.replace(/^[^\s]+\s*/, '') + '」。');
+    reviveTowerAllies(state.tower.wave + 1); spawnTowerWave(state.tower.wave + 1); toggleAuto();
   }
   function towerCommand() {
     if (!currentStage.tower || state.tower.commandUsed || state.over || state.tower.awaitingChoice) return;
