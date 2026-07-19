@@ -135,6 +135,8 @@
 
 /* 友軍治療／護盾不使用元素攻擊的爆裂感，避免和敵方命中特效混淆。 */
 .vfx.support-vfx{border:2px solid #baffc9;border-radius:50%;background:radial-gradient(circle,#f0fff5 0 10%,#75ef9b88 28%,transparent 67%)!important;box-shadow:0 0 14px #64e98c,0 0 26px #b9ffd077;filter:drop-shadow(0 0 9px #7bffac)!important}
+.unit.supporting{filter:drop-shadow(0 0 8px #75ef9b) drop-shadow(2px 4px 1px #1a0c09);animation:support-pulse calc(.5s*var(--battle-rate,1)) ease-out both}
+@keyframes support-pulse{0%{scale:1;filter:brightness(1)}45%{scale:1.06;filter:brightness(1.45) drop-shadow(0 0 10px #75ef9b)}100%{scale:1;filter:brightness(1)}}
 
 /* 點選單位時提供短暫焦點回饋；僅點選移鏡，行走與攻擊過程不追鏡。 */
 .unit.camera-focus{animation:camera-focus calc(.5s*var(--battle-rate,1)) ease-out}

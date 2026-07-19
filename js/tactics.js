@@ -823,7 +823,10 @@
     if (Math.abs(targetDx) >= Math.abs(targetDy) && targetDx !== 0) unit.facing = targetDx > 0 ? 'right' : 'left';
     else if (targetDy !== 0) unit.facing = targetDy > 0 ? 'down' : 'up';
     render();
-    var casterPiece = dom.board.querySelector('[data-key="' + unit.key + '"]'); if (casterPiece) casterPiece.classList.add('cast');
+    /* 支援技能不能沿用攻擊動作圖；它的目標是友軍，若播放 attack row
+       便會視覺上像對自己人出手。 */
+    var casterMotionClass = skill.attackStyle === 'support' ? 'supporting' : 'cast';
+    var casterPiece = dom.board.querySelector('[data-key="' + unit.key + '"]'); if (casterPiece) casterPiece.classList.add(casterMotionClass);
     if (skill.kind === 'ultimate' && skill.attackStyle !== 'support') ultimateFlash();
     if (skill.attackStyle === 'area') telegraphArea(target, skill.radius || 1, skill.vfxHue);
     if (skill.attackStyle !== 'melee') castCircle(unit, skill.attackStyle === 'support' ? 145 : skill.vfxHue); /* 遠程／輔助：腳下魔法陣 */
@@ -882,7 +885,7 @@
     });
     if (bossDefeated) dom.board.parentElement.parentElement.classList.add('boss-death-flash');
     await pause(defeated.length ? 450 : 330);
-    if (casterPiece) { casterPiece.classList.remove('cast', 'dash'); }
+    if (casterPiece) { casterPiece.classList.remove('cast', 'supporting', 'dash'); }
     dom.board.parentElement.parentElement.classList.remove('shake-light', 'shake-crit', 'shake-ultimate', 'boss-death-flash');
     if ((skill.push || skill.pull) && target.hp > 0) await displace(unit, target, skill);
     defeated.forEach(function (effect) { effect.target.defeating = false; });
