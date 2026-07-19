@@ -320,6 +320,13 @@ test('全部戰鬥單位使用四方向新版動作圖', () => {
   ['motion-idle-right', 'motion-idle-left', 'motion-walk-right', 'motion-walk-left', 'motion-attack-right', 'motion-attack-left'].forEach(name => assert.match(css, new RegExp(name)));
   ['motion-4dir-idle-down','motion-4dir-walk-down','motion-4dir-attack-down','motion-4dir-idle-up','motion-4dir-walk-up','motion-4dir-attack-up'].forEach(name => assert.match(css, new RegExp(name)));
 });
+test('無限塔改為十波守護塔防衛，含波間加護、復甦與塔之指令', () => {
+  const html = readFileSync(join(root, 'tactics.html'), 'utf8');
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
+  assert.match(source, /maxWaves: 10/); assert.match(source, /function guardianTower\(floor\)/); assert.match(source, /function spawnTowerWave\(wave\)/); assert.match(source, /function completeTowerWave\(\)/); assert.match(source, /function reviveTowerAllies\(nextWave\)/); assert.match(source, /function towerCommand\(\)/);
+  assert.match(html, /id="tower-command"/); assert.match(html, /id="tower-choice"/); assert.match(battle, /\.guardian-tower\{/); assert.match(battle, /\.tower-choice\{/);
+});
 test('戰鬥地圖可點選敵我單位查看完整資訊且已移除小地圖', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
@@ -411,7 +418,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=7/); assert.match(html, /js\/tactics\.js\?v=34/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=7/); assert.match(html, /js\/tactics\.js\?v=36/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/);
@@ -590,7 +597,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=11/); assert.match(html, /js\/tactics\.js\?v=35/);
+  assert.match(html, /tactics-battle\.css\?v=12/); assert.match(html, /js\/tactics\.js\?v=36/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
   assert.match(battle, /\.projectile-muzzle\{/); assert.match(battle, /\.unit\.evading\{/); assert.match(battle, /\.dodge-number\{/);
