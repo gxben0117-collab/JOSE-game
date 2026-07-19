@@ -244,10 +244,10 @@
       skill('蝕月吐息', { kind: 'active', multiplier: 0.95, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
       skill('月蝕獵殺', { kind: 'ultimate', multiplier: 1.65, cooldown: 4, push: 2 })
     ], { boss: true }),
-    enemy('void_devourer', '虛空吞噬者', 'dark', 'allrounder', '終局首領', { health: 4700, power: 540, magic: 500, defense: 330, speed: 7 }, 3, [
-      skill('吞噬之口', { kind: 'basic', multiplier: 0.95 }),
-      skill('虛空亂流', { kind: 'active', multiplier: 1.0, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
-      skill('奇點湮滅', { kind: 'ultimate', multiplier: 1.4, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4, status: 'freeze', statusTurns: 1 })
+    enemy('void_devourer', '始源龍皇・阿爾卡迪亞', 'dark', 'allrounder', '龍族守護者', { health: 4700, power: 540, magic: 500, defense: 330, speed: 7 }, 3, [
+      skill('始源龍爪', { kind: 'basic', multiplier: 0.95 }),
+      skill('守護龍息', { kind: 'active', multiplier: 1.0, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
+      skill('龍殿共鳴', { kind: 'ultimate', multiplier: 1.4, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4, status: 'freeze', statusTurns: 1 })
     ], { boss: true, size: 3 })
   ];
 

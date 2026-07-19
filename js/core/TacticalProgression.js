@@ -10,6 +10,7 @@
   var STARTER_PETS = DEFAULT_PARTY.slice();
   var GACHA_TIER_WEIGHT = { normal: 34, rare: 30, elite: 18, epic: 10, legendary: 6, mythical: 2 };
   var PULL_COST = 30, PULL10_COST = 270;
+  var TESTER_GIFT_KEY = 'crystals-5000-v1', TESTER_GIFT_CRYSTALS = 5000, FEATURED_PITY = 200;
   var DAILY_QUESTS = [
     { id: 'd-battle', name: '每日遠征', description: '完成 3 場戰鬥', stat: 'battles', target: 3, reward: { crystals: 10 } },
     { id: 'd-win', name: '旗開得勝', description: '贏得 2 場戰鬥', stat: 'wins', target: 2, reward: { crystals: 10, medals: 3 } },
@@ -49,7 +50,7 @@
       bossKills: 0,
       questClaims: {},
       owned: {},
-      crystals: 60,
+      crystals: 5060,
       gold: 200,
       copies: {},
       stars: {},
@@ -62,6 +63,8 @@
       homeDisplay: { petId: 'crimson_dragon', mode: 'fixed' },
       /* 劇情閱讀與一次性救援獎勵；以 key 保留給後續章節擴充。 */
       story: { seen: {}, rewards: {} },
+      testerGifts: { 'crystals-5000-v1': true },
+      featuredPity: { date: '', pulls: 0 },
       tower: { best: 0 },
       bossRaid: null,
       formation: { party: [], positions: [] },
@@ -148,6 +151,13 @@
     next.homeDisplay.mode = next.homeDisplay.mode === 'leader' ? 'leader' : 'fixed';
     if (!next.story || typeof next.story !== 'object' || Array.isArray(next.story)) next.story = { seen: {}, rewards: {} };
     ['seen', 'rewards'].forEach(function (key) { if (!next.story[key] || typeof next.story[key] !== 'object' || Array.isArray(next.story[key])) next.story[key] = {}; });
+    var shouldGrantTesterGift = Boolean(raw) && (!raw.testerGifts || typeof raw.testerGifts !== 'object' || !raw.testerGifts[TESTER_GIFT_KEY]);
+    if (!next.testerGifts || typeof next.testerGifts !== 'object' || Array.isArray(next.testerGifts)) next.testerGifts = {};
+    /* 測試期全玩家一次性贈禮：新舊存檔都可取得一次，但不會因重整重複發放。 */
+    if (shouldGrantTesterGift) { next.crystals += TESTER_GIFT_CRYSTALS; next.testerGifts[TESTER_GIFT_KEY] = true; }
+    if (!next.featuredPity || typeof next.featuredPity !== 'object' || Array.isArray(next.featuredPity)) next.featuredPity = { date: '', pulls: 0 };
+    next.featuredPity.date = typeof next.featuredPity.date === 'string' ? next.featuredPity.date : '';
+    next.featuredPity.pulls = Math.max(0, Math.min(FEATURED_PITY - 1, number(next.featuredPity.pulls, 0)));
     // 擁有制遷移：初始 8 隻 + 隊伍成員 + 任何投入過養成的幻獸自動視為已擁有。
     STARTER_PETS.forEach(function (id) { next.owned[id] = true; });
     (Array.isArray(next.party) ? next.party : []).forEach(function (id) { next.owned[id] = true; });
@@ -281,7 +291,18 @@
     return { ok: true, win: true, reward: reward, best: this.state.tower.best };
   };
   TacticalProgression.prototype.pullCost = function (count) { return count === 10 ? PULL10_COST : PULL_COST * count; };
-  TacticalProgression.prototype.pull = function (count, element) {
+  TacticalProgression.prototype.dateKey = function () { return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Taipei' }); };
+  TacticalProgression.prototype.featuredPet = function () {
+    var date = this.dateKey(), seed = date.split('-').reduce(function (sum, part) { return sum * 37 + Number(part || 0); }, 0);
+    var pool = this.profiles.filter(function (pet) { return ['elite', 'epic', 'legendary', 'mythical'].indexOf(pet.quality) >= 0; });
+    return { date: date, pet: pool[Math.abs(seed) % pool.length] || this.profiles[0] };
+  };
+  TacticalProgression.prototype.featuredProgress = function () {
+    var featured = this.featuredPet();
+    if (this.state.featuredPity.date !== featured.date) { this.state.featuredPity = { date: featured.date, pulls: 0 }; this.save(); }
+    return { pet: featured.pet, date: featured.date, pulls: this.state.featuredPity.pulls, target: FEATURED_PITY };
+  };
+  TacticalProgression.prototype.pull = function (count, element, featured) {
     count = count === 10 ? 10 : 1;
     element = ELEMENTS.indexOf(element) >= 0 ? element : null;
     if (element) count = 1;
@@ -290,17 +311,18 @@
     var tierCounts = {};
     this.profiles.forEach(function (pet) { tierCounts[pet.quality] = (tierCounts[pet.quality] || 0) + 1; });
     var pool = this.profiles.filter(function (pet) { return !element || pet.element === element; }).map(function (pet) { return { pet: pet, weight: (GACHA_TIER_WEIGHT[pet.quality] || 10) / tierCounts[pet.quality] }; });
-    var totalWeight = pool.reduce(function (sum, entry) { return sum + entry.weight; }, 0);
+    var totalWeight = pool.reduce(function (sum, entry) { return sum + entry.weight; }, 0), featuredInfo = featured ? this.featuredProgress() : null;
     this.state.crystals -= cost;
     var results = [];
     for (var index = 0; index < count; index++) {
-      var roll = Math.random() * totalWeight, picked = pool[0];
-      for (var cursor = 0; cursor < pool.length; cursor++) { roll -= pool[cursor].weight; if (roll <= 0) { picked = pool[cursor]; break; } }
+      var guaranteed = featuredInfo && featuredInfo.pulls >= FEATURED_PITY - 1, roll = Math.random() * totalWeight, picked = guaranteed ? { pet: featuredInfo.pet } : pool[0];
+      if (!guaranteed) for (var cursor = 0; cursor < pool.length; cursor++) { roll -= pool[cursor].weight; if (roll <= 0) { picked = pool[cursor]; break; } }
       var grant = this.grantPet(picked.pet.id);
-      results.push({ pet: picked.pet, isNew: grant.isNew, shards: grant.shards || 0 });
+      results.push({ pet: picked.pet, isNew: grant.isNew, shards: grant.shards || 0, featuredGuaranteed: Boolean(guaranteed) });
+      if (featuredInfo) { featuredInfo.pulls = guaranteed ? 0 : featuredInfo.pulls + 1; this.state.featuredPity = { date: featuredInfo.date, pulls: featuredInfo.pulls }; }
     }
     this.save();
-    return { ok: true, results: results, crystals: this.state.crystals };
+    return { ok: true, results: results, crystals: this.state.crystals, featured: featuredInfo ? this.featuredProgress() : null };
   };
 
   TacticalProgression.prototype.bossRaidState = function (bossIds) {
@@ -591,6 +613,7 @@
       reward.medals = reward.firstClear ? stage.rewards.medals : Math.max(1, Math.floor(stage.rewards.medals / 2));
       reward.essence = reward.firstClear ? stage.rewards.essence : Math.max(1, Math.floor(stage.rewards.essence / 2));
       reward.fusionCore = reward.firstClear ? stage.rewards.fusionCore : 0;
+      reward.coreLabel = reward.firstClear ? (stage.rewards.coreLabel || '') : '';
       reward.crystals = reward.firstClear ? 15 + stage.order * 2 : 5;
       this.state.crystals += reward.crystals;
       reward.gold = reward.firstClear ? 40 + stage.order * 6 : 15;

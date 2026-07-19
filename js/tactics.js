@@ -1676,7 +1676,7 @@
     dom.resultCopy.textContent = win ? (reward.firstClear ? '首次通關完成，已解鎖下一個關卡。' : '重複挑戰完成，取得部分固定資源。') : '可先調整隊伍、融合階級與技能樹再挑戰。';
     dom.resultStats.innerHTML = '<span><b>' + state.round + '</b>回合</span><span><b>' + state.stats.damage + '</b>傷害</span><span><b>' + survivors + '/' + partyIds.length + '</b>存活</span>';
     dom.resultRewards.textContent = win
-      ? '★'.repeat(reward.stars || 1) + (reward.medals ? '　🏅 +' + reward.medals : '') + (reward.essence ? '　🔷 +' + reward.essence : '') + (reward.fusionCore ? '　🧬 +' + reward.fusionCore : '') + (reward.crystals ? '　💎 +' + reward.crystals : '') + (reward.gold ? '　🪙 +' + reward.gold : '') + (reward.summonShards ? '　🧩 +' + reward.summonShards + ' 召喚碎片' : '') + (reward.storyPet ? '　🦌 新夥伴：' + profile(reward.storyPet).name : '')
+      ? '★'.repeat(reward.stars || 1) + (reward.medals ? '　🏅 +' + reward.medals : '') + (reward.essence ? '　🔷 +' + reward.essence : '') + (reward.fusionCore ? '　🧬 +' + reward.fusionCore : '') + (reward.coreLabel ? '　✦ ' + reward.coreLabel : '') + (reward.crystals ? '　💎 +' + reward.crystals : '') + (reward.gold ? '　🪙 +' + reward.gold : '') + (reward.summonShards ? '　🧩 +' + reward.summonShards + ' 召喚碎片' : '') + (reward.storyPet ? '　🦌 新夥伴：' + profile(reward.storyPet).name : '')
       : '本次沒有取得掉落物';
     if (currentStage.bossRaid) {
       var bossResult = state.reward || {};
@@ -1981,16 +1981,18 @@
   function renderGacha() {
     document.getElementById('gacha-info').innerHTML = '持有 <b>💎 ' + progress.crystals + '</b> 召喚水晶。首次通關與每日任務可獲得水晶。已收集 ' + progression.dexSummary().total + '/' + window.TACTICAL_PET_DATA.length + ' 隻。';
     var icons = { fire: '🔥 火', forest: '🌿 森', ocean: '🌊 海', light: '✨ 光', dark: '🌑 暗' };
-    document.getElementById('gacha-element-pulls').innerHTML = ['fire', 'forest', 'ocean', 'light', 'dark'].map(function (element) { return '<button type="button" data-element-pull="' + element + '">' + icons[element] + '屬性召喚 <small>50 💎</small></button>'; }).join('');
+    var featured = progression.featuredProgress(), featuredPet = featured.pet;
+    document.getElementById('gacha-element-pulls').innerHTML = '<article class="gacha-featured"><span class="gacha-featured-art" style="background-image:url(\'' + featuredPet.evolution[0].portrait + '\')"></span><div><b>✦ 每日精選幻獸池</b><small>' + (window.ELEMENT_CONFIG[featuredPet.element] || {}).label + '・' + featuredPet.name + '｜保底進度 ' + featured.pulls + '/' + featured.target + '</small></div><div class="gacha-featured-actions"><button type="button" data-featured-pull="1">單抽 30 💎</button><button type="button" data-featured-pull="10">十連 270 💎</button></div></article>' + ['fire', 'forest', 'ocean', 'light', 'dark'].map(function (element) { return '<button type="button" data-element-pull="' + element + '">' + icons[element] + '屬性召喚 <small>50 💎</small></button>'; }).join('');
     document.querySelectorAll('[data-element-pull]').forEach(function (button) { button.onclick = function () { doPull(1, button.dataset.elementPull); }; });
+    document.querySelectorAll('[data-featured-pull]').forEach(function (button) { button.onclick = function () { doPull(Number(button.dataset.featuredPull), null, true); }; });
   }
   function renderGachaResults(results) {
     var box = document.getElementById('gacha-results');
     box.innerHTML = results.map(function (entry, index) {
       var quality = entry.pet.rarity || entry.pet.quality || 'normal';
-      return '<div class="gacha-card quality-' + quality + (entry.isNew ? ' fresh' : '') + '" style="animation-delay:' + index * 90 + 'ms">' +
+      return '<div class="gacha-card quality-' + quality + (entry.isNew ? ' fresh' : '') + (entry.featuredGuaranteed ? ' featured-guaranteed' : '') + '" style="animation-delay:' + index * 90 + 'ms">' +
         '<span class="deploy-art" style="background-image:url(\'' + entry.pet.evolution[0].portrait + '\')"></span>' +
-        '<b>' + entry.pet.name + '</b><small>' + (entry.isNew ? '✨ NEW!' : '碎片 +1') + '</small></div>';
+        '<b>' + entry.pet.name + '</b><small>' + (entry.featuredGuaranteed ? '✦ 精選保底！' : entry.isNew ? '✨ NEW!' : '碎片 +1') + '</small></div>';
     }).join('');
   }
   function revealGachaCard() {
@@ -2024,8 +2026,8 @@
     gachaCeremony = { results: [], index: 0, timer: null };
     document.getElementById('gacha-reveal').hidden = true;
   }
-  function doPull(count, element) {
-    var result = progression.pull(count, element);
+  function doPull(count, element, featured) {
+    var result = progression.pull(count, element, featured);
     if (!result.ok) { document.getElementById('gacha-info').innerHTML = '<b class="fc-warn">' + result.reason + '</b>'; audio.play('ui'); return; }
     audio.play('unlock'); renderProgress(); renderGacha(); renderParty(); renderTrait();
     startGachaCeremony(result.results);
