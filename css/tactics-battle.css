@@ -133,6 +133,9 @@
 .projectile-dark::after{background:linear-gradient(270deg,#b85ae1,#57147d88,transparent)}
 @keyframes projectile-flicker{50%{transform:rotate(16deg) scale(1.12);filter:brightness(1.45)}}
 
+/* 友軍治療／護盾不使用元素攻擊的爆裂感，避免和敵方命中特效混淆。 */
+.vfx.support-vfx{border:2px solid #baffc9;border-radius:50%;background:radial-gradient(circle,#f0fff5 0 10%,#75ef9b88 28%,transparent 67%)!important;box-shadow:0 0 14px #64e98c,0 0 26px #b9ffd077;filter:drop-shadow(0 0 9px #7bffac)!important}
+
 /* 點選單位時提供短暫焦點回饋；僅點選移鏡，行走與攻擊過程不追鏡。 */
 .unit.camera-focus{animation:camera-focus calc(.5s*var(--battle-rate,1)) ease-out}
 @keyframes camera-focus{0%{filter:brightness(1);outline:0 solid #fff0}35%{filter:brightness(1.35);outline:4px solid #fff6a8;outline-offset:3px}100%{filter:brightness(1);outline:0 solid #fff0;outline-offset:9px}}

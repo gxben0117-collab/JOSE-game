@@ -679,7 +679,7 @@
     var cell = cellAt(target.x, target.y); if (!cell) return;
     var fxClass = skill.status === 'freeze' ? 'fx-freeze' : skill.status === 'poison' ? 'fx-poison' : skill.status === 'burn' ? 'fx-burn' : (skill.push || skill.pull) ? 'fx-force' : '';
     var vfxSpec = window.TACTICAL_ANIMATION_CONFIG.vfx(skill);
-    var fx = document.createElement('i'); fx.className = 'vfx ' + (element || 'fire') + ' variant-' + (skill.vfxVariant || 0) + (fxClass ? ' ' + fxClass : ''); fx.style.setProperty('--vfx', 'hsl(' + skill.vfxHue + ' 92% 62%)'); fx.setAttribute('aria-label', skill.name + ' 特效'); cell.appendChild(fx);
+    var fx = document.createElement('i'); fx.className = 'vfx ' + (element || 'fire') + ' variant-' + (skill.vfxVariant || 0) + (fxClass ? ' ' + fxClass : '') + (healing ? ' support-vfx' : ''); fx.style.setProperty('--vfx', 'hsl(' + skill.vfxHue + ' 92% 62%)'); fx.setAttribute('aria-label', skill.name + ' 特效'); cell.appendChild(fx);
     var number = document.createElement('b'); number.className = 'damage-number ' + (healing ? 'heal' : '') + (crit ? ' crit' : ''); number.textContent = absorbed && !amount ? '護盾' : (crit ? '爆擊 ' : '') + (healing ? '+' : '−') + amount;
     fx.style.setProperty('--vfx-frames', vfxSpec.frameCount); fx.style.setProperty('--vfx-duration', vfxSpec.durationMs + 'ms'); fx.dataset.frameCount = String(vfxSpec.frameCount);
     if (skill.kind === 'ultimate' || skill.boss) fx.classList.add('vfx-featured');
@@ -826,7 +826,7 @@
     var casterPiece = dom.board.querySelector('[data-key="' + unit.key + '"]'); if (casterPiece) casterPiece.classList.add('cast');
     if (skill.kind === 'ultimate' && skill.attackStyle !== 'support') ultimateFlash();
     if (skill.attackStyle === 'area') telegraphArea(target, skill.radius || 1, skill.vfxHue);
-    if (skill.attackStyle !== 'melee') castCircle(unit, skill.vfxHue); /* 遠程／輔助：腳下魔法陣 */
+    if (skill.attackStyle !== 'melee') castCircle(unit, skill.attackStyle === 'support' ? 145 : skill.vfxHue); /* 遠程／輔助：腳下魔法陣 */
     else slashFx(target); /* 近戰：目標身上的揮砍弧光 */
     var projectileDelay = addProjectile(unit, target, skill);
     if (projectileDelay) await pause(projectileDelay);
@@ -864,7 +864,10 @@
     if (skill.attackStyle === 'melee' && casterPiece) {
       casterPiece.style.setProperty('--dash-x', (target.x - unit.x) * 42 + 'px'); casterPiece.style.setProperty('--dash-y', (target.y - unit.y) * 42 + 'px'); casterPiece.classList.add('dash');
     }
-    await pause(Math.max(0, animationHitDelay(unit, 'attack', skill) - projectileDelay)); effects.forEach(function (effect) { addVisual(effect.target, unit.p.element, skill, effect.amount, effect.healing, effect.absorbed, effect.crit); });
+    await pause(Math.max(0, animationHitDelay(unit, 'attack', skill) - projectileDelay)); effects.forEach(function (effect) {
+      var visualSkill = effect.healing ? Object.assign({}, skill, { vfxHue: 145, vfxVariant: 3 }) : skill;
+      addVisual(effect.target, effect.healing ? 'forest' : unit.p.element, visualSkill, effect.amount, effect.healing, effect.absorbed, effect.crit);
+    });
     if (effects.some(function (effect) { return !effect.healing; })) {
       combatShake(skill.kind === 'ultimate' ? 'ultimate' : anyCrit ? 'crit' : 'light');
       await hitStop(anyCrit ? 120 : skill.kind === 'ultimate' ? 90 : 75);
