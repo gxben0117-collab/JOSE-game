@@ -142,13 +142,22 @@
     return spec;
   }
   function motionVariables(unit) {
-    var result = { columns: animationSpec(unit, 'idle').columns };
+    var entry = motionManifestEntry(unit);
+    var result = { columns: animationSpec(unit, 'idle').columns, rows: Math.max(1, Number(entry.rows) || 12), rowsOrder: entry.rowsOrder || [] };
     ['idle', 'move', 'attack', 'hit', 'death', 'victory'].forEach(function (action) { result[action] = animationSpec(unit, action); });
     return result;
   }
   function applyMotionVariables(element, unit) {
     var specs = motionVariables(unit);
     element.style.setProperty('--motion-columns', specs.columns);
+    element.style.setProperty('--motion-rows', specs.rows);
+    ['idle', 'move', 'attack', 'hit', 'victory', 'death'].forEach(function (action) {
+      ['down', 'right', 'up', 'left'].forEach(function (direction) {
+        var row = specs.rowsOrder.indexOf(action + '-' + direction);
+        if (row < 0) row = ({ idle: 0, move: 1, attack: 2, hit: 0, victory: 0, death: 0 }[action] + ({ down: 0, right: 3, up: 6, left: 9 }[direction] || 0));
+        element.style.setProperty('--' + action + '-' + direction + '-y', (specs.rows <= 1 ? 0 : row * 100 / (specs.rows - 1)).toFixed(4) + '%');
+      });
+    });
     Object.keys(specs).filter(function (key) { return key !== 'columns'; }).forEach(function (action) {
       var spec = specs[action];
       element.style.setProperty('--' + action + '-frames', spec.frameCount);
@@ -243,6 +252,12 @@
     progression.setFormation(partyIds, positions); audio.play('ui'); note('已儲存此隊伍的部署預設；下次進入戰鬥會自動套用。'); renderDeployPresetStatus();
   }
 
+  function rememberFormation() {
+    if (!state || state.phase !== 'deploy') return false;
+    var positions = state.units.filter(function (unit) { return unit.team === 'ally' && unit.x >= 0 && unit.y >= 0; }).map(function (unit) { return { id: unit.id, x: unit.x, y: unit.y }; });
+    return positions.length === partyIds.length && progression.setFormation(partyIds, positions);
+  }
+
   function captureFormation() {
     formationSnapshot = state.units.filter(function (unit) { return unit.team === 'ally'; }).map(function (unit) { return { key: unit.key, x: unit.x, y: unit.y }; });
   }
@@ -270,6 +285,27 @@
     });
     allies.forEach(function (unit) { var spot = cells.find(function (entry) { return deployFits(unit, entry[0], entry[1]); }); if (spot) { unit.x = spot[0]; unit.y = spot[1]; } });
     state.selected = null; audio.play('ui'); note(mode === 'assault' ? '已套用突擊陣：輸出與控場靠前，快速接敵。' : '已套用均衡陣：防禦在前、治療與輔助在後。'); render();
+  }
+
+  function autoArrangeBySpeed() {
+    if (state.phase !== 'deploy') return;
+    var allies = state.units.filter(function (unit) { return unit.team === 'ally'; });
+    allies.forEach(function (unit) { unit.x = -9; unit.y = -9; });
+    allies.sort(function (a, b) { return b.p.stats.speed - a.p.stats.speed || unitSize(b) - unitSize(a) || a.id.localeCompare(b.id); });
+    var cells = [];
+    for (var y = DEPLOY_MIN_Y; y <= DEPLOY_MAX_Y; y++) for (var x = DEPLOY_MIN_X; x <= DEPLOY_MAX_X; x++) cells.push([x, y]);
+    allies.forEach(function (unit) {
+      var options = cells.filter(function (cell) { return deployFits(unit, cell[0], cell[1]); });
+      options.sort(function (a, b) {
+        function score(cell) {
+          var nearest = allies.filter(function (entry) { return entry.x >= 0 && entry.y >= 0; }).reduce(function (minimum, entry) { return Math.min(minimum, Math.abs(entry.x - cell[0]) + Math.abs(entry.y - cell[1])); }, 12);
+          return cell[0] * 12 + nearest * 14 - Math.abs(cell[1] - 4.5) * 0.05;
+        }
+        return score(b) - score(a) || Math.abs(a[1] - 4.5) - Math.abs(b[1] - 4.5);
+      });
+      if (options.length) { unit.x = options[0][0]; unit.y = options[0][1]; }
+    });
+    state.selected = null; rememberFormation(); audio.play('ui'); note('已自動部署：依速度由快至慢，優先右側並分散隊形。'); render();
   }
 
   function balancedEnemyRoster(stage, partyCost) {
@@ -380,6 +416,7 @@
 
   async function startBattle() {
     if (state.phase !== 'deploy') return;
+    rememberFormation();
     state.phase = 'player'; state.selected = null; audio.play('ui');
     if (currentStage.boss) {
       var boss = state.units.find(function (unit) { return unit.boss && unit.hp > 0; });
@@ -727,7 +764,7 @@
 
   function canCounter(defender, attacker) {
     var basic = defender.p.skills[0];
-    return defender.hp > 0 && attacker.hp > 0 && defender.freeze <= 0 && distance(defender, attacker) <= skillRange(defender, basic) && hasSight(defender, attacker, basic);
+    return defender.team !== attacker.team && defender.hp > 0 && attacker.hp > 0 && defender.freeze <= 0 && distance(defender, attacker) <= skillRange(defender, basic) && hasSight(defender, attacker, basic);
   }
 
   function clearForecast() { /* 相容舊呼叫：現行手動操作點擊目標即施放，不再顯示確認面板。 */ }
@@ -771,7 +808,9 @@
   }
 
   async function act(unit, target, skill, skillIndex, options) {
-    options = options || {}; if (!unit || !target || unit.hp <= 0 || target.hp <= 0) return;
+    options = options || {};
+    /* 無論是手動、AUTO、反擊或未來新增的呼叫端，都不能繞過技能的敵我目標規則。 */
+    if (!unit || !target || unit.hp <= 0 || target.hp <= 0 || !canUseTarget(unit, target, skill)) return;
     if (!options.nested) state.animating = true;
     unit.acted = true;
     var actualIndex = skillIndex === undefined ? state.skill : skillIndex;
@@ -805,7 +844,9 @@
       }
       audio.play('heal');
     } else {
-      var targetsHit = skill.attackStyle === 'area' ? alive(target.team).filter(function (entry) { return distance(entry, target) <= (skill.radius || 1); }) : [target];
+      /* 範圍傷害一律以施放者的敵隊為準，避免目標資料異常時誤傷我方幻獸。 */
+      var opposingTeam = unit.team === 'ally' ? 'enemy' : 'ally';
+      var targetsHit = skill.attackStyle === 'area' ? alive(opposingTeam).filter(function (entry) { return distance(entry, target) <= (skill.radius || 1); }) : [target];
       var totalDamage = 0;
       targetsHit.forEach(function (enemy, index) {
         var result = damage(unit, enemy, skill, { counter: options.counter, secondary: index > 0 }); totalDamage += result.amount;
@@ -909,7 +950,7 @@
   }
 
   function unitElement(unit) {
-    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.team === 'ally' && unit.acted ? ' action-complete' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
+    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.team === 'ally' && unit.acted ? ' action-complete' : '') + (state.victoryCinematic && unit.team === 'ally' && unit.hp > 0 ? ' victorious' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
     applyMotionVariables(element, unit);
     element.setAttribute('aria-pressed', state.inspected === unit.key ? 'true' : 'false');
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
@@ -951,7 +992,7 @@
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
-    renderParty(); renderTrait(); renderBattleSides(); renderDetail(); renderBattleCommand(); renderTurnOrder(); renderBossBar();
+    renderParty(); renderTrait(); renderBattleSides(); renderDetail(); renderBattleCommand(); renderBossBar();
     dom.banner.textContent = state.over ? '戰鬥結束' : state.phase === 'deploy' ? '部署階段' : '第 ' + state.round + ' 回合｜' + (state.phase === 'player' ? '我方行動' : '敵方行動');
     dom.roundStatus.textContent = state.over ? '結算完成' : state.phase === 'deploy' ? '自由部署' : state.phase === 'player' ? '我方回合' : '敵方回合';
     dom.endTurn.textContent = state.phase === 'deploy' ? '⚔️ 開始戰鬥' : '結束本回合';
@@ -1247,9 +1288,9 @@
       var summary = { win: win, round: state.round, survivors: alive('ally').length, partySize: partyIds.length, bossKill: bossDefeated };
       reward = progression.completeBattle(currentStage, summary);
     }
-    state.reward = reward;
+    state.reward = reward; state.victoryCinematic = win;
     renderProgress(); render(); note(reason || (win ? '勝利！獎勵已加入戰棋資源。' : '戰敗。調整隊伍、進化或技能樹後再次挑戰。'));
-    audio.play(win ? 'victory' : 'defeat'); setTimeout(function () { showResult(win); }, duration(420));
+    audio.play(win ? 'victory' : 'defeat'); setTimeout(function () { showResult(win); }, duration(win ? 1000 : 700));
   }
   function showResult(win) {
     var survivors = alive('ally').length, reward = state.reward || {};
@@ -1665,6 +1706,7 @@
   ['search','element','role','owned'].forEach(function (key) { var control = document.getElementById('dex-' + key); control[key === 'search' ? 'oninput' : 'onchange'] = function () { dexFilters[key] = this.value.trim(); renderDex(); }; });
   document.getElementById('formation-balanced').onclick = function () { arrangeFormation('balanced'); };
   document.getElementById('formation-assault').onclick = function () { arrangeFormation('assault'); };
+  (function () { var button = document.createElement('button'); button.id = 'formation-auto'; button.type = 'button'; button.textContent = '⚡ 自動部署'; button.onclick = autoArrangeBySpeed; document.querySelector('.deploy-toolbar-actions').insertBefore(button, document.getElementById('formation-balanced')); }());
   document.getElementById('formation-reset').onclick = restoreFormation;
   (function () { var button = document.createElement('button'); button.id = 'formation-save'; button.type = 'button'; button.textContent = '💾 儲存部署'; button.onclick = saveFormationPreset; document.querySelector('.deploy-toolbar-actions').insertBefore(button, document.getElementById('deploy-start')); }());
   document.getElementById('deploy-start').onclick = startBattle;

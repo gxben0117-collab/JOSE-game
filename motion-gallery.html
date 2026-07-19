@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>JOSE｜幻獸動作展示（內部測試）</title>
+  <style>
+    :root{color-scheme:dark;font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;background:#0b1120;color:#ecf5ff}.wrap{max-width:1500px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap}.top h1{margin:0;font-size:1.35rem}.top p{margin:5px 0 0;color:#a7bad1;font-size:.86rem}.back{color:#bde5ff;text-decoration:none;border:1px solid #497394;border-radius:8px;padding:8px 11px}.controls{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0;padding:12px;border:1px solid #293d59;border-radius:12px;background:#111c31}.controls label{display:flex;align-items:center;gap:6px;color:#cddcf0;font-size:.84rem}.controls input,.controls select{background:#091321;color:#fff;border:1px solid #426180;border-radius:7px;padding:7px}.count{margin-left:auto;color:#8dbee5;font-size:.82rem}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:11px}.card{padding:10px;border:1px solid #2a425e;border-radius:12px;background:linear-gradient(145deg,#14243b,#0d1627)}.card h2{margin:0;min-height:2.8em;font-size:.9rem;color:#f7d98c}.card p{margin:4px 0;color:#9eb6cf;font-size:.72rem}.stage{position:relative;display:grid;place-items:center;height:145px;margin:8px 0;border-radius:9px;background:radial-gradient(circle,#25486b55,transparent 68%),#080d16;overflow:hidden}.sprite{width:112px;height:112px;background-image:var(--sheet);background-size:800% 2400%;background-repeat:no-repeat;animation:play var(--duration) steps(7,end) infinite}@keyframes play{from{background-position:0 var(--row)}to{background-position:100% var(--row)}}.warn{padding:22px;color:#ffd5a5}@media(max-width:560px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.count{width:100%;margin-left:0}}
+    .sprite{background-size:800% calc(var(--rows,12)*100%)}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top"><div><h1>幻獸動作展示｜內部測試</h1><p>檢查各幻獸在上、右、下、左及各動作下的實際圖集列。</p></div><a class="back" href="tactics.html">返回遊戲</a></header>
+    <section class="controls" aria-label="展示設定">
+      <label>搜尋 <input id="search" type="search" placeholder="幻獸名稱"></label>
+      <label>動作 <select id="action"><option value="idle">待機</option><option value="move">移動</option><option value="attack">攻擊</option><option value="hit">受擊</option><option value="victory">勝利</option><option value="death">倒下</option></select></label>
+      <label>方向 <select id="direction"><option value="down">下</option><option value="right">右</option><option value="up">上</option><option value="left">左</option></select></label>
+      <label>進化 <select id="evolution"><option value="1">第一階</option><option value="2">第二階</option><option value="3">第三階</option></select></label>
+      <span id="count" class="count"></span>
+    </section>
+    <section id="grid" class="grid" aria-live="polite"></section>
+  </main>
+  <script src="js/data/pets.js"></script><script src="js/data/pets-lightdark.js"></script><script src="js/data/pets-pack.js"></script><script src="js/data/tactical-pets.js"></script><script src="assets/animations/directional/manifest.js"></script>
+  <script>
+    (function(){
+      var grid=document.getElementById('grid'), search=document.getElementById('search'), action=document.getElementById('action'), direction=document.getElementById('direction'), evolution=document.getElementById('evolution'), count=document.getElementById('count');
+      var pets=(window.TACTICAL_PET_DATA||[]).slice().sort(function(a,b){return a.name.localeCompare(b.name,'zh-Hant')});
+      function render(){
+        var term=search.value.trim().toLowerCase(), chosenAction=action.value, chosenDirection=direction.value, stage=evolution.value;
+        var shown=pets.filter(function(pet){return !term||pet.name.toLowerCase().indexOf(term)>=0});
+        count.textContent='顯示 '+shown.length+' / '+pets.length+' 隻'; grid.innerHTML='';
+        shown.forEach(function(pet){
+          var entry=(window.TACTICAL_MOTION_MANIFEST||{})[pet.id], rows=entry&&entry.rowsOrder||[];
+          if(!entry){return} var row=rows.indexOf(chosenAction+'-'+chosenDirection), rowCount=entry.rows||12; if(row<0)row=0;
+          var sheet=entry.evolutionSheets&&entry.evolutionSheets[stage]||entry.file, spec=entry.animations&&entry.animations[chosenAction]||entry.animations.idle;
+          var card=document.createElement('article'); card.className='card';
+          card.innerHTML='<h2>'+pet.name+'</h2><p>'+pet.roleLabel+' ・ '+pet.element+'</p><div class="stage"><i class="sprite" aria-label="'+pet.name+' '+chosenDirection+' '+chosenAction+'"></i></div><p>第 '+stage+' 階｜第 '+(row+1)+' 列</p>';
+          var sprite=card.querySelector('.sprite'); sprite.style.setProperty('--sheet',"url('"+sheet+"')"); sprite.style.setProperty('--rows',rowCount); sprite.style.setProperty('--row',(row*100/Math.max(1,rowCount-1)).toFixed(4)+'%'); sprite.style.setProperty('--duration',Math.max(1,8/(spec.fps||8)).toFixed(2)+'s'); grid.appendChild(card);
+        });
+        if(!shown.length)grid.innerHTML='<p class="warn">找不到符合的幻獸。</p>';
+      }
+      [search,action,direction,evolution].forEach(function(control){control.addEventListener(control===search?'input':'change',render)}); render();
+    }());
+  </script>
+</body>
+</html>
