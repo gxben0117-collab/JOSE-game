@@ -57,7 +57,11 @@ SOURCE_ALREADY_RIGHT = {
 }
 # 這三張 AI 參考圖的側面欄位是依「角色看向畫面中央」構圖，
 # 實際內容與提示標籤相反，因此合圖時交換第 2、4 欄。
-SWAPPED_SIDE_UNITS = {"fire_lion", "fire_fox", "leaf_ear_rabbit"}
+# Some reference grids are laid out from the viewer's perspective rather than
+# the character's stated facing direction.  These units were verified in the
+# live battle: their visible side must be swapped so a rightward move/attack
+# points right on the board.
+SWAPPED_SIDE_UNITS = {"fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis"}
 
 
 def contain(image: Image.Image, scale: float = .93) -> Image.Image:

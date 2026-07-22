@@ -1444,13 +1444,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/blightwood_sovereign-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/blightwood_sovereign-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/blightwood_sovereign-motion-4dir-sheet.webp"
     }
@@ -10980,9 +10980,9 @@
     },
     "sourceColumns": [
       0,
-      1,
+      3,
       2,
-      3
+      1
     ],
     "sourceType": "authored-four-direction",
     "source": "assets/animations/directional/sources/rotcap_rootling-four-direction-reference-v1-alpha.png",
@@ -13989,9 +13989,9 @@
     },
     "sourceColumns": [
       0,
-      1,
+      3,
       2,
-      3
+      1
     ],
     "sourceType": "authored-four-direction",
     "source": "assets/animations/directional/sources/venom_mantis-four-direction-reference-v1-alpha.png",
