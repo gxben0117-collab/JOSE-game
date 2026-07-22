@@ -1,4 +1,4 @@
-﻿import assert from 'node:assert/strict';
+import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import vm from 'node:vm';
@@ -43,12 +43,12 @@ test('範圍技能具有有效半徑', () => assert.ok(profiles.flatMap(pet => p
 test('每個戰棋技能皆有資料驅動特效識別', () => assert.ok(profiles.every(pet => pet.skills.every(skill => skill.vfxKey && Number.isInteger(skill.vfxVariant) && skill.vfxHue >= 0 && skill.vfxHue < 360))));
 test('所有戰棋頭像與三階透明立繪存在', () => assert.ok(tactical.every(pet => existsSync(join(root, pet.sourceSheet)) && pet.evolution.every(stage => existsSync(join(root, stage.portrait))))));
 
-test('敵人資料包含 46 種小兵與 14 隻首領（含 4×4 菁英、5×5 魔神）', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 46); assert.equal(enemies.filter(enemy => enemy.boss).length, 14); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2 && boss.size <= 5)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 4)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 5)); });
+test('敵人資料包含第 11 章機械軍團共 50 種小兵與 15 隻首領（含 4×4 菁英、5×5 魔神）', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 50); assert.equal(enemies.filter(enemy => enemy.boss).length, 15); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2 && boss.size <= 5)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 4)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 5)); });
 test('小兵只有單一階段且首領有專屬立繪', () => assert.ok(enemies.every(enemy => enemy.evolution.length === 1 && enemy.evolution[0].portrait.startsWith('assets/enemies/'))));
 test('所有敵人圖片檔案存在', () => assert.ok(enemies.every(enemy => existsSync(join(root, enemy.evolution[0].portrait)))));
-test('115 隻幻獸與 60 隻魔獸皆有左右待機、移動、攻擊六列動畫表', () => {
+test('115 隻幻獸與 65 隻魔獸皆有左右待機、移動、攻擊六列動畫表', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/units/manifest.json'), 'utf8'));
-  assert.equal(profiles.length, 175);
+  assert.equal(profiles.length, 180);
   for (const unit of profiles) {
     const entry = manifest[unit.id];
     assert.ok(entry, `${unit.id} 缺少動畫清單`);
@@ -57,7 +57,7 @@ test('115 隻幻獸與 60 隻魔獸皆有左右待機、移動、攻擊六列動
     assert.ok(existsSync(join(root, entry.file)), `${unit.id} 缺少 ${entry.file}`);
   }
   const runtimeSheets = readdirSync(join(root, 'assets/animations/units')).filter(name => name.endsWith('-motion-sheet.webp'));
-  assert.equal(runtimeSheets.length, 175);
+  assert.equal(runtimeSheets.length, 180);
   assert.ok(runtimeSheets.every(name => statSync(join(root, 'assets/animations/units', name)).size > 1000));
 });
 test('敵人陣營涵蓋擊退、拉扯、冰凍、中毒控場', () => {
@@ -70,12 +70,12 @@ test('玩家控制型幻獸具有異常狀態與拉扯技能', () => {
   assert.ok(controllers.some(skill => skill.status) && controllers.some(skill => skill.pull));
 });
 
-test('戰役包含 10 大章節 × 150 關（110 主線 + 40 HARD）', () => {
-  assert.equal(content.maps.length, 10); assert.equal(content.stages.length, 150);
+test('戰役包含 11 大章節 × 165 關（121 主線 + 44 HARD）', () => {
+  assert.equal(content.maps.length, 11); assert.equal(content.stages.length, 165);
   const main = content.stages.filter(stage => !stage.hard);
-  assert.equal(main.length, 110);
-  assert.deepEqual(Array.from(main, stage => stage.order).sort((a, b) => a - b), Array.from({ length: 110 }, (_, index) => index + 1));
-  assert.equal(content.stages.filter(stage => stage.hard).length, 40);
+  assert.equal(main.length, 121);
+  assert.deepEqual(Array.from(main, stage => stage.order).sort((a, b) => a - b), Array.from({ length: 121 }, (_, index) => index + 1));
+  assert.equal(content.stages.filter(stage => stage.hard).length, 44);
 });
 test('每章 10 小關 + 1 首領關 + 4 個 HARD 特別關', () => {
   for (const chapter of content.maps) {
@@ -94,6 +94,20 @@ test('光暗互剋且五元素圖鑑加成齊備', () => {
   assert.match(source, /light: 'dark', dark: 'light'/);
 });
 test('所有關卡敵人、目標、回合上限與掉落表有效', () => assert.ok(content.stages.every(stage => stage.enemies.length >= 4 && stage.enemies.every(id => enemies.some(enemy => enemy.id === id)) && stage.objective && stage.turnLimit >= 10 && stage.rewards.medals > 0)));
+test('第 1～11 章出場魔獸與可編入幻獸都有完整上下左右動作表', () => {
+  const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
+  const chapterEnemies = new Set(content.stages.filter(stage => stage.chapter >= 1 && stage.chapter <= 11).flatMap(stage => stage.enemies));
+  assert.equal(chapterEnemies.size, 53, '第 1～11 章目前應出場 53 種魔獸；其餘名冊保留給 Boss／無限塔等模式');
+  const required = tactical.concat(Array.from(chapterEnemies, id => enemies.find(enemy => enemy.id === id)));
+  for (const unit of required) {
+    const entry = manifest[unit.id];
+    assert.ok(entry, `${unit.id} 缺少四方向動作資料`);
+    assert.equal(entry.columns, 8, `${unit.id} 每列須有八幀`);
+    assert.equal(entry.rows, 24, `${unit.id} 須有 24 列（四方向 × 六動作）`);
+    ['idle-down', 'move-down', 'attack-down', 'idle-up', 'move-up', 'attack-up', 'idle-left', 'move-left', 'attack-left', 'idle-right', 'move-right', 'attack-right'].forEach(action => assert.ok(entry.rowsOrder.includes(action), `${unit.id} 缺少 ${action}`));
+    assert.ok(existsSync(join(root, entry.file)), `${unit.id} 缺少四方向動作圖檔`);
+  }
+});
 
 test('關卡難度倍率章節內遞增、章節起點逐章提高', () => {
   assert.ok(content.stages.every(stage => stage.power >= 0.4));
@@ -104,10 +118,10 @@ test('關卡難度倍率章節內遞增、章節起點逐章提高', () => {
   const starts = content.maps.map(map => content.stages.find(stage => stage.mapId === map.id).power);
   assert.ok(starts.every((power, index) => index === 0 || power > starts[index - 1]), '章節起點難度未逐章提高');
 });
-test('60 張美術大地圖都有 21×10 逐格標註且只用合法圖例', () => {
+test('66 張美術大地圖都有 21×10 逐格標註且只用合法圖例', () => {
   const grids = context.TACTICAL_MAP_TERRAIN;
   const keys = new Set(content.stages.map(stage => content.mapAsset(stage).match(/chapter-\d{2}-(?:field|boss|hard-[1-4])/)[0]));
-  assert.equal(keys.size, 60);
+  assert.equal(keys.size, 66);
   keys.forEach(key => {
     const grid = grids[key];
     assert.ok(grid, `缺少 ${key} 的地形標註`);
@@ -135,12 +149,13 @@ test('共用同一張美術圖的關卡標註一致，平原中央不得標禁�
     assert.equal(central.length, 0, `${stage.id} 在開闊平原標了禁行`);
   }
 });
-test('10 章各自提供 field、boss 與四張 HARD 21×10 大地圖', () => {
+test('11 章各自提供 field、boss 與四張 HARD 21×10 大地圖', () => {
   const assets = new Set(content.stages.map(stage => content.mapAsset(stage)));
-  assert.equal(assets.size, 60);
+  assert.equal(assets.size, 66);
   assets.forEach(asset => { assert.match(asset, /chapter-\d{2}-(field|boss|hard-[1-4])-21x10\.jpg$/); assert.ok(existsSync(join(root, asset)), `缺少 ${asset}`); });
   assert.equal(content.mapAsset(content.stageById('c1-1')), 'assets/maps/chapter-01-field-21x10.jpg');
   assert.equal(content.mapAsset(content.stageById('c10-boss')), 'assets/maps/chapter-10-boss-21x10.jpg');
+  assert.equal(content.mapAsset(content.stageById('c11-boss')), 'assets/maps/chapter-11-boss-21x10.jpg');
   assert.equal(content.mapAsset(content.stageById('c6-h3')), 'assets/maps/chapter-06-hard-3-21x10.jpg');
   assert.equal(new Set([1, 2, 3, 4].map(index => content.mapAsset(content.stageById('c6-h' + index)))).size, 4);
 });
@@ -314,11 +329,11 @@ test('最終進化需要成長體、材料與融合', () => { const { sandbox } 
 test('主頁只導向唯一戰棋模式', () => { const home = readFileSync(join(root, 'index.html'), 'utf8'); assert.match(home, /url=tactics\.html/); assert.match(home, /href="tactics\.html"/); });
 test('旗艦機庫首頁提供五隻展示、橫向遊玩規格與第一章可擴充故事資料', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const progression = readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8'); const story = readFileSync(join(root, 'js/data/story-content.js'), 'utf8'); const hangar = readFileSync(join(root, 'css/tactics-hangar.css'), 'utf8');
-  assert.match(html, /id="home-display-open"/); assert.match(html, /id="home-screenshot"/); assert.match(html, /id="story-modal"/); assert.match(html, /story-content\.js\?v=2/); assert.match(html, /tactics-hangar\.css\?v=8/); assert.doesNotMatch(html, /傾聽宣言/);
+  assert.match(html, /id="home-display-open"/); assert.match(html, /id="home-screenshot"/); assert.match(html, /id="story-modal"/); assert.match(html, /story-content\.js\?v=3/); assert.match(html, /tactics-hangar\.css\?v=9/); assert.doesNotMatch(html, /傾聽宣言/);
   assert.match(source, /HOME_DISPLAY_IDS = \['crimson_dragon', 'emerald_god_dragon', 'abyss_god_dragon', 'solar_phoenix', 'eclipse_dragon'\]/); assert.match(source, /function showStory/); assert.match(source, /grantStoryPet/);
   assert.match(progression, /homeDisplay: \{ petId: 'crimson_dragon', mode: 'fixed' \}/); assert.match(progression, /grantStoryPet/);
-  assert.match(story, /var arcs/); assert.match(story, /幻獸初醒/); assert.match(story, /遠古龍族之門/); assert.match(story, /始源龍皇・阿爾卡迪亞/); assert.match(story, /機械紀元——重新啟動/); assert.match(story, /forest_deer/);
-  assert.match(hangar, /統一遊玩畫布/); assert.match(hangar, /orientation:portrait/); assert.match(hangar, /min-width:720px/);
+  assert.match(story, /var arcs/); assert.match(story, /幻獸初醒/); assert.match(story, /遠古龍族之門/); assert.match(story, /始源龍皇・阿爾卡迪亞/); assert.match(story, /機械紀元——重新啟動/); assert.match(story, /c11-1:before/); assert.match(story, /機關廢鐵巨鱷/); assert.match(story, /forest_deer/);
+  assert.match(hangar, /統一遊玩畫布/); assert.doesNotMatch(hangar, /請將裝置轉為橫向遊玩|orientation:portrait/); assert.match(hangar, /min-width:720px/);
 });
 test('每週無限塔任務以不同樓層計算並提供豐富獎勵', () => {
   const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content });
@@ -427,7 +442,7 @@ test('大地圖鏡頭：拖曳平移、點選置中與小地圖', () => {
 });
 test('戰鬥引擎具備視線遮蔽、位移、狀態與部署階段', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(source, /function lineClear/); assert.match(source, /async function displace/); assert.match(source, /function planFor/); assert.match(source, /phase: 'deploy'/); assert.match(source, /unit\.freeze/); assert.match(source, /unit\.poison/); });
 test('棋盤角色可存取且不重複顯示精確血量文字', () => { const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.doesNotMatch(source, /class=\\?"unit-hp/); assert.match(source, /element\.setAttribute\('aria-label', unit\.p\.name \+ '，生命 '/); assert.match(source, /state\.mode === 'skill' && selected\(\) && canTarget\(selected\(\), unit\)/); });
-test('戰棋頁載入敵人資料、Boss 百分比標籤與戰鬥樣式', () => { const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(html, /tactical-content\.js/); assert.match(html, /tactical-enemies\.js/); assert.match(html, /tactics-battle\.css\?v=14/); assert.match(html, /id="enemy-label"/); assert.doesNotMatch(html, /id="boss-bar"/); assert.match(source, /魔物軍團 ◆｜BOSS/); assert.match(html, /id="boss-intro"/); assert.match(html, /id="campaign-modal"/); assert.match(html, /id="growth-modal"/); });
+test('戰棋頁載入敵人資料、Boss 百分比標籤與戰鬥樣式', () => { const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); assert.match(html, /tactical-content\.js/); assert.match(html, /tactical-enemies\.js/); assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /id="enemy-label"/); assert.doesNotMatch(html, /id="boss-bar"/); assert.match(source, /魔物軍團 ◆｜BOSS/); assert.match(html, /id="boss-intro"/); assert.match(html, /id="campaign-modal"/); assert.match(html, /id="growth-modal"/); });
 test('主城功能格：關卡、編隊、強化、圖鑑、召喚、每日任務', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   assert.match(html, /class="hub-grid"/); assert.match(html, /id="open-dex"/); assert.match(html, /id="open-gacha"/); assert.match(html, /id="open-daily"/); assert.match(html, /id="hub-party"/); assert.match(html, /id="crystals"/);
@@ -440,7 +455,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=57/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=61/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/); assert.doesNotMatch(source, /吾主，請下令/);
@@ -478,10 +493,9 @@ test('戰前主城可垂直捲動，進入戰鬥操作列固定可見', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   assert.match(html, /class="enter-battle-dock"/); assert.match(html, /id="enter-battle"/);
-  assert.match(screens, /body\.view-home\{[^}]*overflow-y:auto/);
-  assert.match(screens, /body\.view-home \.screen-home\{[^}]*height:auto[^}]*overflow:visible/);
+  assert.match(screens, /\.screen-home\{[^}]*padding:18px 18px 118px/);
   assert.match(screens, /\.enter-battle-dock\{position:fixed/);
-  assert.match(screens, /padding-bottom:118px/);
+  assert.match(screens, /padding:18px 18px 118px/);
 });
 test('戰鬥框架使用左方戰隊、中央棋盤、右方敵情與指令三欄', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
@@ -600,7 +614,7 @@ test('四方向圖集與自動部署使用完整方向列、保存最後站位',
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   assert.match(source, /function rememberFormation\(\)/);
-  assert.match(source, /rememberFormation\(\);\n    state\.phase = 'player'/);
+  assert.match(source, /rememberFormation\(\);\s+state\.phase = 'player'/);
   assert.match(source, /function autoArrangeBySpeed\(\)/);
   assert.match(source, /b\.p\.stats\.speed - a\.p\.stats\.speed/);
   assert.match(source, /id = 'formation-auto'/);
@@ -617,6 +631,10 @@ test('遠距技能由施術者中心飛向目標中心，命中特效不使用�
   assert.match(source, /endX = targetRect\.left - boardRect\.left \+ targetRect\.width \/ 2/);
   assert.match(source, /projectile\.style\.left = startX \+ 'px'/);
   assert.match(source, /--travel-x/);
+  assert.match(source, /projectile\.dataset\.sourceKey = caster\.key; projectile\.dataset\.targetKey = target\.key/);
+  assert.match(source, /var flightBaseDuration = 340/);
+  assert.match(source, /--projectile-duration', duration\(flightBaseDuration\) \+ 'ms'/);
+  assert.match(source, /return flightBaseDuration;/);
   assert.match(source, /dom\.board\.appendChild\(projectile\)/);
   assert.match(campaign, /translate\(var\(--travel-x\),var\(--travel-y\)\)/);
 });
@@ -625,19 +643,24 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=14/); assert.match(html, /js\/tactics\.js\?v=57/);
+  assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /js\/tactics\.js\?v=61/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
+  assert.match(source, /element\.style\.setProperty\('--motion-sheet'/); assert.match(source, /motion-sprite motion-4dir/); assert.match(source, /applyMotionVariables\(element, unit\);/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
   assert.match(battle, /\.projectile-muzzle\{/); assert.match(battle, /\.unit\.evading\{/); assert.match(battle, /\.dodge-number\{/);
+  assert.match(battle, /animation-duration:var\(--projectile-duration/);
 });
 
 test('iPad 戰場維持 21×10 比例、中央棋盤優先且隊伍編輯可觸控開啟', () => {
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
-  assert.match(html, /tactics-screens\.css\?v=32/);
+  assert.match(html, /tactics-screens\.css\?v=33/);
+  assert.match(html, /id="deploy-squad-console"/);
   assert.match(screens, /\.idle-arena \.unit \.portrait\{[^}]*height:100%[^}]*aspect-ratio:1 \/ 1/);
   assert.match(screens, /@media \(min-width:700px\) and \(max-width:980px\)[\s\S]*width:max\(720px,100%\)[\s\S]*aspect-ratio:21 \/ 10/);
+  assert.match(screens, /\.deploy-squad-console\{/);
+  assert.match(source, /function renderDeploySquadConsole\(\)/);
   assert.match(screens, /@media \(min-width:981px\) and \(max-width:1180px\)[\s\S]*grid-template-columns:132px minmax\(0,1fr\) 190px/);
   assert.match(source, /\['deploy', 'hub-party'\][\s\S]*addEventListener\('pointerup'/);
   assert.match(html, /id="deploy"[^>]*type="button"/);

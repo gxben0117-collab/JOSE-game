@@ -11,7 +11,9 @@
   var progression = new window.TacticalProgression({ profiles: window.TACTICAL_PET_DATA, content: content });
   var progress = progression.state;
   var audio = new window.TacticalAudio(progress.sound);
-  var partyIds = progress.party.slice(), currentStage = content.stageById(progress.currentStage), state;
+  var previewStageId = new URLSearchParams(window.location.search).get('previewStage');
+  var isPreviewStage = Boolean(previewStageId && content.stages.some(function (stage) { return stage.id === previewStageId; }));
+  var partyIds = progress.party.slice(), currentStage = content.stageById(isPreviewStage ? previewStageId : progress.currentStage), state;
   var deploySelection = [], growthPetId = partyIds[0], autoTimer = null, towerChoiceTimer = null, towerChoiceTick = null, towerReviveTick = null, battleSpeed = 1;
   var formationSnapshot = [], deployFilters = { search: '', element: '', role: '', size: '' };
   var dexFilters = { search: '', element: '', role: '', owned: '' }, dexSelectedId = '';
@@ -195,7 +197,7 @@
     var stage = Math.max(1, Math.min(3, Number(unit.evolution) || 1));
     var stagePortrait = unit.p.evolution[Math.min(stage, unit.p.evolution.length) - 1]?.portrait || '';
     var stageSuffix = stage > 1 && stagePortrait.indexOf('assets/pets/' + unit.id + '/evolution/stage_' + stage + '.png') === 0 ? '-stage_' + stage : '';
-    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=25';
+    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=26';
   }
   function motionManifestEntry(unit) { return (window.TACTICAL_MOTION_MANIFEST || {})[unit.id] || {}; }
   function animationSpec(unit, action, override) {
@@ -217,6 +219,7 @@
   }
   function applyMotionVariables(element, unit) {
     var specs = motionVariables(unit);
+    element.style.setProperty('--motion-sheet', "url('" + motionSheet(unit) + "')");
     element.style.setProperty('--motion-columns', specs.columns);
     element.style.setProperty('--motion-rows', specs.rows);
     ['idle', 'move', 'attack', 'hit', 'victory', 'death'].forEach(function (action) {
@@ -475,7 +478,7 @@
     stopTowerReviveTimer();
     if (stageId && typeof stageId === 'object') currentStage = stageId;
     else if (stageId) currentStage = content.stageById(stageId);
-    if (!currentStage.tower) { progress.currentStage = currentStage.id; progression.save(); }
+    if (!currentStage.tower && !isPreviewStage) { progress.currentStage = currentStage.id; progression.save(); }
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
     state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, commandOpen: false, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
@@ -854,7 +857,10 @@
   function addProjectile(caster, target, skill, misses) {
     if (skill.attackStyle === 'melee' || skill.attackStyle === 'support') return 0;
     var casterHost = visualHost(caster), targetHost = visualHost(target); if (!casterHost || !targetHost) return 0;
+    /* 鎖定在施放瞬間完成：後續畫面重繪、傷害結算都不會改變這枚投射物的
+       施術者或目標。大型單位也會以自身可見範圍的中心，而不是左上錨點計算。 */
     var element = caster.p.element || 'arcane';
+    var flightBaseDuration = 340;
     var projectile = document.createElement('i');
     projectile.className = 'projectile projectile-' + element + (skill.kind === 'basic' ? ' projectile-basic' : ' projectile-skill');
     var boardRect = dom.board.getBoundingClientRect(), casterRect = casterHost.getBoundingClientRect(), targetRect = targetHost.getBoundingClientRect();
@@ -871,10 +877,17 @@
     projectile.style.left = startX + 'px'; projectile.style.top = startY + 'px';
     projectile.style.setProperty('--travel-x', deltaX + 'px'); projectile.style.setProperty('--travel-y', deltaY + 'px');
     projectile.style.setProperty('--angle', Math.atan2(deltaY, deltaX) + 'rad');
+    projectile.style.setProperty('--projectile-duration', duration(flightBaseDuration) + 'ms');
+    projectile.dataset.sourceKey = caster.key; projectile.dataset.targetKey = target.key;
+    projectile.dataset.misses = String(Boolean(misses));
     projectile.setAttribute('aria-label', skill.name + '的' + ({ fire: '火球', forest: '自然彈', ocean: '水流彈', light: '光矢', dark: '暗影彈' }[element] || '魔法彈'));
     var muzzle = document.createElement('i'); muzzle.className = 'projectile-muzzle'; muzzle.style.setProperty('--projectile', 'hsl(' + skill.vfxHue + ' 92% 68%)'); casterHost.appendChild(muzzle);
-    dom.board.appendChild(projectile); setTimeout(function () { projectile.remove(); muzzle.remove(); }, duration(420));
-    return 330;
+    dom.board.appendChild(projectile);
+    setTimeout(function () { muzzle.remove(); }, duration(240));
+    setTimeout(function () { projectile.remove(); }, duration(flightBaseDuration + 90));
+    /* 回傳基準時間，交給 pause() 依遊戲速度縮放一次；不可回傳已縮放數值，
+       否則 2×／8× 會再被縮放一次，造成投射物尚未命中就先結算。 */
+    return flightBaseDuration;
   }
 
   function passiveBurn(attacker, target) {
@@ -1130,12 +1143,13 @@
   }
 
   function unitElement(unit) {
-    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit portrait-fallback motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.team === 'ally' && unit.acted ? ' action-complete' : '') + (state.victoryCinematic && unit.team === 'ally' && unit.hp > 0 ? ' victorious' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
+    var element = document.createElement('button'); element.type = 'button'; element.className = 'unit portrait-fallback motion-sprite motion-4dir facing-' + unit.facing + ' ' + unit.team + ' size-' + unitSize(unit) + (state.selected === unit.key ? ' active' : '') + (state.inspected === unit.key ? ' inspected' : '') + (unit.team === 'ally' && unit.acted ? ' action-complete' : '') + (state.victoryCinematic && unit.team === 'ally' && unit.hp > 0 ? ' victorious' : '') + (unit.boss ? ' boss-unit' : '') + (unit.freeze > 0 ? ' frozen' : '') + (unit.poison > 0 ? ' poisoned' : '') + (unit.defeating ? ' defeated' : ''); element.dataset.key = unit.key;
     if (unit.guardian) {
       element.className += ' guardian-tower'; element.setAttribute('aria-label', '守護塔，生命 ' + unit.hp + ' / ' + unit.maxHp);
       element.innerHTML = '<span class="guardian-spire" aria-hidden="true"><span class="guardian-core">✦</span></span><span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
       element.addEventListener('click', function (event) { event.stopPropagation(); }); return element;
     }
+    applyMotionVariables(element, unit);
     element.setAttribute('aria-pressed', state.inspected === unit.key ? 'true' : 'false');
     element.setAttribute('aria-label', unit.p.name + '，生命 ' + unit.hp + ' / ' + unit.maxHp);
     var statuses = (unit.shield > 0 ? '🛡️' : '') + (unit.burn > 0 ? '🔥' : '') + (unit.poison > 0 ? '☠️' : '') + (unit.freeze > 0 ? '❄️' : '') + (unit.atkBuff > 0 ? '⬆️' : '');
@@ -1714,7 +1728,7 @@
   function renderCampaignMeta() {
     var map = mapData(); dom.mapEyebrow.textContent = map.icon + ' ' + map.name + '｜10 × 21 戰場'; dom.stageTitle.textContent = map.name + '：' + currentStage.name; dom.stageDescription.textContent = map.description;
     dom.stageBadge.textContent = currentStage.difficulty; dom.stageObjective.textContent = '目標：' + currentStage.objective;
-    dom.stageProgress.textContent = currentStage.tower ? '無限塔・歷史最高 ' + progress.tower.best + ' 層' : '第 ' + currentStage.chapter + ' 章／10・' + (currentStage.hard ? 'HARD 特別關' : currentStage.boss ? '魔王關' : '第 ' + currentStage.index + ' 關');
+    dom.stageProgress.textContent = currentStage.tower ? '無限塔・歷史最高 ' + progress.tower.best + ' 層' : '第 ' + currentStage.chapter + ' 章／' + content.maps.length + '・' + (currentStage.hard ? 'HARD 特別關' : currentStage.boss ? '魔王關' : '第 ' + currentStage.index + ' 關');
     dom.battleStageLabel.textContent = map.icon + ' ' + map.name + '：' + currentStage.name + '｜' + currentStage.difficulty;
   }
 
@@ -1880,6 +1894,37 @@
     dom.deployModal.hidden = false; dom.deployModal.scrollTop = 0;
     requestAnimationFrame(function () { var close = document.getElementById('close-deploy'); if (close) close.focus({ preventScroll: true }); });
   }
+  /* 編隊總覽採「前衛／戰術／後衛」三條戰線：參考手機戰略遊戲的出擊準備
+     資訊層級，但不限制玩家實際 3×10 自由部署；它只讓 25 容量隊伍的
+     職責、體型與元素分布在確認前一眼可讀。 */
+  function renderDeploySquadConsole() {
+    var host = document.getElementById('deploy-squad-console'); if (!host) return;
+    var picked = deploySelection.map(profile).filter(Boolean), cost = selectedDeploymentCost();
+    var lanes = [
+      { label: '前衛線', roles: ['defender', 'allrounder'], icon: '🛡' },
+      { label: '戰術線', roles: ['controller', 'support'], icon: '✦' },
+      { label: '後衛線', roles: ['attacker', 'healer'], icon: '⌁' }
+    ];
+    var combat = picked.reduce(function (total, pet) { var stats = pet.stats || {}; return total + (stats.health || 0) * 0.08 + (stats.power || 0) + (stats.magic || 0) + (stats.defense || 0) * 0.65; }, 0);
+    host.innerHTML = '<header><span>出擊準備</span><b>戰力 ' + Math.round(combat).toLocaleString() + '</b><small>' + cost + '／' + DEPLOY_CAPACITY + ' 容量</small></header><div class="deploy-lanes"></div>';
+    var laneHost = host.querySelector('.deploy-lanes');
+    lanes.forEach(function (lane) {
+      var members = picked.filter(function (pet) { return lane.roles.indexOf(pet.role) >= 0; });
+      var column = document.createElement('article'); column.className = 'deploy-lane';
+      column.innerHTML = '<b>' + lane.icon + ' ' + lane.label + '<small>' + members.length + ' 隻</small></b><div class="deploy-lane-members"></div>';
+      var memberHost = column.querySelector('.deploy-lane-members');
+      members.slice(0, 8).forEach(function (pet) {
+        var card = document.createElement('span'); card.className = 'deploy-squad-unit';
+        card.title = pet.name + '｜' + pet.roleLabel + '｜佔 ' + deploymentCost(pet) + ' 單位';
+        card.style.backgroundImage = "url('" + pet.evolution[portraitStage(pet.id) - 1].portrait + "')";
+        card.innerHTML = '<i>' + (ELEMENT_ICONS[pet.element] || '✦') + '</i><em>' + deploymentCost(pet) + '</em>';
+        memberHost.appendChild(card);
+      });
+      if (members.length > 8) { var more = document.createElement('span'); more.className = 'deploy-squad-more'; more.textContent = '+' + (members.length - 8); memberHost.appendChild(more); }
+      if (!members.length) memberHost.innerHTML = '<small class="deploy-lane-empty">未配置</small>';
+      laneHost.appendChild(column);
+    });
+  }
   function renderDeploy() {
     var allOwned = progression.ownedPets(), used = selectedDeploymentCost();
     var roster = allOwned.filter(function (pet) {
@@ -1889,7 +1934,7 @@
     dom.deployBudgetLabel.textContent = '出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY;
     dom.deployBudgetFill.style.width = Math.min(100, used / DEPLOY_CAPACITY * 100) + '%';
     dom.deployBudgetFill.classList.toggle('near-limit', used >= 22);
-    dom.deployHelp.innerHTML = '<b>出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY + '</b>｜已選 ' + deploySelection.length + ' 隻｜定位：' + partyRoleSummary(deploySelection) + '｜顯示 ' + roster.length + '/' + allOwned.length + ' 隻。'; dom.deployGrid.innerHTML = '';
+    dom.deployHelp.innerHTML = '<b>出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY + '</b>｜已選 ' + deploySelection.length + ' 隻｜定位：' + partyRoleSummary(deploySelection) + '｜顯示 ' + roster.length + '/' + allOwned.length + ' 隻。'; renderDeploySquadConsole(); dom.deployGrid.innerHTML = '';
     roster.forEach(function (pet) {
       var button = document.createElement('button'), active = deploySelection.indexOf(pet.id) >= 0, cost = deploymentCost(pet), nextCost = used + cost;
       button.className = 'deploy-card' + (active ? ' selected' : '') + (!active && nextCost > DEPLOY_CAPACITY ? ' over-capacity' : '');
