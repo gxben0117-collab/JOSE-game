@@ -2901,12 +2901,14 @@ window.TACTICAL_MOTION_MANIFEST = {
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/crimson_dragon/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/crimson_dragon-front.png",
-      "up": "assets/animations/directional/views/crimson_dragon-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/crimson_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/crimson_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/crimson_dragon-stage_2-motion-4dir-sheet.webp",
@@ -3800,12 +3802,14 @@ window.TACTICAL_MOTION_MANIFEST = {
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/eclipse_dragon/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/eclipse_dragon-front.png",
-      "up": "assets/animations/directional/views/eclipse_dragon-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/eclipse_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/eclipse_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/eclipse_dragon-stage_2-motion-4dir-sheet.webp",
@@ -4778,12 +4782,14 @@ window.TACTICAL_MOTION_MANIFEST = {
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/flame_emperor/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/flame_emperor-front.png",
-      "up": "assets/animations/directional/views/flame_emperor-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/flame_emperor-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/flame_emperor-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/flame_emperor-stage_2-motion-4dir-sheet.webp",
@@ -6323,12 +6329,14 @@ window.TACTICAL_MOTION_MANIFEST = {
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/gold_qilin/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/gold_qilin-front.png",
-      "up": "assets/animations/directional/views/gold_qilin-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/gold_qilin-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/gold_qilin-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/gold_qilin-stage_2-motion-4dir-sheet.webp",
@@ -12521,12 +12529,14 @@ window.TACTICAL_MOTION_MANIFEST = {
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/solar_phoenix/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/solar_phoenix-front.png",
-      "up": "assets/animations/directional/views/solar_phoenix-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/solar_phoenix-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/solar_phoenix-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/solar_phoenix-stage_2-motion-4dir-sheet.webp",

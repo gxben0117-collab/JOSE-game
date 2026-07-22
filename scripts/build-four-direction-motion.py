@@ -298,10 +298,13 @@ def main() -> None:
     legacy_manifest = json.loads((LEGACY_DIR / "manifest.json").read_text(encoding="utf-8"))
     for unit_id in sorted(legacy_manifest):
         portrait_path = stage_one_portrait(unit_id)
-        if unit_id in SIZE2_IDS and portrait_path:
-            manifest[unit_id] = build_size2_stage_one(unit_id, portrait_path)
-        elif unit_id in authored_sources:
+        # A newly approved full four-direction sheet supersedes the older
+        # size-2 front/back composition.  Keep that fallback only for units
+        # which do not yet have a native four-direction source.
+        if unit_id in authored_sources:
             manifest[unit_id] = build_reference(unit_id, authored_sources[unit_id])
+        elif unit_id in SIZE2_IDS and portrait_path:
+            manifest[unit_id] = build_size2_stage_one(unit_id, portrait_path)
         else:
             manifest[unit_id] = build_legacy(unit_id, LEGACY_DIR / f"{unit_id}-motion-sheet.webp")
         manifest[unit_id]["evolutionSheets"] = {"1": manifest[unit_id]["file"]}
