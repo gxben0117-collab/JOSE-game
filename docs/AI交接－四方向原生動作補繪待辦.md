@@ -45,8 +45,8 @@
 | 類型 | 數量 | 說明 |
 | --- | ---: | --- |
 | `authored-four-direction` | 20 | 已有真正前後左右原生參考圖。 |
-| `authored-front-back-and-approved-side` | 25 | 已有可用前後參考與核准側面，不是本輪優先。 |
-| `derived-from-approved-motion` | **135** | 本輪待補繪目標。 |
+| `authored-front-back-and-approved-side` | 24 | 已有可用前後參考與核准側面，不是本輪優先。 |
+| `derived-from-approved-motion` | **136** | 本輪待補繪目標。 |
 
 不要手動維護 140 隻清單。每次開工請以 manifest 即時列出：
 
