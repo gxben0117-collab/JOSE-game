@@ -401,21 +401,22 @@ test('我方自由部署區為靠左側 3×10 並維持 25 出陣單位規則', 
   assert.match(source, /DEPLOY_CAPACITY = 25/);
 });
 
-test('2×2 圖集逐隻校正左右，原生四方向來源優先於前後補圖', () => {
+test('2×2 幻獸全數優先採用原生四方向來源', () => {
   const source = readFileSync(join(root, 'scripts/build-four-direction-motion.py'), 'utf8');
   const directionalManifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
-  for (const id of ['abyss_god_dragon', 'amber_antler_moose', 'crimson_dragon']) assert.match(source, new RegExp('\\"' + id + '\\"'));
+  const nativeSize2Ids = [
+    'gold_qilin', 'solar_phoenix', 'eclipse_dragon', 'flame_emperor', 'crimson_dragon',
+    'blazing_dragon', 'flame_god_lion', 'volcanic_titan', 'kiln_rhinoceros',
+    'emerald_dragon', 'emerald_god_dragon', 'jade_qilin', 'forest_god', 'ancient_treant',
+    'fern_ceratops', 'mushroom_bison', 'amber_antler_moose', 'sea_god_beast', 'sea_emperor',
+    'tsunami_dragon', 'abyss_god_dragon', 'frost_leviathan', 'aurora_narwhal', 'brine_crocodile',
+    'crown_unicorn', 'cathedral_elephant', 'void_leviathan', 'abyss_mammoth', 'obsidian_gorilla',
+  ];
+  for (const id of nativeSize2Ids) assert.match(source, new RegExp('\\"' + id + '\\"'));
   assert.doesNotMatch(source, /rotate\(angle/);
   assert.match(source, /front_path = VIEW_DIR/);
   assert.match(source, /back_path = VIEW_DIR/);
-  for (const id of ['abyss_god_dragon', 'amber_antler_moose']) {
-    const entry = directionalManifest[id];
-    assert.equal(entry.rows, 24);
-    assert.equal(entry.sourceType, 'authored-front-back-and-approved-side');
-    assert.ok(existsSync(join(root, entry.verticalViews.down)));
-    assert.ok(existsSync(join(root, entry.verticalViews.up)));
-  }
-  for (const id of ['gold_qilin', 'solar_phoenix', 'eclipse_dragon', 'flame_emperor', 'crimson_dragon']) {
+  for (const id of nativeSize2Ids) {
     const entry = directionalManifest[id];
     assert.equal(entry.rows, 24);
     assert.equal(entry.sourceType, 'authored-four-direction');
@@ -468,7 +469,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=63/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=64/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/); assert.doesNotMatch(source, /吾主，請下令/);
@@ -656,7 +657,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /js\/tactics\.js\?v=63/);
+  assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /js\/tactics\.js\?v=64/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /element\.style\.setProperty\('--motion-sheet'/); assert.match(source, /motion-sprite motion-4dir/); assert.match(source, /applyMotionVariables\(element, unit\);/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);

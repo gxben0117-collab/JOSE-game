@@ -151,12 +151,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/abyss_god_dragon/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/abyss_god_dragon-front.png",
-      "up": "assets/animations/directional/views/abyss_god_dragon-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/abyss_god_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/abyss_god_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/abyss_god_dragon-stage_2-motion-4dir-sheet.webp",
@@ -232,12 +234,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/abyss_mammoth.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/abyss_mammoth-front.png",
-      "up": "assets/animations/directional/views/abyss_mammoth-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/abyss_mammoth-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/abyss_mammoth-motion-4dir-sheet.webp"
     }
@@ -556,12 +560,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/amber_antler_moose.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/amber_antler_moose-front.png",
-      "up": "assets/animations/directional/views/amber_antler_moose-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/amber_antler_moose-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/amber_antler_moose-motion-4dir-sheet.webp"
     }
@@ -635,12 +641,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/ancient_treant/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/ancient_treant-front.png",
-      "up": "assets/animations/directional/views/ancient_treant-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/ancient_treant-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/ancient_treant-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/ancient_treant-stage_2-motion-4dir-sheet.webp",
@@ -959,12 +967,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/aurora_narwhal.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/aurora_narwhal-front.png",
-      "up": "assets/animations/directional/views/aurora_narwhal-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/aurora_narwhal-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/aurora_narwhal-motion-4dir-sheet.webp"
     }
@@ -1281,12 +1291,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/blazing_dragon/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/blazing_dragon-front.png",
-      "up": "assets/animations/directional/views/blazing_dragon-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/blazing_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/blazing_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/blazing_dragon-stage_2-motion-4dir-sheet.webp",
@@ -1686,12 +1698,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/brine_crocodile.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/brine_crocodile-front.png",
-      "up": "assets/animations/directional/views/brine_crocodile-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/brine_crocodile-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/brine_crocodile-motion-4dir-sheet.webp"
     }
@@ -1848,12 +1862,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/cathedral_elephant.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/cathedral_elephant-front.png",
-      "up": "assets/animations/directional/views/cathedral_elephant-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/cathedral_elephant-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/cathedral_elephant-motion-4dir-sheet.webp"
     }
@@ -3148,12 +3164,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/crown_unicorn.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/crown_unicorn-front.png",
-      "up": "assets/animations/directional/views/crown_unicorn-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/crown_unicorn-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/crown_unicorn-motion-4dir-sheet.webp"
     }
@@ -4294,12 +4312,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/emerald_dragon/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/emerald_dragon-front.png",
-      "up": "assets/animations/directional/views/emerald_dragon-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/emerald_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/emerald_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/emerald_dragon-stage_2-motion-4dir-sheet.webp",
@@ -4375,12 +4395,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/emerald_god_dragon/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/emerald_god_dragon-front.png",
-      "up": "assets/animations/directional/views/emerald_god_dragon-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/emerald_god_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/emerald_god_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/emerald_god_dragon-stage_2-motion-4dir-sheet.webp",
@@ -4537,12 +4559,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/fern_ceratops.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/fern_ceratops-front.png",
-      "up": "assets/animations/directional/views/fern_ceratops-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/fern_ceratops-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/fern_ceratops-motion-4dir-sheet.webp"
     }
@@ -4865,12 +4889,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/flame_god_lion/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/flame_god_lion-front.png",
-      "up": "assets/animations/directional/views/flame_god_lion-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/flame_god_lion-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/flame_god_lion-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/flame_god_lion-stage_2-motion-4dir-sheet.webp",
@@ -5355,12 +5381,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/forest_god/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/forest_god-front.png",
-      "up": "assets/animations/directional/views/forest_god-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/forest_god-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/forest_god-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/forest_god-stage_2-motion-4dir-sheet.webp",
@@ -5519,12 +5547,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/frost_leviathan/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/frost_leviathan-front.png",
-      "up": "assets/animations/directional/views/frost_leviathan-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/frost_leviathan-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/frost_leviathan-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/frost_leviathan-stage_2-motion-4dir-sheet.webp",
@@ -7479,12 +7509,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/jade_qilin/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/jade_qilin-front.png",
-      "up": "assets/animations/directional/views/jade_qilin-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/jade_qilin-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/jade_qilin-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/jade_qilin-stage_2-motion-4dir-sheet.webp",
@@ -7722,12 +7754,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/kiln_rhinoceros.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/kiln_rhinoceros-front.png",
-      "up": "assets/animations/directional/views/kiln_rhinoceros-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/kiln_rhinoceros-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/kiln_rhinoceros-motion-4dir-sheet.webp"
     }
@@ -9194,12 +9228,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/mushroom_bison.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/mushroom_bison-front.png",
-      "up": "assets/animations/directional/views/mushroom_bison-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/mushroom_bison-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/mushroom_bison-motion-4dir-sheet.webp"
     }
@@ -9765,12 +9801,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pack/obsidian_gorilla.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/obsidian_gorilla-front.png",
-      "up": "assets/animations/directional/views/obsidian_gorilla-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/obsidian_gorilla-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/obsidian_gorilla-motion-4dir-sheet.webp"
     }
@@ -11472,12 +11510,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/sea_emperor/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/sea_emperor-front.png",
-      "up": "assets/animations/directional/views/sea_emperor-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/sea_emperor-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/sea_emperor-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/sea_emperor-stage_2-motion-4dir-sheet.webp",
@@ -11553,12 +11593,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/sea_god_beast/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/sea_god_beast-front.png",
-      "up": "assets/animations/directional/views/sea_god_beast-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/sea_god_beast-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/sea_god_beast-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/sea_god_beast-stage_2-motion-4dir-sheet.webp",
@@ -13833,12 +13875,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/tsunami_dragon/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/tsunami_dragon-front.png",
-      "up": "assets/animations/directional/views/tsunami_dragon-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/tsunami_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/tsunami_dragon-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/tsunami_dragon-stage_2-motion-4dir-sheet.webp",
@@ -14487,12 +14531,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/void_leviathan/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/void_leviathan-front.png",
-      "up": "assets/animations/directional/views/void_leviathan-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/void_leviathan-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/void_leviathan-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/void_leviathan-stage_2-motion-4dir-sheet.webp",
@@ -14568,12 +14614,14 @@
         "hitFrame": null
       }
     },
-    "sourceType": "authored-front-back-and-approved-side",
-    "source": "assets/pets/volcanic_titan/evolution/stage_1.png",
-    "verticalViews": {
-      "down": "assets/animations/directional/views/volcanic_titan-front.png",
-      "up": "assets/animations/directional/views/volcanic_titan-back.png"
-    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/volcanic_titan-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/volcanic_titan-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/volcanic_titan-stage_2-motion-4dir-sheet.webp",

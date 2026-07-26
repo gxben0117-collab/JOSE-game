@@ -62,6 +62,17 @@ SOURCE_ALREADY_RIGHT = {
 # live battle: their visible side must be swapped so a rightward move/attack
 # points right on the board.
 SWAPPED_SIDE_UNITS = {"fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis"}
+# AI grids occasionally let an adjacent cell's tail or attack trail cross the
+# cell boundary.  Remove only the verified intrusion, before scaling it into a
+# runtime frame.  Keys are (unit id, source row, source column).
+REFERENCE_EDGE_CLEANUP = {
+    # The supplied right-facing Phoenix column carries a thin bleed from the
+    # preceding panel.  Its body begins well inside the cell, so clearing this
+    # left margin removes the bleed without touching the sprite.
+    ("solar_phoenix", 0, 1): (96, 0, 0, 0),
+    ("solar_phoenix", 1, 1): (96, 0, 0, 0),
+    ("solar_phoenix", 2, 1): (96, 0, 0, 0),
+}
 
 
 def contain(image: Image.Image, scale: float = .93) -> Image.Image:
@@ -146,7 +157,22 @@ def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
             x1 = round(source.width * (source_column + 1) / 4) - 4
             y0 = round(source.height * source_action_index / 3) + 4
             y1 = round(source.height * (source_action_index + 1) / 3) - 4
-            base = contain(source.crop((x0, y0, x1, y1)))
+            cell = source.crop((x0, y0, x1, y1))
+            clear_left, clear_top, clear_right, clear_bottom = REFERENCE_EDGE_CLEANUP.get(
+                (unit_id, source_action_index, source_column), (0, 0, 0, 0)
+            )
+            if clear_left or clear_top or clear_right or clear_bottom:
+                alpha = cell.getchannel("A")
+                if clear_left:
+                    alpha.paste(0, (0, 0, clear_left, cell.height))
+                if clear_top:
+                    alpha.paste(0, (0, 0, cell.width, clear_top))
+                if clear_right:
+                    alpha.paste(0, (cell.width - clear_right, 0, cell.width, cell.height))
+                if clear_bottom:
+                    alpha.paste(0, (0, cell.height - clear_bottom, cell.width, cell.height))
+                cell.putalpha(alpha)
+            base = contain(cell)
             row = direction_index * len(ACTIONS) + action_index
             row_order.append(f"{action}-{direction}")
             frame_count = ACTION_ANIMATIONS[action]["frameCount"]

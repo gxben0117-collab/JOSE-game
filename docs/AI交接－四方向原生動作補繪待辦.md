@@ -1,6 +1,6 @@
 # AI 交接－四方向原生動作補繪待辦
 
-更新日期：2026-07-22
+更新日期：2026-07-23
 專案：JOSE｜幻獸戰棋
 目前目標：把所有仍為「延伸上下方向」的戰鬥單位，逐隻改為真正原生的前／後／左／右動作來源，並直接導入遊戲戰鬥。
 
@@ -44,8 +44,8 @@
 
 | 類型 | 數量 | 說明 |
 | --- | ---: | --- |
-| `authored-four-direction` | 20 | 已有真正前後左右原生參考圖。 |
-| `authored-front-back-and-approved-side` | 24 | 已有可用前後參考與核准側面，不是本輪優先。 |
+| `authored-four-direction` | 44 | 已有真正前後左右原生參考圖，包含全數 29 隻 2×2 幻獸。 |
+| `authored-front-back-and-approved-side` | 0 | 此舊式前後來源已全數由原生四方向來源取代。 |
 | `derived-from-approved-motion` | **136** | 本輪待補繪目標。 |
 
 不要手動維護 140 隻清單。每次開工請以 manifest 即時列出：
@@ -55,6 +55,18 @@ $m = Get-Content -Raw -Encoding utf8 assets\animations\directional\manifest.json
 $m.psobject.Properties | Where-Object { $_.Value.sourceType -eq 'derived-from-approved-motion' } |
   ForEach-Object Name | Sort-Object
 ```
+
+### 2×2 幻獸批次（2026-07-23 完成，待最終驗證與上架）
+
+本輪 24 隻 2×2 幻獸都已完成「原稿、透明去背、原生四方向 4×3 動作來源」；重建後必須全部在 manifest 顯示為 `authored-four-direction`：
+
+- 火：`blazing_dragon`、`flame_god_lion`、`volcanic_titan`、`kiln_rhinoceros`。
+- 森：`emerald_dragon`、`emerald_god_dragon`、`jade_qilin`、`forest_god`、`ancient_treant`、`fern_ceratops`、`mushroom_bison`、`amber_antler_moose`。
+- 海：`sea_god_beast`、`sea_emperor`、`tsunami_dragon`、`abyss_god_dragon`、`frost_leviathan`、`aurora_narwhal`、`brine_crocodile`。
+- 光：`crown_unicorn`、`cathedral_elephant`。
+- 暗：`void_leviathan`、`abyss_mammoth`、`obsidian_gorilla`。
+
+同輪修正：`solar_phoenix` 的右向移動／攻擊來源格左上殘圖會在裁切進 runtime 圖集前透明清除；需以重建後的圖集人工確認。
 
 ## 建議補繪順序
 
@@ -146,4 +158,4 @@ npm.cmd test
 
 本工作區原本就有其他未提交的 UI、劇情與戰鬥改動。接手者只能處理本待辦相關檔案，不可用 `git reset --hard`、`git checkout --` 或大範圍還原。
 
-本輪沒有授權部署、提交或推送；完成一個可驗證批次後，先回報素材清單與測試結果。
+本輪 24 隻 2×2 幻獸與鳳凰右向裁切修正已於 2026-07-23 完成重建：`python scripts/check-directional-frame-bounds.py` 34560 格通過、`npm.cmd run lint` 通過、`npm.cmd test` 92/92 通過；發布時需同步更新 `tactics.html` 與 `js/tactics.js` 的快取版本。
