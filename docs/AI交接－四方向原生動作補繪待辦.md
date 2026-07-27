@@ -86,6 +86,8 @@ $m.psobject.Properties | Where-Object { $_.Value.sourceType -eq 'derived-from-ap
 
 本批驗證：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 92/92 通過。尚未獨立提交／上架，避免與工作區其他未完成的第 11 章與介面變更混合。
 
+方向校正：`fog_wisp`｜霧中鬼火與 `gloom_turtle`｜幽暗龜已依實測交換側面來源欄位，確保右移／右攻時面向右方；第 2、3 章其餘八隻維持原有映射。
+
 ### 第三章完成狀態（2026-07-27，待獨立上架）
 
 `ash_crown_tyrant`｜燼冠暴君（Boss）與第三章實際出場的 `crown_cinderling`｜燼冠餘燼靈、`salamander_fiend`｜火蜥精、`surtr_spawn`｜焰巨人眷屬、`ember_imp`｜餘燼小鬼，均已完成真正原生前／右／後／左動作來源、透明去背與戰鬥圖集重建。

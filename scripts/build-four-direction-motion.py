@@ -61,7 +61,10 @@ SOURCE_ALREADY_RIGHT = {
 # the character's stated facing direction.  These units were verified in the
 # live battle: their visible side must be swapped so a rightward move/attack
 # points right on the board.
-SWAPPED_SIDE_UNITS = {"fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis"}
+SWAPPED_SIDE_UNITS = {
+    "fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis",
+    "fog_wisp", "gloom_turtle",
+}
 # AI grids occasionally let an adjacent cell's tail or attack trail cross the
 # cell boundary.  Remove only the verified intrusion, before scaling it into a
 # runtime frame.  Keys are (unit id, source row, source column).
