@@ -80,6 +80,18 @@ $m.psobject.Properties | Where-Object { $_.Value.sourceType -eq 'derived-from-ap
 
 `blightwood_sovereign`｜腐菌樹王（Boss）已完成真正原生前後左右動作圖；第一章第 1～10 關、Boss 與四個 HARD 關卡實際出場的 `forest_deer`、`rotcap_rootling`、`dryad_thorn`、`ent_sapling`、`venom_mantis` 皆無須再產圖。
 
+### 第二章完成狀態（2026-07-27，待獨立上架）
+
+`thorn_hive_queen`｜荊棘蜂后（Boss）與第二章實際出場的 `thorn_pollen_drone`｜荊棘花粉蜂、`mist_banshee`｜迷霧報喪女妖、`fog_wisp`｜霧中鬼火、`gloom_turtle`｜幽暗龜，均已完成真正原生前／右／後／左動作來源、透明去背與戰鬥圖集重建。
+
+本批驗證：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 92/92 通過。尚未獨立提交／上架，避免與工作區其他未完成的第 11 章與介面變更混合。
+
+### 第三章完成狀態（2026-07-27，待獨立上架）
+
+`ash_crown_tyrant`｜燼冠暴君（Boss）與第三章實際出場的 `crown_cinderling`｜燼冠餘燼靈、`salamander_fiend`｜火蜥精、`surtr_spawn`｜焰巨人眷屬、`ember_imp`｜餘燼小鬼，均已完成真正原生前／右／後／左動作來源、透明去背與戰鬥圖集重建。
+
+本批驗證：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 92/92 通過。尚未獨立提交／上架，避免與工作區其他未完成的第 11 章與介面變更混合。
+
 後續章節請依 `js/data/tactical-content.js` 中各章 `minions`、`boss` 取順序，不要只依檔名字母排序。
 
 ## 每隻單位的標準流程（不可省略）

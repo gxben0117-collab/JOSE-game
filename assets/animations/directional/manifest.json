@@ -725,13 +725,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/ash_crown_tyrant-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/ash_crown_tyrant-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/ash_crown_tyrant-motion-4dir-sheet.webp"
     }
@@ -3084,13 +3084,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/crown_cinderling-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/crown_cinderling-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/crown_cinderling-motion-4dir-sheet.webp"
     }
@@ -4068,13 +4068,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/ember_imp-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/ember_imp-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/ember_imp-motion-4dir-sheet.webp"
     }
@@ -5218,13 +5218,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/fog_wisp-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/fog_wisp-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/fog_wisp-motion-4dir-sheet.webp"
     }
@@ -6279,13 +6279,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/gloom_turtle-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/gloom_turtle-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/gloom_turtle-motion-4dir-sheet.webp"
     }
@@ -8901,13 +8901,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/mist_banshee-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/mist_banshee-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/mist_banshee-motion-4dir-sheet.webp"
     }
@@ -11187,13 +11187,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/salamander_fiend-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/salamander_fiend-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/salamander_fiend-motion-4dir-sheet.webp"
     }
@@ -13226,13 +13226,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/surtr_spawn-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/surtr_spawn-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/surtr_spawn-motion-4dir-sheet.webp"
     }
@@ -13471,13 +13471,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/thorn_hive_queen-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/thorn_hive_queen-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/thorn_hive_queen-motion-4dir-sheet.webp"
     }
@@ -13552,13 +13552,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/thorn_pollen_drone-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/thorn_pollen_drone-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/thorn_pollen_drone-motion-4dir-sheet.webp"
     }

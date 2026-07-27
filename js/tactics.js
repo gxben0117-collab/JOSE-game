@@ -89,16 +89,23 @@
   }
   function displayQuote(pet) { return (window.TACTICAL_SUMMON_QUOTES || {})[pet.id] || '機庫已完成同步，隨時可以出發。'; }
   var BOSS_RAID_TIERS = ['簡單', '普通', '困難', '菁英', '魔神'];
+  /* 依主題配對 Boss 來襲的隨行小兵，讓補位不再是同一隻 Boss 的複製體。 */
+  var BOSS_RAID_COMPANIONS = {
+    scrap_crocodile: ['rust_scout', 'rail_demolition', 'heavy_rail_guard', 'sawwheel_hunter'],
+    skeleton_king: ['skeleton_soldier', 'skeleton_mage', 'skeleton_knight', 'skeleton_sergeant'],
+    bone_dragon: ['skeleton_soldier', 'skeleton_mage', 'skeleton_knight', 'skeleton_sergeant'],
+    lich: ['skeleton_soldier', 'skeleton_mage', 'skeleton_knight', 'skeleton_sergeant']
+  };
   function bossRaidIds() { return profiles.filter(function (entry) { return entry.boss && entry.size === 4; }).map(function (entry) { return entry.id; }); }
   function bossRaidInfo() {
     var raid = progression.bossRaidState(bossRaidIds()), boss = profile(raid.bossId) || profiles.filter(function (entry) { return entry.boss; })[0];
     return { raid: raid, boss: boss, tier: Math.min(4, Number(raid.tier) || 0), cost: 90 + Math.min(4, Number(raid.tier) || 0) * 45 };
   }
   function bossRaidStage(info) {
-    var base = content.stages[0];
+    var base = content.stages[0], companions = BOSS_RAID_COMPANIONS[info.boss.id] || [];
     return { id: 'daily-boss-' + info.raid.key, bossRaid: true, mapId: base.mapId, chapter: 0, index: 0, order: 0,
       name: 'Boss 來襲・' + BOSS_RAID_TIERS[info.tier], difficulty: BOSS_RAID_TIERS[info.tier], boss: true,
-      power: 1.12 + info.tier * 0.32, enemies: [info.boss.id], enemyCount: 1, seed: 800 + info.tier,
+      power: 1.12 + info.tier * 0.32, enemies: [info.boss.id].concat(companions), enemyCount: 1 + companions.length, seed: 800 + info.tier,
       objective: '討伐今日 Boss，殘血可於今日持續追擊', turnLimit: 30, rewards: { medals: 0, essence: 0, fusionCore: 0 } };
   }
   function renderBossRaidSummary() {
@@ -197,7 +204,7 @@
     var stage = Math.max(1, Math.min(3, Number(unit.evolution) || 1));
     var stagePortrait = unit.p.evolution[Math.min(stage, unit.p.evolution.length) - 1]?.portrait || '';
     var stageSuffix = stage > 1 && stagePortrait.indexOf('assets/pets/' + unit.id + '/evolution/stage_' + stage + '.png') === 0 ? '-stage_' + stage : '';
-    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=29';
+    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=30';
   }
   function motionManifestEntry(unit) { return (window.TACTICAL_MOTION_MANIFEST || {})[unit.id] || {}; }
   function animationSpec(unit, action, override) {
@@ -389,13 +396,15 @@
   function balancedEnemyRoster(stage, partyCost) {
     var base = (content.rosterFor ? content.rosterFor(stage) : stage.enemies).slice();
     var originalCount = base.length;
-    var earlyChapter = !stage.tower && Number(stage.chapter) <= 5;
-    var added = Math.max(0, Math.round((partyCost - 10) * (earlyChapter ? 0.35 : 0.6)));
-    var target = Math.min(30, base.length + added), pool = base.filter(function (id) { return !(profile(id) || {}).boss; });
+    /* 無限塔與 Boss 來襲屬於重複挑戰的高強度內容，套用與前五章相同的溫和曲線，避免場面與數值失控。 */
+    var gentle = stage.tower || stage.bossRaid || Number(stage.chapter) <= 5;
+    var added = Math.max(0, Math.round((partyCost - 10) * (gentle ? 0.35 : 0.6)));
+    var rosterCap = stage.bossRaid ? 8 : 30;
+    var target = Math.min(rosterCap, base.length + added), pool = base.filter(function (id) { return !(profile(id) || {}).boss; });
     if (!pool.length) pool = base.slice();
     for (var index = base.length; index < target; index++) base.push(pool[(index + (stage.seed || 0)) % pool.length]);
-    var scale = 1 + Math.max(0, partyCost - 10) * (earlyChapter ? 0.008 : 0.012);
-    var minimumScale = (earlyChapter ? 0.48 : 0.62) + Math.max(0, partyCost - 8) * (earlyChapter ? 0.025 : 0.035);
+    var scale = 1 + Math.max(0, partyCost - 10) * (gentle ? 0.008 : 0.012);
+    var minimumScale = (gentle ? 0.48 : 0.62) + Math.max(0, partyCost - 8) * (gentle ? 0.025 : 0.035);
     return { roster: base, added: Math.max(0, target - originalCount), scale: scale, minimumScale: minimumScale, label: partyCost >= 23 ? '滿編迎擊' : partyCost >= 16 ? '增援迎擊' : partyCost >= 9 ? '警戒迎擊' : '標準迎擊' };
   }
 
@@ -439,7 +448,7 @@
   }
 
   /* 無限塔：10 波守護塔生存戰。 */
-  function towerBasePower(floor) { return Math.round((0.62 + Math.min(floor, 20) * 0.025 + Math.max(0, floor - 20) * 0.015) * 100) / 100; }
+  function towerBasePower(floor) { return Math.round((0.52 + Math.min(floor, 20) * 0.021 + Math.max(0, floor - 20) * 0.012) * 100) / 100; }
   function towerEnemyBuffs(floor) {
     var cycle = ['fortified', 'frenzy', 'swift', 'barrier'], buffs = {}, tiers = Math.floor(Math.max(0, floor - 1) / 5);
     for (var index = 0; index < tiers; index++) buffs[cycle[index % cycle.length]] = (buffs[cycle[index % cycle.length]] || 0) + 1;
@@ -496,7 +505,7 @@
     if (currentStage.bossRaid) {
       var raidInfo = bossRaidInfo(), raidBoss = state.units.find(function (unit) { return unit.boss; });
       if (raidBoss) {
-        var raidMaxHp = Math.round(raidBoss.maxHp * (2.4 + raidInfo.tier * 0.9));
+        var raidMaxHp = Math.round(raidBoss.maxHp * (2.0 + raidInfo.tier * 0.7));
         raidBoss.maxHp = raidMaxHp;
         raidBoss.hp = raidInfo.raid.hp && raidInfo.raid.maxHp ? Math.min(raidMaxHp, Math.round(raidInfo.raid.hp / raidInfo.raid.maxHp * raidMaxHp)) : raidMaxHp;
         state.bossRaid = { raid: raidInfo.raid, maxHp: raidMaxHp, element: raidInfo.boss.element };
@@ -628,7 +637,7 @@
   }
   function towerUnits() { return state.units.filter(function (unit) { return unit.team === 'ally' && !unit.guardian; }); }
   function towerWaveRoster(wave) {
-    var pool = currentStage.enemies, count = Math.min(14, 3 + wave + Math.floor(currentStage.floor / 3)), roster = [];
+    var pool = currentStage.enemies, count = Math.min(10, 3 + Math.floor(wave * 0.7) + Math.floor(currentStage.floor / 4)), roster = [];
     var offset = (currentStage.floor * 31 + wave * 17) % pool.length;
     /* 37 與目前名冊長度互質，能讓相鄰波次跨越不同元素、定位與體型，而非只輪到少數單位。 */
     for (var index = 0; index < count; index++) roster.push(pool[(offset + index * 37) % pool.length]);
