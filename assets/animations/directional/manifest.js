@@ -8253,7 +8253,7 @@ window.TACTICAL_MOTION_MANIFEST = {
       3
     ],
     "sourceType": "authored-four-direction",
-    "source": "assets/animations/directional/sources/leviathan_brood-four-direction-reference-v1-alpha.png",
+    "source": "assets/animations/directional/sources/leviathan_brood-four-direction-reference-v2-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/leviathan_brood-motion-4dir-sheet.webp"
     }
