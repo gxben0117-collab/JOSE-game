@@ -100,6 +100,18 @@ $m.psobject.Properties | Where-Object { $_.Value.sourceType -eq 'derived-from-ap
 
 本批驗證：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 93/93 通過。
 
+### 第五章完成狀態（2026-07-27，本地完成、待獨立上架）
+
+`glacier_leviathan`｜冰河利維坦（Boss）與第五章實際出場的 `glacier_shellcrab`｜冰川甲殼蟹、`jotunn_frost`｜霜巨人、`selkie_hunter`｜海豹獵人、`murk_fish`｜幽濁魚，均已完成原生前／右／後／左動作來源、透明去背與戰鬥圖集重建。後續以 `v2` 來源為準：第 1 列待機、第 2 列明顯移動、第 3 列明顯攻擊，取代原先攻擊辨識不足的 `v1`。
+
+本批以固定欄位「前、右、後、左」建立來源圖，特別以角色本體面向判定側面：右欄為面向畫面右方、左欄為面向畫面左方，並非程式鏡像。驗證完成：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 93/93 通過。
+
+### 第六～十章完成狀態（2026-07-27，本地完成、待獨立上架）
+
+第六～十章新增的 23 隻出場魔獸與 Boss 已完成原生四方向來源、透明去背與動作圖集重建；重複出場的 `void_eel` 與 `mara_fiend` 共用同一套角色來源。每張來源固定第 1 列待機、第 2 列明顯移動、第 3 列明顯攻擊，並固定欄位前／右／後／左，右欄面向畫面右方、左欄面向畫面左方。
+
+本批驗證：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 93/93 通過。
+
 後續章節請依 `js/data/tactical-content.js` 中各章 `minions`、`boss` 取順序，不要只依檔名字母排序。
 
 ## 每隻單位的標準流程（不可省略）
