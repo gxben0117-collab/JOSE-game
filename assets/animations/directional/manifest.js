@@ -806,13 +806,13 @@ window.TACTICAL_MOTION_MANIFEST = {
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/ash_hound-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/ash_hound-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/ash_hound-motion-4dir-sheet.webp"
     }
@@ -1944,13 +1944,13 @@ window.TACTICAL_MOTION_MANIFEST = {
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/cathedral_titan-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/cathedral_titan-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/cathedral_titan-motion-4dir-sheet.webp"
     }
@@ -5874,13 +5874,13 @@ window.TACTICAL_MOTION_MANIFEST = {
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/gargoyle_watcher-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/gargoyle_watcher-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/gargoyle_watcher-motion-4dir-sheet.webp"
     }
@@ -6443,13 +6443,13 @@ window.TACTICAL_MOTION_MANIFEST = {
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/golem_sentinel-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/golem_sentinel-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/golem_sentinel-motion-4dir-sheet.webp"
     }
@@ -10944,13 +10944,13 @@ window.TACTICAL_MOTION_MANIFEST = {
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/rosewindow_sentinel-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/rosewindow_sentinel-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/rosewindow_sentinel-motion-4dir-sheet.webp"
     }

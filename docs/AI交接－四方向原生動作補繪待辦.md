@@ -94,6 +94,12 @@ $m.psobject.Properties | Where-Object { $_.Value.sourceType -eq 'derived-from-ap
 
 本批驗證：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 92/92 通過。尚未獨立提交／上架，避免與工作區其他未完成的第 11 章與介面變更混合。
 
+### 第四章完成狀態（2026-07-27，待獨立上架）
+
+`cathedral_titan`｜聖堂泰坦（Boss）與第四章實際出場的 `rosewindow_sentinel`｜彩窗哨兵、`gargoyle_watcher`｜石像鬼守望者、`golem_sentinel`｜魔像哨衛、`ash_hound`｜灰燼獵犬，均已完成真正原生前／右／後／左動作來源、透明去背與戰鬥圖集重建。
+
+本批驗證：`python scripts/check-directional-frame-bounds.py` 34,560 格通過；`npm.cmd test` 93/93 通過。
+
 後續章節請依 `js/data/tactical-content.js` 中各章 `minions`、`boss` 取順序，不要只依檔名字母排序。
 
 ## 每隻單位的標準流程（不可省略）
