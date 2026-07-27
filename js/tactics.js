@@ -1493,7 +1493,7 @@
     if (autoTimer) { stopAuto(false); render(); return; }
     startAuto(); note('AUTO 啟動：AI 會評估走位、視線、集火與控場時機。');
   }
-  function cycleSpeed() { var speeds = [1, 1.5, 2], index = speeds.indexOf(battleSpeed); battleSpeed = speeds[(index + 1) % speeds.length]; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed); dom.speed.textContent = '⚡ ' + battleSpeed + '×'; if (autoTimer) scheduleAuto(); audio.play('ui'); }
+  function cycleSpeed() { var speeds = [1, 1.5, 2, 10], index = speeds.indexOf(battleSpeed); battleSpeed = speeds[(index + 1) % speeds.length]; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed); dom.speed.textContent = '⚡ ' + battleSpeed + '×'; if (autoTimer) scheduleAuto(); audio.play('ui'); }
 
   async function endTurn(fromAuto) {
     if (currentStage.tower && !fromAuto) return;
@@ -2288,7 +2288,7 @@
     enterTower: enterTower,
     reset: function (stageId) { if (stageId && progression.isStageUnlocked(stageId)) currentStage = content.stageById(stageId); reset(currentStage.id); },
     startBattle: startBattle,
-    setSpeed: function (speed) { battleSpeed = Math.max(1, Math.min(8, Number(speed) || 1)); },
+    setSpeed: function (speed) { battleSpeed = Math.max(1, Math.min(10, Number(speed) || 1)); },
     startAuto: function () { if (!autoTimer) toggleAuto(); },
     stopAuto: stopAuto
   };
