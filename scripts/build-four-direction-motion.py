@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -63,7 +64,7 @@ SOURCE_ALREADY_RIGHT = {
 # points right on the board.
 SWAPPED_SIDE_UNITS = {
     "fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis",
-    "fog_wisp", "gloom_turtle",
+    "fog_wisp", "gloom_turtle", "ash_hound",
 }
 # AI grids occasionally let an adjacent cell's tail or attack trail cross the
 # cell boundary.  Remove only the verified intrusion, before scaling it into a
@@ -319,10 +320,18 @@ def main() -> None:
         stale.unlink()
     for stale in OUTPUT_DIR.glob("*-motion-4dir-sheet.webp"):
         stale.unlink()
-    authored_sources = {
-        source.name.split("-four-direction-reference-")[0]: source
-        for source in SOURCE_DIR.glob("*-four-direction-reference-v*-alpha.png")
-    }
+    # A unit may receive successive approved redraws.  Always take the highest
+    # numeric version, rather than relying on filesystem enumeration order.
+    authored_sources: dict[str, Path] = {}
+    for source in SOURCE_DIR.glob("*-four-direction-reference-v*-alpha.png"):
+        match = re.match(r"(.+)-four-direction-reference-v(\d+)-alpha\.png$", source.name)
+        if not match:
+            continue
+        unit_id, version = match.group(1), int(match.group(2))
+        current = authored_sources.get(unit_id)
+        current_match = re.match(r".+-four-direction-reference-v(\d+)-alpha\.png$", current.name) if current else None
+        if current_match is None or version > int(current_match.group(1)):
+            authored_sources[unit_id] = source
     manifest: dict[str, object] = {}
     legacy_manifest = json.loads((LEGACY_DIR / "manifest.json").read_text(encoding="utf-8"))
     for unit_id in sorted(legacy_manifest):

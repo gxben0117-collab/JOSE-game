@@ -807,9 +807,9 @@ window.TACTICAL_MOTION_MANIFEST = {
     },
     "sourceColumns": [
       0,
-      1,
+      3,
       2,
-      3
+      1
     ],
     "sourceType": "authored-four-direction",
     "source": "assets/animations/directional/sources/ash_hound-four-direction-reference-v1-alpha.png",
