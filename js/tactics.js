@@ -89,6 +89,15 @@
   }
   function displayQuote(pet) { return (window.TACTICAL_SUMMON_QUOTES || {})[pet.id] || '機庫已完成同步，隨時可以出發。'; }
   var BOSS_RAID_TIERS = ['簡單', '普通', '困難', '菁英', '魔神'];
+  var BOSS_RAID_WEEKLY = [
+    { day: '週一', bossId: 'blightwood_sovereign', companions: ['rotcap_rootling', 'venom_mantis', 'dryad_thorn'] },
+    { day: '週二', bossId: 'ash_crown_tyrant', companions: ['ember_imp', 'salamander_fiend', 'surtr_spawn'] },
+    { day: '週三', bossId: 'glacier_leviathan', companions: ['glacier_shellcrab', 'jotunn_frost', 'selkie_hunter'] },
+    { day: '週四', bossId: 'solar_seraph_chimera', companions: ['prism_wing_cub', 'cherub_guard', 'bennu_acolyte'] },
+    { day: '週五', bossId: 'eclipse_bone_wyrm', companions: ['crescent_rib_whelp', 'cerberus_whelp', 'mara_fiend'] },
+    { day: '週六', bossId: 'furnace_colossus', companions: ['slag_hound', 'thunderbird_kin', 'raiju_beast'] },
+    { day: '週日', bossId: 'abyssal_kraken_emperor', companions: ['pearl_lantern_fry', 'siren_lure', 'kraken_tentacle'] }
+  ];
   /* 依主題配對 Boss 來襲的隨行小兵，讓補位不再是同一隻 Boss 的複製體。 */
   var BOSS_RAID_COMPANIONS = {
     scrap_crocodile: ['rust_scout', 'rail_demolition', 'heavy_rail_guard', 'sawwheel_hunter'],
@@ -96,13 +105,15 @@
     bone_dragon: ['skeleton_soldier', 'skeleton_mage', 'skeleton_knight', 'skeleton_sergeant'],
     lich: ['skeleton_soldier', 'skeleton_mage', 'skeleton_knight', 'skeleton_sergeant']
   };
-  function bossRaidIds() { return profiles.filter(function (entry) { return entry.boss && entry.size === 4; }).map(function (entry) { return entry.id; }); }
+  function bossRaidWeekday() { return (new Date().getDay() + 6) % 7; }
+  function bossRaidPlan() { return BOSS_RAID_WEEKLY[bossRaidWeekday()]; }
+  function bossRaidIds() { return BOSS_RAID_WEEKLY.map(function (entry) { return entry.bossId; }).filter(function (id) { return Boolean(profile(id)); }); }
   function bossRaidInfo() {
-    var raid = progression.bossRaidState(bossRaidIds()), boss = profile(raid.bossId) || profiles.filter(function (entry) { return entry.boss; })[0];
-    return { raid: raid, boss: boss, tier: Math.min(4, Number(raid.tier) || 0), cost: 90 + Math.min(4, Number(raid.tier) || 0) * 45 };
+    var plan = bossRaidPlan(), raid = progression.bossRaidState(bossRaidIds(), plan.bossId), boss = profile(raid.bossId) || profiles.filter(function (entry) { return entry.boss; })[0];
+    return { raid: raid, boss: boss, plan: plan, tier: Math.min(4, Number(raid.tier) || 0), cost: 90 + Math.min(4, Number(raid.tier) || 0) * 45 };
   }
   function bossRaidStage(info) {
-    var base = content.stages[0], companions = BOSS_RAID_COMPANIONS[info.boss.id] || [];
+    var base = content.stages[0], companions = info.plan.companions || BOSS_RAID_COMPANIONS[info.boss.id] || [];
     return { id: 'daily-boss-' + info.raid.key, bossRaid: true, mapId: base.mapId, chapter: 0, index: 0, order: 0,
       name: 'Boss 來襲・' + BOSS_RAID_TIERS[info.tier], difficulty: BOSS_RAID_TIERS[info.tier], boss: true,
       power: 1.12 + info.tier * 0.32, enemies: [info.boss.id].concat(companions), enemyCount: 1 + companions.length, seed: 800 + info.tier,
@@ -1676,7 +1687,7 @@
     var reward;
     if (currentStage.bossRaid) {
       var raidBoss = state.units.find(function (unit) { return unit.boss; });
-      var raidResult = progression.recordBossRaid(bossRaidIds(), win, raidBoss ? raidBoss.hp : 0, raidBoss ? raidBoss.maxHp : 1, state.bossRaid && state.bossRaid.element);
+      var raidResult = progression.recordBossRaid(bossRaidIds(), win, raidBoss ? raidBoss.hp : 0, raidBoss ? raidBoss.maxHp : 1, state.bossRaid && state.bossRaid.element, state.bossRaid && state.bossRaid.id);
       reward = win ? Object.assign({ stars: 1, firstClear: false, cleared: raidResult.cleared }, raidResult.reward) : {};
     } else if (currentStage.tower) {
       var towerResult = progression.completeTower(currentStage.floor, win);
@@ -2040,7 +2051,7 @@
     document.getElementById('boss-raid-modal').hidden = false; audio.play('ui');
   }
   function enterBossRaid() {
-    var info = bossRaidInfo(), result = progression.startBossRaid(bossRaidIds(), info.cost);
+    var info = bossRaidInfo(), result = progression.startBossRaid(bossRaidIds(), info.cost, info.plan.bossId);
     if (!result.ok) { document.getElementById('boss-raid-content').insertAdjacentHTML('afterbegin', '<p class="fc-warn">' + result.reason + '</p>'); audio.play('ui'); return; }
     document.getElementById('boss-raid-modal').hidden = true; currentStage = bossRaidStage(info); reset(currentStage); setView('battle'); audio.play('boss');
   }

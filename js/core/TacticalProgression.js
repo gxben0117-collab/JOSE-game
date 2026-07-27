@@ -325,25 +325,25 @@
     return { ok: true, results: results, crystals: this.state.crystals, featured: featuredInfo ? this.featuredProgress() : null };
   };
 
-  TacticalProgression.prototype.bossRaidState = function (bossIds) {
+  TacticalProgression.prototype.bossRaidState = function (bossIds, fixedBossId) {
     var key = new Date().toISOString().slice(0, 10), seed = key.replace(/-/g, '').split('').reduce(function (sum, digit) { return sum + Number(digit); }, 0);
     bossIds = Array.isArray(bossIds) && bossIds.length ? bossIds : [];
-    var bossId = bossIds[seed % bossIds.length] || '';
+    var bossId = bossIds.indexOf(fixedBossId) >= 0 ? fixedBossId : (bossIds[seed % bossIds.length] || '');
     if (!this.state.bossRaid || this.state.bossRaid.key !== key || this.state.bossRaid.bossId !== bossId) {
       this.state.bossRaid = { key: key, bossId: bossId, tier: 0, hp: null, maxHp: null, cleared: false, challenges: 0 };
       this.save();
     }
     return this.state.bossRaid;
   };
-  TacticalProgression.prototype.startBossRaid = function (bossIds, cost) {
-    var raid = this.bossRaidState(bossIds); cost = Math.max(0, number(cost, 0));
+  TacticalProgression.prototype.startBossRaid = function (bossIds, cost, fixedBossId) {
+    var raid = this.bossRaidState(bossIds, fixedBossId); cost = Math.max(0, number(cost, 0));
     if (raid.cleared) return { ok: false, reason: '今日五個難度已全部討伐完成' };
     if (this.state.gold < cost) return { ok: false, reason: '金幣不足（需要 ' + cost + '）' };
     this.state.gold -= cost; raid.challenges++; this.save();
     return { ok: true, raid: raid };
   };
-  TacticalProgression.prototype.recordBossRaid = function (bossIds, win, hp, maxHp, element) {
-    var raid = this.bossRaidState(bossIds);
+  TacticalProgression.prototype.recordBossRaid = function (bossIds, win, hp, maxHp, element, fixedBossId) {
+    var raid = this.bossRaidState(bossIds, fixedBossId);
     if (!win) { raid.hp = Math.max(1, Math.round(number(hp, maxHp))); raid.maxHp = Math.max(1, Math.round(number(maxHp, raid.hp))); this.save(); return { win: false }; }
     var tier = Math.min(4, number(raid.tier, 0));
     var reward = { crystals: 12 + tier * 8, gold: 140 + tier * 100, medals: 4 + tier * 4, fusionCore: 1 + Math.floor(tier / 2), essence: 8 + tier * 5, element: ELEMENTS.indexOf(element) >= 0 ? element : 'fire' };
