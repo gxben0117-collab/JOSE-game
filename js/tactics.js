@@ -215,7 +215,7 @@
     var stage = Math.max(1, Math.min(3, Number(unit.evolution) || 1));
     var stagePortrait = unit.p.evolution[Math.min(stage, unit.p.evolution.length) - 1]?.portrait || '';
     var stageSuffix = stage > 1 && stagePortrait.indexOf('assets/pets/' + unit.id + '/evolution/stage_' + stage + '.png') === 0 ? '-stage_' + stage : '';
-    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=35';
+    return '../assets/animations/directional/' + unit.id + stageSuffix + '-motion-4dir-sheet.webp?v=36';
   }
   function motionManifestEntry(unit) { return (window.TACTICAL_MOTION_MANIFEST || {})[unit.id] || {}; }
   function animationSpec(unit, action, override) {
@@ -1504,7 +1504,7 @@
     if (autoTimer) { stopAuto(false); render(); return; }
     startAuto(); note('AUTO 啟動：AI 會評估走位、視線、集火與控場時機。');
   }
-  function cycleSpeed() { var speeds = [1, 1.5, 2, 10], index = speeds.indexOf(battleSpeed); battleSpeed = speeds[(index + 1) % speeds.length]; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed); dom.speed.textContent = '⚡ ' + battleSpeed + '×'; if (autoTimer) scheduleAuto(); audio.play('ui'); }
+  function cycleSpeed() { var speeds = [1, 1.5, 2], index = speeds.indexOf(battleSpeed); battleSpeed = speeds[(index + 1) % speeds.length]; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed); dom.speed.textContent = '⚡ ' + battleSpeed + '×'; if (autoTimer) scheduleAuto(); audio.play('ui'); }
 
   async function endTurn(fromAuto) {
     if (currentStage.tower && !fromAuto) return;
@@ -2059,7 +2059,7 @@
     document.getElementById('gacha-info').innerHTML = '持有 <b>💎 ' + progress.crystals + '</b> 召喚水晶。首次通關與每日任務可獲得水晶。已收集 ' + progression.dexSummary().total + '/' + window.TACTICAL_PET_DATA.length + ' 隻。';
     var icons = { fire: '🔥 火', forest: '🌿 森', ocean: '🌊 海', light: '✨ 光', dark: '🌑 暗' };
     var featured = progression.featuredProgress(), featuredPet = featured.pet;
-    document.getElementById('gacha-element-pulls').innerHTML = '<article class="gacha-featured"><span class="gacha-featured-art" style="background-image:url(\'' + featuredPet.evolution[0].portrait + '\')"></span><div><b>✦ 每日精選幻獸池</b><small>' + (window.ELEMENT_CONFIG[featuredPet.element] || {}).label + '・' + featuredPet.name + '｜保底進度 ' + featured.pulls + '/' + featured.target + '</small></div><div class="gacha-featured-actions"><button type="button" data-featured-pull="1">單抽 30 💎</button><button type="button" data-featured-pull="10">十連 270 💎</button></div></article>' + ['fire', 'forest', 'ocean', 'light', 'dark'].map(function (element) { return '<button type="button" data-element-pull="' + element + '">' + icons[element] + '屬性召喚 <small>50 💎</small></button>'; }).join('');
+    document.getElementById('gacha-element-pulls').innerHTML = '<article class="gacha-featured"><span class="gacha-featured-art" style="background-image:url(\'' + featuredPet.evolution[0].portrait + '\')"></span><div><b>✦ 200 抽隨機保底池</b><small>僅限 1×1 幻獸｜保底進度 ' + featured.pulls + '/' + featured.target + '｜達成時隨機贈送</small></div><div class="gacha-featured-actions"><button type="button" data-featured-pull="1">單抽 30 💎</button><button type="button" data-featured-pull="10">十連 270 💎</button></div></article>' + ['fire', 'forest', 'ocean', 'light', 'dark'].map(function (element) { return '<button type="button" data-element-pull="' + element + '">' + icons[element] + '屬性召喚 <small>50 💎</small></button>'; }).join('');
     document.querySelectorAll('[data-element-pull]').forEach(function (button) { button.onclick = function () { doPull(1, button.dataset.elementPull); }; });
     document.querySelectorAll('[data-featured-pull]').forEach(function (button) { button.onclick = function () { doPull(Number(button.dataset.featuredPull), null, true); }; });
   }
@@ -2299,7 +2299,7 @@
     enterTower: enterTower,
     reset: function (stageId) { if (stageId && progression.isStageUnlocked(stageId)) currentStage = content.stageById(stageId); reset(currentStage.id); },
     startBattle: startBattle,
-    setSpeed: function (speed) { battleSpeed = Math.max(1, Math.min(10, Number(speed) || 1)); },
+    setSpeed: function (speed) { battleSpeed = Math.max(1, Math.min(2, Number(speed) || 1)); },
     startAuto: function () { if (!autoTimer) toggleAuto(); },
     stopAuto: stopAuto
   };
@@ -2324,7 +2324,7 @@
 
   /* 自動化煙霧測試：?autotest=1 會全速打完一場並把結果寫進網頁標題。 */
   if (/[?&]autotest=1/.test(window.location.search)) {
-    battleSpeed = 8; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed);
+    battleSpeed = 2; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed);
     var stageMatch = window.location.search.match(/[?&]stage=([a-z0-9-]+)/);
     if (stageMatch) {
       var wanted = content.stageById(stageMatch[1]);

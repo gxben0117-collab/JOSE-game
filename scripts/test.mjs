@@ -220,7 +220,7 @@ function progressionSandbox() {
   sandbox.window = sandbox; vm.createContext(sandbox); vm.runInContext(readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8'), sandbox); return { sandbox, storage };
 }
 test('新版進度服務會建立安全預設存檔（含初始幻獸與測試水晶）', () => { const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.party.join(','), 'molten_ball,fire_lion,fire_fox,leaf_ear_rabbit'); assert.equal(service.state.currentStage, 'c1-1'); assert.equal(service.state.crystals, 5060); assert.equal(service.ownedPets().length, 4); assert.ok(service.state.party.every(id => service.owns(id))); });
-test('測試贈禮僅發放一次，且每日精選池在第 200 抽保底給當日幻獸', () => { const { sandbox, storage } = progressionSandbox(); storage.set('jose-tactics-progression-v2', JSON.stringify({ crystals: 60, party: ['molten_ball'] })); const service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.crystals, 5060); const second = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(second.state.crystals, 5060); const featured = service.featuredProgress(); service.state.featuredPity = { date: featured.date, pulls: 199 }; service.state.crystals = 100; const result = service.pull(1, null, true); assert.equal(result.ok, true); assert.equal(result.results[0].pet.id, featured.pet.id); assert.equal(result.results[0].featuredGuaranteed, true); assert.equal(service.featuredProgress().pulls, 0); });
+test('測試贈禮僅發放一次，召喚限定 1×1，且 200 抽保底隨機送出 1×1 幻獸', () => { const { sandbox, storage } = progressionSandbox(); storage.set('jose-tactics-progression-v2', JSON.stringify({ crystals: 60, party: ['molten_ball'] })); const service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.crystals, 5060); const second = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(second.state.crystals, 5060); const elemental = service.pull(1, 'fire'); assert.equal(elemental.ok, true); assert.equal(elemental.results[0].pet.size, 1); const featured = service.featuredProgress(); service.state.featuredPity = { date: featured.date, pulls: 199 }; service.state.crystals = 100; const result = service.pull(1, null, true); assert.equal(result.ok, true); assert.equal(result.results[0].pet.size, 1); assert.equal(result.results[0].featuredGuaranteed, true); assert.equal(service.featuredProgress().pulls, 0); });
 test('舊版 3 人存檔保留隊伍並自動獲得擁有權', () => { const { sandbox, storage } = progressionSandbox(); storage.set('jose-tactics-progression-v2', JSON.stringify({ party: ['fire_fox', 'forest_deer', 'abyss_dragon'], medals: 9, fusion: { sea_emperor: 2 } })); const service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.party.join(','), 'fire_fox,forest_deer,abyss_dragon'); assert.equal(service.state.medals, 9); assert.ok(service.owns('sea_emperor')); });
 test('召喚消耗水晶、給新幻獸或碎片補償', () => {
   const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content });
@@ -420,7 +420,7 @@ test('2×2 幻獸全數優先採用原生四方向來源', () => {
     const entry = directionalManifest[id];
     assert.equal(entry.rows, 24);
     assert.equal(entry.sourceType, 'authored-four-direction');
-    assert.deepEqual(Array.from(entry.sourceColumns), [0, 1, 2, 3]);
+    assert.deepEqual(Array.from(entry.sourceColumns), id === 'tsunami_dragon' ? [0, 3, 2, 1] : [0, 1, 2, 3]);
     assert.match(entry.source, /four-direction-reference-v1-alpha\.png$/);
   }
 });
@@ -478,16 +478,16 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=72/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=74/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/); assert.doesNotMatch(source, /吾主，請下令/);
 });
-test('元素限定召喚與每日 Boss 來襲可保存殘血並依五段難度解鎖', () => {
+test('元素限定 1×1 召喚與每日 Boss 來襲可保存殘血並依五段難度解鎖', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const progression = readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8');
-  assert.match(html, /id="gacha-element-pulls"/); assert.match(html, /id="open-boss-raid"/); assert.match(html, /id="boss-raid-modal"/); assert.match(html, /js\/core\/TacticalProgression\.js\?v=13/);
-  assert.match(source, /function bossRaidStage/); assert.match(source, /function enterBossRaid/); assert.match(source, /BOSS_RAID_TIERS = \['簡單', '普通', '困難', '菁英', '魔神'\]/); assert.match(source, /boss-tier-grid/); assert.match(source, /完成前一難度解鎖/); assert.match(source, /progression\.pull\(count, element, featured\)/); assert.match(source, /每日精選幻獸池/);
-  assert.match(progression, /TacticalProgression\.prototype\.bossRaidState/); assert.match(progression, /TacticalProgression\.prototype\.recordBossRaid/); assert.match(progression, /TacticalProgression\.prototype\.featuredProgress/); assert.match(progression, /FEATURED_PITY = 200/); assert.match(progression, /var cost = element \? 50/);
+  assert.match(html, /id="gacha-element-pulls"/); assert.match(html, /id="open-boss-raid"/); assert.match(html, /id="boss-raid-modal"/); assert.match(html, /js\/core\/TacticalProgression\.js\?v=14/);
+  assert.match(source, /function bossRaidStage/); assert.match(source, /function enterBossRaid/); assert.match(source, /BOSS_RAID_TIERS = \['簡單', '普通', '困難', '菁英', '魔神'\]/); assert.match(source, /boss-tier-grid/); assert.match(source, /完成前一難度解鎖/); assert.match(source, /progression\.pull\(count, element, featured\)/); assert.match(source, /200 抽隨機保底池/);
+  assert.match(progression, /TacticalProgression\.prototype\.bossRaidState/); assert.match(progression, /TacticalProgression\.prototype\.recordBossRaid/); assert.match(progression, /TacticalProgression\.prototype\.featuredProgress/); assert.match(progression, /FEATURED_PITY = 200/); assert.match(progression, /pet\.size === 1/); assert.match(progression, /var cost = element \? 50/);
 });
 test('三畫面架構：準備、戰鬥、結算各自獨立', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
@@ -666,7 +666,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /js\/tactics\.js\?v=72/);
+  assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /js\/tactics\.js\?v=74/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /element\.style\.setProperty\('--motion-sheet'/); assert.match(source, /motion-sprite motion-4dir/); assert.match(source, /applyMotionVariables\(element, unit\);/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);

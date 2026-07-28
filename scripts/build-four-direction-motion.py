@@ -64,7 +64,7 @@ SOURCE_ALREADY_RIGHT = {
 # points right on the board.
 SWAPPED_SIDE_UNITS = {
     "fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis",
-    "fog_wisp", "gloom_turtle", "ash_hound",
+    "fog_wisp", "gloom_turtle", "ash_hound", "tsunami_dragon",
 }
 # AI grids occasionally let an adjacent cell's tail or attack trail cross the
 # cell boundary.  Remove only the verified intrusion, before scaling it into a

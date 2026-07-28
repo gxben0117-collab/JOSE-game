@@ -294,7 +294,7 @@
   TacticalProgression.prototype.dateKey = function () { return new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Taipei' }); };
   TacticalProgression.prototype.featuredPet = function () {
     var date = this.dateKey(), seed = date.split('-').reduce(function (sum, part) { return sum * 37 + Number(part || 0); }, 0);
-    var pool = this.profiles.filter(function (pet) { return ['elite', 'epic', 'legendary', 'mythical'].indexOf(pet.quality) >= 0; });
+    var pool = this.profiles.filter(function (pet) { return pet.size === 1 && ['elite', 'epic', 'legendary', 'mythical'].indexOf(pet.quality) >= 0; });
     return { date: date, pet: pool[Math.abs(seed) % pool.length] || this.profiles[0] };
   };
   TacticalProgression.prototype.featuredProgress = function () {
@@ -308,14 +308,14 @@
     if (element) count = 1;
     var cost = element ? 50 : this.pullCost(count);
     if (this.state.crystals < cost) return { ok: false, reason: '召喚水晶不足（需要 ' + cost + '💎）' };
-    var tierCounts = {};
-    this.profiles.forEach(function (pet) { tierCounts[pet.quality] = (tierCounts[pet.quality] || 0) + 1; });
-    var pool = this.profiles.filter(function (pet) { return !element || pet.element === element; }).map(function (pet) { return { pet: pet, weight: (GACHA_TIER_WEIGHT[pet.quality] || 10) / tierCounts[pet.quality] }; });
+    var tierCounts = {}, eligiblePets = this.profiles.filter(function (pet) { return pet.size === 1 && (!element || pet.element === element); });
+    eligiblePets.forEach(function (pet) { tierCounts[pet.quality] = (tierCounts[pet.quality] || 0) + 1; });
+    var pool = eligiblePets.map(function (pet) { return { pet: pet, weight: (GACHA_TIER_WEIGHT[pet.quality] || 10) / tierCounts[pet.quality] }; });
     var totalWeight = pool.reduce(function (sum, entry) { return sum + entry.weight; }, 0), featuredInfo = featured ? this.featuredProgress() : null;
     this.state.crystals -= cost;
     var results = [];
     for (var index = 0; index < count; index++) {
-      var guaranteed = featuredInfo && featuredInfo.pulls >= FEATURED_PITY - 1, roll = Math.random() * totalWeight, picked = guaranteed ? { pet: featuredInfo.pet } : pool[0];
+      var guaranteed = featuredInfo && featuredInfo.pulls >= FEATURED_PITY - 1, roll = Math.random() * totalWeight, picked = guaranteed ? { pet: eligiblePets[Math.floor(Math.random() * eligiblePets.length)] } : pool[0];
       if (!guaranteed) for (var cursor = 0; cursor < pool.length; cursor++) { roll -= pool[cursor].weight; if (roll <= 0) { picked = pool[cursor]; break; } }
       var grant = this.grantPet(picked.pet.id);
       results.push({ pet: picked.pet, isNew: grant.isNew, shards: grant.shards || 0, featuredGuaranteed: Boolean(guaranteed) });
