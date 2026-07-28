@@ -33,6 +33,11 @@ CHAPTERS = {
     8: ("sky", (105, 116, 141), (232, 203, 123)),
     9: ("rift", (58, 35, 78), (142, 62, 136)),
     10: ("void", (34, 25, 50), (183, 72, 109)),
+    11: ("machine", (28, 43, 49), (102, 141, 139)),
+    12: ("voltage", (20, 38, 73), (66, 170, 224)),
+    13: ("foundry", (73, 30, 20), (213, 89, 31)),
+    14: ("prototype", (45, 42, 69), (177, 112, 220)),
+    15: ("firewall", (47, 57, 76), (178, 222, 239)),
 }
 
 # Most of the established portrait pack is composed facing left. Normalize the
@@ -91,8 +96,16 @@ def parse_profiles() -> list[tuple[str, Path]]:
 
     enemy_source = (ROOT / "js" / "data" / "tactical-enemies.js").read_text(encoding="utf-8")
     enemy_ids = re.findall(r"enemy\(['\"]([a-z0-9_]+)['\"]", enemy_source)
+    # Chapter 12+ uses compact spec arrays so visual IDs are not all literal
+    # enemy(...) calls. Approved four-direction sources are the authoritative
+    # asset list for those entries.
+    for source in (ROOT / "assets" / "animations" / "directional" / "sources").glob("*-four-direction-reference-v*-alpha.png"):
+        match = re.match(r"(.+)-four-direction-reference-v\d+-alpha\.png$", source.name)
+        if match:
+            enemy_ids.append(match.group(1))
     enemies = [(enemy_id, ROOT / "assets" / "enemies" / f"{enemy_id}.png") for enemy_id in enemy_ids]
-    return [(unit_id, path) for unit_id, path in pets + enemies if path.exists()]
+    seen = set()
+    return [(unit_id, path) for unit_id, path in pets + enemies if path.exists() and not (unit_id in seen or seen.add(unit_id))]
 
 
 def generate_motion_sheets() -> dict[str, dict[str, str | int]]:
@@ -183,14 +196,96 @@ def map_overlay(image: Image.Image, chapter: int, variant: str) -> Image.Image:
     return image.filter(ImageFilter.GaussianBlur(.18))
 
 
+def chapter_scene(chapter: int) -> Image.Image:
+    """Paint a chapter-native battlefield rather than recolouring one shared map.
+
+    The play space remains deliberately readable through a low-detail central lane;
+    chapter landmarks live at the edges so they cannot be confused with tiles.
+    """
+    _, dark, light = CHAPTERS[chapter]
+    rng = random.Random(8100 + chapter)
+    image = Image.new("RGB", MAP_SIZE, dark)
+    draw = ImageDraw.Draw(image, "RGBA")
+    w, h = MAP_SIZE
+    # Atmospheric depth and a unique, broad tactical lane for every chapter.
+    for band in range(18):
+        y0, y1 = band * h // 18, (band + 1) * h // 18
+        mix = band / 17
+        color = tuple(round(dark[i] * (1 - mix) + light[i] * mix) for i in range(3))
+        draw.rectangle((0, y0, w, y1), fill=color + (42,))
+    lane_y = (.56, .44, .53, .47, .52, .45, .57, .43, .54, .48, .51, .46, .55, .49, .52)[chapter - 1]
+    lane = [(0, int(h * lane_y + math.sin(x / w * math.tau * (chapter % 3 + 1)) * h * .035))
+            for x in range(0, w + 1, 70)]
+    lane += [(w, h), (0, h)]
+    draw.polygon(lane, fill=(236, 225, 182, 26))
+    # Distinct landmark vocabulary by chapter: forest, marsh, lava, ruins, ice,
+    # storm, coast, sky islands, crystal rift and void citadel.
+    if chapter == 1:
+        for _ in range(54):
+            x, y = rng.randrange(w), rng.choice([rng.randrange(0, 250), rng.randrange(600, h)])
+            r = rng.randrange(25, 62); draw.ellipse((x-r, y-r, x+r, y+r), fill=(31, 78, 35, 210), outline=(150, 203, 92, 105), width=3)
+    elif chapter == 2:
+        for _ in range(28):
+            x, y = rng.randrange(w), rng.randrange(h); r = rng.randrange(30, 88)
+            draw.ellipse((x-r, y-r//2, x+r, y+r//2), fill=(174, 226, 209, 42))
+        for _ in range(18):
+            x, y = rng.randrange(w), rng.randrange(h); draw.ellipse((x-24, y-10, x+24, y+10), fill=(26, 72, 62, 150))
+    elif chapter == 3:
+        for _ in range(7):
+            x = (index := _) * w // 6 - 60; draw.polygon([(x, h), (x+145, h), (x+80, 0)], fill=(68, 23, 18, 190))
+        for _ in range(15):
+            x, y = rng.randrange(w), rng.randrange(h); draw.line((x, y, x + rng.randrange(-100, 100), y + rng.randrange(30, 100)), fill=(255, 113, 32, 145), width=7)
+    elif chapter == 4:
+        for _ in range(20):
+            x, y = rng.randrange(w), rng.choice([rng.randrange(0, 235), rng.randrange(590, h)])
+            draw.rectangle((x, y, x+48, y+78), fill=(83, 74, 64, 220), outline=(205, 180, 130, 100), width=3)
+    elif chapter == 5:
+        for _ in range(36):
+            x, y = rng.randrange(w), rng.randrange(h); r = rng.randrange(18, 58)
+            draw.polygon([(x, y-r), (x+r//2, y), (x, y+r), (x-r//2, y)], fill=(210, 247, 255, 120), outline=(255, 255, 255, 120))
+    elif chapter == 6:
+        for _ in range(11):
+            x = rng.randrange(w); draw.line((x, 0, x+rng.randrange(-80, 80), h), fill=(225, 211, 106, 105), width=4)
+        for _ in range(18):
+            x, y = rng.randrange(w), rng.randrange(h); draw.ellipse((x-18, y-10, x+18, y+10), fill=(35, 39, 74, 115))
+    elif chapter == 7:
+        for _ in range(12):
+            y = 70 + _ * 58; draw.arc((-120, y-45, w+130, y+65), 188, 352, fill=(125, 230, 235, 110), width=8)
+        for _ in range(16):
+            x, y = rng.randrange(w), rng.choice([rng.randrange(0, 210), rng.randrange(620, h)]); draw.ellipse((x-38, y-20, x+38, y+20), fill=(210, 194, 121, 140))
+    elif chapter == 8:
+        for _ in range(16):
+            x, y = rng.randrange(w), rng.choice([rng.randrange(0, 240), rng.randrange(580, h)]); r = rng.randrange(26, 64)
+            draw.ellipse((x-r, y-r//2, x+r, y+r//2), fill=(246, 225, 163, 145), outline=(255, 248, 218, 100), width=2)
+    elif chapter == 9:
+        for _ in range(24):
+            x, y = rng.randrange(w), rng.randrange(h); r = rng.randrange(16, 54)
+            draw.polygon([(x, y-r), (x+r, y), (x, y+r), (x-r, y)], fill=(170, 76, 220, 125), outline=(245, 175, 255, 95))
+    elif chapter == 10:
+        for _ in range(32):
+            x, y = rng.randrange(w), rng.randrange(h); r = rng.randrange(8, 28)
+            draw.ellipse((x-r, y-r, x+r, y+r), fill=(230, 104, 170, 130))
+        for x in range(60, w, 190): draw.polygon([(x, 0), (x+80, 0), (x+36, 190)], fill=(16, 11, 29, 190))
+    else:
+        # Chapter 11: abandoned rail yard and autonomous factory perimeter.
+        for y in (105, 700):
+            draw.line((0, y, w, y - 26), fill=(122, 158, 160, 115), width=9)
+            draw.line((0, y + 26, w, y), fill=(67, 92, 96, 155), width=9)
+        for _ in range(22):
+            x = rng.randrange(w); y = rng.choice([rng.randrange(0, 245), rng.randrange(590, h)])
+            draw.rectangle((x, y, x + rng.randrange(28, 75), y + rng.randrange(18, 48)), fill=(75, 89, 89, 205), outline=(190, 122, 62, 115), width=3)
+        for _ in range(14):
+            x, y = rng.randrange(w), rng.randrange(h)
+            draw.ellipse((x - 12, y - 12, x + 12, y + 12), fill=(72, 221, 231, 72))
+    return image.filter(ImageFilter.GaussianBlur(.35))
+
+
 def generate_maps() -> None:
     MAP_DIR.mkdir(parents=True, exist_ok=True)
-    source = Image.open(MAP_DIR / "chapter-01-forest-river-21x10.png").convert("RGB")
-    source = ImageOps.fit(source, MAP_SIZE, method=Image.Resampling.LANCZOS)
     for stale in MAP_DIR.glob("chapter-??-hard-21x10.jpg"):
         stale.unlink()
     for chapter, (_, dark, light) in CHAPTERS.items():
-        base = tint_map(source, dark, light)
+        base = chapter_scene(chapter)
         for variant in ("field", "boss", "hard-1", "hard-2", "hard-3", "hard-4"):
             work = base.copy()
             if variant == "boss":

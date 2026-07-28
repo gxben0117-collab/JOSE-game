@@ -13,7 +13,7 @@
   }
 
   function enemy(id, name, element, role, roleLabel, stats, move, skills, extra) {
-    var hue = { fire: 16, forest: 110, ocean: 210, light: 46, dark: 275 }[element] || 275;
+    var hue = { fire: 16, forest: 110, ocean: 210, light: 46, dark: 275, machine: 194 }[element] || 275;
     skills.forEach(function (entry, index) { entry.vfxKey = id + '-' + index; entry.vfxVariant = index % 5; if (!entry.vfxHue) entry.vfxHue = hue; });
     return Object.assign({
       id: id, name: name, element: element, rarity: extra && extra.boss ? 'legend' : 'common',
@@ -74,6 +74,24 @@
       skill('放電', { kind: 'basic', multiplier: 0.8, range: 3, attackStyle: 'ranged' }),
       skill('虛空凍流', { multiplier: 1.0, range: 4, attackStyle: 'ranged', cooldown: 3, status: 'freeze', statusTurns: 1 })
     ]),
+
+    /* ── 第 11 章：機械紀元・廢鐵邊境 ── */
+    enemy('rust_scout', '鏽蝕偵察兵', 'machine', 'controller', '機械小兵', { health: 840, power: 96, magic: 182, defense: 82, speed: 8 }, 3, [
+      skill('掃描脈衝', { kind: 'basic', multiplier: 0.82, range: 4, attackStyle: 'ranged' }),
+      skill('故障標記', { multiplier: 1.0, range: 4, attackStyle: 'ranged', cooldown: 2, status: 'freeze', statusTurns: 1 })
+    ], { loreElement: 'machine' }),
+    enemy('rail_demolition', '軌道爆破兵', 'machine', 'attacker', '機械小兵', { health: 980, power: 184, magic: 116, defense: 96, speed: 5 }, 2, [
+      skill('鑽頭衝擊', { kind: 'basic', multiplier: 0.92 }),
+      skill('鐵軌爆破', { multiplier: 1.18, range: 3, radius: 1, attackStyle: 'area', cooldown: 3, push: 1 })
+    ], { loreElement: 'machine' }),
+    enemy('heavy_rail_guard', '重裝鐵衛', 'machine', 'defender', '首領親衛', { health: 2250, power: 242, magic: 112, defense: 260, speed: 3 }, 2, [
+      skill('鐵衛重錘', { kind: 'basic', multiplier: 0.98 }),
+      skill('列車盾牆', { effect: 'shield', value: 0.95, range: 3, attackStyle: 'support', cooldown: 3 })
+    ], { loreElement: 'machine', size: 2, guard: true }),
+    enemy('sawwheel_hunter', '鋸輪獵兵', 'machine', 'attacker', '首領親衛', { health: 1780, power: 288, magic: 138, defense: 154, speed: 5 }, 3, [
+      skill('鋸輪斬', { kind: 'basic', multiplier: 1.0 }),
+      skill('鋼軌獵殺', { multiplier: 1.28, range: 3, cooldown: 2, push: 2 })
+    ], { loreElement: 'machine', size: 2, guard: true }),
 
     /* ── 章節首領專屬神話小兵（玩家無法取得） ── */
     enemy('dryad_thorn', '棘刺樹精', 'forest', 'controller', '首領親衛', { health: 560, power: 70, magic: 142, defense: 60, speed: 6 }, 3, [
@@ -248,7 +266,12 @@
       skill('始源龍爪', { kind: 'basic', multiplier: 0.95 }),
       skill('守護龍息', { kind: 'active', multiplier: 1.0, range: 4, radius: 2, attackStyle: 'area', cooldown: 3, status: 'poison', statusTurns: 2 }),
       skill('龍殿共鳴', { kind: 'ultimate', multiplier: 1.4, range: 5, attackStyle: 'ranged', cooldown: 4, pull: 4, status: 'freeze', statusTurns: 1 })
-    ], { boss: true, size: 3 })
+    ], { boss: true, size: 3 }),
+    enemy('scrap_crocodile', '機關廢鐵巨鱷', 'machine', 'defender', '章節首領', { health: 18000, power: 850, magic: 420, defense: 720, speed: 4 }, 2, [
+      skill('廢鐵撕咬', { kind: 'basic', multiplier: 1.02 }),
+      skill('鋼軌暴衝', { multiplier: 1.15, range: 4, radius: 1, attackStyle: 'area', cooldown: 3, push: 3 }),
+      skill('廢鐵吞噬', { kind: 'ultimate', multiplier: 1.55, range: 5, radius: 2, attackStyle: 'area', cooldown: 5, status: 'burn', statusTurns: 2 })
+    ], { boss: true, size: 4, loreElement: 'machine', passives: [{ name: '鋼鐵裝甲', effect: 'def_boost', value: 0.22 }] })
   ];
 
   var SKELETONS = [
@@ -278,5 +301,22 @@
     ], { boss: true, size: 5, passives: [{ name: '魔神威壓', effect: 'all_boost', value: 0.35 }] })
   ];
 
-  global.TACTICAL_ENEMY_DATA = MINIONS.concat(BOSSES, SKELETONS);
+  /* 第 12～15 章：每章兩名小兵、兩名親衛與一名大型首領。美術來源均為
+     assets/animations/directional/sources 的核准四方向原畫。 */
+  var MACHINE_ARC = [
+    ['electromagnetic_infantry','電磁步兵','attacker','機械小兵',1180,260,150,116,7,1], ['energy_carrier','能量搬運機','support','機械小兵',1240,120,240,138,5,1], ['lightning_hunter','雷光獵手','controller','首領親衛',2180,280,340,176,8,2], ['high_voltage_guard','高壓護衛','defender','首領親衛',2840,310,190,300,4,2],
+    ['furnace_sapper','熔爐工兵','attacker','機械小兵',1420,310,180,130,6,1], ['cinder_mechanical_hound','焦炭機械犬','attacker','機械小兵',1360,340,130,120,9,1], ['magma_heavy_guard','熔岩重衛','defender','首領親衛',3200,360,170,330,3,2], ['hydraulic_war_spider','液壓戰蛛','controller','首領親衛',2520,310,300,210,6,2],
+    ['experiment_trooper','實驗機兵','controller','機械小兵',1600,210,330,145,7,1], ['bionic_hound','仿生獵犬','attacker','機械小兵',1510,360,150,135,9,1], ['prototype_guard','原型護衛機','defender','首領親衛',3480,340,210,350,4,2], ['mimic_warrior','模仿戰士','allrounder','首領親衛',2760,360,320,230,7,2],
+    ['data_patroller','數據巡邏兵','controller','機械小兵',1760,210,360,155,8,1], ['antivirus_drone','防毒無人機','healer','機械小兵',1540,145,380,130,8,1], ['firewall_knight','防火牆騎士','defender','首領親衛',3700,370,230,370,4,2], ['deletion_executor','刪除執行者','attacker','首領親衛',2920,410,290,235,7,2]
+  ].map(function (spec) {
+    return enemy(spec[0], spec[1], 'machine', spec[2], spec[3], { health: spec[4], power: spec[5], magic: spec[6], defense: spec[7], speed: spec[8] }, 3, [
+      skill('機械打擊', { kind: 'basic', multiplier: .92, range: spec[2] === 'controller' || spec[2] === 'healer' ? 4 : 1, attackStyle: spec[2] === 'controller' || spec[2] === 'healer' ? 'ranged' : 'melee' }),
+      skill(spec[2] === 'healer' ? '修復脈衝' : '協議強襲', { effect: spec[2] === 'healer' ? 'heal' : 'damage', multiplier: 1.12, range: spec[2] === 'controller' || spec[2] === 'healer' ? 4 : 3, attackStyle: spec[2] === 'healer' ? 'support' : (spec[2] === 'controller' ? 'ranged' : 'melee'), cooldown: 2, status: spec[2] === 'controller' ? 'freeze' : undefined, statusTurns: spec[2] === 'controller' ? 1 : undefined })
+    ], { loreElement: 'machine', size: spec[9], guard: spec[9] === 2 });
+  });
+  var MACHINE_BOSSES = [
+    ['surge_circuit_wolf','電湧電路狼','attacker',23000,1080,880,760,10], ['incinerator_hydraulic_spider','焚燒液壓蜘蛛','controller',26000,960,1120,820,6], ['prototype_ex01','原型機體 EX-01','allrounder',30000,1120,1040,900,8], ['firewall_paladin','防火牆聖騎','defender',34000,1060,1180,1080,5]
+  ].map(function (spec) { return enemy(spec[0], spec[1], 'machine', spec[2], '章節首領', { health: spec[3], power: spec[4], magic: spec[5], defense: spec[6], speed: spec[7] }, 3, [skill('首領攻擊', { kind: 'basic', multiplier: 1.02, range: 2 }), skill('核心協議', { multiplier: 1.12, range: 5, radius: 2, attackStyle: 'area', cooldown: 3, push: 2 }), skill('超載終端', { kind: 'ultimate', multiplier: 1.62, range: 5, radius: 2, attackStyle: 'area', cooldown: 5, status: 'freeze', statusTurns: 1 })], { boss: true, size: 5, loreElement: 'machine' }); });
+
+  global.TACTICAL_ENEMY_DATA = MINIONS.concat(BOSSES, SKELETONS, MACHINE_ARC, MACHINE_BOSSES);
 }(typeof window !== 'undefined' ? window : globalThis));

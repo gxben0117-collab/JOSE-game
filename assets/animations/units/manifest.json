@@ -1777,6 +1777,62 @@
       "attack-left"
     ]
   },
+  "rust_scout": {
+    "file": "assets/animations/units/rust_scout-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "rail_demolition": {
+    "file": "assets/animations/units/rail_demolition-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "heavy_rail_guard": {
+    "file": "assets/animations/units/heavy_rail_guard-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "sawwheel_hunter": {
+    "file": "assets/animations/units/sawwheel_hunter-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
   "dryad_thorn": {
     "file": "assets/animations/units/dryad_thorn-motion-sheet.webp",
     "columns": 4,
@@ -2337,6 +2393,20 @@
       "attack-left"
     ]
   },
+  "scrap_crocodile": {
+    "file": "assets/animations/units/scrap_crocodile-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
   "skeleton_soldier": {
     "file": "assets/animations/units/skeleton_soldier-motion-sheet.webp",
     "columns": 4,
@@ -2437,6 +2507,286 @@
   },
   "lich_king": {
     "file": "assets/animations/units/lich_king-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "antivirus_drone": {
+    "file": "assets/animations/units/antivirus_drone-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "bionic_hound": {
+    "file": "assets/animations/units/bionic_hound-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "cinder_mechanical_hound": {
+    "file": "assets/animations/units/cinder_mechanical_hound-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "data_patroller": {
+    "file": "assets/animations/units/data_patroller-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "deletion_executor": {
+    "file": "assets/animations/units/deletion_executor-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "electromagnetic_infantry": {
+    "file": "assets/animations/units/electromagnetic_infantry-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "energy_carrier": {
+    "file": "assets/animations/units/energy_carrier-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "experiment_trooper": {
+    "file": "assets/animations/units/experiment_trooper-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "firewall_knight": {
+    "file": "assets/animations/units/firewall_knight-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "firewall_paladin": {
+    "file": "assets/animations/units/firewall_paladin-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "furnace_sapper": {
+    "file": "assets/animations/units/furnace_sapper-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "high_voltage_guard": {
+    "file": "assets/animations/units/high_voltage_guard-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "hydraulic_war_spider": {
+    "file": "assets/animations/units/hydraulic_war_spider-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "incinerator_hydraulic_spider": {
+    "file": "assets/animations/units/incinerator_hydraulic_spider-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "lightning_hunter": {
+    "file": "assets/animations/units/lightning_hunter-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "magma_heavy_guard": {
+    "file": "assets/animations/units/magma_heavy_guard-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "mimic_warrior": {
+    "file": "assets/animations/units/mimic_warrior-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "prototype_ex01": {
+    "file": "assets/animations/units/prototype_ex01-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "prototype_guard": {
+    "file": "assets/animations/units/prototype_guard-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "surge_circuit_wolf": {
+    "file": "assets/animations/units/surge_circuit_wolf-motion-sheet.webp",
     "columns": 4,
     "rows": 6,
     "frame": 112,

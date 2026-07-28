@@ -1,5 +1,5 @@
-/* JOSE 戰棋內容資料：10 大章節 × 150 關、掉落、任務與技能樹。
-   每章 10 小關 + 1 首領關（擊破首領開啟下一章）+ 4 個 HARD 特別關（通關本章首領後解鎖）。 */
+/* JOSE 戰棋內容資料：第 1～11 章為 10 小關＋4 HARD；第 12～15 章採
+   精煉節奏 6 小關＋1 首領關＋3 HARD，之後可依章節設定擴充。 */
 (function (global) {
   'use strict';
 
@@ -14,24 +14,35 @@
     { id: 'c7', name: '失落海域', icon: '🌊', element: 'ocean', theme: 'tide', coreType: '自然核心', boss: 'abyssal_kraken_emperor', minions: ['pearl_lantern_fry', 'siren_lure', 'kraken_tentacle', 'tide_spawn'], description: '沉沒城市與深海神殿記錄始源晶核破碎時，曾有來自世界之外的存在注視此地。', missions: ['沉沒城外環','潮汐航道護送','海底壁畫辨讀','晶核破碎回放','深海祭壇開啟','救援失落潛行者','世界外痕跡採樣','克拉肯觸腕斬斷','皇座水壓突破','神殿深處對峙'], hard: ['沉城守密者','破碎瞬間','世界外的影','深海皇室試煉'] },
     { id: 'c8', name: '天空遺跡', icon: '☀️', element: 'light', theme: 'rift', coreType: '聖光核心', boss: 'solar_seraph_chimera', minions: ['prism_wing_cub', 'cherub_guard', 'bennu_acolyte', 'flame_wisp'], description: '浮空島與天空神殿首度證實天界存在；石碑警告五界重連將再次開啟審判之門。', missions: ['浮空島著陸','風脈升降校正','神殿光路點亮','聖碑文字解碼','五界連結證實','避開審判巡翼','回收聖光碎片','奇美拉巢域突破','日輝祭壇淨化','審判門前警訊'], hard: ['墜落翼隊','星光石碑','審判預演','聖光核心守門'] },
     { id: 'c9', name: '魔界裂縫', icon: '🌑', element: 'dark', theme: 'rift', coreType: '深淵核心', boss: 'eclipse_bone_wyrm', minions: ['crescent_rib_whelp', 'cerberus_whelp', 'mara_fiend', 'void_eel'], description: '晶核活動使裂縫提早開啟，魔界生物首次進入現世；牠們不是答案，而是更大災變的警報。', missions: ['裂縫封鎖線','暗影森林偵查','異界生物辨識','避難幻獸護送','深淵氣息採樣','骨龍遺骸追跡','魔界倖存者對話','月蝕骨巢突入','鋼鐵警告驗證','裂縫邊界決戰'], hard: ['魔界逃難者','裂縫另一端','骨龍舊戰場','深淵核心警報'] },
-    { id: 'c10', name: '遠古龍族之門', icon: '🐲', element: 'mixed', theme: 'rift', coreType: '龍魂核心', boss: 'void_devourer', minions: ['singularity_mite', 'chimera_spawn', 'leviathan_brood', 'mara_fiend'], description: '穿越龍之谷、龍魂祭壇與始源龍殿；龍族守護大型始源碎片，並非異變元凶。', missions: ['龍之谷入境','遠古龍門共鳴','龍魂祭壇試煉','守護者誤會化解','龍城記憶回收','始源碎片定位','跨界搜尋痕跡','皇族親衛考驗','龍殿封印解除','始源龍皇謁見'], hard: ['龍族守護契約','遠古龍城殘頁','跨界搜尋者','始源碎片共振'] }
+    { id: 'c10', name: '遠古龍族之門', icon: '🐲', element: 'mixed', theme: 'rift', coreType: '龍魂核心', boss: 'void_devourer', minions: ['singularity_mite', 'chimera_spawn', 'leviathan_brood', 'mara_fiend'], description: '穿越龍之谷、龍魂祭壇與始源龍殿；龍族守護大型始源碎片，並非異變元凶。', missions: ['龍之谷入境','遠古龍門共鳴','龍魂祭壇試煉','守護者誤會化解','龍城記憶回收','始源碎片定位','跨界搜尋痕跡','皇族親衛考驗','龍殿封印解除','始源龍皇謁見'], hard: ['龍族守護契約','遠古龍城殘頁','跨界搜尋者','始源碎片共振'] },
+    { id: 'c11', name: '廢鐵邊境', icon: '⚙️', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'scrap_crocodile', minions: ['rust_scout', 'rail_demolition', 'heavy_rail_guard', 'sawwheel_hunter'], description: '穿過龍門後，隊伍抵達被舊鐵道與失控工廠吞沒的機械文明邊境；廢鐵巨鱷正在吞噬殘骸，將生命訊號納入冰冷的效率演算。', missions: ['鏽軌邊界偵察','失控巡邏網切斷','回收能源電池','避開爆破軌道','工廠資料端點解鎖','救援受困機械師','重裝鐵衛突破','鋸輪車庫清除','巨鱷巢穴定位','中央鐵道突入'], hard: ['廢鐵信號殘響','高壓貨運線','拆解廠封鎖','效率協議試煉'] },
+    { id: 'c12', name: '能源電塔', icon: '⚡', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'surge_circuit_wolf', minions: ['electromagnetic_infantry','energy_carrier','lightning_hunter','high_voltage_guard'], description: '高壓電塔將整片荒原接入機械網路；隊伍必須阻止能源被用於獵殺所有未授權生命。', missions: ['電塔外環潛入','切斷麻痺網','能源貨線攔截','雷光獵手追擊','高壓護盾破解','主塔超載終止'], hard: ['雷網反制','能源失控','電塔核心試煉'] },
+    { id: 'c13', name: '熔爐工業區', icon: '🔥', element: 'fire', theme: 'ember', coreType: '數據核心', boss: 'incinerator_hydraulic_spider', minions: ['furnace_sapper','cinder_mechanical_hound','magma_heavy_guard','hydraulic_war_spider'], description: '機械工業區用核心驅動永不熄滅的熔爐，生命訊號則被視為需要熔解的雜質。', missions: ['熔爐外牆突破','工兵火線穿越','焦炭獵犬清除','液壓管路關閉','熔岩重衛瓦解','主熔爐降溫'], hard: ['高熱輸送帶','液壓追獵','熔爐核心試煉'] },
+    { id: 'c14', name: '原型實驗場', icon: '🧪', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'prototype_ex01', minions: ['experiment_trooper','bionic_hound','prototype_guard','mimic_warrior'], description: 'EX-01 正在把幻獸的共鳴拆解成可複製的戰術資料；必須救回被拿來測試的生命樣本。', missions: ['實驗區偵察','回收測試資料','仿生獵犬救援','護衛機封鎖突破','模仿演算中斷','EX-01 決戰準備'], hard: ['能力複製場','原型反制','實驗核心試煉'] },
+    { id: 'c15', name: '數據傳輸陣', icon: '🛡️', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'firewall_paladin', minions: ['data_patroller','antivirus_drone','firewall_knight','deletion_executor'], description: '中央網路將共鳴者列為病毒。穿越傳輸陣，才能取得機械文明最初修復協議的真相。', missions: ['權限門掃描','巡邏資料截取','淨化光束迴避','防火牆騎士突破','刪除協議解除','傳輸陣核心奪回'], hard: ['全域封鎖','刪除程序','防火牆核心試煉'] }
   ];
 
   var HARD_NAMES = ['文明殘響', '角色側記', '歷史真相', '核心試煉'];
-  var BOSS_NAMES = { blightwood_sovereign: '腐菌樹王', thorn_hive_queen: '荊棘蜂后', ash_crown_tyrant: '燼冠暴君', cathedral_titan: '聖堂泰坦', glacier_leviathan: '冰川利維坦', furnace_colossus: '熔爐巨神', abyssal_kraken_emperor: '深淵克拉肯皇', solar_seraph_chimera: '日輝奇美拉', eclipse_bone_wyrm: '蝕月骨龍', void_devourer: '始源龍皇・阿爾卡迪亞' };
+  var BOSS_NAMES = { blightwood_sovereign: '腐菌樹王', thorn_hive_queen: '荊棘蜂后', ash_crown_tyrant: '燼冠暴君', cathedral_titan: '聖堂泰坦', glacier_leviathan: '冰川利維坦', furnace_colossus: '熔爐巨神', abyssal_kraken_emperor: '深淵克拉肯皇', solar_seraph_chimera: '日輝奇美拉', eclipse_bone_wyrm: '蝕月骨龍', void_devourer: '始源龍皇・阿爾卡迪亞', scrap_crocodile: '機關廢鐵巨鱷', surge_circuit_wolf: '電湧電路狼', incinerator_hydraulic_spider: '焚燒液壓蜘蛛', prototype_ex01: '原型機體 EX-01', firewall_paladin: '防火牆聖騎' };
 
   function round2(value) { return Math.round(value * 100) / 100; }
 
   /* 前五章讓玩家熟悉角色、元素與劇情；第六章起才逐步要求養成與編隊配合。 */
-  var CHAPTER_BASE_POWER = [0.58, 0.66, 0.75, 0.85, 0.96, 1.12, 1.32, 1.55, 1.82, 2.14];
+  /* 前五章是新指揮官的教學與隊伍成形期：數值留出容錯，讓首通贈送、
+     編隊擴容與元素克制能自然發揮；第六章才正式進入養成與機制壓力。 */
+  var CHAPTER_BASE_POWER = [0.55, 0.62, 0.70, 0.79, 0.89, 1.12, 1.32, 1.55, 1.82, 2.14, 2.5, 2.82, 3.18, 3.58, 4.04];
   var stages = [];
+  var mainOrder = 0;
   chapters.forEach(function (chapter, chapterIndex) {
     var base = CHAPTER_BASE_POWER[chapterIndex];
-    for (var index = 1; index <= 10; index++) {
-      var elite = index >= 9;
+    var mainCount = chapter.missions.length, hardCount = chapter.hard.length;
+    for (var index = 1; index <= mainCount; index++) {
+      var elite = index >= Math.max(4, mainCount - 1);
       stages.push({
         id: chapter.id + '-' + index, mapId: chapter.id, chapter: chapterIndex + 1, index: index,
-        order: chapterIndex * 11 + index,
+        /* 主線長卷一段對應一個普通小關；不把 Boss / HARD 算入推進長度。 */
+        storySegment: index, storySegmentCount: mainCount,
+        order: ++mainOrder,
         name: chapter.name + '・' + chapter.missions[index - 1],
         difficulty: elite ? '精英' : '普通', elite: elite,
         power: round2(base * (1 + (index - 1) * 0.022)),
@@ -43,19 +54,25 @@
       });
     }
     stages.push({
-      id: chapter.id + '-boss', mapId: chapter.id, chapter: chapterIndex + 1, index: 11,
-      order: chapterIndex * 11 + 11, boss: true,
+      id: chapter.id + '-boss', mapId: chapter.id, chapter: chapterIndex + 1, index: mainCount + 1,
+      storySegment: mainCount, storySegmentCount: mainCount, storyEndpoint: true,
+      order: ++mainOrder, boss: true,
       name: chapter.name + '・魔王 ' + BOSS_NAMES[chapter.boss],
       difficulty: '首領', power: round2(base * 1.22),
-      enemies: [chapter.boss].concat(chapter.minions), enemyCount: Math.min(30, 14 + chapterIndex),
+      /* 章節最終戰固定是 1 隻 5×5 Boss、2～3 隻 2×2 親衛、再配 4～8 隻 1×1 小兵。
+         前五章維持兩名親衛與較少小兵；第六章起才增至三名親衛與完整機制壓力。 */
+      enemies: [chapter.boss].concat(chapter.minions), bossGuards: chapter.minions.slice(0, chapterIndex >= 5 ? 3 : 2),
+      bossMinionPool: chapter.minions.slice(), bossMinionCount: Math.min(8, 4 + Math.floor(chapterIndex * 0.65)),
+      enemyCount: 1 + (chapterIndex >= 5 ? 3 : 2) + Math.min(8, 4 + Math.floor(chapterIndex * 0.65)),
       seed: chapterIndex * 53 + 199,
       objective: '擊敗 ' + BOSS_NAMES[chapter.boss] + '，取得高階' + chapter.coreType + '並開啟下一章',
       turnLimit: 24 + chapterIndex,
       rewards: { medals: 8 + chapterIndex * 2, essence: 6 + chapterIndex, fusionCore: 2 + (chapterIndex >= 5 ? 1 : 0), coreType: chapter.coreType, coreLabel: '高階' + chapter.coreType }
     });
-    for (var hard = 1; hard <= 4; hard++) {
+    for (var hard = 1; hard <= hardCount; hard++) {
       stages.push({
-        id: chapter.id + '-h' + hard, mapId: chapter.id, chapter: chapterIndex + 1, index: 11 + hard,
+        id: chapter.id + '-h' + hard, mapId: chapter.id, chapter: chapterIndex + 1, index: mainCount + 1 + hard,
+        storySegment: null, storySegmentCount: mainCount, storyBranch: true,
         order: 900 + chapterIndex * 10 + hard, hard: true, elite: true,
         name: chapter.name + '・HARD ' + chapter.hard[hard - 1],
         difficulty: 'HARD', power: round2(base * 1.22 * (1.04 + hard * 0.04)),
@@ -119,11 +136,16 @@
   function mapVariant(stage) {
     if (stage.boss) return 'boss';
     if (stage.hard) return 'hard-' + (Number(String(stage.id).match(/-h([1-4])$/)?.[1]) || 1);
-    return 'field';
+    return storySegmentId(stage) || 'field';
+  }
+  function storySegmentId(stage) {
+    if (!stage || stage.hard) return null;
+    var segment = Math.max(1, Number(stage.storySegment) || Number(stage.index) || 1);
+    return 'story-' + String(segment).padStart(2, '0');
   }
   function terrainGrid(stage) {
     var data = global.TACTICAL_MAP_TERRAIN || {};
-    var chapter = Math.max(1, Math.min(10, Number(stage.chapter) || 1));
+    var chapter = Math.max(1, Math.min(chapters.length, Number(stage.chapter) || 1));
     return data['chapter-' + String(chapter).padStart(2, '0') + '-' + mapVariant(stage)] || null;
   }
   function obstaclesFor(stage) {
@@ -160,10 +182,13 @@
     quests: quests,
     mapById: mapById,
     stageById: stageById,
+    /* 長卷地圖的資料契約：普通小關依序從左往右推進；Boss 是最右端地標，
+       HARD 是支線戰場。正式切片資產完成後 mapAsset 將使用 story-01…story-NN。 */
+    storySegmentId: storySegmentId,
     terrainAt: terrainAt,
     mapLayout: function (stage) { return stage.mapId + (stage.boss ? '-boss' : stage.hard ? '-hard' : '-field'); },
     mapAsset: function (stage) {
-      var chapter = Math.max(1, Math.min(10, Number(stage.chapter) || 1));
+      var chapter = Math.max(1, Math.min(chapters.length, Number(stage.chapter) || 1));
       return 'assets/maps/chapter-' + String(chapter).padStart(2, '0') + '-' + mapVariant(stage) + '-21x10.jpg';
     },
     obstaclesFor: obstaclesFor,

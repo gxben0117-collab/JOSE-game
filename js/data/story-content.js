@@ -21,6 +21,62 @@
     scenes[id + '-boss:before'] = { kicker: kicker + '｜首領戰', title: arc[5], speaker: '赤炎神龍', portrait: 'crimson_dragon', copy: arc[6] };
     scenes[id + '-boss:after'] = { kicker: kicker + '｜章節結局', title: arc[7], speaker: index === 0 ? '森靈鹿' : '赤炎神龍', portrait: index === 0 ? 'forest_deer' : 'crimson_dragon', copy: arc[8] };
   });
+  /* 前五章各補三個調查節點。讓玩家不只知道「打贏」，還能逐步理解：
+     核心為何失衡、隊伍為何遠征，以及每章線索如何導向下一個世界。 */
+  var earlyChapterBeats = {
+    c1: [
+      [3, '孢霧不是天災', '森靈鹿', 'forest_deer', '孢霧會覆寫守護者的記憶。破碎核心把「守護生命」扭成「排除一切外來者」；我們的目的不是獵殺失控幻獸，而是找到污染根網與碎片落點。'],
+      [7, '古樹祭壇的誓約', '葉耳兔', 'leaf_ear_rabbit', '每一枚融合核心原本都協助一地維持生命循環。有人把它們拆散並留下空槽，才讓森林的治癒之力反過來吞噬自己。'],
+      [10, '枯木王座之前', '赤炎神龍', 'crimson_dragon', '根網一路延向北方的霧林。先讓泉源恢復呼吸，再帶著殘響追查採集者；這場遠征要做的，是讓五界重新能夠彼此共鳴。']
+    ],
+    c2: [
+      [3, '被刻意留下的足跡', '葉耳兔', 'leaf_ear_rabbit', '毒沼邊的採集標記有固定編號，代表有人早已規畫好碎片順序。若放任對方湊齊核心，失衡不會只停在森林。'],
+      [7, '蜂巢是訊號中繼', '森靈鹿', 'forest_deer', '花粉訊號被改造成遠距座標。蜂群以為自己在保護巢穴，其實正替陌生人傳遞核心的位置；先切斷中繼，才能救回牠們。'],
+      [10, '空槽指向火山', '赤炎神龍', 'crimson_dragon', '碎片倉庫留下通往赤炎火山的座標。採集者沒有留下名字，卻熟知龍族的古老路徑；下一步必須查明五界之門的真意。']
+    ],
+    c3: [
+      [3, '火脈原本負責溫暖', '赤炎神龍', 'crimson_dragon', '熔岩河不是敵人。龍魂核心原本讓地熱有秩序地滋養山谷，現在卻被迫過載；穩住火脈，是為了讓被狂暴吞沒的幻獸有機會醒來。'],
+      [7, '五界之門的警告', '葉耳兔', 'leaf_ear_rabbit', '壁畫說五界曾共享始源晶核的力量，卻從不該由任何一界獨占。碎片被分離後，連結失衡才會化成我們眼前的災害。'],
+      [10, '火山口的選擇', '赤炎神龍', 'crimson_dragon', '我們不是來奪取火焰，而是讓它回到循環。帶走龍紋紀錄後，沉睡古城或許能回答：為何古文明也曾試圖駕馭核心。']
+    ],
+    c4: [
+      [3, '封門保留的是證詞', '葉耳兔', 'leaf_ear_rabbit', '古城研究者沒有把核心當成單純武器。他們知道它能延續文明，也知道只信任唯一答案時，所有不同的生命都會被排除。'],
+      [7, '災變不是一夜發生', '森靈鹿', 'forest_deer', '年表顯示古城先失去對話，才失去城市。當守護系統只服從效率與控制，泰坦也會把需要保護的人視為入侵者。'],
+      [10, '帶著答案離開古城', '赤炎神龍', 'crimson_dragon', '解除泰坦的誤判後，我們會取回未完成的研究。冰封雪原的異常提醒我們：核心失衡正在改寫的不只是戰場，而是整個世界的氣候。']
+    ],
+    c5: [
+      [3, '冰封湖正在抽走熱', '森靈鹿', 'forest_deer', '永凍湖的冰不是普通寒潮。失衡核心持續抽取大地熱量，甦醒者才被迫離開巢穴；保護聚落與救援遠古生命，是同一件事。'],
+      [7, '封凍者並非侵略者', '葉耳兔', 'leaf_ear_rabbit', '利維坦以自己的身體壓住寒潮，卻被冰層反噬。若只求快速擊破，雪原會立刻崩解；必須先校正共鳴，再結束這場戰鬥。'],
+      [10, '冰層下的另一種語言', '赤炎神龍', 'crimson_dragon', '合金結構不屬於自然，也不像古城留下的技術。它指向雷鳴高原的機械遺跡：我們將面對的，可能是一個同樣害怕失序的文明。']
+    ]
+  };
+  Object.keys(earlyChapterBeats).forEach(function (chapterId) {
+    earlyChapterBeats[chapterId].forEach(function (beat) {
+      scenes[chapterId + '-' + beat[0] + ':before'] = {
+        kicker: '第' + chapterId.slice(1) + '章｜調查紀錄', title: beat[1], speaker: beat[2], portrait: beat[3], copy: beat[4]
+      };
+    });
+  });
+  /* 第二篇從第 11 章即正式開始：龍門的機械訊號不是換皮敵人，而是
+     「效率文明」第一次與共鳴者正面接觸。四個節點對齊 Story Canon 的
+     開場／調查／Boss 動機／戰後線索結構。 */
+  scenes['c11-1:before'] = { kicker: '第11章｜鏽蝕鐵道・機械紀元', title: '文明修復程序的第一站', speaker: '赤炎神龍', portrait: 'crimson_dragon', copy: '龍門後的鐵道自行亮起。這些機械沒有追逐憤怒；它們正依一套古老協議，將所有生命訊號列為「待處理的低效率變數」。' };
+  scenes['c11-5:before'] = { kicker: '第11章｜鏽蝕鐵道・調查中段', title: '被拆解的求救訊號', speaker: '森靈鹿', portrait: 'forest_deer', copy: '貨運端點留下受困幻獸與機械師的訊號。資料顯示機械系統相信：只要把生命轉成可預測的數據，就能讓世界免於再次崩解。' };
+  scenes['c11-boss:before'] = { kicker: '第11章｜鏽蝕鐵道・首領戰', title: '機關廢鐵巨鱷的回收指令', speaker: '赤炎神龍', portrait: 'crimson_dragon', copy: '巨鱷吞噬殘骸並自我修復，是為維持鐵道的運算效率。切斷核心回收迴路；我們要停止的是失控命令，不是抹除一個文明。' };
+  scenes['c11-boss:after'] = { kicker: '第11章｜鏽蝕鐵道・章節結局', title: '數據核心的座標', speaker: '森靈鹿', portrait: 'forest_deer', copy: '廢鐵巨鱷停止後，資料端點吐出下一段能源網座標。機械紀元已全面甦醒，而它們的「修復」究竟要拯救世界，還是刪除世界，仍有待我們親自查明。' };
+  var machineArcScenes = {
+    c12: ['能源電塔','被接管的荒原','電塔不是單純發電設施；它正把每一個生命訊號轉成獵殺座標。切斷麻痺網，才能讓荒原上的幻獸不再被系統逐一標記。','雷電不是意志','電湧電路狼只是被超載協議驅動的追獵單位。停止主塔連線，我們要取回的是選擇權，而不是摧毀所有機械。','電網之外的熔爐','主塔資料顯示能源流向一座永不熄滅的熔爐；機械文明正在用核心把整片工業區改造成處理生命的工廠。'],
+    c13: ['熔爐工業區','永不熄滅的命令','熔爐曾替文明鍛造工具，現在卻把所有不符合效率的存在列為雜質。先關閉高熱管線，讓受困者有撤離的路。','蜘蛛守的是程序','焚燒液壓蜘蛛不理解毀滅；它只執行維修與熔解。破壞主熔爐前，必須先讓它停止把生命視為待回收材料。','原型資料的殘頁','熔爐底層藏著幻獸能力的測試紀錄。下一座原型實驗場正在把共鳴拆解成可複製的武器。'],
+    c14: ['原型實驗場','被複製的共鳴','EX-01 能模仿技能，卻不理解技能背後的選擇。研究者留下的樣本仍在求救；這次遠征先要救回被資料化的生命。','模仿不是理解','當機體把不同屬性的力量當成參數，它也會忽略那些力量原本守護的地方。中斷演算，才能阻止它從每場戰鬥學會更有效的傷害。','通往中央網路的門','EX-01 留下防火牆座標。中央網路已把共鳴者分類成病毒；我們得在刪除協議啟動前取得修復程序的原始紀錄。'],
+    c15: ['數據傳輸陣','未授權的生命','傳輸陣以防毒名義封鎖一切未知訊號。赤炎神龍的共鳴也被標示為風險，證明系統早已忘了它原本要保護誰。','防火牆後的真相','資料不是敵人，將生命化約成唯一答案才是。穿過防火牆，我們要找到機械文明首次啟動修復協議時遺失的判斷條件。','更深層的磁場','防火牆聖騎停止後，核心傳來重力磁場座標。中央系統正在改寫戰場規則，而下一章的方向與距離本身都可能不再可靠。']
+  };
+  Object.keys(machineArcScenes).forEach(function (id) {
+    var arc = machineArcScenes[id], chapter = id.slice(1);
+    scenes[id + '-1:before'] = { kicker: '第' + chapter + '章｜' + arc[0], title: arc[1], speaker: '赤炎神龍', portrait: 'crimson_dragon', copy: arc[2] };
+    scenes[id + '-3:before'] = { kicker: '第' + chapter + '章｜調查中段', title: arc[3], speaker: '葉耳兔', portrait: 'leaf_ear_rabbit', copy: arc[4] };
+    scenes[id + '-boss:before'] = { kicker: '第' + chapter + '章｜首領戰', title: arc[1], speaker: '赤炎神龍', portrait: 'crimson_dragon', copy: arc[4] };
+    scenes[id + '-boss:after'] = { kicker: '第' + chapter + '章｜章節結局', title: arc[5], speaker: '森靈鹿', portrait: 'forest_deer', copy: arc[6] };
+  });
   scenes['c1-boss:after'].rewardKey = 'c1-rescue-forest-deer'; scenes['c1-boss:after'].rewardPet = 'forest_deer';
   global.JOSE_STORY_CONTENT = { scenes: scenes, sceneFor: function (stageId, timing) { return this.scenes[stageId + ':' + timing] || null; } };
 }(window));

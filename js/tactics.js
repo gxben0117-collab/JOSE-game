@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var COLS = 21, ROWS = 10, HARD_ROUND_LIMIT = 45, DEPLOY_CAPACITY = 25, AGGRO_RANGE = 7;
+  var COLS = 21, ROWS = 10, HARD_ROUND_LIMIT = 45, AGGRO_RANGE = 7;
   /* 25 格底部部署區：6×4 主區（24 格）+ 右下 1 格，能容納 25 隻 1×1 或 6 隻 2×2 + 1 隻 1×1。 */
   /* 戰前自由部署：左側 3 欄 × 10 列；出陣容量仍獨立維持 25 單位。 */
   var DEPLOY_MIN_X = 0, DEPLOY_MAX_X = 2, DEPLOY_MIN_Y = 0, DEPLOY_MAX_Y = 9;
@@ -81,6 +81,7 @@
   }
 
   function profile(id) { return profiles.find(function (pet) { return pet.id === id; }); }
+  function partyCapacity() { return progression.partyCapacity(); }
   function displayPet() { return profile(progression.homeDisplayPetId()) || profile('crimson_dragon') || window.TACTICAL_PET_DATA[0]; }
   function displayPortrait(pet) {
     if (!pet) return '';
@@ -167,7 +168,7 @@
   function alive(team) { return state.units.filter(function (unit) { return unit.team === team && unit.hp > 0; }); }
   function selected() { return state.units.find(function (unit) { return unit.key === state.selected; }); }
   function inspected() { return state.units.find(function (unit) { return unit.key === state.inspected; }) || selected(); }
-  function unitSize(unit) { return (unit && unit.p && unit.p.size) || 1; }
+  function unitSize(unit) { return (unit && (unit.size || (unit.p && unit.p.size))) || 1; }
   function deploymentCost(pet) { return progression.deploymentCost(pet && pet.p ? pet.p : pet); }
   function selectedDeploymentCost(ids) { return progression.partyCost(ids || deploySelection); }
   /* 多格佔位：大型單位以左上角為錨點，footprint 覆蓋 size×size 格。 */
@@ -268,6 +269,8 @@
     if (key === 'power') value *= 1 + bonusValue(unit, 'offense');
     if (key === 'magic') value *= 1 + bonusValue(unit, 'magic') + (bonuses(unit).offense || 0);
     if (key === 'defense') value *= 1 + bonusValue(unit, 'defense');
+    if (unit.team === 'enemy' && unit.elite) value *= key === 'defense' ? 1.18 : (key === 'power' || key === 'magic' ? 1.12 : 1);
+    if (unit.team === 'enemy' && unit.boss && unit.bossPhase >= 2 && (key === 'power' || key === 'magic')) value *= unit.bossPhase >= 3 ? 1.35 : 1.18;
     if (unit.team === 'enemy' && currentStage.tower && (key === 'power' || key === 'magic')) value *= 1 + towerBuffStack('frenzy') * 0.08;
     if (unit.team === 'enemy' && currentStage.tower && key === 'speed') value += towerBuffStack('swift');
     return value * (unit.team === 'enemy' ? state.enemyScale : 1);
@@ -287,11 +290,21 @@
     return effects[passive.effect] || (percent ? '戰鬥中對應能力提升 ' + percent + '%' : chance ? '觸發機率 ' + chance + '%' : '進入戰鬥後持續生效');
   }
 
-  function clone(id, team, x, y, index) {
+  function clone(entry, team, x, y, index) {
+    var spec = typeof entry === 'string' ? { id: entry } : entry || {}, id = spec.id;
     var pet = profile(id), evolution = team === 'ally' ? portraitStage(id) : Math.max(1, Math.min(pet.evolution.length, 1 + Math.floor((Math.max(1, currentStage.order) - 1) / 6)));
     var unit = { id: id, key: team + '-' + index + '-' + id, team: team, p: pet, x: x, y: y, hp: 1, maxHp: 1, moved: false, acted: false, facing: team === 'ally' ? 'right' : 'left', evolution: evolution,
-      cooldowns: pet.skills.map(function () { return 0; }), shield: 0, burn: 0, poison: 0, freeze: 0, atkBuff: 0, boss: Boolean(pet.boss) };
+      cooldowns: pet.skills.map(function () { return 0; }), shield: 0, burn: 0, poison: 0, freeze: 0, atkBuff: 0, size: spec.size || pet.size || 1, elite: Boolean(spec.elite), eliteRole: spec.eliteRole || '', boss: Boolean(spec.boss || pet.boss), bossPhase: 1 };
     unit.maxHp = Math.round(pet.stats.health * evolutionMultiplier(unit) * starMultiplier(unit) * (1 + bonusValue(unit, 'health')) * (team === 'enemy' ? state.enemyScale * (unit.boss ? 1.1 : 1) : 1));
+    if (unit.elite) unit.maxHp = Math.round(unit.maxHp * 1.45);
+    if (unit.boss && unitSize(unit) === 5) {
+      /* 前五章的首領仍保有大型單位的存在感，但不讓剛起步的 12～23 容量
+         隊伍被單一血條卡住；第六章起回到完整 2.2 倍的首領耐久。 */
+      var bossHpMultiplier = currentStage && Number(currentStage.chapter) <= 5
+        ? 1.45 + Math.max(0, Number(currentStage.chapter) - 1) * 0.12
+        : 2.2;
+      unit.maxHp = Math.round(unit.maxHp * bossHpMultiplier);
+    }
     unit.hp = unit.maxHp;
     if (team === 'enemy' && currentStage.tower) {
       unit.maxHp = Math.round(unit.maxHp * (1 + towerBuffStack('fortified') * 0.12));
@@ -405,6 +418,14 @@
   }
 
   function balancedEnemyRoster(stage, partyCost) {
+    if (stage.boss && !stage.bossRaid && stage.bossGuards && stage.bossMinionPool) {
+      var guardRoles = ['盾衛親衛', '祭司親衛', '砲手親衛'];
+      var bossRoster = [{ id: stage.enemies[0], size: 5, boss: true }];
+      stage.bossGuards.forEach(function (id, index) { bossRoster.push({ id: id, size: 2, elite: true, eliteRole: guardRoles[index] || '菁英親衛' }); });
+      for (var minionIndex = 0; minionIndex < stage.bossMinionCount; minionIndex++) bossRoster.push({ id: stage.bossMinionPool[minionIndex % stage.bossMinionPool.length], size: 1, minion: true });
+      var comfortFloor = 0.62 + Math.max(0, Number(stage.chapter) - 1) * 0.045;
+      return { roster: bossRoster, added: 0, scale: 1, minimumScale: Number(stage.chapter) <= 5 ? comfortFloor : 0.88, label: '首領軍團・5×5 Boss／菁英親衛／小兵' };
+    }
     var base = (content.rosterFor ? content.rosterFor(stage) : stage.enemies).slice();
     var originalCount = base.length;
     /* 無限塔與 Boss 來襲屬於重複挑戰的高強度內容，套用與前五章相同的溫和曲線，避免場面與數值失控。 */
@@ -448,11 +469,11 @@
     for (var index = 0; index < roster.length; index += squadSize) squads.push(roster.slice(index, index + squadSize));
     squads.forEach(function (squad, squadIndex) {
       var anchor = squadIndex === 0 && currentStage.boss ? [COLS - 4, Math.floor(ROWS / 2) - 1] : anchors[(offset + squadIndex * 3) % anchors.length];
-      squad.forEach(function (id) {
-        var size = (profile(id) || {}).size || 1;
+      squad.forEach(function (entry) {
+        var id = typeof entry === 'string' ? entry : entry.id, size = (typeof entry === 'object' && entry.size) || (profile(id) || {}).size || 1;
         var spot = findFreeSpot(anchor[0], anchor[1], occupied, size);
         for (var dy = 0; dy < size; dy++) for (var dx = 0; dx < size; dx++) occupied[(spot.x + dx) + ',' + (spot.y + dy)] = true;
-        result.push({ id: id, x: spot.x, y: spot.y, squad: squadIndex });
+        result.push({ id: id, x: spot.x, y: spot.y, squad: squadIndex, size: size, elite: typeof entry === 'object' && entry.elite, eliteRole: typeof entry === 'object' && entry.eliteRole, boss: typeof entry === 'object' && entry.boss });
       });
     });
     return result;
@@ -511,7 +532,7 @@
     var usedPreset = applySavedFormation();
     var roster = currentStage.tower ? [] : balance.roster;
     enemyFormation(roster).forEach(function (spot, index) {
-      var unit = clone(spot.id, 'enemy', spot.x, spot.y, index); unit.squad = spot.squad; state.units.push(unit);
+      var unit = clone(spot, 'enemy', spot.x, spot.y, index); unit.squad = spot.squad; state.units.push(unit);
     });
     if (currentStage.bossRaid) {
       var raidInfo = bossRaidInfo(), raidBoss = state.units.find(function (unit) { return unit.boss; });
@@ -719,8 +740,25 @@
     var absorbed = Math.min(target.shield, amount); target.shield -= absorbed; amount -= absorbed;
     target.hp = Math.max(0, target.hp - amount);
     if (target.hp <= 0) target.defeating = true;
+    if (target.boss && target.hp > 0) triggerBossPhase(target);
     if (attacker.team === 'ally') state.stats.damage += amount;
     return { amount: amount, absorbed: absorbed, crit: crit, dodged: false };
+  }
+
+  function triggerBossPhase(boss) {
+    if (!currentStage.boss || currentStage.bossRaid || !boss || boss.hp <= 0) return;
+    var ratio = boss.hp / boss.maxHp, nextPhase = ratio <= 0.35 ? 3 : ratio <= 0.70 ? 2 : 1;
+    while (boss.bossPhase < nextPhase) {
+      boss.bossPhase++;
+      var count = boss.bossPhase === 2 ? 2 : 3, pool = currentStage.bossMinionPool || currentStage.enemies.filter(function (id) { return id !== boss.id; });
+      for (var index = 0; index < count && pool.length; index++) {
+        var id = pool[(index + boss.bossPhase) % pool.length], spot = findFreeSpot(Math.max(5, boss.x - 3), boss.y + (index - 1) * 2, {}, 1);
+        state.units.push(clone({ id: id, size: 1, minion: true }, 'enemy', spot.x, spot.y, state.units.length));
+      }
+      boss.shield += Math.round(boss.maxHp * (boss.bossPhase === 2 ? 0.08 : 0.12));
+      note(boss.p.name + ' 進入第 ' + boss.bossPhase + ' 階段！召來增援並獲得護盾。');
+      phaseBanner('👑 BOSS 第 ' + boss.bossPhase + ' 階段｜增援來襲', 'enemy');
+    }
   }
 
   /* 速度較快者較能閃避；冰凍時無法閃避，必殺技與近戰則較難避開。 */
@@ -1207,7 +1245,7 @@
     dom.board.classList.toggle('is-deploying', state.phase === 'deploy');
     if (dom.deployToolbar) dom.deployToolbar.hidden = state.phase !== 'deploy';
     if (dom.towerCommand) { dom.towerCommand.hidden = !currentStage.tower; dom.towerCommand.disabled = !currentStage.tower || state.tower.commandUsed || state.tower.awaitingChoice || state.over; dom.towerCommand.textContent = state.tower && state.tower.commandUsed ? '🛡 塔之指令・已使用' : '🛡 塔之指令'; }
-    if (dom.deployStatus) dom.deployStatus.textContent = '左側 3×10｜出陣 ' + alive('ally').length + ' 隻｜' + state.partyCost + '/25 單位｜' + state.balance.label + '・敵軍 ' + alive('enemy').length + ' 隻' + (active && active.team === 'ally' ? '｜已選 ' + active.p.name : '');
+    if (dom.deployStatus) dom.deployStatus.textContent = '左側 3×10｜出陣 ' + alive('ally').length + ' 隻｜' + state.partyCost + '/' + partyCapacity() + ' 單位｜' + state.balance.label + '・敵軍 ' + alive('enemy').length + ' 隻' + (active && active.team === 'ally' ? '｜已選 ' + active.p.name : '');
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
@@ -1253,7 +1291,7 @@
     var livingEnemies = enemies.filter(function (unit) { return unit.hp > 0; });
     dom.battleAllyCount.textContent = livingAllies.length + ' / ' + allies.length;
     dom.battleEnemyCount.textContent = livingEnemies.length + ' / ' + enemies.length;
-    dom.battleObjective.textContent = currentStage.tower ? '目標｜守護塔 ' + state.units.find(function (unit) { return unit.guardian; }).hp + ' / ' + state.units.find(function (unit) { return unit.guardian; }).maxHp + '｜第 ' + state.tower.wave + '／10 波｜敵軍 Buff：' + towerBuffSummary() : '目標｜' + currentStage.objective + '｜' + state.balance.label + '（' + state.partyCost + '/25）';
+    dom.battleObjective.textContent = currentStage.tower ? '目標｜守護塔 ' + state.units.find(function (unit) { return unit.guardian; }).hp + ' / ' + state.units.find(function (unit) { return unit.guardian; }).maxHp + '｜第 ' + state.tower.wave + '／10 波｜敵軍 Buff：' + towerBuffSummary() : '目標｜' + currentStage.objective + '｜' + state.balance.label + '（' + state.partyCost + '/' + partyCapacity() + '）';
     var trait = traitFor('ally');
     dom.battleTeamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>';
     dom.battleAllyList.innerHTML = '';
@@ -1273,7 +1311,7 @@
       dom.battleAllyList.appendChild(card);
     });
     var boss = livingEnemies.find(function (unit) { return unit.boss; });
-    if (boss) dom.battleEnemySummary.textContent = '首領 ' + boss.p.name + '｜生命 ' + boss.hp + ' / ' + boss.maxHp;
+    if (boss) dom.battleEnemySummary.textContent = '5×5 首領 ' + boss.p.name + '｜第 ' + boss.bossPhase + ' 階段｜生命 ' + boss.hp + ' / ' + boss.maxHp;
     else if (livingEnemies.length) dom.battleEnemySummary.textContent = state.balance.label + '｜剩餘 ' + livingEnemies.length + ' 隻｜戰力倍率 ×' + state.enemyScale.toFixed(2);
     else dom.battleEnemySummary.textContent = '敵軍已全數擊破';
   }
@@ -1303,7 +1341,7 @@
     if (unit.burn > 0) statusText.push('🔥 灼燒 ' + unit.burn);
     var elementIcon = { fire: '🔥', forest: '🌿', ocean: '🌊', light: '✨', dark: '🌑' }[unit.p.element] || '◆';
     var stage = unit.p.evolution[Math.min(unit.evolution, unit.p.evolution.length) - 1];
-    var teamLabel = unit.team === 'ally' ? '我方幻獸' : unit.boss ? '敵方首領' : '敵方魔獸';
+    var teamLabel = unit.team === 'ally' ? '我方幻獸' : unit.boss ? '敵方首領・第 ' + unit.bossPhase + ' 階段' : unit.elite ? '敵方菁英・' + unit.eliteRole : '敵方魔獸';
     var skillInfo = unit.p.skills.map(function (skill) {
       var type = skill.attackStyle === 'support' ? '輔助' : skill.attackStyle === 'area' ? '範圍' : skill.attackStyle === 'melee' ? '近戰' : '遠程';
       var cooldown = skill.cooldown ? '・冷卻' + skill.cooldown : '・無冷卻';
@@ -1710,7 +1748,7 @@
     dom.resultCopy.textContent = win ? (reward.firstClear ? '首次通關完成，已解鎖下一個關卡。' : '重複挑戰完成，取得部分固定資源。') : '可先調整隊伍、融合階級與技能樹再挑戰。';
     dom.resultStats.innerHTML = '<span><b>' + state.round + '</b>回合</span><span><b>' + state.stats.damage + '</b>傷害</span><span><b>' + survivors + '/' + partyIds.length + '</b>存活</span>';
     dom.resultRewards.textContent = win
-      ? '★'.repeat(reward.stars || 1) + (reward.medals ? '　🏅 +' + reward.medals : '') + (reward.essence ? '　🔷 +' + reward.essence : '') + (reward.fusionCore ? '　🧬 +' + reward.fusionCore : '') + (reward.coreLabel ? '　✦ ' + reward.coreLabel : '') + (reward.crystals ? '　💎 +' + reward.crystals : '') + (reward.gold ? '　🪙 +' + reward.gold : '') + (reward.summonShards ? '　🧩 +' + reward.summonShards + ' 召喚碎片' : '') + (reward.storyPet ? '　🦌 新夥伴：' + profile(reward.storyPet).name : '')
+      ? '★'.repeat(reward.stars || 1) + (reward.commanderXp ? '　🎖️ 指揮官 EXP +' + reward.commanderXp : '') + (reward.medals ? '　🏅 +' + reward.medals : '') + (reward.essence ? '　🔷 +' + reward.essence : '') + (reward.fusionCore ? '　🧬 +' + reward.fusionCore : '') + (reward.coreLabel ? '　✦ ' + reward.coreLabel : '') + (reward.crystals ? '　💎 +' + reward.crystals : '') + (reward.gold ? '　🪙 +' + reward.gold : '') + (reward.summonShards ? '　🧩 +' + reward.summonShards + ' 召喚碎片' : '') + (reward.firstClearPet ? '　🎁 首通幻獸：' + profile(reward.firstClearPet).name : '') + (reward.storyPet ? '　🦌 新夥伴：' + profile(reward.storyPet).name : '')
       : '本次沒有取得掉落物';
     if (currentStage.bossRaid) {
       var bossResult = state.reward || {};
@@ -1733,11 +1771,27 @@
     }
   }
 
+  function renderCommander() {
+    var info = progression.commanderInfo(), host = document.getElementById('commander-content'); if (!host) return;
+    var milestones = [
+      [1, 12], [3, 15], [6, 18], [10, 21], [15, 23], [20, 25], [30, 26], [45, 27], [60, 28], [80, 29], [100, 30]
+    ];
+    var nextText = info.nextCapacityStep ? '下一次擴編：Lv.' + info.nextCapacityStep.level + ' 解鎖 ' + info.nextCapacityStep.capacity + ' 容量' : '已達最高 30 容量';
+    host.innerHTML = '<section class="commander-hero"><div class="commander-insignia">🎖️</div><div><p>幻獸遠征指揮官</p><h3>Lv.' + info.level + '｜出戰容量 ' + info.capacity + '／30</h3><small>主線首通、Boss 關、無限塔與 Boss 來襲皆可獲得指揮官經驗。</small></div></section>' +
+      '<section class="commander-xp"><div><b>指揮官經驗</b><span>' + (info.level >= 100 ? 'MAX' : (info.xp - info.currentStart) + ' / ' + (info.nextStart - info.currentStart)) + '</span></div><i><u style="width:' + (info.progress * 100) + '%"></u></i><small>' + nextText + '</small></section>' +
+      '<section class="commander-guide"><article><b>🧩 出戰成本</b><span>1×1＝1 容量　2×2＝4 容量　3×3＝3 容量</span></article><article><b>⚔️ 卡關突破</b><span>提升指揮官等級可擴充編隊；不必只依賴抽卡或單一幻獸強化。</span></article><article><b>👑 首領戰術</b><span>章節 Boss 關採 5×5 Boss、2×2 菁英親衛與 1×1 小兵編制。</span></article></section>' +
+      '<section class="commander-milestones"><h3>容量解鎖路線</h3><div>' + milestones.map(function (step) { return '<span class="' + (info.level >= step[0] ? 'unlocked' : '') + '"><b>Lv.' + step[0] + '</b><small>' + step[1] + ' 容量</small></span>'; }).join('') + '</div></section>';
+  }
+  function openCommander() { renderCommander(); document.getElementById('commander-modal').hidden = false; audio.play('ui'); }
+
   function renderProgress() {
     var totalEssence = progress.essences.fire + progress.essences.forest + progress.essences.ocean;
     var crystals = document.getElementById('crystals'); if (crystals) { crystals.textContent = '💎 ' + progress.crystals; crystals.title = '召喚水晶'; }
     var gold = document.getElementById('gold'); if (gold) { gold.textContent = '🪙 ' + progress.gold; gold.title = '金幣'; }
     var towerBest = document.getElementById('tower-best'); if (towerBest) towerBest.textContent = '最高 ' + progress.tower.best + ' 層';
+    var commander = progression.commanderInfo(), partyNote = document.getElementById('hub-party-note'), partyTitle = document.getElementById('party-capacity-title');
+    if (partyNote) partyNote.textContent = 'Lv.' + commander.level + '｜容量 ' + commander.capacity + '／30';
+    if (partyTitle) partyTitle.textContent = '出戰隊伍（容量 ' + commander.capacity + '／30）';
     dom.medals.textContent = '🏅 ' + progress.medals; dom.medals.title = '戰術徽章'; dom.essences.textContent = '🔷 ' + totalEssence; dom.essences.title = '元素精華總量'; dom.fusionCores.textContent = '🧬 ' + progress.fusionCores; dom.fusionCores.title = '融合核心'; dom.sound.textContent = progress.sound ? '🔊' : '🔇'; dom.sound.setAttribute('aria-pressed', String(!progress.sound));
     var completed = content.quests.filter(function (quest) { return progression.questProgress(quest) >= quest.target && !progress.questClaims[quest.id]; }).length;
     var mainStages = content.stages.filter(function (stage) { return !stage.hard; });
@@ -1926,7 +1980,7 @@
       { label: '後衛線', roles: ['attacker', 'healer'], icon: '⌁' }
     ];
     var combat = picked.reduce(function (total, pet) { var stats = pet.stats || {}; return total + (stats.health || 0) * 0.08 + (stats.power || 0) + (stats.magic || 0) + (stats.defense || 0) * 0.65; }, 0);
-    host.innerHTML = '<header><span>出擊準備</span><b>戰力 ' + Math.round(combat).toLocaleString() + '</b><small>' + cost + '／' + DEPLOY_CAPACITY + ' 容量</small></header><div class="deploy-lanes"></div>';
+    host.innerHTML = '<header><span>出擊準備</span><b>戰力 ' + Math.round(combat).toLocaleString() + '</b><small>' + cost + '／' + partyCapacity() + ' 容量</small></header><div class="deploy-lanes"></div>';
     var laneHost = host.querySelector('.deploy-lanes');
     lanes.forEach(function (lane) {
       var members = picked.filter(function (pet) { return lane.roles.indexOf(pet.role) >= 0; });
@@ -1951,20 +2005,20 @@
       var search = deployFilters.search.toLowerCase();
       return (!search || pet.name.toLowerCase().indexOf(search) >= 0) && (!deployFilters.element || pet.element === deployFilters.element) && (!deployFilters.role || pet.role === deployFilters.role) && (!deployFilters.size || String(pet.size) === deployFilters.size);
     }).sort(function (a, b) { return (deploySelection.indexOf(b.id) >= 0) - (deploySelection.indexOf(a.id) >= 0) || deploymentCost(a) - deploymentCost(b) || a.name.localeCompare(b.name, 'zh-Hant'); });
-    dom.deployBudgetLabel.textContent = '出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY;
-    dom.deployBudgetFill.style.width = Math.min(100, used / DEPLOY_CAPACITY * 100) + '%';
+    dom.deployBudgetLabel.textContent = '出陣單位 ' + used + ' / ' + partyCapacity();
+    dom.deployBudgetFill.style.width = Math.min(100, used / partyCapacity() * 100) + '%';
     dom.deployBudgetFill.classList.toggle('near-limit', used >= 22);
-    dom.deployHelp.innerHTML = '<b>出陣單位 ' + used + ' / ' + DEPLOY_CAPACITY + '</b>｜已選 ' + deploySelection.length + ' 隻｜定位：' + partyRoleSummary(deploySelection) + '｜顯示 ' + roster.length + '/' + allOwned.length + ' 隻。'; renderDeploySquadConsole(); dom.deployGrid.innerHTML = '';
+    dom.deployHelp.innerHTML = '<b>出陣單位 ' + used + ' / ' + partyCapacity() + '</b>｜已選 ' + deploySelection.length + ' 隻｜定位：' + partyRoleSummary(deploySelection) + '｜顯示 ' + roster.length + '/' + allOwned.length + ' 隻。'; renderDeploySquadConsole(); dom.deployGrid.innerHTML = '';
     roster.forEach(function (pet) {
       var button = document.createElement('button'), active = deploySelection.indexOf(pet.id) >= 0, cost = deploymentCost(pet), nextCost = used + cost;
-      button.className = 'deploy-card' + (active ? ' selected' : '') + (!active && nextCost > DEPLOY_CAPACITY ? ' over-capacity' : '');
+      button.className = 'deploy-card' + (active ? ' selected' : '') + (!active && nextCost > partyCapacity() ? ' over-capacity' : '');
       button.innerHTML = '<span class="deploy-cost">' + cost + '</span><span class="deploy-art" style="background-image:url(\'' + pet.evolution[portraitStage(pet.id) - 1].portrait + '\')"></span><b>' + pet.name + (pet.size > 1 ? ' ⬛' : '') + '</b><small>' + (ELEMENT_ICONS[pet.element] || '') + ' ' + pet.roleLabel + '｜★' + progression.starOf(pet.id) + '<br>' + pet.size + '×' + pet.size + '・佔 ' + cost + ' 單位</small>';
       button.setAttribute('aria-pressed', active ? 'true' : 'false');
       button.onclick = function () {
         var index = deploySelection.indexOf(pet.id);
         if (index >= 0) deploySelection.splice(index, 1);
-        else if (selectedDeploymentCost() + cost <= DEPLOY_CAPACITY) deploySelection.push(pet.id);
-        else { dom.deployHelp.innerHTML = '<b>出陣單位不足：</b>目前 ' + selectedDeploymentCost() + '/' + DEPLOY_CAPACITY + '，' + pet.name + ' 需要 ' + cost + ' 單位。'; return; }
+        else if (selectedDeploymentCost() + cost <= partyCapacity()) deploySelection.push(pet.id);
+        else { dom.deployHelp.innerHTML = '<b>出陣單位不足：</b>目前 ' + selectedDeploymentCost() + '/' + partyCapacity() + '，' + pet.name + ' 需要 ' + cost + ' 單位。'; return; }
         renderDeploy();
       };
       dom.deployGrid.appendChild(button);
@@ -1985,8 +2039,8 @@
       return rankA - rankB || (progression.starOf(b.id) - progression.starOf(a.id)) || deploymentCost(a) - deploymentCost(b);
     });
     var picked = [], used = 0;
-    ['defender','healer','attacker','controller','support'].forEach(function (role) { var pet = candidates.find(function (entry) { return entry.role === role && used + deploymentCost(entry) <= DEPLOY_CAPACITY; }); if (pet && picked.indexOf(pet.id) < 0) { picked.push(pet.id); used += deploymentCost(pet); } });
-    candidates.forEach(function (pet) { var cost = deploymentCost(pet); if (picked.indexOf(pet.id) < 0 && used + cost <= DEPLOY_CAPACITY) { picked.push(pet.id); used += cost; } });
+    ['defender','healer','attacker','controller','support'].forEach(function (role) { var pet = candidates.find(function (entry) { return entry.role === role && used + deploymentCost(entry) <= partyCapacity(); }); if (pet && picked.indexOf(pet.id) < 0) { picked.push(pet.id); used += deploymentCost(pet); } });
+    candidates.forEach(function (pet) { var cost = deploymentCost(pet); if (picked.indexOf(pet.id) < 0 && used + cost <= partyCapacity()) { picked.push(pet.id); used += cost; } });
     deploySelection = picked; audio.play('ui'); renderDeploy();
   }
 
@@ -2226,7 +2280,7 @@
   }
   function confirmDeploy() {
     var used = selectedDeploymentCost();
-    if (!deploySelection.length || used > DEPLOY_CAPACITY) { dom.deployHelp.textContent = '請選擇至少 1 隻幻獸，且出陣單位不得超過 ' + DEPLOY_CAPACITY + '（目前 ' + used + '）。'; return; }
+    if (!deploySelection.length || used > partyCapacity()) { dom.deployHelp.textContent = '請選擇至少 1 隻幻獸，且出陣單位不得超過 ' + partyCapacity() + '（目前 ' + used + '）。'; return; }
     if (!progression.setParty(deploySelection)) { dom.deployHelp.textContent = '編隊資料無效，請確認幻獸擁有狀態與出陣單位。'; return; }
     partyIds = progress.party.slice(); dom.deployModal.hidden = true; reset(currentStage.id);
   }
@@ -2241,6 +2295,7 @@
   document.getElementById('open-campaign').onclick = openCampaign; document.getElementById('open-growth').onclick = openGrowth;
   document.getElementById('open-dex').onclick = openDex; document.getElementById('open-gacha').onclick = openGacha; document.getElementById('open-daily').onclick = openDaily;
   document.getElementById('open-home').onclick = openHome; document.getElementById('open-shop').onclick = openShop; document.getElementById('open-bag').onclick = openBag;
+  document.getElementById('open-commander').onclick = openCommander;
   document.getElementById('open-boss-raid').onclick = openBossRaid; document.getElementById('home-boss-open').onclick = openBossRaid; document.getElementById('boss-raid-enter').onclick = enterBossRaid;
   document.querySelectorAll('[data-hangar-action]').forEach(function (button) { button.onclick = function () { var target = document.getElementById(button.dataset.hangarAction); if (target) target.click(); }; });
   document.querySelectorAll('[data-hangar-soon]').forEach(function (button) { button.onclick = function () { audio.play('ui'); note('「' + button.dataset.hangarSoon + '」正在規劃探索地圖與事件，敬請期待。'); }; });
@@ -2291,7 +2346,7 @@
   };
   var towerButton = document.getElementById('open-tower');
   if (towerButton) towerButton.onclick = function () { audio.unlock(); enterTower(progress.tower.best + 1); };
-  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal', 'boss-raid-modal', 'home-display-modal', 'story-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
+  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal', 'commander-modal', 'boss-raid-modal', 'home-display-modal', 'story-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
 
   window.__TACTICS_DEBUG__ = {
     getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, over: state.over, allies: alive('ally').length, enemies: alive('enemy').length, partyCost: state.partyCost, enemyScale: state.enemyScale, balanceLabel: state.balance.label, enemyReinforcements: state.balance.added, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },

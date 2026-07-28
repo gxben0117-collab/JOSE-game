@@ -4,7 +4,12 @@
 
   var SAVE_KEY = 'jose-tactics-progression-v2';
   var LEGACY_KEY = 'jose-tactics-progression-v1';
-  var DEPLOY_CAPACITY = 25;
+  var COMMANDER_CAPACITY_STEPS = [
+    { level: 1, capacity: 12 }, { level: 3, capacity: 15 }, { level: 6, capacity: 18 },
+    { level: 10, capacity: 21 }, { level: 15, capacity: 23 }, { level: 20, capacity: 25 },
+    { level: 30, capacity: 26 }, { level: 45, capacity: 27 }, { level: 60, capacity: 28 },
+    { level: 80, capacity: 29 }, { level: 100, capacity: 30 }
+  ];
   /* 初始陣容：熔球獸、炎獅、火狐 + 會治療的葉耳兔。 */
   var DEFAULT_PARTY = ['molten_ball', 'fire_lion', 'fire_fox', 'leaf_ear_rabbit'];
   var STARTER_PETS = DEFAULT_PARTY.slice();
@@ -28,6 +33,10 @@
   }
 
   function number(value, fallback) { value = Number(value); return Number.isFinite(value) ? value : fallback; }
+  function commanderXpForLevel(level) { level = Math.max(1, Math.min(100, Math.floor(number(level, 1)))); return Math.round(60 * (level - 1) + 15 * (level - 1) * (level - 1)); }
+  function commanderCapacityForLevel(level) {
+    return COMMANDER_CAPACITY_STEPS.reduce(function (capacity, step) { return level >= step.level ? step.capacity : capacity; }, 12);
+  }
   function emptyElements() { return { fire: 0, forest: 0, ocean: 0, light: 0, dark: 0 }; }
   function fresh() {
     return {
@@ -67,6 +76,7 @@
       featuredPity: { date: '', pulls: 0 },
       tower: { best: 0 },
       bossRaid: null,
+      commander: { level: 1, xp: 0 },
       formation: { party: [], positions: [] },
       sound: true
     };
@@ -106,13 +116,17 @@
   TacticalProgression.prototype.migrate = function (raw) {
     var next = Object.assign(fresh(), raw || {});
     next.version = 2;
-    // 出陣成本上限 25：1×1=1、2×2=4、3×3=3；遷移時依原順序保留可容納成員。
+    /* 舊存檔已依 25 容量編隊，遷移時給予 Lv.20，避免既有隊伍被拆除。 */
+    if (!next.commander || typeof next.commander !== 'object' || Array.isArray(next.commander)) next.commander = { level: raw ? 20 : 1, xp: commanderXpForLevel(raw ? 20 : 1) };
+    next.commander.level = Math.max(1, Math.min(100, Math.floor(number(next.commander.level, raw ? 20 : 1))));
+    next.commander.xp = Math.max(commanderXpForLevel(next.commander.level), number(next.commander.xp, commanderXpForLevel(next.commander.level)));
+    // 出陣成本依指揮官容量：1×1=1、2×2=4、3×3=3；遷移時依原順序保留可容納成員。
     var party = Array.isArray(next.party) ? next.party.filter(this.validPet.bind(this)) : [];
     party = party.filter(function (id, index) { return party.indexOf(id) === index; });
     var used = 0, self = this;
     next.party = party.filter(function (id) {
       var cost = self.deploymentCost(id);
-      if (used + cost > DEPLOY_CAPACITY) return false;
+      if (used + cost > commanderCapacityForLevel(next.commander.level)) return false;
       used += cost; return true;
     });
     if (!next.party.length) next.party = DEFAULT_PARTY.slice();
@@ -182,7 +196,7 @@
     if (!Array.isArray(party) || !party.length || !party.every(this.validPet.bind(this))) return false;
     if (new Set(party).size !== party.length) return false;
     if (!party.every(this.owns.bind(this))) return false;
-    if (this.partyCost(party) > DEPLOY_CAPACITY) return false;
+    if (this.partyCost(party) > this.partyCapacity()) return false;
     this.state.party = party.slice(); this.save(); return true;
   };
 
@@ -194,7 +208,21 @@
     var self = this;
     return (party || this.state.party || []).reduce(function (total, id) { return total + self.deploymentCost(id); }, 0);
   };
-  TacticalProgression.prototype.partyCapacity = function () { return DEPLOY_CAPACITY; };
+  TacticalProgression.prototype.commanderXpForLevel = function (level) { return commanderXpForLevel(level); };
+  TacticalProgression.prototype.commanderInfo = function () {
+    var commander = this.state.commander || { level: 1, xp: 0 }, level = Math.max(1, Math.min(100, commander.level));
+    var currentXp = Math.max(0, commander.xp), currentStart = commanderXpForLevel(level), nextStart = level >= 100 ? currentStart : commanderXpForLevel(level + 1);
+    var nextStep = COMMANDER_CAPACITY_STEPS.find(function (step) { return step.level > level; }) || null;
+    return { level: level, xp: currentXp, currentStart: currentStart, nextStart: nextStart, progress: level >= 100 ? 1 : Math.max(0, Math.min(1, (currentXp - currentStart) / Math.max(1, nextStart - currentStart))), capacity: commanderCapacityForLevel(level), nextCapacityStep: nextStep, maxLevel: 100 };
+  };
+  TacticalProgression.prototype.partyCapacity = function () { return this.commanderInfo().capacity; };
+  TacticalProgression.prototype.awardCommanderXp = function (amount) {
+    amount = Math.max(0, Math.round(number(amount, 0))); var before = this.commanderInfo();
+    this.state.commander.xp += amount;
+    while (this.state.commander.level < 100 && this.state.commander.xp >= commanderXpForLevel(this.state.commander.level + 1)) this.state.commander.level++;
+    var after = this.commanderInfo(); this.save();
+    return { gained: amount, before: before, after: after, leveled: after.level > before.level, capacityUp: after.capacity > before.capacity };
+  };
   TacticalProgression.prototype.setFormation = function (party, positions) {
     if (!Array.isArray(party) || !Array.isArray(positions)) return false;
     this.state.formation = {
@@ -287,6 +315,7 @@
     this.state.crystals += reward.crystals;
     this.state.gold += reward.gold;
     this.state.essences[reward.element] += reward.essence;
+    reward.commanderXp = this.awardCommanderXp(26 + Math.min(80, floor) * 2).gained;
     this.save();
     return { ok: true, win: true, reward: reward, best: this.state.tower.best };
   };
@@ -352,6 +381,7 @@
     reward.summonShards = 2 + tier;
     this.state.crystals += reward.crystals; this.state.gold += reward.gold; this.state.medals += reward.medals; this.state.fusionCores += reward.fusionCore; this.state.essences[reward.element] += reward.essence;
     if (reward.shardPetId) this.state.copies[reward.shardPetId] = number(this.state.copies[reward.shardPetId], 0) + reward.summonShards;
+    reward.commanderXp = this.awardCommanderXp(70 + tier * 20).gained;
     raid.hp = null; raid.maxHp = null; raid.tier = tier + 1; raid.cleared = raid.tier >= 5; this.save();
     return { win: true, reward: reward, nextTier: raid.tier, cleared: raid.cleared };
   };
@@ -615,6 +645,15 @@
       reward.fusionCore = reward.firstClear ? stage.rewards.fusionCore : 0;
       reward.coreLabel = reward.firstClear ? (stage.rewards.coreLabel || '') : '';
       reward.crystals = reward.firstClear ? 15 + stage.order * 2 : 5;
+      reward.commanderXp = this.awardCommanderXp((reward.firstClear ? 2 : 1) * (stage.boss ? 95 + stage.chapter * 12 : stage.hard ? 62 + stage.chapter * 6 : 24 + stage.chapter * 3)).gained;
+      /* 新手福利：第一章前五個主線節點首次通關，各贈一隻隨機 1×1 幻獸。
+         優先從未擁有名單抽取，避免福利被重複幻獸轉成素材而失去意義。 */
+      if (reward.firstClear && stage.mapId === 'c1' && !stage.hard && stage.index >= 1 && stage.index <= 5) {
+        var giftPool = this.profiles.filter(function (pet) { return pet.size === 1 && !this.owns(pet.id); }, this);
+        if (!giftPool.length) giftPool = this.profiles.filter(function (pet) { return pet.size === 1; });
+        var giftPet = giftPool[Math.floor(Math.random() * giftPool.length)];
+        if (giftPet) { this.grantPet(giftPet.id); reward.firstClearPet = giftPet.id; }
+      }
       this.state.crystals += reward.crystals;
       reward.gold = reward.firstClear ? 40 + stage.order * 6 : 15;
       this.state.gold += reward.gold;

@@ -334,7 +334,9 @@ def main() -> None:
             authored_sources[unit_id] = source
     manifest: dict[str, object] = {}
     legacy_manifest = json.loads((LEGACY_DIR / "manifest.json").read_text(encoding="utf-8"))
-    for unit_id in sorted(legacy_manifest):
+    # New chapter enemies may begin as approved four-direction sources before
+    # they have a legacy left/right atlas. Include them directly in runtime.
+    for unit_id in sorted(set(legacy_manifest) | set(authored_sources)):
         portrait_path = stage_one_portrait(unit_id)
         # A newly approved full four-direction sheet supersedes the older
         # size-2 front/back composition.  Keep that fallback only for units
@@ -343,7 +345,7 @@ def main() -> None:
             manifest[unit_id] = build_reference(unit_id, authored_sources[unit_id])
         elif unit_id in SIZE2_IDS and portrait_path:
             manifest[unit_id] = build_size2_stage_one(unit_id, portrait_path)
-        else:
+        elif unit_id in legacy_manifest:
             manifest[unit_id] = build_legacy(unit_id, LEGACY_DIR / f"{unit_id}-motion-sheet.webp")
         manifest[unit_id]["evolutionSheets"] = {"1": manifest[unit_id]["file"]}
         evolution_dir = EVOLUTION_ROOT / unit_id / "evolution"
