@@ -11,7 +11,8 @@
     "test:difficulty": "node scripts/audit-difficulty.mjs",
     "report:balance": "node scripts/report-balance.mjs --write",
     "report:simulation": "node scripts/simulate-tactics.mjs --runs=255 --report",
-    "test:browser": "node scripts/browser-smoke.mjs"
+    "test:browser": "node scripts/browser-smoke.mjs",
+    "test:manual": "node scripts/manual-combat-soak.mjs --runs=100"
   },
   "engines": { "node": ">=18" }
 }

@@ -675,6 +675,13 @@
   /* 手動戰鬥的預設不是再選一次「普攻」：選中幻獸後，基本攻擊可直接點紅框敵人。 */
   function basicSkill(unit) { return unit.p.skills[0]; }
   function canBasicTarget(unit, target) { return canUseTarget(unit, target, basicSkill(unit)); }
+  function manualSelectionHint(unit) {
+    var canMoveNow = !unit.moved && reachableTiles(unit).some(function (tile) { return tile.steps > 0; });
+    var canAttackNow = !unit.acted && alive('enemy').some(function (enemy) { return canBasicTarget(unit, enemy); });
+    if (canMoveNow) return '已選擇 ' + unitName(unit) + '：直接點藍格移動，紅框敵人可普攻；需要技能時再從右側指令開啟。';
+    if (canAttackNow) return '已選擇 ' + unitName(unit) + '：目前沒有可走的藍格，但紅框敵人可直接普攻；技能可從右側指令開啟。';
+    return '已選擇 ' + unitName(unit) + '：目前被隊友或地形擋住，沒有可走或可攻擊目標；可改選有藍格的幻獸，或調整下一回合站位。';
+  }
 
   async function walkUnit(unit, x, y) {
     var path = pathTo(unit, x, y, moveRange(unit));
@@ -1293,7 +1300,7 @@
         note(state.threatKey ? unitName(unit) + ' 的威脅範圍：橘色＝可移動、紅色＝射程涵蓋。再點一次取消。' : '已關閉威脅範圍顯示。');
         render(); return;
       }
-      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = false; clearForecast(); note('已選擇 ' + unitName(unit) + '：直接點藍格移動，紅框敵人可普攻；需要技能時再從右側指令開啟。'); render(); }
+      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = false; clearForecast(); note(manualSelectionHint(unit)); render(); }
     }); return element;
   }
 
@@ -2492,7 +2499,7 @@
   document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal', 'commander-modal', 'boss-raid-modal', 'home-display-modal', 'story-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
 
   window.__TACTICS_DEBUG__ = {
-    getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, over: state.over, battleStartInProgress: battleStartInProgress, allies: alive('ally').length, enemies: alive('enemy').length, partyCost: state.partyCost, enemyScale: state.enemyScale, balanceLabel: state.balance.label, enemyReinforcements: state.balance.added, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },
+    getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, mode: state.mode, selected: state.selected, animating: state.animating, cameraSuppressed: cameraSuppressed(), over: state.over, battleStartInProgress: battleStartInProgress, allies: alive('ally').length, enemies: alive('enemy').length, partyCost: state.partyCost, enemyScale: state.enemyScale, balanceLabel: state.balance.label, enemyReinforcements: state.balance.added, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },
     setView: setView,
     enterTower: enterTower,
     reset: function (stageId) { if (stageId && progression.isStageUnlocked(stageId)) currentStage = content.stageById(stageId); reset(currentStage.id); },
