@@ -24,7 +24,7 @@ PREVIEWS = ROOT / "scratch" / "map-terrain-previews"
 AUDIT_IMAGE = ROOT / "docs" / "地形分類抽查對照.jpg"
 COLS, ROWS = 21, 10
 CELL_W, CELL_H = 80, 80
-CHAPTER_SPECS = {**{chapter: (10, 4) for chapter in range(1, 12)}, **{chapter: (6, 3) for chapter in range(12, 16)}}
+CHAPTER_SPECS = {**{chapter: (10, 4) for chapter in range(1, 12)}, **{chapter: (6, 3) for chapter in range(12, 21)}}
 WALKABLE = {".", "W", "F", "R"}
 
 # Artwork-specific corrections belong here, never in tactical-content.js.
@@ -37,7 +37,9 @@ OVERRIDES: dict[str, dict[tuple[int, int], str]] = {
 SAFE_CELLS = {
     *((x, y) for y in range(6, 10) for x in range(3, 9)),
     (9, 9),
-    *((x, y) for y in range(1, 9) for x in range(16, 20)),
+    # 5×5 Boss 會以 x=16～20 佔滿棋盤最右側；第 21 格（x=20）
+    # 也必須保持安全，否則首領視覺會壓在禁行設施上。
+    *((x, y) for y in range(1, 9) for x in range(16, 21)),
 }
 
 
@@ -222,7 +224,7 @@ def main() -> None:
     maps: dict[str, list[str]] = {}
     audit: list[tuple[str, Image.Image, Image.Image]] = []
     repaired = 0
-    audit_keys = {f"chapter-{chapter:02d}-story-01" for chapter in range(1, 16)}
+    audit_keys = {f"chapter-{chapter:02d}-story-01" for chapter in range(1, 21)}
     for chapter, (main_count, hard_count) in CHAPTER_SPECS.items():
         variants = [f"story-{index:02d}" for index in range(1, main_count + 1)]
         variants += ["boss"] + [f"hard-{index}" for index in range(1, hard_count + 1)]

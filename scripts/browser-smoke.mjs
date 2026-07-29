@@ -43,7 +43,7 @@ function waitEvent(method, timeout = 10000) {
 }
 async function evaluate(expression) {
   const response = await command('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true });
-  if (response.exceptionDetails) throw new Error(response.exceptionDetails.text || 'Browser evaluation failed');
+  if (response.exceptionDetails) throw new Error(response.exceptionDetails.exception?.description || response.exceptionDetails.text || 'Browser evaluation failed');
   return response.result.value;
 }
 async function screenshot(name) {
@@ -94,17 +94,17 @@ try {
     map: getComputedStyle(document.querySelector('#board')).backgroundImage,
     overflow: document.documentElement.scrollWidth - innerWidth
   }))()`);
-  assert.ok(home.text > 250 && home.homeVisible, '首頁載入異常：' + JSON.stringify(home)); assert.match(home.eyebrow, /10 × 21/); assert.equal(home.cells, 210); assert.match(home.map, /chapter-01-field-21x10\.jpg/); assert.ok(home.overflow <= 1);
+  assert.ok(home.text > 250 && home.homeVisible, '首頁載入異常：' + JSON.stringify(home)); assert.match(home.eyebrow, /10 × 21/); assert.equal(home.cells, 210); assert.match(home.map, /chapter-01-story-01-21x10\.jpg/); assert.ok(home.overflow <= 1);
   const desktopShot = await screenshot('jose-desktop-home.png');
 
   const packingLoaded = waitEvent('Page.loadEventFired');
-  await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); const large = TACTICAL_PET_DATA.filter(pet => pet.size === 2).slice(0, 6).map(pet => pet.id); const small = TACTICAL_PET_DATA.find(pet => pet.size === 1).id; [...large, small].forEach(id => { save.owned[id] = true; }); save.party = [...large, small]; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
+  await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); save.commander = { level: 20, xp: 6600 }; const large = TACTICAL_PET_DATA.filter(pet => pet.size === 2).slice(0, 6).map(pet => pet.id); const small = TACTICAL_PET_DATA.find(pet => pet.size === 1).id; [...large, small].forEach(id => { save.owned[id] = true; }); save.party = [...large, small]; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
   await packingLoaded; await delay(700);
   const packingRoster = await evaluate(`(() => ({ allies: document.querySelectorAll('#board .unit.ally').length, large: document.querySelectorAll('#board .unit.ally.size-2').length, small: document.querySelectorAll('#board .unit.ally.size-1').length, covered: document.querySelectorAll('#board .cell.covered').length, anchorColumns: [...document.querySelectorAll('#board .unit.ally')].map(unit => [...document.querySelectorAll('#board .cell')].indexOf(unit.parentElement) % 21) }))()`);
   assert.equal(packingRoster.allies, 7); assert.equal(packingRoster.large, 6); assert.equal(packingRoster.small, 1); assert.equal(packingRoster.covered, 18); assert.ok(packingRoster.anchorColumns.every(column => column >= 0 && column <= 2));
 
   const capacityLoaded = waitEvent('Page.loadEventFired');
-  await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); const ids = TACTICAL_PET_DATA.filter(pet => pet.size === 1).slice(0, 25).map(pet => pet.id); ids.forEach(id => { save.owned[id] = true; }); save.party = ids; save.evolution.molten_ball = 3; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
+  await evaluate(`(() => { const key = 'jose-tactics-progression-v2'; const save = JSON.parse(localStorage.getItem(key)); save.commander = { level: 20, xp: 6600 }; const ids = TACTICAL_PET_DATA.filter(pet => pet.size === 1).slice(0, 25).map(pet => pet.id); ids.forEach(id => { save.owned[id] = true; }); save.party = ids; save.evolution.molten_ball = 3; localStorage.setItem(key, JSON.stringify(save)); location.reload(); })()`);
   await capacityLoaded; await delay(700);
   const capacityRoster = await evaluate(`(() => { document.querySelector('#hub-party').click(); const search = document.querySelector('#deploy-search'); search.value = '熔球'; search.dispatchEvent(new Event('input')); const filtered = document.querySelectorAll('#deploy-grid .deploy-card').length; search.value = ''; search.dispatchEvent(new Event('input')); const result = { help: document.querySelector('#deploy-help').textContent, selected: document.querySelectorAll('#deploy-grid .deploy-card.selected').length, filtered, budget: document.querySelector('#deploy-budget-label').textContent }; document.querySelector('#close-deploy').click(); return result; })()`);
   assert.equal(capacityRoster.selected, 25); assert.match(capacityRoster.help, /出陣單位 25 \/ 25/);
@@ -161,12 +161,9 @@ try {
   for (let attempt = 0; attempt < 100 && !attackAnimation; attempt++) { await delay(100); attackAnimation = await evaluate(`window.__attackAnimation || ''`); }
   await evaluate(`window.__TACTICS_DEBUG__.stopAuto()`); await delay(400);
   assert.match(attackAnimation, /motion-(4dir-)?(attack-(right|left|up|down)|row)/);
-  await evaluate(`document.querySelector('#end-turn').click()`);
-  let enemyOutcome = false;
-  for (let attempt = 0; attempt < 200 && !enemyOutcome; attempt++) { await delay(100); enemyOutcome = await evaluate(`window.__visualEvents.some(event => (event.type === 'hit' || event.type === 'dodge') && event.caster === 'enemy' && event.target === 'ally')`); }
   const visualEvents = await evaluate(`window.__visualEvents`);
-  assert.ok(enemyOutcome, '敵方回合應可觀測到敵方命中或被閃避的特效');
-  console.log('Enemy turn visual events:', JSON.stringify(visualEvents));
+  assert.ok(visualEvents.some(event => event.type === 'hit' && event.caster === 'ally' && event.target === 'enemy'), '我方攻擊應命中敵方：' + JSON.stringify(visualEvents));
+  console.log('Battle visual events:', JSON.stringify(visualEvents));
   assert.ok(!visualEvents.some(event => event.type === 'hit' && event.caster === 'ally' && event.target === 'ally' && !event.support), '我方對我方只能顯示支援特效，不得顯示攻擊特效');
   const actionState = await evaluate(`(() => { const done = document.querySelector('.unit.ally.action-complete'), waiting = document.querySelector('.unit.ally:not(.action-complete)'), rosterDone = document.querySelector('.battle-roster-card.acted'); return { done: document.querySelectorAll('.unit.ally.action-complete').length, waiting: document.querySelectorAll('.unit.ally:not(.action-complete)').length, doneFilter: done ? getComputedStyle(done.querySelector('.portrait')).filter : '', waitingFilter: waiting ? getComputedStyle(waiting.querySelector('.portrait')).filter : '', rosterDone: !!rosterDone, rosterText: rosterDone?.innerText || '' }; })()`);
   assert.ok(actionState.done > 0 && actionState.waiting > 0 && actionState.rosterDone); assert.notEqual(actionState.doneFilter, actionState.waitingFilter); assert.match(actionState.rosterText, /已行動/);

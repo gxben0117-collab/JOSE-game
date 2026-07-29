@@ -1,8 +1,41 @@
 # AI 交接－四方向原生動作補繪待辦
 
-更新日期：2026-07-23
+更新日期：2026-07-29
 專案：JOSE｜幻獸戰棋
 目前目標：把所有仍為「延伸上下方向」的戰鬥單位，逐隻改為真正原生的前／後／左／右動作來源，並直接導入遊戲戰鬥。
+
+## 2026-07-29｜第 1～20 章敵軍原生四方向全數完成
+
+- 第 1～20 章的 110 隻敵軍現在全部使用 `authored-four-direction`；不再有任何章節敵軍使用 `derived-from-approved-motion`。
+- 本批補齊：`cinder_bat`、`blight_boar`、`thorn_creeper`、`frost_shell`、`skeleton_soldier`、`skeleton_mage`、`skeleton_knight`、`skeleton_sergeant`、`skeleton_king`、`bone_dragon`、`lich`、`lich_king`。
+- 每隻均已完成原生 4×3 來源（下／右／上／左 × 待命／移動／攻擊）、透明去背、正式 runtime WebP 圖集、敵軍預覽與 manifest 登錄；不以鏡像或延伸上下圖取代。
+- 全量 runtime 以非清空模式重建完成：225 單位、43,200 格 WebP 動作框；`npm.cmd test` 98/98 與 `python scripts/check-directional-frame-bounds.py` 均通過。
+
+## 2026-07-29｜第 19～20 章正式接入完成
+
+- 第 19 章「中央能源心臟」與第 20 章「Ω 終焉程序」已完成正式關卡、敵軍、地圖與 Boss 三階段接入；第 18 章同步補齊章節資料銜接。
+- 第 19～20 章各有 5 隻正式敵軍：1 隻 5×5 Boss、2 隻 2×2 親衛／精英、2 隻 1×1 小兵；每章為 6 主線＋Boss＋3 HARD，共 10 關。第 19 章沿用既有 `overload_nuclear_golem` 正式來源，不重製資產。
+- 新增並完成原生四方向來源、透明版、敵方立繪、runtime WebP 圖集與 manifest 登錄：`omega_trooper`、`central_core_unit`、`omega_guard`、`terminal_adjudicator`；`omega_guard` 已以 V2 修正左右欄序。
+- 第 19、20 章 Boss 均具 70%／35% 三階段：核能傀儡依序進入熱能增幅、過載灼燒／裂隙壓力；Ω-00 依序啟動資料凍結、終端協議／裂隙壓力。階段會更新技能優先度、召喚、護盾、警示與敵軍壓力，非純數值加成。
+- 長卷主地圖與 Boss／HARD 切片、255 張地形格、5×5 安全出生區已完成；5×5 Boss 與 2×2 親衛的出生、移動、範圍與邊界均由回歸測試覆蓋。
+- 現行總量：20 章、255 個正式關卡、110 隻敵軍、225 個四方向動作單位。驗證：`npm.cmd test` 98/98、`python scripts/check-directional-frame-bounds.py` 225 單位／43,200 格、100 場自動戰鬥模擬全數結束且無卡關。
+
+## 2026-07-29｜第 18～20 章本批原生四方向動作全面巡檢
+
+- 本批 11 隻已逐張檢查下／右／上／左 × 待命／移動／攻擊：`argus_omniscient_eye`、`surveillance_orb`、`optical_sniper`、`argus_guardian`、`predictive_executor`、`overload_nuclear_golem`、`nuclear_technician`、`reactor_guard`、`nuclear_heavy`、`overload_berserker`、`omega_00`。
+- 原圖合格、無須改圖：`optical_sniper`、`predictive_executor`、`overload_nuclear_golem`、`nuclear_heavy`、`omega_00`。
+- 已修正方向／版型：`argus_omniscient_eye` 重排為標準四方向欄序；`surveillance_orb`、`argus_guardian` 修正左右映射；`reactor_guard`、`nuclear_technician` 將錯誤 4×4 來源轉為標準 4×3；`overload_berserker` 以 V2 取代動作與方向混列的舊表。
+- `nuclear_technician` 已升為 V3：左向攻擊改為朝畫面左側發射，並清除轉置後的跨格殘片。
+- 11 隻 manifest 均指向目前最高核准版本；runtime 均為 8 欄 × 24 列、112px 動作格，透明來源與正式 WebP 圖集皆存在。
+- 驗證：`python scripts/check-directional-frame-bounds.py` 通過 221 單位、42,432 個 runtime WebP 動作格；`git diff --check` 無格式錯誤（僅既有 CRLF 提示）。
+
+## 2026-07-28｜第 16 章「重力磁場」完成進度
+
+- 原生 4×3（下／右／上／左 × 待命／移動／攻擊）來源、去背、敵方立繪與 runtime 四方向八幀圖集已完成：`magnetic_gravity_core`、`magnetic_infantry`、`gravity_probe`、`gravity_warden`、`magnetic_storm_knight`。
+- 已接入第 16 章 6 個主線小關、5×5 Boss 關與 3 個 HARD；Boss 為磁極重力核心，親衛為重力守衛／磁暴騎士，小兵為磁力步兵／浮游探測機。
+- 章節長卷切片、Boss／HARD 地圖與逐格地形已更新；目前總計 16 章、215 關、90 隻敵軍、205 個四方向單位圖集。
+- 驗證：`python scripts/check-directional-frame-bounds.py` 通過 39,360 格；`npm.cmd test` 97/97 通過。
+- 下一批：第 17 章「奈米工廠」五隻（奈米蜂群女王、奈米工蜂、修復蟲群、蜂群戰將、奈米禁衛），接著以同規格完成第 18～20 章。
 
 ## 已完成
 
@@ -44,9 +77,9 @@
 
 | 類型 | 數量 | 說明 |
 | --- | ---: | --- |
-| `authored-four-direction` | 44 | 已有真正前後左右原生參考圖，包含全數 29 隻 2×2 幻獸。 |
+| `authored-four-direction` | **144** | 已有真正前後左右原生參考圖，包含第 1～20 章全數 110 隻敵軍與全數 29 隻 2×2 幻獸。 |
 | `authored-front-back-and-approved-side` | 0 | 此舊式前後來源已全數由原生四方向來源取代。 |
-| `derived-from-approved-motion` | **136** | 本輪待補繪目標。 |
+| `derived-from-approved-motion` | **81** | 僅剩非主線敵軍或其他舊單位的後續補繪目標；第 1～20 章敵軍不在其中。 |
 
 不要手動維護 140 隻清單。每次開工請以 manifest 即時列出：
 

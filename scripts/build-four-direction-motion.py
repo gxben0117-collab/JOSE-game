@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import argparse
 from pathlib import Path
 
 from PIL import Image, ImageOps
@@ -20,6 +21,7 @@ FRAME_DIR = OUTPUT_DIR / "frames"
 VIEW_DIR = OUTPUT_DIR / "views"
 LEGACY_DIR = ROOT / "assets" / "animations" / "units"
 EVOLUTION_ROOT = ROOT / "assets" / "pets"
+ENEMY_DIR = ROOT / "assets" / "enemies"
 FRAME = 112
 EXPORT_SOURCE_FRAMES = os.environ.get("JOSE_EXPORT_SOURCE_FRAMES") == "1"
 MIN_ANIMATION_FRAMES = 1
@@ -64,7 +66,8 @@ SOURCE_ALREADY_RIGHT = {
 # points right on the board.
 SWAPPED_SIDE_UNITS = {
     "fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis",
-    "fog_wisp", "gloom_turtle", "ash_hound", "tsunami_dragon",
+    "fog_wisp", "gloom_turtle", "ash_hound", "tsunami_dragon", "heavy_rail_guard",
+    "surveillance_orb", "argus_guardian",
 }
 # AI grids occasionally let an adjacent cell's tail or attack trail cross the
 # cell boundary.  Remove only the verified intrusion, before scaling it into a
@@ -149,6 +152,19 @@ def save_frame(frame: Image.Image, path: Path) -> None:
 
 def build_reference(unit_id: str, source_path: Path) -> dict[str, object]:
     source = Image.open(source_path).convert("RGBA")
+    # A native direction sheet is also the approved identity source for a new
+    # enemy. Export its idle-down panel as the in-game portrait when no
+    # separately commissioned portrait exists.
+    portrait_path = ENEMY_DIR / f"{unit_id}.png"
+    if not portrait_path.exists():
+        cell_w, cell_h = source.width // 4, source.height // 3
+        portrait = source.crop((4, 4, cell_w - 4, cell_h - 4))
+        box = portrait.getchannel("A").getbbox()
+        if box:
+            portrait = portrait.crop(box)
+        portrait.thumbnail((512, 512), Image.Resampling.LANCZOS)
+        portrait_path.parent.mkdir(parents=True, exist_ok=True)
+        portrait.save(portrait_path, "PNG", compress_level=6)
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
     sheet = Image.new("RGBA", (FRAME * SHEET_COLUMNS, FRAME * len(DIRECTIONS) * len(ACTIONS)))
     row_order: list[str] = []
@@ -314,12 +330,22 @@ def build_size2_stage_one(unit_id: str, source_path: Path) -> dict[str, object]:
 
 
 def main() -> None:
+    parser = argparse.ArgumentParser(description="Build four-direction battle motion sheets.")
+    parser.add_argument(
+        "--only",
+        nargs="+",
+        metavar="UNIT_ID",
+        help="Rebuild only the named unit(s), preserving every other runtime sheet and manifest entry.",
+    )
+    args = parser.parse_args()
+    only_units = set(args.only or [])
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     FRAME_DIR.mkdir(parents=True, exist_ok=True)
-    for stale in FRAME_DIR.glob("*.png"):
-        stale.unlink()
-    for stale in OUTPUT_DIR.glob("*-motion-4dir-sheet.webp"):
-        stale.unlink()
+    if not only_units:
+        for stale in FRAME_DIR.glob("*.png"):
+            stale.unlink()
+        for stale in OUTPUT_DIR.glob("*-motion-4dir-sheet.webp"):
+            stale.unlink()
     # A unit may receive successive approved redraws.  Always take the highest
     # numeric version, rather than relying on filesystem enumeration order.
     authored_sources: dict[str, Path] = {}
@@ -332,11 +358,22 @@ def main() -> None:
         current_match = re.match(r".+-four-direction-reference-v(\d+)-alpha\.png$", current.name) if current else None
         if current_match is None or version > int(current_match.group(1)):
             authored_sources[unit_id] = source
-    manifest: dict[str, object] = {}
+    manifest_path = OUTPUT_DIR / "manifest.json"
+    manifest: dict[str, object] = (
+        json.loads(manifest_path.read_text(encoding="utf-8"))
+        if only_units and manifest_path.exists()
+        else {}
+    )
     legacy_manifest = json.loads((LEGACY_DIR / "manifest.json").read_text(encoding="utf-8"))
     # New chapter enemies may begin as approved four-direction sources before
     # they have a legacy left/right atlas. Include them directly in runtime.
-    for unit_id in sorted(set(legacy_manifest) | set(authored_sources)):
+    all_unit_ids = sorted(set(legacy_manifest) | set(authored_sources))
+    if only_units:
+        missing = only_units - set(all_unit_ids)
+        if missing:
+            raise ValueError(f"Unknown unit id(s): {', '.join(sorted(missing))}")
+        all_unit_ids = [unit_id for unit_id in all_unit_ids if unit_id in only_units]
+    for unit_id in all_unit_ids:
         portrait_path = stage_one_portrait(unit_id)
         # A newly approved full four-direction sheet supersedes the older
         # size-2 front/back composition.  Keep that fallback only for units

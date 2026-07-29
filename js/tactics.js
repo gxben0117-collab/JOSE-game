@@ -750,14 +750,28 @@
     var ratio = boss.hp / boss.maxHp, nextPhase = ratio <= 0.35 ? 3 : ratio <= 0.70 ? 2 : 1;
     while (boss.bossPhase < nextPhase) {
       boss.bossPhase++;
-      var count = boss.bossPhase === 2 ? 2 : 3, pool = currentStage.bossMinionPool || currentStage.enemies.filter(function (id) { return id !== boss.id; });
+      var phaseSpecs = boss.p.bossPhases || [];
+      var phaseSpec = phaseSpecs.find(function (entry) { return entry.phase === boss.bossPhase; }) || {};
+      var count = phaseSpec.summonCount === undefined ? (boss.bossPhase === 2 ? 2 : 3) : phaseSpec.summonCount;
+      var pool = phaseSpec.summons || currentStage.bossMinionPool || currentStage.enemies.filter(function (id) { return id !== boss.id; });
       for (var index = 0; index < count && pool.length; index++) {
         var id = pool[(index + boss.bossPhase) % pool.length], spot = findFreeSpot(Math.max(5, boss.x - 3), boss.y + (index - 1) * 2, {}, 1);
         state.units.push(clone({ id: id, size: 1, minion: true }, 'enemy', spot.x, spot.y, state.units.length));
       }
-      boss.shield += Math.round(boss.maxHp * (boss.bossPhase === 2 ? 0.08 : 0.12));
-      note(boss.p.name + ' 進入第 ' + boss.bossPhase + ' 階段！召來增援並獲得護盾。');
-      phaseBanner('👑 BOSS 第 ' + boss.bossPhase + ' 階段｜增援來襲', 'enemy');
+      boss.shield += Math.round(boss.maxHp * (phaseSpec.shieldRate === undefined ? (boss.bossPhase === 2 ? 0.08 : 0.12) : phaseSpec.shieldRate));
+      if (phaseSpec.skillIndex !== undefined && boss.cooldowns[phaseSpec.skillIndex] !== undefined) boss.cooldowns[phaseSpec.skillIndex] = 0;
+      if (phaseSpec.teamBuff) alive('enemy').forEach(function (unit) { unit.atkBuff = Math.max(unit.atkBuff, 3); });
+      if (phaseSpec.status && phaseSpec.statusCount) {
+        alive('ally').slice().sort(function (a, b) { return stat(b, 'power') + stat(b, 'magic') - stat(a, 'power') - stat(a, 'magic'); }).slice(0, phaseSpec.statusCount).forEach(function (unit) {
+          if (phaseSpec.status === 'freeze') unit.freeze = Math.max(unit.freeze, 1);
+          else if (phaseSpec.status === 'burn') unit.burn = Math.max(unit.burn, 2);
+          else if (phaseSpec.status === 'poison') unit.poison = Math.max(unit.poison, 2);
+        });
+      }
+      if (phaseSpec.riftPower) state.riftPower += phaseSpec.riftPower;
+      var phaseName = phaseSpec.name || ('第 ' + boss.bossPhase + ' 階段');
+      note(boss.p.name + ' 進入「' + phaseName + '」！' + (phaseSpec.warning || '召來增援並獲得護盾。'));
+      phaseBanner('👑 BOSS 第 ' + boss.bossPhase + ' 階段｜' + phaseName, 'enemy');
     }
   }
 
@@ -1484,6 +1498,10 @@
           if ((skill.push || skill.pull) && !target.boss) score += 6;
           if (target.boss) score += 5;
           if (skill.kind === 'ultimate') score += 4;
+          if (unit.boss && unit.p.bossPhases) {
+            var phaseSpec = unit.p.bossPhases.find(function (entry) { return entry.phase === unit.bossPhase; });
+            if (phaseSpec && phaseSpec.skillIndex === index) score += 42;
+          }
           if (currentStage.tower && unit.team === 'ally') {
             var guardian = state.units.find(function (entry) { return entry.guardian && entry.hp > 0; });
             if (guardian) score += Math.max(0, 9 - distance(target, guardian)) * 11;
@@ -1777,10 +1795,25 @@
       [1, 12], [3, 15], [6, 18], [10, 21], [15, 23], [20, 25], [30, 26], [45, 27], [60, 28], [80, 29], [100, 30]
     ];
     var nextText = info.nextCapacityStep ? '下一次擴編：Lv.' + info.nextCapacityStep.level + ' 解鎖 ' + info.nextCapacityStep.capacity + ' 容量' : '已達最高 30 容量';
+    var owned = progression.ownedPets(), totalEssence = Object.keys(progress.essences || {}).reduce(function (sum, element) { return sum + (Number(progress.essences[element]) || 0); }, 0);
+    var totalCopies = Object.keys(progress.copies || {}).reduce(function (sum, id) { return sum + (Number(progress.copies[id]) || 0); }, 0);
+    var elements = [['fire', '🔥 火'], ['forest', '🌲 森'], ['ocean', '💧 海'], ['light', '☀️ 光'], ['dark', '🌑 暗']];
+    var elementLabels = { fire: '火', forest: '森', ocean: '海', light: '光', dark: '暗' };
+    var resourceCards = [
+      ['💎', '水晶', progress.crystals], ['🪙', '金幣', progress.gold], ['🏅', '戰術徽章', progress.medals], ['🔷', '元素精華', totalEssence], ['🧬', '融合核心', progress.fusionCores]
+    ].map(function (entry) { return '<article><i>' + entry[0] + '</i><span>' + entry[1] + '</span><b>' + (Number(entry[2]) || 0) + '</b></article>'; }).join('');
+    var essenceCards = elements.map(function (entry) { return '<span><b>' + entry[1] + '</b><small>' + (Number((progress.essences || {})[entry[0]]) || 0) + '</small></span>'; }).join('');
+    var rosterCards = owned.map(function (pet) {
+      var evolution = Math.max(1, Number(progress.evolution[pet.id]) || 1), fusion = Number((progress.fusion || {})[pet.id]) || 0, copies = Number((progress.copies || {})[pet.id]) || 0;
+      return '<article class="commander-pet-card"><i style="background-image:url(\'' + displayPortrait(pet) + '\')"></i><div><b>' + pet.name + '</b><small>' + (elementLabels[pet.element] || pet.element) + '｜' + pet.roleLabel + '｜' + pet.size + '×' + pet.size + '</small><em>進化 ' + evolution + '｜融合 ' + fusion + (copies ? '｜碎片 +' + copies : '') + '</em></div></article>';
+    }).join('') || '<p class="commander-empty">尚未持有幻獸；先完成第一章或前往召喚取得伙伴。</p>';
     host.innerHTML = '<section class="commander-hero"><div class="commander-insignia">🎖️</div><div><p>幻獸遠征指揮官</p><h3>Lv.' + info.level + '｜出戰容量 ' + info.capacity + '／30</h3><small>主線首通、Boss 關、無限塔與 Boss 來襲皆可獲得指揮官經驗。</small></div></section>' +
       '<section class="commander-xp"><div><b>指揮官經驗</b><span>' + (info.level >= 100 ? 'MAX' : (info.xp - info.currentStart) + ' / ' + (info.nextStart - info.currentStart)) + '</span></div><i><u style="width:' + (info.progress * 100) + '%"></u></i><small>' + nextText + '</small></section>' +
+      '<section class="commander-resources"><h3>帳號資源</h3><div>' + resourceCards + '</div></section>' +
       '<section class="commander-guide"><article><b>🧩 出戰成本</b><span>1×1＝1 容量　2×2＝4 容量　3×3＝3 容量</span></article><article><b>⚔️ 卡關突破</b><span>提升指揮官等級可擴充編隊；不必只依賴抽卡或單一幻獸強化。</span></article><article><b>👑 首領戰術</b><span>章節 Boss 關採 5×5 Boss、2×2 菁英親衛與 1×1 小兵編制。</span></article></section>' +
-      '<section class="commander-milestones"><h3>容量解鎖路線</h3><div>' + milestones.map(function (step) { return '<span class="' + (info.level >= step[0] ? 'unlocked' : '') + '"><b>Lv.' + step[0] + '</b><small>' + step[1] + ' 容量</small></span>'; }).join('') + '</div></section>';
+      '<section class="commander-milestones"><h3>容量解鎖路線</h3><div>' + milestones.map(function (step) { return '<span class="' + (info.level >= step[0] ? 'unlocked' : '') + '"><b>Lv.' + step[0] + '</b><small>' + step[1] + ' 容量</small></span>'; }).join('') + '</div></section>' +
+      '<section class="commander-inventory"><div><h3>道具與材料</h3><small>目前持有的養成資源與重複幻獸碎片。</small></div><article><b>🧬 融合核心</b><span>' + (Number(progress.fusionCores) || 0) + '</span></article><article><b>🔷 元素精華</b><span>' + totalEssence + '</span></article><article><b>✦ 召喚碎片</b><span>' + totalCopies + '</span></article><div class="commander-essences">' + essenceCards + '</div></section>' +
+      '<section class="commander-roster"><div class="commander-section-head"><div><h3>目前持有的幻獸</h3><small>已取得 ' + owned.length + '／' + (window.TACTICAL_PET_DATA || []).length + ' 隻｜出戰中 ' + (progress.party || []).length + ' 隻</small></div><b>' + owned.length + ' 隻</b></div><div class="commander-pet-grid">' + rosterCards + '</div></section>';
   }
   function openCommander() { renderCommander(); document.getElementById('commander-modal').hidden = false; audio.play('ui'); }
 
@@ -1811,10 +1844,12 @@
   function openCampaign() { campaignChapter = currentStage.mapId; campaignView = 'overview'; renderCampaign(); dom.campaignModal.hidden = false; audio.play('ui'); }
   function chapterInfo(map) {
     var boss = profile(map.boss), modal = document.getElementById('chapter-info-modal');
+    var mainCount = content.stages.filter(function(s){ return s.mapId === map.id && !s.hard && !s.boss; }).length;
+    var hardCount = content.stages.filter(function(s){ return s.mapId === map.id && s.hard; }).length;
     document.getElementById('chapter-info-art').style.backgroundImage = boss ? "url('" + portrait({ p: boss, evolution: 1 }) + "')" : '';
     document.getElementById('chapter-info-kicker').textContent = map.icon + ' 章節情報';
     document.getElementById('chapter-info-title').textContent = map.name + '｜Boss：' + (boss ? boss.name : '未知');
-    document.getElementById('chapter-info-copy').textContent = map.description + ' 本章將在 10 個主線節點後迎戰首領；通關後解鎖 4 個 HARD 特別關。';
+    document.getElementById('chapter-info-copy').textContent = map.description + ' 本章將在 ' + mainCount + ' 個主線節點後迎戰首領；通關後解鎖 ' + hardCount + ' 個 HARD 特別關。';
     modal.hidden = false; audio.play('ui');
   }
   function stageNode(stage) {
@@ -1834,7 +1869,7 @@
       var clearedCount = main.filter(function (stage) { return progress.cleared[stage.id]; }).length;
       var unlocked = progression.isStageUnlocked(main[0].id);
       var boss = profile(map.boss), art = boss ? portrait({ p: boss, evolution: 1 }) : '';
-      return '<article class="chapter-overview-card' + (unlocked ? '' : ' locked') + '" style="--chapter-art:url(\'' + art + '\')"><div><small>第 ' + (index + 1) + ' 章｜' + clearedCount + '/11</small><h3>' + map.icon + ' ' + map.name + '</h3><p>' + map.description + '</p><b>Boss：' + (boss ? boss.name : '未知') + '</b></div><footer><button data-chapter-info="' + map.id + '">情報</button><button class="primary" data-chapter-open="' + map.id + '" ' + (unlocked ? '' : 'disabled') + '>進入章節</button></footer></article>';
+      return '<article class="chapter-overview-card' + (unlocked ? '' : ' locked') + '" style="--chapter-art:url(\'' + art + '\')"><div><small>第 ' + (index + 1) + ' 章｜' + clearedCount + '/' + main.length + '</small><h3>' + map.icon + ' ' + map.name + '</h3><p>' + map.description + '</p><b>Boss：' + (boss ? boss.name : '未知') + '</b></div><footer><button data-chapter-info="' + map.id + '">情報</button><button class="primary" data-chapter-open="' + map.id + '" ' + (unlocked ? '' : 'disabled') + '>進入章節</button></footer></article>';
       }).join('') + '</div>';
       dom.campaignGrid.querySelectorAll('[data-chapter-open]').forEach(function (button) { button.onclick = function () { campaignChapter = button.dataset.chapterOpen; campaignView = 'chapter'; renderCampaign(); }; });
       dom.campaignGrid.querySelectorAll('[data-chapter-info]').forEach(function (button) { button.onclick = function () { chapterInfo(content.mapById(button.dataset.chapterInfo)); }; });

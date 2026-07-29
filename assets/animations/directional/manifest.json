@@ -736,6 +736,168 @@
       "1": "assets/animations/directional/antivirus_drone-motion-4dir-sheet.webp"
     }
   },
+  "argus_guardian": {
+    "file": "assets/animations/directional/argus_guardian-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/argus_guardian-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/argus_guardian-motion-4dir-sheet.webp"
+    }
+  },
+  "argus_omniscient_eye": {
+    "file": "assets/animations/directional/argus_omniscient_eye-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/argus_omniscient_eye-four-direction-reference-v2-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/argus_omniscient_eye-motion-4dir-sheet.webp"
+    }
+  },
   "ash_crown_tyrant": {
     "file": "assets/animations/directional/ash_crown_tyrant-motion-4dir-sheet.webp",
     "columns": 8,
@@ -1537,13 +1699,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/blight_boar-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/blight_boar-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/blight_boar-motion-4dir-sheet.webp"
     }
@@ -1699,13 +1861,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/bone_dragon-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/bone_dragon-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/bone_dragon-motion-4dir-sheet.webp"
     }
@@ -2117,6 +2279,87 @@
       "1": "assets/animations/directional/cathedral_titan-motion-4dir-sheet.webp"
     }
   },
+  "central_core_unit": {
+    "file": "assets/animations/directional/central_core_unit-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/central_core_unit-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/central_core_unit-motion-4dir-sheet.webp"
+    }
+  },
   "cerberus_whelp": {
     "file": "assets/animations/directional/cerberus_whelp-motion-4dir-sheet.webp",
     "columns": 8,
@@ -2511,13 +2754,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/cinder_bat-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/cinder_bat-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/cinder_bat-motion-4dir-sheet.webp"
     }
@@ -6441,13 +6684,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/frost_shell-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/frost_shell-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/frost_shell-motion-4dir-sheet.webp"
     }
@@ -7509,6 +7752,168 @@
       "1": "assets/animations/directional/grave_badger-motion-4dir-sheet.webp"
     }
   },
+  "gravity_probe": {
+    "file": "assets/animations/directional/gravity_probe-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/gravity_probe-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/gravity_probe-motion-4dir-sheet.webp"
+    }
+  },
+  "gravity_warden": {
+    "file": "assets/animations/directional/gravity_warden-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/gravity_warden-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/gravity_warden-motion-4dir-sheet.webp"
+    }
+  },
   "halo_capybara": {
     "file": "assets/animations/directional/halo_capybara-motion-4dir-sheet.webp",
     "columns": 8,
@@ -7744,9 +8149,9 @@
     },
     "sourceColumns": [
       0,
-      1,
+      3,
       2,
-      3
+      1
     ],
     "sourceType": "authored-four-direction",
     "source": "assets/animations/directional/sources/heavy_rail_guard-four-direction-reference-v1-alpha.png",
@@ -9462,13 +9867,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/lich-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/lich-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/lich-motion-4dir-sheet.webp"
     }
@@ -9543,13 +9948,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/lich_king-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/lich_king-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/lich_king-motion-4dir-sheet.webp"
     }
@@ -9963,6 +10368,249 @@
       "1": "assets/animations/directional/magma_hound-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/magma_hound-stage_2-motion-4dir-sheet.webp",
       "3": "assets/animations/directional/magma_hound-stage_3-motion-4dir-sheet.webp"
+    }
+  },
+  "magnetic_gravity_core": {
+    "file": "assets/animations/directional/magnetic_gravity_core-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/magnetic_gravity_core-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/magnetic_gravity_core-motion-4dir-sheet.webp"
+    }
+  },
+  "magnetic_infantry": {
+    "file": "assets/animations/directional/magnetic_infantry-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/magnetic_infantry-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/magnetic_infantry-motion-4dir-sheet.webp"
+    }
+  },
+  "magnetic_storm_knight": {
+    "file": "assets/animations/directional/magnetic_storm_knight-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/magnetic_storm_knight-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/magnetic_storm_knight-motion-4dir-sheet.webp"
     }
   },
   "mara_fiend": {
@@ -10617,6 +11265,249 @@
       "1": "assets/animations/directional/mushroom_bison-motion-4dir-sheet.webp"
     }
   },
+  "nano_guardian": {
+    "file": "assets/animations/directional/nano_guardian-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/nano_guardian-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/nano_guardian-motion-4dir-sheet.webp"
+    }
+  },
+  "nano_swarm_queen": {
+    "file": "assets/animations/directional/nano_swarm_queen-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/nano_swarm_queen-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/nano_swarm_queen-motion-4dir-sheet.webp"
+    }
+  },
+  "nano_worker": {
+    "file": "assets/animations/directional/nano_worker-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/nano_worker-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/nano_worker-motion-4dir-sheet.webp"
+    }
+  },
   "nature_guardian": {
     "file": "assets/animations/directional/nature_guardian-motion-4dir-sheet.webp",
     "columns": 8,
@@ -11109,6 +12000,168 @@
       "1": "assets/animations/directional/nightmare_tapir-motion-4dir-sheet.webp"
     }
   },
+  "nuclear_heavy": {
+    "file": "assets/animations/directional/nuclear_heavy-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/nuclear_heavy-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/nuclear_heavy-motion-4dir-sheet.webp"
+    }
+  },
+  "nuclear_technician": {
+    "file": "assets/animations/directional/nuclear_technician-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/nuclear_technician-four-direction-reference-v3-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/nuclear_technician-motion-4dir-sheet.webp"
+    }
+  },
   "obsidian_gorilla": {
     "file": "assets/animations/directional/obsidian_gorilla-motion-4dir-sheet.webp",
     "columns": 8,
@@ -11190,6 +12243,330 @@
       "1": "assets/animations/directional/obsidian_gorilla-motion-4dir-sheet.webp"
     }
   },
+  "omega_00": {
+    "file": "assets/animations/directional/omega_00-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/omega_00-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/omega_00-motion-4dir-sheet.webp"
+    }
+  },
+  "omega_guard": {
+    "file": "assets/animations/directional/omega_guard-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/omega_guard-four-direction-reference-v2-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/omega_guard-motion-4dir-sheet.webp"
+    }
+  },
+  "omega_trooper": {
+    "file": "assets/animations/directional/omega_trooper-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/omega_trooper-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/omega_trooper-motion-4dir-sheet.webp"
+    }
+  },
+  "optical_sniper": {
+    "file": "assets/animations/directional/optical_sniper-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/optical_sniper-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/optical_sniper-motion-4dir-sheet.webp"
+    }
+  },
   "orchid_gecko": {
     "file": "assets/animations/directional/orchid_gecko-motion-4dir-sheet.webp",
     "columns": 8,
@@ -11269,6 +12646,168 @@
     "source": "assets/animations/units/orchid_gecko-motion-sheet.webp",
     "evolutionSheets": {
       "1": "assets/animations/directional/orchid_gecko-motion-4dir-sheet.webp"
+    }
+  },
+  "overload_berserker": {
+    "file": "assets/animations/directional/overload_berserker-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/overload_berserker-four-direction-reference-v2-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/overload_berserker-motion-4dir-sheet.webp"
+    }
+  },
+  "overload_nuclear_golem": {
+    "file": "assets/animations/directional/overload_nuclear_golem-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/overload_nuclear_golem-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/overload_nuclear_golem-motion-4dir-sheet.webp"
     }
   },
   "pearl_lantern_fry": {
@@ -11595,6 +13134,87 @@
       "1": "assets/animations/directional/poison_mantis-motion-4dir-sheet.webp",
       "2": "assets/animations/directional/poison_mantis-stage_2-motion-4dir-sheet.webp",
       "3": "assets/animations/directional/poison_mantis-stage_3-motion-4dir-sheet.webp"
+    }
+  },
+  "predictive_executor": {
+    "file": "assets/animations/directional/predictive_executor-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/predictive_executor-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/predictive_executor-motion-4dir-sheet.webp"
     }
   },
   "prism_dragon": {
@@ -12249,6 +13869,87 @@
       "1": "assets/animations/directional/rail_demolition-motion-4dir-sheet.webp"
     }
   },
+  "reactor_guard": {
+    "file": "assets/animations/directional/reactor_guard-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/reactor_guard-four-direction-reference-v2-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/reactor_guard-motion-4dir-sheet.webp"
+    }
+  },
   "red_wing_bird": {
     "file": "assets/animations/directional/red_wing_bird-motion-4dir-sheet.webp",
     "columns": 8,
@@ -12411,6 +14112,87 @@
     "source": "assets/animations/units/reef_hammerhead-motion-sheet.webp",
     "evolutionSheets": {
       "1": "assets/animations/directional/reef_hammerhead-motion-4dir-sheet.webp"
+    }
+  },
+  "repair_swarm": {
+    "file": "assets/animations/directional/repair_swarm-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/repair_swarm-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/repair_swarm-motion-4dir-sheet.webp"
     }
   },
   "rosewindow_sentinel": {
@@ -13625,13 +15407,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/skeleton_king-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/skeleton_king-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/skeleton_king-motion-4dir-sheet.webp"
     }
@@ -13706,13 +15488,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/skeleton_knight-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/skeleton_knight-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/skeleton_knight-motion-4dir-sheet.webp"
     }
@@ -13787,13 +15569,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/skeleton_mage-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/skeleton_mage-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/skeleton_mage-motion-4dir-sheet.webp"
     }
@@ -13868,13 +15650,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/skeleton_sergeant-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/skeleton_sergeant-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/skeleton_sergeant-motion-4dir-sheet.webp"
     }
@@ -13949,13 +15731,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/skeleton_soldier-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/skeleton_soldier-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/skeleton_soldier-motion-4dir-sheet.webp"
     }
@@ -14857,6 +16639,249 @@
       "1": "assets/animations/directional/surtr_spawn-motion-4dir-sheet.webp"
     }
   },
+  "surveillance_orb": {
+    "file": "assets/animations/directional/surveillance_orb-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      3,
+      2,
+      1
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/surveillance_orb-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/surveillance_orb-motion-4dir-sheet.webp"
+    }
+  },
+  "swarm_warlord": {
+    "file": "assets/animations/directional/swarm_warlord-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/swarm_warlord-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/swarm_warlord-motion-4dir-sheet.webp"
+    }
+  },
+  "terminal_adjudicator": {
+    "file": "assets/animations/directional/terminal_adjudicator-motion-4dir-sheet.webp",
+    "columns": 8,
+    "rows": 24,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-down",
+      "move-down",
+      "attack-down",
+      "hit-down",
+      "victory-down",
+      "death-down",
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "hit-right",
+      "victory-right",
+      "death-right",
+      "idle-up",
+      "move-up",
+      "attack-up",
+      "hit-up",
+      "victory-up",
+      "death-up",
+      "idle-left",
+      "move-left",
+      "attack-left",
+      "hit-left",
+      "victory-left",
+      "death-left"
+    ],
+    "animations": {
+      "idle": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "move": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": true,
+        "hitFrame": null
+      },
+      "attack": {
+        "frameCount": 8,
+        "fps": 14,
+        "loop": false,
+        "hitFrame": 6
+      },
+      "hit": {
+        "frameCount": 8,
+        "fps": 16,
+        "loop": false,
+        "hitFrame": 2
+      },
+      "victory": {
+        "frameCount": 8,
+        "fps": 8,
+        "loop": true,
+        "hitFrame": null
+      },
+      "death": {
+        "frameCount": 8,
+        "fps": 12,
+        "loop": false,
+        "hitFrame": null
+      }
+    },
+    "sourceColumns": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/terminal_adjudicator-four-direction-reference-v1-alpha.png",
+    "evolutionSheets": {
+      "1": "assets/animations/directional/terminal_adjudicator-motion-4dir-sheet.webp"
+    }
+  },
   "thorn_boar": {
     "file": "assets/animations/directional/thorn_boar-motion-4dir-sheet.webp",
     "columns": 8,
@@ -15010,13 +17035,13 @@
       }
     },
     "sourceColumns": [
-      "derived-down",
-      "legacy-right",
-      "derived-up",
-      "legacy-left"
+      0,
+      1,
+      2,
+      3
     ],
-    "sourceType": "derived-from-approved-motion",
-    "source": "assets/animations/units/thorn_creeper-motion-sheet.webp",
+    "sourceType": "authored-four-direction",
+    "source": "assets/animations/directional/sources/thorn_creeper-four-direction-reference-v1-alpha.png",
     "evolutionSheets": {
       "1": "assets/animations/directional/thorn_creeper-motion-4dir-sheet.webp"
     }

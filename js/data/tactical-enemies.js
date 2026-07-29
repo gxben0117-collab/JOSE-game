@@ -318,5 +318,129 @@
     ['surge_circuit_wolf','電湧電路狼','attacker',23000,1080,880,760,10], ['incinerator_hydraulic_spider','焚燒液壓蜘蛛','controller',26000,960,1120,820,6], ['prototype_ex01','原型機體 EX-01','allrounder',30000,1120,1040,900,8], ['firewall_paladin','防火牆聖騎','defender',34000,1060,1180,1080,5]
   ].map(function (spec) { return enemy(spec[0], spec[1], 'machine', spec[2], '章節首領', { health: spec[3], power: spec[4], magic: spec[5], defense: spec[6], speed: spec[7] }, 3, [skill('首領攻擊', { kind: 'basic', multiplier: 1.02, range: 2 }), skill('核心協議', { multiplier: 1.12, range: 5, radius: 2, attackStyle: 'area', cooldown: 3, push: 2 }), skill('超載終端', { kind: 'ultimate', multiplier: 1.62, range: 5, radius: 2, attackStyle: 'area', cooldown: 5, status: 'freeze', statusTurns: 1 })], { boss: true, size: 5, loreElement: 'machine' }); });
 
-  global.TACTICAL_ENEMY_DATA = MINIONS.concat(BOSSES, SKELETONS, MACHINE_ARC, MACHINE_BOSSES);
+  /* 第 16 章：重力磁場。磁場兵與探測機組成壓制網，兩名 2×2 親衛則分別
+     保護核心與改變走位；首領使用拉扯與位移來呼應劇情設定。 */
+  var GRAVITY_FIELD = [
+    enemy('magnetic_infantry', '磁力步兵', 'machine', 'attacker', '機械小兵', { health: 2100, power: 430, magic: 260, defense: 205, speed: 7 }, 3, [
+      skill('磁力射擊', { kind: 'basic', multiplier: .94, range: 4, attackStyle: 'ranged' }),
+      skill('極性牽引', { multiplier: 1.08, range: 4, attackStyle: 'ranged', cooldown: 2, pull: 2 })
+    ], { loreElement: 'machine' }),
+    enemy('gravity_probe', '浮游探測機', 'machine', 'controller', '機械小兵', { health: 1840, power: 230, magic: 460, defense: 170, speed: 9 }, 4, [
+      skill('空中掃描', { kind: 'basic', multiplier: .84, range: 5, attackStyle: 'ranged' }),
+      skill('重力干擾', { multiplier: 1.0, range: 5, radius: 1, attackStyle: 'area', cooldown: 2, status: 'freeze', statusTurns: 1 })
+    ], { loreElement: 'machine' }),
+    enemy('gravity_warden', '重力守衛', 'machine', 'defender', '首領親衛', { health: 4650, power: 440, magic: 330, defense: 510, speed: 3 }, 2, [
+      skill('重力盾擊', { kind: 'basic', multiplier: .98 }),
+      skill('壓制力場', { multiplier: 1.1, range: 3, radius: 1, attackStyle: 'area', cooldown: 3, status: 'freeze', statusTurns: 1 })
+    ], { loreElement: 'machine', size: 2, guard: true }),
+    enemy('magnetic_storm_knight', '磁暴騎士', 'machine', 'attacker', '首領親衛', { health: 4020, power: 550, magic: 390, defense: 320, speed: 8 }, 4, [
+      skill('磁暴刺擊', { kind: 'basic', multiplier: 1.0 }),
+      skill('極性反轉', { multiplier: 1.18, range: 4, attackStyle: 'ranged', cooldown: 3, push: 2 })
+    ], { loreElement: 'machine', size: 2, guard: true })
+  ];
+  var GRAVITY_BOSS = enemy('magnetic_gravity_core', '磁極重力核心', 'machine', 'controller', '章節首領', { health: 39000, power: 1260, magic: 1510, defense: 1120, speed: 6 }, 3, [
+    skill('核心脈衝', { kind: 'basic', multiplier: 1.04, range: 5, attackStyle: 'ranged' }),
+    skill('磁極逆轉', { multiplier: 1.18, range: 6, radius: 2, attackStyle: 'area', cooldown: 3, push: 3 }),
+    skill('重力坍縮', { kind: 'ultimate', multiplier: 1.72, range: 6, radius: 3, attackStyle: 'area', cooldown: 5, pull: 4, status: 'freeze', statusTurns: 1 })
+  ], { boss: true, size: 5, loreElement: 'machine', passives: [{ name: '方向參數', effect: 'def_boost', value: .18 }] });
+
+  var NANO_FACTORY = [
+    enemy('nano_worker','奈米工蜂','machine','attacker','機械小兵',{health:2450,power:490,magic:300,defense:220,speed:9},4,[skill('微型切割',{kind:'basic',multiplier:.92,range:3,attackStyle:'ranged'}),skill('自我複製',{multiplier:1.08,range:3,attackStyle:'ranged',cooldown:2})],{loreElement:'machine'}),
+    enemy('repair_swarm','修復蟲群','machine','healer','機械小兵',{health:2200,power:180,magic:560,defense:190,speed:7},3,[skill('修復脈衝',{kind:'basic',multiplier:.78,range:4,attackStyle:'ranged'}),skill('群體維護',{effect:'heal',multiplier:1.05,range:4,attackStyle:'support',cooldown:2})],{loreElement:'machine'}),
+    enemy('swarm_warlord','蜂群戰將','machine','attacker','首領親衛',{health:5200,power:640,magic:410,defense:360,speed:8},4,[skill('蜂群突擊',{kind:'basic',multiplier:1.02}),skill('分裂斬擊',{multiplier:1.22,cooldown:3,push:2})],{loreElement:'machine',size:2,guard:true}),
+    enemy('nano_guardian','奈米禁衛','machine','defender','首領親衛',{health:5900,power:480,magic:390,defense:610,speed:3},2,[skill('禁衛槍擊',{kind:'basic',multiplier:.98}),skill('奈米護盾',{effect:'shield',value:1.0,range:3,attackStyle:'support',cooldown:3})],{loreElement:'machine',size:2,guard:true})
+  ];
+  var NANO_QUEEN = enemy('nano_swarm_queen','奈米蜂群女王','machine','controller','章節首領',{health:44500,power:1380,magic:1680,defense:1200,speed:7},3,[skill('蜂群刺針',{kind:'basic',multiplier:1.04,range:5,attackStyle:'ranged'}),skill('蜂群增殖',{multiplier:1.18,range:6,radius:2,attackStyle:'area',cooldown:3}),skill('奈米重構',{kind:'ultimate',multiplier:1.76,range:6,radius:3,attackStyle:'area',cooldown:5,status:'poison',statusTurns:2})],{boss:true,size:5,loreElement:'machine'});
+
+  /* 第 18 章：全域監測塔。小兵負責標記與遠程狙擊，兩名親衛分別
+     建立防線與先制壓力；ARGUS 在 70%／35% 生命時切換預測模式。 */
+  var ARGUS_TOWER = [
+    enemy('surveillance_orb','監視浮球','machine','controller','機械小兵',{health:2760,power:240,magic:650,defense:230,speed:10},4,[
+      skill('掃描脈衝',{kind:'basic',multiplier:.86,range:5,attackStyle:'ranged'}),
+      skill('弱點標記',{multiplier:1.06,range:5,attackStyle:'ranged',cooldown:2,status:'freeze',statusTurns:1})
+    ],{loreElement:'machine',ai:'mark-and-retreat',resistances:['light'],weakness:'fire',soundHooks:{attack:'scan-pulse',death:'machine-collapse'},drops:{medals:3,essence:2}}),
+    enemy('optical_sniper','光學狙擊兵','light','attacker','機械小兵',{health:2580,power:720,magic:410,defense:205,speed:8},3,[
+      skill('精準射擊',{kind:'basic',multiplier:.98,range:6,attackStyle:'ranged'}),
+      skill('弱點瞄準',{multiplier:1.28,range:7,attackStyle:'ranged',cooldown:3})
+    ],{loreElement:'machine',ai:'long-range-focus',resistances:['light'],weakness:'dark',soundHooks:{attack:'rail-shot',death:'machine-collapse'},drops:{medals:3,essence:2}}),
+    enemy('argus_guardian','天眼守衛','light','defender','首領親衛',{health:6900,power:560,magic:520,defense:720,speed:4},2,[
+      skill('守衛重擊',{kind:'basic',multiplier:1.0}),
+      skill('全域掃描',{effect:'shield',value:1.08,range:4,attackStyle:'support',cooldown:3})
+    ],{loreElement:'machine',size:2,guard:true,ai:'protect-boss',resistances:['light','freeze'],weakness:'dark',soundHooks:{attack:'shield-impact',death:'heavy-collapse'},drops:{medals:6,essence:4}}),
+    enemy('predictive_executor','預測執行者','machine','attacker','首領親衛',{health:6100,power:790,magic:560,defense:430,speed:11},4,[
+      skill('先制刃',{kind:'basic',multiplier:1.04}),
+      skill('戰術預判',{multiplier:1.3,range:4,attackStyle:'ranged',cooldown:3,push:2})
+    ],{loreElement:'machine',size:2,guard:true,ai:'flank-lowest-hp',resistances:['freeze'],weakness:'fire',soundHooks:{attack:'prediction-slash',death:'heavy-collapse'},drops:{medals:6,essence:4}})
+  ];
+  var ARGUS_BOSS = enemy('argus_omniscient_eye','全視天眼・ARGUS','machine','controller','章節首領',{health:50000,power:1420,magic:1920,defense:1320,speed:8},3,[
+    skill('監視光束',{kind:'basic',multiplier:1.05,range:6,attackStyle:'ranged'}),
+    skill('未來預測',{multiplier:1.2,range:7,radius:2,attackStyle:'area',cooldown:3,status:'freeze',statusTurns:1}),
+    skill('弱點鎖定',{kind:'ultimate',multiplier:1.82,range:7,radius:3,attackStyle:'area',cooldown:5,pull:3})
+  ],{boss:true,size:5,loreElement:'machine',ai:'phase-prediction',resistances:['light','freeze'],weakness:'dark',soundHooks:{attack:'argus-beam',phase:'argus-alarm',death:'core-collapse'},drops:{medals:40,essence:24,fusionCore:3},passives:[{name:'全域觀測',effect:'def_boost',value:.18}],bossPhases:[
+    {phase:1,name:'全域觀測',skillIndex:0,warning:'ARGUS 正在記錄所有移動路徑。'},
+    {phase:2,name:'未來預測',skillIndex:1,summonCount:2,shieldRate:.07,status:'freeze',statusCount:1,warning:'預測環展開：下一輪行動路徑遭到封鎖。'},
+    {phase:3,name:'弱點鎖定',skillIndex:2,summonCount:3,shieldRate:.1,teamBuff:true,warning:'全視主瞳鎖定弱點，親衛進入先制模式。'}
+  ]});
+
+  /* 第 19 章：中央能源心臟。維修兵提供續戰，反應爐守衛封鎖區域；
+     首領的三階段由穩定爐心轉為紅熱暴走，最後進入倒數自毀。 */
+  var NUCLEAR_HEART = [
+    enemy('nuclear_technician','核能維修兵','machine','healer','機械小兵',{health:3100,power:220,magic:760,defense:260,speed:7},3,[
+      skill('維修射線',{kind:'basic',multiplier:.8,range:4,attackStyle:'ranged'}),
+      skill('核心充能',{effect:'heal',multiplier:1.12,range:5,attackStyle:'support',cooldown:2})
+    ],{loreElement:'machine',ai:'heal-critical-core',resistances:['fire'],weakness:'ocean',soundHooks:{attack:'repair-ray',death:'machine-collapse'},drops:{medals:4,essence:3}}),
+    enemy('reactor_guard','反應爐守衛','fire','controller','機械小兵',{health:3450,power:390,magic:730,defense:310,speed:6},3,[
+      skill('熱能射線',{kind:'basic',multiplier:.9,range:5,attackStyle:'ranged',status:'burn',statusTurns:2}),
+      skill('高熱爆炸',{multiplier:1.16,range:5,radius:1,attackStyle:'area',cooldown:3,status:'burn',statusTurns:3})
+    ],{loreElement:'machine',ai:'area-denial',resistances:['fire','burn'],weakness:'ocean',soundHooks:{attack:'thermal-ray',death:'reactor-pop'},drops:{medals:4,essence:3}}),
+    enemy('nuclear_heavy','核能重裝兵','fire','defender','首領親衛',{health:7800,power:720,magic:610,defense:820,speed:3},2,[
+      skill('核能砲',{kind:'basic',multiplier:1.0,range:5,attackStyle:'ranged'}),
+      skill('裝甲強化',{effect:'shield',value:1.18,range:3,attackStyle:'support',cooldown:3})
+    ],{loreElement:'machine',size:2,guard:true,ai:'protect-reactor',resistances:['fire','burn'],weakness:'ocean',soundHooks:{attack:'nuclear-cannon',death:'heavy-collapse'},drops:{medals:7,essence:5}}),
+    enemy('overload_berserker','過載狂戰機','machine','attacker','首領親衛',{health:6800,power:910,magic:540,defense:470,speed:10},4,[
+      skill('狂暴鋸刃',{kind:'basic',multiplier:1.06}),
+      skill('自爆核心',{multiplier:1.38,range:3,radius:1,attackStyle:'area',cooldown:4,status:'burn',statusTurns:2})
+    ],{loreElement:'machine',size:2,guard:true,ai:'rush-lowest-hp',resistances:['burn'],weakness:'ocean',soundHooks:{attack:'berserk-blade',death:'overload-blast'},drops:{medals:7,essence:5}})
+  ];
+  var NUCLEAR_BOSS = enemy('overload_nuclear_golem','過載核能傀儡','fire','attacker','章節首領',{health:57000,power:1850,magic:1510,defense:1450,speed:5},3,[
+    skill('核能重拳',{kind:'basic',multiplier:1.08,range:2,radius:1,attackStyle:'area'}),
+    skill('爐心震爆',{multiplier:1.28,range:6,radius:2,attackStyle:'area',cooldown:3,status:'burn',statusTurns:2}),
+    skill('終極過載',{kind:'ultimate',multiplier:1.92,range:6,radius:3,attackStyle:'area',cooldown:5,push:3,status:'burn',statusTurns:3})
+  ],{boss:true,size:5,loreElement:'machine',ai:'low-hp-berserk',resistances:['fire','burn'],weakness:'ocean',soundHooks:{attack:'nuclear-impact',phase:'reactor-alarm',death:'core-meltdown'},drops:{medals:46,essence:28,fusionCore:4},passives:[{name:'過載爐心',effect:'atk_boost',value:.2}],bossPhases:[
+    {phase:1,name:'穩定爐心',skillIndex:0,warning:'反應爐仍在穩定輸出，先切斷維修線。'},
+    {phase:2,name:'紅熱臨界',skillIndex:1,summonCount:2,shieldRate:.05,teamBuff:true,warning:'爐心升至臨界溫度，地表開始燃燒。'},
+    {phase:3,name:'毀滅倒數',skillIndex:2,summonCount:3,shieldRate:.08,status:'burn',statusCount:3,riftPower:.12,warning:'終極過載啟動：必須在全場熔毀前擊破傀儡。'}
+  ]});
+
+  /* 第 20 章：機械神明祭壇。兩種量產機提供同步射擊與能源支援，
+     親衛負責絕對防禦與封鎖；Ω-00 依序啟動秩序、數據化與終焉協議。 */
+  var OMEGA_ALTAR = [
+    enemy('omega_trooper','Ω量產兵','machine','attacker','機械小兵',{health:3600,power:780,magic:470,defense:320,speed:8},3,[
+      skill('制式射擊',{kind:'basic',multiplier:.96,range:5,attackStyle:'ranged'}),
+      skill('同步作戰',{effect:'buff_atk',range:4,attackStyle:'support',cooldown:3})
+    ],{loreElement:'machine',ai:'synchronized-fire',resistances:['light'],weakness:'dark',soundHooks:{attack:'omega-rifle',death:'data-shatter'},drops:{medals:5,essence:3}}),
+    enemy('central_core_unit','中央核心機','machine','healer','機械小兵',{health:3300,power:200,magic:900,defense:300,speed:7},4,[
+      skill('資料脈衝',{kind:'basic',multiplier:.82,range:5,attackStyle:'ranged'}),
+      skill('能源同步',{effect:'heal_all',multiplier:.72,range:5,radius:2,attackStyle:'support',cooldown:3})
+    ],{loreElement:'machine',ai:'support-omega-network',resistances:['light','freeze'],weakness:'dark',soundHooks:{attack:'data-pulse',death:'data-shatter'},drops:{medals:5,essence:3}}),
+    enemy('omega_guard','Ω近衛兵','machine','defender','首領親衛',{health:8800,power:820,magic:620,defense:940,speed:5},3,[
+      skill('Ω斬擊',{kind:'basic',multiplier:1.04}),
+      skill('絕對防禦',{effect:'shield',value:1.3,range:4,attackStyle:'support',cooldown:3})
+    ],{loreElement:'machine',size:2,guard:true,ai:'absolute-guard',resistances:['light','freeze'],weakness:'dark',soundHooks:{attack:'omega-slash',death:'heavy-data-collapse'},drops:{medals:8,essence:6}}),
+    enemy('terminal_adjudicator','終端裁決者','machine','controller','首領親衛',{health:7600,power:560,magic:1060,defense:590,speed:9},4,[
+      skill('裁決光束',{kind:'basic',multiplier:1.0,range:6,attackStyle:'ranged'}),
+      skill('系統封鎖',{multiplier:1.22,range:7,radius:2,attackStyle:'area',cooldown:3,status:'freeze',statusTurns:1})
+    ],{loreElement:'machine',size:2,guard:true,ai:'lock-highest-power',resistances:['dark','freeze'],weakness:'fire',soundHooks:{attack:'judgment-beam',death:'heavy-data-collapse'},drops:{medals:8,essence:6}})
+  ];
+  var OMEGA_BOSS = enemy('omega_00','秩序執行官 Ω-00','machine','allrounder','篇章最終首領',{health:72000,power:2050,magic:2250,defense:1720,speed:9},4,[
+    skill('秩序裁斷',{kind:'basic',multiplier:1.08,range:5,attackStyle:'ranged'}),
+    skill('生命數據化',{multiplier:1.3,range:7,radius:2,attackStyle:'area',cooldown:3,status:'freeze',statusTurns:1}),
+    skill('Ω終焉協議',{kind:'ultimate',multiplier:2.02,range:8,radius:3,attackStyle:'area',cooldown:5,pull:4})
+  ],{boss:true,size:5,loreElement:'machine',ai:'omega-absolute-order',resistances:['light','dark','freeze'],weakness:'fire',soundHooks:{attack:'omega-judgment',phase:'omega-protocol',death:'omega-collapse'},drops:{medals:60,essence:36,fusionCore:5},passives:[{name:'絕對秩序',effect:'all_boost',value:.22}],bossPhases:[
+    {phase:1,name:'秩序演算',skillIndex:0,warning:'Ω-00 正在建立絕對秩序模型。'},
+    {phase:2,name:'生命數據化',skillIndex:1,summonCount:2,shieldRate:.08,status:'freeze',statusCount:2,warning:'數據化封鎖啟動：被鎖定的生命將失去行動。'},
+    {phase:3,name:'Ω終焉協議',skillIndex:2,summonCount:3,shieldRate:.12,teamBuff:true,riftPower:.16,warning:'全場機械同步強化，終焉協議開始覆寫世界。'}
+  ]});
+
+  global.TACTICAL_ENEMY_DATA = MINIONS.concat(BOSSES, SKELETONS, MACHINE_ARC, MACHINE_BOSSES, GRAVITY_FIELD, [GRAVITY_BOSS], NANO_FACTORY, [NANO_QUEEN], ARGUS_TOWER, [ARGUS_BOSS], NUCLEAR_HEART, [NUCLEAR_BOSS], OMEGA_ALTAR, [OMEGA_BOSS]);
 }(typeof window !== 'undefined' ? window : globalThis));

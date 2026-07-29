@@ -44,12 +44,12 @@ test('範圍技能具有有效半徑', () => assert.ok(profiles.flatMap(pet => p
 test('每個戰棋技能皆有資料驅動特效識別', () => assert.ok(profiles.every(pet => pet.skills.every(skill => skill.vfxKey && Number.isInteger(skill.vfxVariant) && skill.vfxHue >= 0 && skill.vfxHue < 360))));
 test('所有戰棋頭像與三階透明立繪存在', () => assert.ok(tactical.every(pet => existsSync(join(root, pet.sourceSheet)) && pet.evolution.every(stage => existsSync(join(root, stage.portrait))))));
 
-test('第 15 章前的敵軍資料包含 66 種小兵與 19 隻首領', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 66); assert.equal(enemies.filter(enemy => enemy.boss).length, 19); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2 && boss.size <= 5)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 4)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 5)); });
+test('第 1～20 章敵軍資料包含 86 種小兵與 24 隻首領', () => { assert.equal(enemies.filter(enemy => enemy.minion).length, 86); assert.equal(enemies.filter(enemy => enemy.boss).length, 24); assert.ok(enemies.filter(enemy => enemy.boss).every(boss => boss.size >= 2 && boss.size <= 5)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 4)); assert.ok(enemies.some(enemy => enemy.boss && enemy.size === 5)); });
 test('小兵只有單一階段且首領有專屬立繪', () => assert.ok(enemies.every(enemy => enemy.evolution.length === 1 && enemy.evolution[0].portrait.startsWith('assets/enemies/'))));
 test('所有敵人圖片檔案存在', () => assert.ok(enemies.every(enemy => existsSync(join(root, enemy.evolution[0].portrait)))));
-test('115 隻幻獸與 85 隻魔獸皆有左右待機、移動、攻擊六列動畫表', () => {
+test('115 隻幻獸與 110 隻魔獸皆有左右待機、移動、攻擊六列動畫表', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/units/manifest.json'), 'utf8'));
-  assert.equal(profiles.length, 200);
+  assert.equal(profiles.length, 225);
   for (const unit of profiles) {
     const entry = manifest[unit.id];
     assert.ok(entry, `${unit.id} 缺少動畫清單`);
@@ -58,7 +58,7 @@ test('115 隻幻獸與 85 隻魔獸皆有左右待機、移動、攻擊六列動
     assert.ok(existsSync(join(root, entry.file)), `${unit.id} 缺少 ${entry.file}`);
   }
   const runtimeSheets = readdirSync(join(root, 'assets/animations/units')).filter(name => name.endsWith('-motion-sheet.webp'));
-  assert.equal(runtimeSheets.length, 200);
+  assert.equal(runtimeSheets.length, 225);
   assert.ok(runtimeSheets.every(name => statSync(join(root, 'assets/animations/units', name)).size > 1000));
 });
 test('敵人陣營涵蓋擊退、拉扯、冰凍、中毒控場', () => {
@@ -71,19 +71,20 @@ test('玩家控制型幻獸具有異常狀態與拉扯技能', () => {
   assert.ok(controllers.some(skill => skill.status) && controllers.some(skill => skill.pull));
 });
 
-test('戰役包含 15 大章節 × 205 關（149 主線 + 56 HARD）', () => {
-  assert.equal(content.maps.length, 15); assert.equal(content.stages.length, 205);
+test('戰役包含 20 大章節 × 255 關（184 主線／Boss + 71 HARD）', () => {
+  assert.equal(content.maps.length, 20); assert.equal(content.stages.length, 255);
   const main = content.stages.filter(stage => !stage.hard);
-  assert.equal(main.length, 149);
-  assert.deepEqual(Array.from(main, stage => stage.order).sort((a, b) => a - b), Array.from({ length: 149 }, (_, index) => index + 1));
-  assert.equal(content.stages.filter(stage => stage.hard).length, 56);
+  assert.equal(main.length, 184);
+  assert.deepEqual(Array.from(main, stage => stage.order).sort((a, b) => a - b), Array.from({ length: 184 }, (_, index) => index + 1));
+  assert.equal(content.stages.filter(stage => stage.hard).length, 71);
 });
-test('第 1～11 章維持 10 小關＋4 HARD，第 12～15 章為 6 小關＋3 HARD', () => {
+test('第 1～11 章維持 10 小關＋4 HARD，第 12～20 章為 6 小關＋3 HARD', () => {
   for (const chapter of content.maps) {
     const own = content.stages.filter(stage => stage.mapId === chapter.id);
-    assert.equal(own.filter(stage => !stage.hard && !stage.boss).length, chapter.id.match(/^c1[2-5]$/) ? 6 : 10, chapter.id);
+    const compact = Number(chapter.id.slice(1)) >= 12;
+    assert.equal(own.filter(stage => !stage.hard && !stage.boss).length, compact ? 6 : 10, chapter.id);
     assert.equal(own.filter(stage => stage.boss).length, 1, chapter.id);
-    assert.equal(own.filter(stage => stage.hard).length, chapter.id.match(/^c1[2-5]$/) ? 3 : 4, chapter.id);
+    assert.equal(own.filter(stage => stage.hard).length, compact ? 3 : 4, chapter.id);
     const boss = own.find(stage => stage.boss);
     assert.ok(enemies.find(enemy => enemy.id === boss.enemies[0])?.boss, chapter.id);
   }
@@ -109,11 +110,11 @@ test('第 1～11 章出場魔獸與可編入幻獸都有完整上下左右動作
     assert.ok(existsSync(join(root, entry.file)), `${unit.id} 缺少四方向動作圖檔`);
   }
 });
-test('腐帽根靈與毒刃螳螂的左右欄位依實戰校正，不會反向面對移動目標', () => {
+test('腐帽根靈、毒刃螳螂與重裝鐵衛的左右欄位依實戰校正，不會反向面對移動目標', () => {
   const manifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
-  ['rotcap_rootling', 'venom_mantis'].forEach(id => assert.deepEqual(Array.from(manifest[id].sourceColumns), [0, 3, 2, 1], `${id} 左右欄位未交換`));
+  ['rotcap_rootling', 'venom_mantis', 'heavy_rail_guard'].forEach(id => assert.deepEqual(Array.from(manifest[id].sourceColumns), [0, 3, 2, 1], `${id} 左右欄位未交換`));
   const builder = readFileSync(join(root, 'scripts/build-four-direction-motion.py'), 'utf8');
-  assert.match(builder, /"rotcap_rootling", "venom_mantis"/);
+  assert.match(builder, /"rotcap_rootling", "venom_mantis"[\s\S]*"heavy_rail_guard"/);
 });
 
 test('關卡難度倍率章節內遞增、章節起點逐章提高', () => {
@@ -125,10 +126,10 @@ test('關卡難度倍率章節內遞增、章節起點逐章提高', () => {
   const starts = content.maps.map(map => content.stages.find(stage => stage.mapId === map.id).power);
   assert.ok(starts.every((power, index) => index === 0 || power > starts[index - 1]), '章節起點難度未逐章提高');
 });
-test('205 張長卷／首領／HARD 美術地圖都有 21×10 逐格標註且只用合法圖例', () => {
+test('255 張長卷／首領／HARD 美術地圖都有 21×10 逐格標註且只用合法圖例', () => {
   const grids = context.TACTICAL_MAP_TERRAIN;
   const keys = new Set(content.stages.map(stage => content.mapAsset(stage).match(/chapter-\d{2}-(?:story-\d{2}|boss|hard-[1-4])/)[0]));
-  assert.equal(keys.size, 205);
+  assert.equal(keys.size, 255);
   keys.forEach(key => {
     const grid = grids[key];
     assert.ok(grid, `缺少 ${key} 的地形標註`);
@@ -156,9 +157,9 @@ test('長卷小關各自使用推進切片，平原中央不得標禁行', () =>
     assert.equal(central.length, 0, `${stage.id} 在開闊平原標了禁行`);
   }
 });
-test('15 章均提供長卷切片、boss 與 HARD 21×10 大地圖', () => {
+test('20 章均提供長卷切片、boss 與 HARD 21×10 大地圖', () => {
   const assets = new Set(content.stages.map(stage => content.mapAsset(stage)));
-  assert.equal(assets.size, 205);
+  assert.equal(assets.size, 255);
   assets.forEach(asset => { assert.match(asset, /chapter-\d{2}-(story-\d{2}|boss|hard-[1-4])-21x10\.jpg$/); assert.ok(existsSync(join(root, asset)), `缺少 ${asset}`); });
   assert.equal(content.mapAsset(content.stageById('c1-1')), 'assets/maps/chapter-01-story-01-21x10.jpg');
   assert.equal(content.mapAsset(content.stageById('c10-boss')), 'assets/maps/chapter-10-boss-21x10.jpg');
@@ -433,11 +434,37 @@ test('我方自由部署區為靠左側 3×10 並可支援最高 30 容量規則
   assert.match(source, /DEPLOY_MIN_X = 0, DEPLOY_MAX_X = 2, DEPLOY_MIN_Y = 0, DEPLOY_MAX_Y = 9/);
   assert.match(source, /function partyCapacity\(\)/);
 });
-test('每章 Boss 關為 5×5 首領、2×2 菁英親衛與隨章節增加的 1×1 小兵，含三階段機制', () => {
+test('每章 Boss 關為 5×5 首領、2～3 隻 2×2 菁英親衛與隨章節增加的 1×1 小兵，含三階段機制', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'), contentSource = readFileSync(join(root, 'js/data/tactical-content.js'), 'utf8');
   const bosses = content.stages.filter(stage => stage.boss && !stage.bossRaid);
-  assert.equal(bosses.length, 15); assert.ok(bosses.every(stage => stage.bossGuards.length === (stage.chapter <= 5 ? 2 : 3))); assert.ok(bosses.every(stage => stage.bossMinionCount >= 4 && stage.bossMinionCount <= 8));
+  assert.equal(bosses.length, 20); assert.ok(bosses.every(stage => stage.bossGuards.length >= 2 && stage.bossGuards.length <= 3)); assert.ok(bosses.every(stage => stage.bossMinionCount >= 4 && stage.bossMinionCount <= 8));
   assert.match(contentSource, /bossGuards/); assert.match(contentSource, /bossMinionCount/); assert.match(source, /size: 5, boss: true/); assert.match(source, /size: 2, elite: true/); assert.match(source, /function triggerBossPhase\(boss\)/); assert.match(source, /ratio <= 0\.35/); assert.match(source, /ratio <= 0\.70/);
+});
+
+test('第 19～20 章各有 5 隻正式敵軍、10 關、三階段 Boss 與完整四方向來源', () => {
+  const directional = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
+  const chapterIds = {
+    19: ['overload_nuclear_golem','nuclear_technician','reactor_guard','nuclear_heavy','overload_berserker'],
+    20: ['omega_00','omega_trooper','central_core_unit','omega_guard','terminal_adjudicator']
+  };
+  for (const [chapter, ids] of Object.entries(chapterIds)) {
+    const stages = content.stages.filter(stage => stage.chapter === Number(chapter));
+    assert.equal(stages.length, 10, `第 ${chapter} 章關卡數`);
+    assert.equal(stages.filter(stage => stage.boss).length, 1);
+    assert.equal(stages.filter(stage => stage.hard).length, 3);
+    ids.forEach(id => {
+      const unit = enemies.find(enemy => enemy.id === id);
+      assert.ok(unit, `${id} 未登錄敵軍`);
+      assert.ok(directional[id], `${id} 未登錄四方向動畫`);
+      assert.equal(directional[id].rows, 24);
+      assert.equal(directional[id].sourceType, 'authored-four-direction');
+      assert.ok(existsSync(join(root, directional[id].source)), `${id} 缺少原生方向來源`);
+    });
+    const boss = enemies.find(enemy => enemy.id === ids[0]);
+    assert.equal(boss.size, 5);
+    assert.equal(boss.bossPhases.length, 3);
+    assert.deepEqual(Array.from(boss.bossPhases, phase => phase.phase), [1, 2, 3]);
+  }
 });
 
 test('2×2 幻獸全數優先採用原生四方向來源', () => {

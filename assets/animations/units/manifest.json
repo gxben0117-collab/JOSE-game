@@ -2519,6 +2519,356 @@
       "attack-left"
     ]
   },
+  "magnetic_infantry": {
+    "file": "assets/animations/units/magnetic_infantry-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "gravity_probe": {
+    "file": "assets/animations/units/gravity_probe-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "gravity_warden": {
+    "file": "assets/animations/units/gravity_warden-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "magnetic_storm_knight": {
+    "file": "assets/animations/units/magnetic_storm_knight-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "magnetic_gravity_core": {
+    "file": "assets/animations/units/magnetic_gravity_core-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nano_worker": {
+    "file": "assets/animations/units/nano_worker-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "repair_swarm": {
+    "file": "assets/animations/units/repair_swarm-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "swarm_warlord": {
+    "file": "assets/animations/units/swarm_warlord-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nano_guardian": {
+    "file": "assets/animations/units/nano_guardian-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nano_swarm_queen": {
+    "file": "assets/animations/units/nano_swarm_queen-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "surveillance_orb": {
+    "file": "assets/animations/units/surveillance_orb-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "optical_sniper": {
+    "file": "assets/animations/units/optical_sniper-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "argus_guardian": {
+    "file": "assets/animations/units/argus_guardian-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "predictive_executor": {
+    "file": "assets/animations/units/predictive_executor-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "argus_omniscient_eye": {
+    "file": "assets/animations/units/argus_omniscient_eye-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nuclear_technician": {
+    "file": "assets/animations/units/nuclear_technician-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "reactor_guard": {
+    "file": "assets/animations/units/reactor_guard-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "nuclear_heavy": {
+    "file": "assets/animations/units/nuclear_heavy-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "overload_berserker": {
+    "file": "assets/animations/units/overload_berserker-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "overload_nuclear_golem": {
+    "file": "assets/animations/units/overload_nuclear_golem-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "omega_trooper": {
+    "file": "assets/animations/units/omega_trooper-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "central_core_unit": {
+    "file": "assets/animations/units/central_core_unit-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "omega_guard": {
+    "file": "assets/animations/units/omega_guard-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "terminal_adjudicator": {
+    "file": "assets/animations/units/terminal_adjudicator-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
+  "omega_00": {
+    "file": "assets/animations/units/omega_00-motion-sheet.webp",
+    "columns": 4,
+    "rows": 6,
+    "frame": 112,
+    "rowsOrder": [
+      "idle-right",
+      "move-right",
+      "attack-right",
+      "idle-left",
+      "move-left",
+      "attack-left"
+    ]
+  },
   "antivirus_drone": {
     "file": "assets/animations/units/antivirus_drone-motion-sheet.webp",
     "columns": 4,

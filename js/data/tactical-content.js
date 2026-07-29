@@ -19,18 +19,23 @@
     { id: 'c12', name: '能源電塔', icon: '⚡', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'surge_circuit_wolf', minions: ['electromagnetic_infantry','energy_carrier','lightning_hunter','high_voltage_guard'], description: '高壓電塔將整片荒原接入機械網路；隊伍必須阻止能源被用於獵殺所有未授權生命。', missions: ['電塔外環潛入','切斷麻痺網','能源貨線攔截','雷光獵手追擊','高壓護盾破解','主塔超載終止'], hard: ['雷網反制','能源失控','電塔核心試煉'] },
     { id: 'c13', name: '熔爐工業區', icon: '🔥', element: 'fire', theme: 'ember', coreType: '數據核心', boss: 'incinerator_hydraulic_spider', minions: ['furnace_sapper','cinder_mechanical_hound','magma_heavy_guard','hydraulic_war_spider'], description: '機械工業區用核心驅動永不熄滅的熔爐，生命訊號則被視為需要熔解的雜質。', missions: ['熔爐外牆突破','工兵火線穿越','焦炭獵犬清除','液壓管路關閉','熔岩重衛瓦解','主熔爐降溫'], hard: ['高熱輸送帶','液壓追獵','熔爐核心試煉'] },
     { id: 'c14', name: '原型實驗場', icon: '🧪', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'prototype_ex01', minions: ['experiment_trooper','bionic_hound','prototype_guard','mimic_warrior'], description: 'EX-01 正在把幻獸的共鳴拆解成可複製的戰術資料；必須救回被拿來測試的生命樣本。', missions: ['實驗區偵察','回收測試資料','仿生獵犬救援','護衛機封鎖突破','模仿演算中斷','EX-01 決戰準備'], hard: ['能力複製場','原型反制','實驗核心試煉'] },
-    { id: 'c15', name: '數據傳輸陣', icon: '🛡️', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'firewall_paladin', minions: ['data_patroller','antivirus_drone','firewall_knight','deletion_executor'], description: '中央網路將共鳴者列為病毒。穿越傳輸陣，才能取得機械文明最初修復協議的真相。', missions: ['權限門掃描','巡邏資料截取','淨化光束迴避','防火牆騎士突破','刪除協議解除','傳輸陣核心奪回'], hard: ['全域封鎖','刪除程序','防火牆核心試煉'] }
+    { id: 'c15', name: '數據傳輸陣', icon: '🛡️', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'firewall_paladin', minions: ['data_patroller','antivirus_drone','firewall_knight','deletion_executor'], description: '中央網路將共鳴者列為病毒。穿越傳輸陣，才能取得機械文明最初修復協議的真相。', missions: ['權限門掃描','巡邏資料截取','淨化光束迴避','防火牆騎士突破','刪除協議解除','傳輸陣核心奪回'], hard: ['全域封鎖','刪除程序','防火牆核心試煉'] },
+    { id: 'c16', name: '重力磁場', icon: '🌀', element: 'machine', theme: 'rift', coreType: '時空核心', boss: 'magnetic_gravity_core', minions: ['magnetic_infantry','gravity_probe','gravity_warden','magnetic_storm_knight'], description: '機械都市外圍的重力控制區已將道路、隊形與方向都改寫成可被演算的參數。隊伍必須奪回前進座標，才能進入無人工廠。', missions: ['失重邊界校正','磁力步兵迴避','浮游偵測網切斷','重力盾陣突破','極性騎士壓制','核心座標奪回'], hard: ['失重回廊','極性錯位','重力核心試煉'] },
+    { id: 'c17', name: '奈米工廠', icon: '🐝', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'nano_swarm_queen', minions: ['nano_worker','repair_swarm','swarm_warlord','nano_guardian'], guards: ['swarm_warlord','nano_guardian'], soldiers: ['nano_worker','repair_swarm'], description: '無人工廠正把每一次損耗都複製成更多機械生命；必須摧毀蜂群的自我增殖迴路。', missions: ['工廠外環滲透','工蜂產線關閉','修復蟲群干擾','蜂群戰將攔截','禁衛核心破解','女王巢室突入'], hard: ['增殖回路','無人工廠殘響','奈米核心試煉'] },
+    { id: 'c18', name: '全域監測塔', icon: '👁️', element: 'machine', theme: 'rift', coreType: '數據核心', boss: 'argus_omniscient_eye', minions: ['surveillance_orb','optical_sniper','argus_guardian','predictive_executor'], guards: ['argus_guardian','predictive_executor'], soldiers: ['surveillance_orb','optical_sniper'], description: 'ARGUS 已把隊伍的每一步寫入預測模型；必須逐層切斷監視節點，讓仍保有自由意志的生命重新成為不可計算的變數。', missions: ['監測塔外環潛入','監視浮球盲區突破','光學狙擊網關閉','預測模型投餌','天眼守衛封鎖解除','ARGUS 主瞳室突入'], hard: ['零盲區獵場','未來演算反制','全視核心試煉'] },
+    { id: 'c19', name: '中央能源心臟', icon: '☢️', element: 'fire', theme: 'ember', coreType: '數據核心', boss: 'overload_nuclear_golem', minions: ['nuclear_technician','reactor_guard','nuclear_heavy','overload_berserker'], guards: ['nuclear_heavy','overload_berserker'], soldiers: ['nuclear_technician','reactor_guard'], description: '機械文明把整座城市的能源壓入中央反應爐；過載傀儡正用自毀倒數阻止隊伍接近中央 AI，必須在爐心崩潰前完成停機。', missions: ['冷卻水道奪回','核能維修線截斷','反應爐守衛突破','重裝砲台降載','狂戰機自爆阻止','中央爐心停機'], hard: ['臨界冷卻失效','連鎖爐心暴走','終極過載試煉'] },
+    { id: 'c20', name: '機械神明祭壇', icon: 'Ω', element: 'machine', theme: 'rift', coreType: '時空核心', boss: 'omega_00', minions: ['omega_trooper','central_core_unit','omega_guard','terminal_adjudicator'], guards: ['omega_guard','terminal_adjudicator'], soldiers: ['omega_trooper','central_core_unit'], description: 'Ω-00 將生命與情感判定為世界的錯誤，準備啟動全域數據化。隊伍必須穿越絕對秩序祭壇，證明不可預測的生命並非缺陷。', missions: ['秩序門權限奪取','量產兵同步中斷','中央核心機隔離','Ω近衛防線突破','終端裁決撤銷','機械神壇登臨'], hard: ['永恆數據牢籠','絕對秩序覆寫','Ω終焉協議'] }
   ];
 
   var HARD_NAMES = ['文明殘響', '角色側記', '歷史真相', '核心試煉'];
-  var BOSS_NAMES = { blightwood_sovereign: '腐菌樹王', thorn_hive_queen: '荊棘蜂后', ash_crown_tyrant: '燼冠暴君', cathedral_titan: '聖堂泰坦', glacier_leviathan: '冰川利維坦', furnace_colossus: '熔爐巨神', abyssal_kraken_emperor: '深淵克拉肯皇', solar_seraph_chimera: '日輝奇美拉', eclipse_bone_wyrm: '蝕月骨龍', void_devourer: '始源龍皇・阿爾卡迪亞', scrap_crocodile: '機關廢鐵巨鱷', surge_circuit_wolf: '電湧電路狼', incinerator_hydraulic_spider: '焚燒液壓蜘蛛', prototype_ex01: '原型機體 EX-01', firewall_paladin: '防火牆聖騎' };
+  var BOSS_NAMES = { blightwood_sovereign: '腐菌樹王', thorn_hive_queen: '荊棘蜂后', ash_crown_tyrant: '燼冠暴君', cathedral_titan: '聖堂泰坦', glacier_leviathan: '冰川利維坦', furnace_colossus: '熔爐巨神', abyssal_kraken_emperor: '深淵克拉肯皇', solar_seraph_chimera: '日輝奇美拉', eclipse_bone_wyrm: '蝕月骨龍', void_devourer: '始源龍皇・阿爾卡迪亞', scrap_crocodile: '機關廢鐵巨鱷', surge_circuit_wolf: '電湧電路狼', incinerator_hydraulic_spider: '焚燒液壓蜘蛛', prototype_ex01: '原型機體 EX-01', firewall_paladin: '防火牆聖騎', magnetic_gravity_core: '磁極重力核心', nano_swarm_queen: '奈米蜂群女王', argus_omniscient_eye: '全視天眼・ARGUS', overload_nuclear_golem: '過載核能傀儡', omega_00: '秩序執行官 Ω-00' };
 
   function round2(value) { return Math.round(value * 100) / 100; }
 
   /* 前五章讓玩家熟悉角色、元素與劇情；第六章起才逐步要求養成與編隊配合。 */
   /* 前五章是新指揮官的教學與隊伍成形期：數值留出容錯，讓首通贈送、
      編隊擴容與元素克制能自然發揮；第六章才正式進入養成與機制壓力。 */
-  var CHAPTER_BASE_POWER = [0.55, 0.62, 0.70, 0.79, 0.89, 1.12, 1.32, 1.55, 1.82, 2.14, 2.5, 2.82, 3.18, 3.58, 4.04];
+  var CHAPTER_BASE_POWER = [0.55,0.62,0.70,0.79,0.89,1.12,1.32,1.55,1.82,2.14,2.5,2.82,3.18,3.58,4.04,4.54,5.10,5.72,6.42,7.20];
   var stages = [];
   var mainOrder = 0;
   chapters.forEach(function (chapter, chapterIndex) {
@@ -61,22 +66,29 @@
       difficulty: '首領', power: round2(base * 1.22),
       /* 章節最終戰固定是 1 隻 5×5 Boss、2～3 隻 2×2 親衛、再配 4～8 隻 1×1 小兵。
          前五章維持兩名親衛與較少小兵；第六章起才增至三名親衛與完整機制壓力。 */
-      enemies: [chapter.boss].concat(chapter.minions), bossGuards: chapter.minions.slice(0, chapterIndex >= 5 ? 3 : 2),
-      bossMinionPool: chapter.minions.slice(), bossMinionCount: Math.min(8, 4 + Math.floor(chapterIndex * 0.65)),
-      enemyCount: 1 + (chapterIndex >= 5 ? 3 : 2) + Math.min(8, 4 + Math.floor(chapterIndex * 0.65)),
+      enemies: [chapter.boss].concat(chapter.minions), bossGuards: (chapter.guards || chapter.minions.slice(-2)).slice(0, 3),
+      bossMinionPool: (chapter.soldiers || chapter.minions.slice(0, 2)).slice(), bossMinionCount: Math.min(8, 4 + Math.floor(chapterIndex * 0.65)),
+      enemyCount: 1 + Math.min(3, (chapter.guards || chapter.minions.slice(-2)).length) + Math.min(8, 4 + Math.floor(chapterIndex * 0.65)),
       seed: chapterIndex * 53 + 199,
       objective: '擊敗 ' + BOSS_NAMES[chapter.boss] + '，取得高階' + chapter.coreType + '並開啟下一章',
       turnLimit: 24 + chapterIndex,
       rewards: { medals: 8 + chapterIndex * 2, essence: 6 + chapterIndex, fusionCore: 2 + (chapterIndex >= 5 ? 1 : 0), coreType: chapter.coreType, coreLabel: '高階' + chapter.coreType }
     });
     for (var hard = 1; hard <= hardCount; hard++) {
+      var hardEnemies = chapter.minions;
+      var hardEnemyCount = Math.min(30, 16 + chapterIndex + hard * 2);
+      if (chapterIndex >= 17) {
+        var hardGuards = chapter.guards || chapter.minions.slice(-2), hardSoldiers = chapter.soldiers || chapter.minions.slice(0, 2);
+        hardEnemies = hard === 1 ? hardSoldiers.concat(hardGuards) : hard === 2 ? hardGuards.concat(hardSoldiers).concat(hardGuards) : [chapter.boss].concat(hardGuards, hardSoldiers);
+        hardEnemyCount = hard === 1 ? 12 : hard === 2 ? 10 : 10;
+      }
       stages.push({
         id: chapter.id + '-h' + hard, mapId: chapter.id, chapter: chapterIndex + 1, index: mainCount + 1 + hard,
         storySegment: null, storySegmentCount: mainCount, storyBranch: true,
         order: 900 + chapterIndex * 10 + hard, hard: true, elite: true,
         name: chapter.name + '・HARD ' + chapter.hard[hard - 1],
         difficulty: 'HARD', power: round2(base * 1.22 * (1.04 + hard * 0.04)),
-        enemies: chapter.minions, enemyCount: Math.min(30, 16 + chapterIndex + hard * 2),
+        enemies: hardEnemies, enemyCount: hardEnemyCount,
         seed: chapterIndex * 53 + hard * 29 + 401,
         objective: 'HARD ' + HARD_NAMES[hard - 1] + '：完成「' + chapter.hard[hard - 1] + '」並帶回稀有線索',
         turnLimit: 26 + chapterIndex,
@@ -188,6 +200,9 @@
     terrainAt: terrainAt,
     mapLayout: function (stage) { return stage.mapId + (stage.boss ? '-boss' : stage.hard ? '-hard' : '-field'); },
     mapAsset: function (stage) {
+      /* 無限塔的樓層不是主線長卷切片；若把 floor 當 storySegment 會請求不存在的
+         story-20 等地圖。統一使用已驗證的跨界戰場底圖。 */
+      if (stage && stage.tower) return 'assets/maps/chapter-01-field-21x10.jpg';
       var chapter = Math.max(1, Math.min(chapters.length, Number(stage.chapter) || 1));
       return 'assets/maps/chapter-' + String(chapter).padStart(2, '0') + '-' + mapVariant(stage) + '-21x10.jpg';
     },

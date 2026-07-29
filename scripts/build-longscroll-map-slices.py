@@ -12,7 +12,7 @@ from PIL import Image, ImageEnhance
 ROOT = Path(__file__).resolve().parents[1]
 MAPS = ROOT / "assets" / "maps"
 TARGET = (1680, 800)
-COUNTS = {**{chapter: 10 for chapter in range(1, 12)}, **{chapter: 6 for chapter in range(12, 16)}}
+COUNTS = {**{chapter: 10 for chapter in range(1, 12)}, **{chapter: 6 for chapter in range(12, 21)}}
 
 
 def make_stage(master: Image.Image, index: int, count: int) -> Image.Image:
@@ -43,6 +43,20 @@ def main() -> None:
                 out = MAPS / f"chapter-{chapter:02d}-story-{stage:02d}-21x10.jpg"
                 make_stage(master, stage - 1, count).save(out, quality=92, optimize=True, progressive=True)
                 made += 1
+            # 第 17 章後的長卷原畫同時是 Boss／HARD 支線戰場的正式來源。
+            # Boss 固定取最右端終點；三個 HARD 取不同路段並調整對比與色彩，
+            # 保留同章世界觀，同時避免只是重複普通關卡的同一張畫面。
+            if chapter >= 17:
+                boss = ImageEnhance.Contrast(make_stage(master, count - 1, count)).enhance(1.12)
+                boss.save(MAPS / f"chapter-{chapter:02d}-boss-21x10.jpg", quality=93, optimize=True, progressive=True)
+                made += 1
+                for hard in range(1, 4):
+                    position = (hard / 4) * (count - 1)
+                    arena = make_stage(master, position, count)
+                    arena = ImageEnhance.Contrast(arena).enhance(1.06 + hard * .035)
+                    arena = ImageEnhance.Color(arena).enhance(1.02 + hard * .04)
+                    arena.save(MAPS / f"chapter-{chapter:02d}-hard-{hard}-21x10.jpg", quality=92, optimize=True, progressive=True)
+                    made += 1
     print(f"Built {made} long-scroll stage maps from {len(COUNTS)} chapter masters.")
 
 
