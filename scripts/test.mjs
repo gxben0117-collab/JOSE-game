@@ -38,6 +38,13 @@ test('每隻幻獸都有專屬且不重複的水晶召喚台詞', () => {
 test('每隻戰棋幻獸皆有三段進化', () => assert.ok(tactical.every(pet => pet.evolution?.length === 3)));
 test('每隻戰棋幻獸皆有可用技能與正數數值', () => assert.ok(tactical.every(pet => pet.skills?.length && Object.values(pet.stats).every(value => value > 0))));
 test('敵我所有戰棋單位皆以無冷卻傷害普攻作為第一技能', () => assert.ok(profiles.every(pet => pet.skills[0]?.kind === 'basic' && pet.skills[0].attackStyle !== 'support' && pet.skills[0].cooldown === 0 && pet.skills[0].multiplier > 0)));
+test('幻獸依定位使用 2～4 格移動與 1～4 格普攻射程', () => {
+  assert.ok(tactical.every(pet => pet.move >= 2 && pet.move <= 4 && pet.skills[0].range >= 1 && pet.skills[0].range <= 4));
+  assert.ok(tactical.filter(pet => pet.role === 'attacker' && pet.skills[0].attackStyle === 'melee').every(pet => pet.move === 4 && pet.skills[0].range === 1));
+  assert.ok(tactical.filter(pet => pet.role === 'controller' || pet.skills[0].attackStyle === 'ranged').every(pet => pet.skills[0].range === 4));
+  assert.ok(tactical.filter(pet => pet.role === 'defender' && pet.size >= 2).every(pet => pet.move === 2));
+  assert.ok(tactical.filter(pet => pet.role === 'allrounder' && pet.skills[0].attackStyle === 'melee').every(pet => pet.skills[0].range === 2));
+});
 test('被動技能不會混入可點擊技能', () => assert.ok(tactical.every(pet => pet.skills.every(skill => !['atk_boost', 'def_boost', 'hp_boost', 'all_boost', 'burn'].includes(skill.effect)))));
 test('輔助技能的效果語意與攻擊型態一致', () => assert.ok(profiles.every(pet => pet.skills.every(skill => skill.attackStyle !== 'support' || ['heal', 'heal_all', 'shield', 'buff_atk'].includes(skill.effect)))));
 test('範圍技能具有有效半徑', () => assert.ok(profiles.flatMap(pet => pet.skills).filter(skill => skill.attackStyle === 'area').every(skill => skill.radius >= 1)));
@@ -234,8 +241,8 @@ function progressionSandbox() {
   const sandbox = { console, TACTICAL_CONTENT: content, TACTICAL_PET_DATA: tactical, localStorage: { getItem: key => storage.get(key) ?? null, setItem: (key, value) => storage.set(key, value) } };
   sandbox.window = sandbox; vm.createContext(sandbox); vm.runInContext(readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8'), sandbox); return { sandbox, storage };
 }
-test('新版進度服務會建立安全預設存檔（含初始幻獸與測試水晶）', () => { const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.party.join(','), 'molten_ball,fire_lion,fire_fox,leaf_ear_rabbit'); assert.equal(service.state.currentStage, 'c1-1'); assert.equal(service.state.crystals, 5060); assert.equal(service.ownedPets().length, 4); assert.ok(service.state.party.every(id => service.owns(id))); });
-test('測試贈禮僅發放一次，召喚限定 1×1，且 200 抽保底隨機送出 1×1 幻獸', () => { const { sandbox, storage } = progressionSandbox(); storage.set('jose-tactics-progression-v2', JSON.stringify({ crystals: 60, party: ['molten_ball'] })); const service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.crystals, 5060); const second = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(second.state.crystals, 5060); const elemental = service.pull(1, 'fire'); assert.equal(elemental.ok, true); assert.equal(elemental.results[0].pet.size, 1); const featured = service.featuredProgress(); service.state.featuredPity = { date: featured.date, pulls: 199 }; service.state.crystals = 100; const result = service.pull(1, null, true); assert.equal(result.ok, true); assert.equal(result.results[0].pet.size, 1); assert.equal(result.results[0].featuredGuaranteed, true); assert.equal(service.featuredProgress().pulls, 0); });
+test('新版進度服務會建立安全預設存檔（含初始幻獸與測試水晶）', () => { const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.party.join(','), 'molten_ball,fire_lion,fire_fox,leaf_ear_rabbit'); assert.equal(service.state.currentStage, 'c1-1'); assert.equal(service.state.crystals, 360); assert.equal(service.ownedPets().length, 4); assert.ok(service.state.party.every(id => service.owns(id))); });
+test('測試贈禮僅發放一次，召喚限定 1×1，且 200 抽保底隨機送出 1×1 幻獸', () => { const { sandbox, storage } = progressionSandbox(); storage.set('jose-tactics-progression-v2', JSON.stringify({ crystals: 60, party: ['molten_ball'] })); const service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.crystals, 360); const second = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(second.state.crystals, 360); const elemental = service.pull(1, 'fire'); assert.equal(elemental.ok, true); assert.equal(elemental.results[0].pet.size, 1); const featured = service.featuredProgress(); service.state.featuredPity = { date: featured.date, pulls: 199 }; service.state.crystals = 100; const result = service.pull(1, null, true); assert.equal(result.ok, true); assert.equal(result.results[0].pet.size, 1); assert.equal(result.results[0].featuredGuaranteed, true); assert.equal(service.featuredProgress().pulls, 0); });
 test('舊版 3 人存檔保留隊伍並自動獲得擁有權', () => { const { sandbox, storage } = progressionSandbox(); storage.set('jose-tactics-progression-v2', JSON.stringify({ party: ['fire_fox', 'forest_deer', 'abyss_dragon'], medals: 9, fusion: { sea_emperor: 2 } })); const service = new sandbox.TacticalProgression({ profiles: tactical, content }); assert.equal(service.state.party.join(','), 'fire_fox,forest_deer,abyss_dragon'); assert.equal(service.state.medals, 9); assert.ok(service.owns('sea_emperor')); });
 test('召喚消耗水晶、給新幻獸或碎片補償', () => {
   const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content });
@@ -401,7 +408,7 @@ test('無限塔改為十波守護塔防衛，含波間加護、復甦與塔之�
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
   assert.match(source, /maxWaves: 10/); assert.match(source, /function guardianTower\(floor\)/); assert.match(source, /function towerBasePower\(floor\)/); assert.match(source, /function towerEnemyBuffs\(floor\)/); assert.match(source, /enemyBuffs: towerEnemyBuffs\(currentStage\.floor\)/); assert.match(source, /profiles\.filter\(function \(entry\) \{ return !entry\.boss; \}\)/); assert.match(source, /towerBosses: towerBosses/); assert.match(source, /function spawnTowerWave\(wave\)/); assert.match(source, /function completeTowerWave\(\)/); assert.match(source, /var TOWER_REVIVE_MS = 12000/); assert.match(source, /function placeTowerRevival\(unit\)/); assert.match(source, /placeTowerRevival\(unit\)/); assert.match(source, /reviveRemaining/); assert.match(source, /\* battleSpeed/); assert.match(source, /function queueTowerRevival\(unit\)/); assert.match(source, /function processTowerRevives\(\)/); assert.match(source, /function towerCommand\(\)/);
-  assert.match(source, /function chooseTowerBoon\(boon, automatic\)/); assert.match(source, /setTimeout\(function \(\) \{ chooseTowerBoon\(autoTowerBoon\(boons\), true\); \}, 5000\)/); assert.match(source, /function towerDefenseTarget\(unit\)/); assert.match(source, /autoEnabled: false/); assert.match(source, /state\.tower\.autoEnabled = true; spawnTowerWave\(1\); return;/); assert.match(source, /if \(currentStage\.tower\) return;/); assert.match(source, /stopAuto\(true\)/);
+  assert.match(source, /function chooseTowerBoon\(boon, automatic\)/); assert.match(source, /setTimeout\(function \(\) \{ chooseTowerBoon\(autoTowerBoon\(boons\), true\); \}, 5000\)/); assert.match(source, /function towerDefenseTarget\(unit\)/); assert.match(source, /autoEnabled: false/); assert.match(source, /state\.tower\.autoEnabled = true; battleStartInProgress = false; spawnTowerWave\(1\); return true;/); assert.match(source, /if \(currentStage\.tower\) return;/); assert.match(source, /stopAuto\(true\)/);
   assert.match(html, /id="tower-command"/); assert.match(html, /id="tower-choice"/); assert.match(battle, /\.guardian-tower\{/); assert.match(battle, /\.tower-choice\{/); assert.match(battle, /guardian-spire/);
 });
 test('戰鬥地圖可點選敵我單位查看完整資訊且已移除小地圖', () => {
@@ -458,7 +465,9 @@ test('第 19～20 章各有 5 隻正式敵軍、10 關、三階段 Boss 與完�
       assert.ok(directional[id], `${id} 未登錄四方向動畫`);
       assert.equal(directional[id].rows, 24);
       assert.equal(directional[id].sourceType, 'authored-four-direction');
-      assert.ok(existsSync(join(root, directional[id].source)), `${id} 缺少原生方向來源`);
+      const sourcePath = join(root, directional[id].source);
+      const archivedSourcePath = join(root, '不需要的檔案', directional[id].source);
+      assert.ok(existsSync(sourcePath) || existsSync(archivedSourcePath), `${id} 缺少原生方向來源`);
     });
     const boss = enemies.find(enemy => enemy.id === ids[0]);
     assert.equal(boss.size, 5);
@@ -545,14 +554,14 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=8/); assert.match(html, /js\/tactics\.js\?v=77/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=9/); assert.match(html, /js\/tactics\.js\?v=81/); assert.match(html, /id="battle-tutorial"/); assert.match(html, /id="result-advice"/); assert.match(html, /id="story-archive-modal"/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/); assert.doesNotMatch(source, /吾主，請下令/);
 });
 test('元素限定 1×1 召喚與每日 Boss 來襲可保存殘血並依五段難度解鎖', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const progression = readFileSync(join(root, 'js/core/TacticalProgression.js'), 'utf8');
-  assert.match(html, /id="gacha-element-pulls"/); assert.match(html, /id="open-boss-raid"/); assert.match(html, /id="boss-raid-modal"/); assert.match(html, /js\/core\/TacticalProgression\.js\?v=16/);
+  assert.match(html, /id="gacha-element-pulls"/); assert.match(html, /id="open-boss-raid"/); assert.match(html, /id="boss-raid-modal"/); assert.match(html, /js\/core\/TacticalProgression\.js\?v=18/);
   assert.match(source, /function bossRaidStage/); assert.match(source, /function enterBossRaid/); assert.match(source, /BOSS_RAID_TIERS = \['簡單', '普通', '困難', '菁英', '魔神'\]/); assert.match(source, /boss-tier-grid/); assert.match(source, /完成前一難度解鎖/); assert.match(source, /progression\.pull\(count, element, featured\)/); assert.match(source, /200 抽隨機保底池/);
   assert.match(progression, /TacticalProgression\.prototype\.bossRaidState/); assert.match(progression, /TacticalProgression\.prototype\.recordBossRaid/); assert.match(progression, /TacticalProgression\.prototype\.featuredProgress/); assert.match(progression, /FEATURED_PITY = 200/); assert.match(progression, /pet\.size === 1/); assert.match(progression, /var cost = element \? 50/);
 });
@@ -647,15 +656,16 @@ test('部署藍格僅在部署階段顯示，戰鬥地形具有獨立辨識符�
   assert.match(source, /terrainGlyph = tile === 'fire' \? '♨' : tile === 'forest' \? '♣' : '≈'/);
   assert.match(screenCss, /terrain-hint-water/);
 });
-test('內部遊玩 10 場均在硬回合上限內結束', () => { const result = spawnSync(process.execPath, ['scripts/simulate-tactics.mjs'], { cwd: root, encoding: 'utf8' }); assert.equal(result.status, 0, result.stderr || result.stdout); assert.match(result.stdout, /10 場通過/); assert.equal((result.stdout.match(/第 \d+ 場/g) || []).length, 10); });
+test('內部遊玩 10 場均在硬回合上限內結束', () => { const result = spawnSync(process.execPath, ['scripts/simulate-tactics.mjs'], { cwd: root, encoding: 'utf8' }); assert.equal(result.status, 0, result.stderr || result.stdout); assert.match(result.stdout, /10 場完成/); assert.equal((result.stdout.match(/第 \d+ 場/g) || []).length, 10); });
 
-test('手動戰鬥點選我方會開啟中央角色指令面板', () => {
+test('手動戰鬥點選我方會直接保留棋盤操作，技能由右側資訊欄選擇', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="battle-command"/); assert.match(html, /id="battle-command-portrait"/); assert.match(html, /id="battle-command-skills"/);
-  assert.match(source, /function renderBattleCommand/); assert.match(source, /state\.commandOpen = state\.phase === 'player'/);
-  assert.match(css, /\.battle-command\{position:fixed/); assert.match(css, /\.battle-panel #skill-buttons\{display:none!important/);
+  assert.match(html, /id="battle-command"/); assert.match(html, /id="skill-buttons"/);
+  assert.match(source, /state\.commandOpen = false; clearForecast\(\); note\('已選擇/);
+  assert.match(source, /dom\.skills\.appendChild\(actions\)/);
+  assert.doesNotMatch(css, /\.battle-panel #skill-buttons\{display:none!important/);
 });
 test('隊伍部署預設可儲存、讀取與清除', () => {
   const { sandbox } = progressionSandbox(), service = new sandbox.TacticalProgression({ profiles: tactical, content });
@@ -704,7 +714,7 @@ test('四方向圖集與自動部署使用完整方向列、保存最後站位',
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   assert.match(source, /function rememberFormation\(\)/);
-  assert.match(source, /rememberFormation\(\);\s+state\.phase = 'player'/);
+  assert.match(source, /state\.phase = 'player'; state\.selected = null; audio\.play\('ui'\);\s+\/\* 儲存站位是便利功能/);
   assert.match(source, /function autoArrangeBySpeed\(\)/);
   assert.match(source, /b\.p\.stats\.speed - a\.p\.stats\.speed/);
   assert.match(source, /id = 'formation-auto'/);
@@ -733,7 +743,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /js\/tactics\.js\?v=77/);
+  assert.match(html, /tactics-battle\.css\?v=15/); assert.match(html, /js\/tactics\.js\?v=81/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /element\.style\.setProperty\('--motion-sheet'/); assert.match(source, /motion-sprite motion-4dir/); assert.match(source, /applyMotionVariables\(element, unit\);/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
@@ -745,7 +755,7 @@ test('iPad 戰場維持 21×10 比例、中央棋盤優先且隊伍編輯可觸�
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
-  assert.match(html, /tactics-screens\.css\?v=33/);
+  assert.match(html, /tactics-screens\.css\?v=34/);
   assert.match(html, /id="deploy-squad-console"/);
   assert.match(screens, /\.idle-arena \.unit \.portrait\{[^}]*height:100%[^}]*aspect-ratio:1 \/ 1/);
   assert.match(screens, /@media \(min-width:700px\) and \(max-width:980px\)[\s\S]*width:max\(720px,100%\)[\s\S]*aspect-ratio:21 \/ 10/);

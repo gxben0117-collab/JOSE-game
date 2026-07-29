@@ -58,7 +58,8 @@ function battle(seed, stage, partyIds) {
     if (foes.some(unit => unit.hp > 0)) break; // 小隊未清光＝我方敗退
   }
   if (rounds >= 45) throw new Error(`${stage.id} 超出 45 回合硬上限`);
-  return { stage: stage.id, rounds, winner: allies.some(unit => unit.hp > 0) ? '我方' : '敵方', skills };
+  const survivors = allies.filter(unit => unit.hp > 0).length;
+  return { stage: stage.id, chapter: stage.chapter, rounds, winner: survivors ? '我方' : '敵方', skills, survivors, deaths: allies.length - survivors };
 }
 
 const starterParty = ['molten_ball', 'fire_lion', 'fire_fox', 'leaf_ear_rabbit'];
@@ -82,5 +83,17 @@ if (requestedRuns === 10) {
   const starterWins = results.filter((result, index) => ['c1-1', 'c1-2'].includes(selectedStages[index].id) && result.winner === '我方').length;
   if (starterWins < 1) throw new Error('初始 4 人隊連第一章前兩關都無法取勝，難度曲線失衡');
 }
-console.log(`✅ 戰棋內部遊玩 ${requestedRuns} 場通過`);
-results.forEach((result, index) => console.log(`第 ${index + 1} 場（${result.stage}）：${result.winner}勝利，${result.rounds} 回合，施放 ${result.skills} 次技能`));
+const chapterSummary = Array.from({ length: 20 }, (_, index) => index + 1).map(chapter => {
+  const rows = results.filter(result => result.chapter === chapter);
+  if (!rows.length) return null;
+  const wins = rows.filter(result => result.winner === '我方').length;
+  return { chapter, runs: rows.length, wins, winRate: Math.round(wins / rows.length * 100), averageRounds: Number((rows.reduce((sum, result) => sum + result.rounds, 0) / rows.length).toFixed(1)), averageDeaths: Number((rows.reduce((sum, result) => sum + result.deaths, 0) / rows.length).toFixed(1)) };
+}).filter(Boolean);
+console.log(`✅ 戰棋內部遊玩 ${requestedRuns} 場完成`);
+results.forEach((result, index) => console.log(`第 ${index + 1} 場（${result.stage}）：${result.winner}勝利，${result.rounds} 回合，倒下 ${result.deaths} 隻，施放 ${result.skills} 次技能`));
+if (process.argv.includes('--report')) {
+  const lines = ['# 1～20 章自動戰鬥模擬報表', '', `模擬場次：${requestedRuns}`, '', '| 章節 | 場次 | 勝率 | 平均回合 | 平均倒下 |', '| --- | ---: | ---: | ---: | ---: |'];
+  chapterSummary.forEach(row => lines.push(`| ${row.chapter} | ${row.runs} | ${row.winRate}% | ${row.averageRounds} | ${row.averageDeaths} |`));
+  fs.writeFileSync(new URL('docs/1～20章自動戰鬥模擬報表.md', root), lines.join('\n') + '\n', 'utf8');
+  console.log('✅ 已更新 docs/1～20章自動戰鬥模擬報表.md');
+}

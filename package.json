@@ -9,6 +9,8 @@
     "lint": "node scripts/lint.mjs",
     "test": "node scripts/test.mjs",
     "test:difficulty": "node scripts/audit-difficulty.mjs",
+    "report:balance": "node scripts/report-balance.mjs --write",
+    "report:simulation": "node scripts/simulate-tactics.mjs --runs=255 --report",
     "test:browser": "node scripts/browser-smoke.mjs"
   },
   "engines": { "node": ">=18" }

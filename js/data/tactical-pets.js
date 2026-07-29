@@ -50,8 +50,13 @@ Object.keys(TACTICAL_SUMMON_QUOTES).forEach(function (id) {
 
 function tacticalProfile(pet, index) {
   var role = TACTICAL_ROLE_BY_ID[pet.id] || 'allrounder';
-  var style = role === 'defender' ? 'melee' : role === 'healer' || role === 'support' ? 'support' : (pet.id.indexOf('bird') >= 0 || pet.id.indexOf('fish') >= 0 || pet.id.indexOf('spirit') >= 0 || pet.id.indexOf('jelly') >= 0 || pet.id.indexOf('eel') >= 0) ? 'ranged' : 'melee';
+  var size = TACTICAL_SIZE_BY_ID[pet.id] || 1;
+  /* 手動戰場採「近戰切入、遠程壓制」的機動基準：控制型固定遠程，
+     讓玩家不必為了使用控場而先走到敵人臉上。 */
+  var style = role === 'defender' ? 'melee' : role === 'healer' || role === 'support' ? 'support' : role === 'controller' ? 'ranged' : (pet.id.indexOf('bird') >= 0 || pet.id.indexOf('fish') >= 0 || pet.id.indexOf('spirit') >= 0 || pet.id.indexOf('jelly') >= 0 || pet.id.indexOf('eel') >= 0) ? 'ranged' : 'melee';
   var basicStyle = style === 'melee' ? 'melee' : 'ranged';
+  var movement = role === 'defender' ? (size >= 2 ? 2 : 3) : role === 'attacker' ? (basicStyle === 'melee' ? 4 : 3) : 3;
+  var basicRange = basicStyle === 'ranged' ? 4 : role === 'allrounder' ? 2 : 1;
   var hp = Math.round(pet.baseHp * (role === 'defender' ? 1.18 : role === 'attacker' ? .93 : 1));
   var power = Math.round(pet.baseAtk * (style === 'melee' ? 1.12 : .86));
   var magic = Math.round(pet.baseAtk * (style === 'ranged' || style === 'support' ? 1.18 : .72));
@@ -95,13 +100,39 @@ function tacticalProfile(pet, index) {
   });
   return {
     id: pet.id, name: pet.name, element: pet.element, rarity: pet.quality, role: role, roleLabel: TACTICAL_ROLES[role], attackStyle: style, summonQuote: TACTICAL_SUMMON_QUOTES[pet.id],
-    stats: { health: hp, power: power, magic: magic, defense: defense, speed: speed }, move: role === 'attacker' ? 3 : role === 'defender' ? 2 : 3,
-    skills: [{ name:'基本攻擊', kind:'basic', effect:'damage', multiplier:.82, range:basicStyle === 'melee' ? 1 : 3, radius:0, attackStyle:basicStyle, cooldown:0, vfxKey:pet.id + '-basic', vfxVariant:index % 5, vfxHue:(index * 47 + 12) % 360 }].concat(actionSkills),
+    stats: { health: hp, power: power, magic: magic, defense: defense, speed: speed }, move: movement,
+    skills: [{ name:'基本攻擊', kind:'basic', effect:'damage', multiplier:.82, range:basicRange, radius:0, attackStyle:basicStyle, cooldown:0, vfxKey:pet.id + '-basic', vfxVariant:index % 5, vfxHue:(index * 47 + 12) % 360 }].concat(actionSkills),
     passives: pet.skills.filter(function(skill) { return skill.type === 'passive'; }).map(function(skill) { return { name:skill.name, effect:skill.effect, value:skill.value || 0, chance:skill.chance || 0 }; }),
-    size: TACTICAL_SIZE_BY_ID[pet.id] || 1,
+    size: size,
     evolution: [1,2,3].map(function(stage) { return { stage: stage, label: stage === 1 ? '\u5e7c\u9ad4' : stage === 2 ? '\u6210\u9577\u9ad4' : '\u6700\u7d42\u578b', portrait: pet.art || ('assets/pets/' + pet.id + '/evolution/stage_' + stage + '.png') }; }),
     sourceSheet: pet.art || ('assets/sprites/pets/' + pet.id + '-sheet.png')
   };
 }
 
 var TACTICAL_PET_DATA = PET_DATA.map(tacticalProfile);
+
+/* 核心幻獸先建立可辨識的戰術招牌；其餘名冊仍沿用定位規則，避免一次改動
+   115 隻而破壞既有平衡。signature 用於戰場與圖鑑說明，並以現有狀態／位移／
+   範圍技能欄位直接驅動實際戰鬥效果。 */
+var TACTICAL_CORE_SIGNATURES = {
+  molten_ball:{ title:'熔核先鋒', copy:'高機動切入，先手灼燒目標。', status:'burn' },
+  fire_lion:{ title:'炎鬃壁壘', copy:'前排承傷，以擊退守住隊伍空間。', push:2 },
+  leaf_ear_rabbit:{ title:'泉源急救', copy:'優先維持前排血線，擅長單體回復。', support:true },
+  vine_snake:{ title:'藤縛獵手', copy:'中距離控場，拉近危險目標。', status:'poison', pull:2 },
+  forest_deer:{ title:'森靈祈願', copy:'持續治療，讓隊伍能長線推進。', support:true },
+  crimson_dragon:{ title:'赤炎破陣', copy:'4 格突擊射程，擅長集火收割。', status:'burn' },
+  gold_qilin:{ title:'聖角指揮', copy:'全能前線，兼具元素反制與護衛。', push:1 },
+  solar_phoenix:{ title:'日輪復甦', copy:'範圍治療核心，為大型隊伍續航。', support:true },
+  eclipse_dragon:{ title:'月蝕牽引', copy:'拉扯敵軍，製造集火與範圍技能機會。', pull:2 },
+  flame_emperor:{ title:'帝焰終結', copy:'近戰爆發，對殘血敵軍更具威脅。', push:1 },
+  frost_leviathan:{ title:'冰海封線', copy:'大型前排，以冰凍延緩敵軍攻勢。', status:'freeze' },
+  sea_emperor:{ title:'潮汐統御', copy:'水域機動與範圍壓制的隊長。', status:'freeze' }
+};
+TACTICAL_PET_DATA.forEach(function (pet) {
+  var signature = TACTICAL_CORE_SIGNATURES[pet.id]; if (!signature) return;
+  pet.signature = signature;
+  var action = pet.skills[1] || pet.skills[0];
+  if (signature.status && action.attackStyle !== 'support') { action.status = signature.status; action.statusTurns = signature.status === 'freeze' ? 1 : 2; action.cooldown = Math.max(action.cooldown || 0, 2); }
+  if (signature.push && action.attackStyle !== 'support') action.push = Math.max(action.push || 0, signature.push);
+  if (signature.pull && action.attackStyle !== 'support') action.pull = Math.max(action.pull || 0, signature.pull);
+});

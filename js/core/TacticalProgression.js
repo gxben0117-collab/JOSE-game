@@ -15,7 +15,8 @@
   var STARTER_PETS = DEFAULT_PARTY.slice();
   var GACHA_TIER_WEIGHT = { normal: 34, rare: 30, elite: 18, epic: 10, legendary: 6, mythical: 2 };
   var PULL_COST = 30, PULL10_COST = 270;
-  var TESTER_GIFT_KEY = 'crystals-5000-v1', TESTER_GIFT_CRYSTALS = 5000, FEATURED_PITY = 200;
+  /* 測試期首次登入贈禮：保留既有 key，避免已領過舊贈禮的帳號再次補發。 */
+  var TESTER_GIFT_KEY = 'crystals-5000-v1', TESTER_GIFT_CRYSTALS = 300, FEATURED_PITY = 200;
   var DAILY_QUESTS = [
     { id: 'd-battle', name: '每日遠征', description: '完成 3 場戰鬥', stat: 'battles', target: 3, reward: { crystals: 10 } },
     { id: 'd-win', name: '旗開得勝', description: '贏得 2 場戰鬥', stat: 'wins', target: 2, reward: { crystals: 10, medals: 3 } },
@@ -59,7 +60,7 @@
       bossKills: 0,
       questClaims: {},
       owned: {},
-      crystals: 5060,
+      crystals: 360,
       gold: 200,
       copies: {},
       stars: {},
@@ -71,13 +72,13 @@
       /* 首頁展示只影響機庫立繪，不等同於取得／出戰該幻獸。 */
       homeDisplay: { petId: 'crimson_dragon', mode: 'fixed' },
       /* 劇情閱讀與一次性救援獎勵；以 key 保留給後續章節擴充。 */
-      story: { seen: {}, rewards: {} },
+      story: { seen: {}, rewards: {}, bonds: {} },
       testerGifts: { 'crystals-5000-v1': true },
       featuredPity: { date: '', pulls: 0 },
       tower: { best: 0 },
       bossRaid: null,
       commander: { level: 1, xp: 0 },
-      formation: { party: [], positions: [] },
+      formation: { party: [], positions: [], presets: {} },
       sound: true
     };
   }
@@ -153,9 +154,10 @@
     next.tower.best = Math.max(0, number(next.tower.best, 0));
     if (!next.bossRaid || typeof next.bossRaid !== 'object' || Array.isArray(next.bossRaid)) next.bossRaid = null;
     if (!next.weekly || typeof next.weekly !== 'object' || Array.isArray(next.weekly)) next.weekly = null;
-    if (!next.formation || typeof next.formation !== 'object' || Array.isArray(next.formation)) next.formation = { party: [], positions: [] };
+    if (!next.formation || typeof next.formation !== 'object' || Array.isArray(next.formation)) next.formation = { party: [], positions: [], presets: {} };
     if (!Array.isArray(next.formation.party)) next.formation.party = [];
     if (!Array.isArray(next.formation.positions)) next.formation.positions = [];
+    if (!next.formation.presets || typeof next.formation.presets !== 'object' || Array.isArray(next.formation.presets)) next.formation.presets = {};
     if (!next.home || typeof next.home !== 'object' || Array.isArray(next.home)) next.home = { residents: [], lastCollect: 0 };
     if (!Array.isArray(next.home.residents)) next.home.residents = [];
     next.home.residents = next.home.residents.filter(this.validPet.bind(this)).slice(0, 3);
@@ -164,7 +166,7 @@
     if (!this.validPet(next.homeDisplay.petId)) next.homeDisplay.petId = 'crimson_dragon';
     next.homeDisplay.mode = next.homeDisplay.mode === 'leader' ? 'leader' : 'fixed';
     if (!next.story || typeof next.story !== 'object' || Array.isArray(next.story)) next.story = { seen: {}, rewards: {} };
-    ['seen', 'rewards'].forEach(function (key) { if (!next.story[key] || typeof next.story[key] !== 'object' || Array.isArray(next.story[key])) next.story[key] = {}; });
+    ['seen', 'rewards', 'bonds'].forEach(function (key) { if (!next.story[key] || typeof next.story[key] !== 'object' || Array.isArray(next.story[key])) next.story[key] = {}; });
     var shouldGrantTesterGift = Boolean(raw) && (!raw.testerGifts || typeof raw.testerGifts !== 'object' || !raw.testerGifts[TESTER_GIFT_KEY]);
     if (!next.testerGifts || typeof next.testerGifts !== 'object' || Array.isArray(next.testerGifts)) next.testerGifts = {};
     /* 測試期全玩家一次性贈禮：新舊存檔都可取得一次，但不會因重整重複發放。 */
@@ -236,6 +238,18 @@
     if (!Array.isArray(party) || saved.party.join('|') !== party.join('|')) return [];
     return saved.positions.map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; });
   };
+  TacticalProgression.prototype.setFormationPreset = function (kind, party, positions) {
+    var allowed = ['campaign', 'boss', 'hard', 'tower', 'raid'];
+    if (allowed.indexOf(kind) < 0 || !Array.isArray(party) || !Array.isArray(positions)) return false;
+    if (!this.state.formation || typeof this.state.formation !== 'object') this.state.formation = { party: [], positions: [], presets: {} };
+    if (!this.state.formation.presets || typeof this.state.formation.presets !== 'object') this.state.formation.presets = {};
+    this.state.formation.presets[kind] = { party: party.slice(), positions: positions.filter(function (spot) { return spot && typeof spot.id === 'string' && Number.isInteger(spot.x) && Number.isInteger(spot.y); }).map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; }) };
+    this.save(); return true;
+  };
+  TacticalProgression.prototype.formationPreset = function (kind) {
+    var saved = (this.state.formation.presets || {})[kind];
+    return saved && Array.isArray(saved.party) && Array.isArray(saved.positions) ? { party: saved.party.slice(), positions: saved.positions.map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; }) } : null;
+  };
   TacticalProgression.prototype.clearFormation = function () { this.state.formation = { party: [], positions: [] }; this.save(); };
 
   /* ── 首頁展示／劇情進度 ── */
@@ -249,7 +263,14 @@
     return this.state.homeDisplay.petId;
   };
   TacticalProgression.prototype.hasSeenStory = function (key) { return Boolean(this.state.story.seen[key]); };
-  TacticalProgression.prototype.markStorySeen = function (key) { this.state.story.seen[key] = true; this.save(); };
+  TacticalProgression.prototype.markStorySeen = function (key, portrait) {
+    if (this.state.story.seen[key]) return false;
+    this.state.story.seen[key] = true;
+    if (portrait && this.validPet(portrait)) this.state.story.bonds[portrait] = Math.min(5, number(this.state.story.bonds[portrait], 0) + 1);
+    this.save(); return true;
+  };
+  TacticalProgression.prototype.bondOf = function (petId) { return Math.min(5, Math.max(0, number(this.state.story.bonds[petId], 0))); };
+  TacticalProgression.prototype.bondBonusFor = function (petId) { return this.bondOf(petId) * 0.01; };
   TacticalProgression.prototype.grantStoryPet = function (rewardKey, petId) {
     if (!rewardKey || !this.validPet(petId) || this.state.story.rewards[rewardKey]) return false;
     this.state.story.rewards[rewardKey] = petId;

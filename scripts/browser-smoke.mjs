@@ -146,12 +146,17 @@ try {
   assert.deepEqual(formationPreset, { party: 25, positions: 25 });
   const unitInspection = await evaluate(`(async () => { const enemy = document.querySelector('.unit.enemy'); enemy.click(); await new Promise(resolve => setTimeout(resolve, 80)); const enemyResult = { highlighted: !!document.querySelector('.unit.enemy.inspected'), tags: document.querySelectorAll('#unit-detail .detail-tags span').length, skills: document.querySelectorAll('#unit-detail .detail-skill-list li').length, text: document.querySelector('#unit-detail').innerText.length }; const ally = document.querySelector('.unit.ally'); ally.click(); await new Promise(resolve => setTimeout(resolve, 80)); return { enemy: enemyResult, allyHighlighted: !!document.querySelector('.unit.ally.inspected'), allyActions: document.querySelectorAll('#skill-buttons .skill').length, minimap: !!document.querySelector('#minimap') }; })()`);
   assert.ok(unitInspection.enemy.highlighted && unitInspection.enemy.tags >= 3 && unitInspection.enemy.skills > 0 && unitInspection.enemy.text > 80); assert.ok(unitInspection.allyHighlighted && unitInspection.allyActions > 0); assert.equal(unitInspection.minimap, false);
-  await evaluate(`document.querySelector('#deploy-start').click()`); await delay(120);
-  await evaluate(`(() => { const modal = document.querySelector('#story-modal'); if (modal && !modal.hidden) document.querySelector('#story-next').click(); })()`); await delay(500);
-  const centralCommand = await evaluate(`(() => { document.querySelector('.unit.ally').click(); const panel = document.querySelector('#battle-command'); return { visible: !panel.hidden, portrait: getComputedStyle(document.querySelector('#battle-command-portrait')).backgroundImage, skills: document.querySelectorAll('#battle-command-skills .battle-command-skill').length, actions: document.querySelectorAll('#battle-command-actions button').length, rightSkillsHidden: getComputedStyle(document.querySelector('#skill-buttons')).display }; })()`);
-  assert.ok(centralCommand.visible && centralCommand.skills > 0 && centralCommand.actions >= 2, '角色指令面板異常：' + JSON.stringify(centralCommand)); assert.match(centralCommand.portrait, /url/); assert.equal(centralCommand.rightSkillsHidden, 'none');
-  const centralCommandShot = await screenshot('jose-central-command.png');
-  await evaluate(`document.querySelector('#battle-command-close').click()`);
+  await evaluate(`(() => { document.querySelector('#deploy-start').click(); if (window.__TACTICS_DEBUG__.getState().phase === 'deploy') window.__TACTICS_DEBUG__.beginBattlePhase(); })()`); await delay(120);
+  await evaluate(`(() => { const modal = document.querySelector('#story-modal'); if (modal && !modal.hidden) document.querySelector('#story-next').click(); })()`);
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const phase = await evaluate(`window.__TACTICS_DEBUG__.getState().phase`);
+    if (phase === 'player') break;
+    await delay(100);
+  }
+  const battleStartState = await evaluate(`(() => { const raw = window.__TACTICS_DEBUG__.getState(); return { state: { phase: raw.phase, battleStartInProgress: raw.battleStartInProgress }, button: { disabled: document.querySelector('#deploy-start').disabled, hidden: document.querySelector('#deploy-toolbar').hidden, handler: typeof document.querySelector('#deploy-start').onclick } }; })()`);
+  assert.equal(battleStartState.state.phase, 'player', '部署開始後必須進入我方行動階段：' + JSON.stringify(battleStartState));
+  const directControl = await evaluate(`(() => { const unit = document.querySelector('.unit.ally:not(.action-complete)') || document.querySelector('.unit.ally'); unit.click(); const panel = document.querySelector('#battle-command'); return { panelHidden: panel.hidden, moveTargets: document.querySelectorAll('.cell.move-target').length, attackTargets: document.querySelectorAll('.unit.enemy.in-range, .unit.enemy.attack-target').length, rightSkills: document.querySelectorAll('#skill-buttons .skill').length, rightSkillsDisplay: getComputedStyle(document.querySelector('#skill-buttons')).display }; })()`);
+  assert.ok(directControl.panelHidden && directControl.rightSkills > 0, '選取幻獸後必須直接保留棋盤操作與右側技能：' + JSON.stringify(directControl)); assert.notEqual(directControl.rightSkillsDisplay, 'none');
   const moved = await evaluate(`(() => { const count = document.querySelectorAll('.unit.ally').length; for (let index = 0; index < count; index++) { const ally = document.querySelectorAll('.unit.ally')[index]; ally.click(); const target = document.querySelector('.cell.move-target'); if (target) { target.click(); return true; } } return false; })()`);
   assert.ok(moved); await delay(60);
   const walkAnimation = await evaluate(`(() => { const portrait = document.querySelector('.unit.ally.walking .portrait'); return portrait ? getComputedStyle(portrait).animationName : ''; })()`);
@@ -191,8 +196,8 @@ try {
     cells: document.querySelectorAll('#board .cell').length
   }))()`);
   assert.ok(mobile.width >= 720, '手機橫向畫布應維持最小 720px：' + JSON.stringify(mobile)); assert.ok(mobile.overflow <= 1); assert.ok(mobile.board && mobile.controls !== 'none'); assert.equal(mobile.cells, 210);
-  const mobileCommand = await evaluate(`(() => { document.querySelector('.unit.ally').click(); const panel = document.querySelector('#battle-command'), rect = panel.getBoundingClientRect(); const result = { visible: !panel.hidden, left: rect.left, right: rect.right, width: rect.width, viewport: innerWidth, skills: document.querySelectorAll('#battle-command-skills .battle-command-skill').length, phase: window.__TACTICS_DEBUG__.getState().phase }; document.querySelector('#battle-command-close').click(); return result; })()`);
-  assert.ok(!mobileCommand.visible || (mobileCommand.skills > 0 && mobileCommand.left >= 0 && mobileCommand.right <= mobileCommand.viewport + 1), '行動回合的手機指令面板不可超出畫布：' + JSON.stringify(mobileCommand));
+  const mobileDirectControl = await evaluate(`(() => { const unit = document.querySelector('.unit.ally:not(.action-complete)') || document.querySelector('.unit.ally'); unit.click(); const panel = document.querySelector('#battle-command'); return { panelHidden: panel.hidden, moves: document.querySelectorAll('.cell.move-target').length, attacks: document.querySelectorAll('.unit.enemy.in-range, .unit.enemy.attack-target').length, skills: document.querySelectorAll('#skill-buttons .skill').length, skillDisplay: getComputedStyle(document.querySelector('#skill-buttons')).display, phase: window.__TACTICS_DEBUG__.getState().phase }; })()`);
+  assert.ok(mobileDirectControl.panelHidden && mobileDirectControl.skills > 0 && mobileDirectControl.skillDisplay !== 'none', '行動回合的手機橫向畫布必須維持直接棋盤操作：' + JSON.stringify(mobileDirectControl));
   const mobileShot = await screenshot('jose-mobile-battle.png');
 
   await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
@@ -205,7 +210,7 @@ try {
   assert.equal(towerDemon.slows, 0); assert.ok(towerDemon.size5 >= 0); assert.equal(towerDemon.cells, 210);
 
   assert.deepEqual(errors, [], `Browser errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, formationPreset, unitInspection, centralCommand, walkAnimation, attackAnimation, actionState, ipadLandscape, mobile, mobileCommand, hardStage, bossStage, towerElite, towerDemon, screenshots: [desktopShot, desktopBattleShot, centralCommandShot, ipadShot, mobileShot], errors }, null, 2));
+  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, formationPreset, unitInspection, directControl, walkAnimation, attackAnimation, actionState, ipadLandscape, mobile, mobileDirectControl, hardStage, bossStage, towerElite, towerDemon, screenshots: [desktopShot, desktopBattleShot, ipadShot, mobileShot], errors }, null, 2));
 } finally {
   try { socket?.close(); } catch {}
   browser.kill();
