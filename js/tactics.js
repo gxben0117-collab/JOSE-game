@@ -653,6 +653,9 @@
   }
   function skillOf(unit) { return unit.p.skills[state.skill] || unit.p.skills[0]; }
   function canTarget(unit, target) { return canUseTarget(unit, target, skillOf(unit)); }
+  /* 手動戰鬥的預設不是再選一次「普攻」：選中幻獸後，基本攻擊可直接點紅框敵人。 */
+  function basicSkill(unit) { return unit.p.skills[0]; }
+  function canBasicTarget(unit, target) { return canUseTarget(unit, target, basicSkill(unit)); }
 
   async function walkUnit(unit, x, y) {
     var path = pathTo(unit, x, y, moveRange(unit));
@@ -660,7 +663,7 @@
     unit.prevX = unit.x; unit.prevY = unit.y; /* 供「取消移動」還原 */
     state.animating = true; note(unitName(unit) + ' 移動 ' + path.length + ' 格。');
     await animateWaypoints(unit, path, 'walking', 115);
-    unit.moved = true; state.animating = false; note(unitName(unit) + ' 抵達 ' + (unit.x + 1) + '-' + (unit.y + 1) + '。'); render(); maybeAutoEndAfterMoves(); return true;
+    unit.moved = true; state.animating = false; note(unitName(unit) + ' 抵達 ' + (unit.x + 1) + '-' + (unit.y + 1) + '；紅框敵人可直接點擊普攻。'); render(); maybeAutoEndAfterMoves(); return true;
   }
   function guardianTower(floor) {
     var hp = Math.round(1500 + floor * 260);
@@ -1199,14 +1202,19 @@
     if (active && state.phase === 'deploy' && active.team === 'ally' && !unit && deployFits(active, x, y)) element.classList.add('move-target');
     if (active && state.phase === 'player' && !state.over) {
       if (state.mode === 'move' && !active.moved && moveTargetMap && moveTargetMap[x + ',' + y]) element.classList.add('move-target');
-      if (state.mode === 'skill' && unit && !active.acted && canTarget(active, unit)) element.classList.add(skillOf(active).attackStyle === 'support' ? 'support-target' : 'attack-target');
+      if (unit && !active.acted) {
+        if (state.mode === 'skill' && canTarget(active, unit)) element.classList.add(skillOf(active).attackStyle === 'support' ? 'support-target' : 'attack-target');
+        /* 基本操作模式同時顯示可移動藍格與普攻紅框，移動後會自動只留下紅框。 */
+        else if (state.mode !== 'skill' && canBasicTarget(active, unit)) element.classList.add('attack-target');
+      }
     }
     if (tile && active && active.team === 'ally') {
       var inMoveScope = state.mode === 'move' && moveTargetMap && moveTargetMap[x + ',' + y];
       var gapX = Math.max(0, x - (active.x + unitSize(active) - 1), active.x - x);
       var gapY = Math.max(0, y - (active.y + unitSize(active) - 1), active.y - y);
       var inSkillScope = state.mode === 'skill' && gapX + gapY <= skillRange(active, skillOf(active));
-      if (inMoveScope || inSkillScope || (x === active.x && y === active.y)) element.classList.add('terrain-relevant');
+      var inBasicScope = state.mode !== 'skill' && gapX + gapY <= skillRange(active, basicSkill(active));
+      if (inMoveScope || inSkillScope || inBasicScope || (x === active.x && y === active.y)) element.classList.add('terrain-relevant');
     }
     element.addEventListener('click', function () { clickCell(x, y); });
     if (unit && unit.x === x && unit.y === y) element.appendChild(unitElement(unit));
@@ -1234,13 +1242,14 @@
       state.inspected = unit.key;
       focusUnit(unit, false);
       if (state.mode === 'skill' && selected() && canTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
+      if (!currentStage.tower && unit.team === 'enemy' && selected() && selected().team === 'ally' && !selected().acted && state.phase === 'player' && !state.animating && state.mode !== 'skill' && canBasicTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
       if (state.phase === 'deploy' && unit.team === 'ally') { state.selected = unit.key; note('已選擇 ' + unitName(unit) + '，點選左側部署格調整站位。'); render(); return; }
       if (unit.team === 'enemy' && unit.hp > 0 && (state.phase === 'player' || state.phase === 'deploy') && !state.animating) {
         state.threatKey = state.threatKey === unit.key ? null : unit.key; clearForecast(); audio.play('ui');
         note(state.threatKey ? unitName(unit) + ' 的威脅範圍：橘色＝可移動、紅色＝射程涵蓋。再點一次取消。' : '已關閉威脅範圍顯示。');
         render(); return;
       }
-      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = true; clearForecast(); note('已選擇 ' + unitName(unit) + '，請從中央指令面板選擇移動或技能。'); render(); }
+      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = true; clearForecast(); note('已選擇 ' + unitName(unit) + '：藍格可移動、紅框敵人可直接普攻；技能與待機在指令面板。'); render(); }
     }); return element;
   }
 
@@ -1399,6 +1408,11 @@
       return;
     }
     if (!unit || state.phase !== 'player' || state.over || state.animating || state.autoEnding) return;
+    if (target && !unit.acted && state.mode !== 'skill' && canBasicTarget(unit, target)) {
+      clearForecast();
+      await act(unit, target, basicSkill(unit), 0);
+      return;
+    }
     if (state.mode === 'move' && !unit.moved && canMove(unit, x, y)) { clearForecast(); await walkUnit(unit, x, y); return; }
     if (state.mode === 'skill' && !unit.acted && target && canTarget(unit, target)) {
       clearForecast();
@@ -1911,7 +1925,7 @@
     if (!visible) return;
     dom.battleCommandPortrait.style.backgroundImage = "url('" + portrait(unit) + "')";
     dom.battleCommandName.textContent = unit.p.name;
-    dom.battleCommandStatus.textContent = 'HP ' + unit.hp + ' / ' + unit.maxHp + '｜移動 ' + moveRange(unit) + '｜' + (unit.moved ? '已移動' : '可移動') + '｜' + (unit.acted ? '已行動' : '可使用技能');
+    dom.battleCommandStatus.textContent = '藍格＝移動｜紅框＝普攻｜直接點棋盤即可｜' + (unit.moved ? '已移動' : '可移動') + '｜' + (unit.acted ? '已行動' : '可使用技能');
     dom.battleCommandSkills.innerHTML = '';
     unit.p.skills.forEach(function (skill, index) {
       var cooldown = unit.cooldowns[index] || 0, button = document.createElement('button');
@@ -1923,8 +1937,8 @@
       dom.battleCommandSkills.appendChild(button);
     });
     dom.battleCommandActions.innerHTML = '';
-    var move = document.createElement('button'); move.type = 'button'; move.className = 'secondary'; move.textContent = unit.moved ? '✓ 已移動' : '移動'; move.disabled = unit.moved || state.animating;
-    move.onclick = function () { state.mode = 'move'; state.commandOpen = false; clearForecast(); audio.play('ui'); note('請點選藍色可移動格；減速格單次最多消耗 1 點行動力。'); render(); };
+    var move = document.createElement('button'); move.type = 'button'; move.className = 'secondary'; move.textContent = unit.moved ? '⚔ 顯示可攻擊目標' : '⌁ 直接操作'; move.disabled = unit.acted || state.animating;
+    move.onclick = function () { state.mode = 'move'; state.skill = 0; state.commandOpen = false; clearForecast(); audio.play('ui'); note(unit.moved ? '紅框敵人可直接點擊普攻。' : '已回到直覺操作：藍格可移動、紅框敵人可直接普攻。'); render(); };
     var wait = document.createElement('button'); wait.type = 'button'; wait.className = 'secondary'; wait.textContent = '待機'; wait.disabled = unit.acted || state.animating;
     wait.onclick = function () { unit.moved = true; unit.acted = true; state.commandOpen = false; clearForecast(); audio.play('ui'); note(unitName(unit) + ' 完成本回合。'); render(); maybeAutoEndAfterMoves(); };
     var info = document.createElement('button'); info.type = 'button'; info.className = 'secondary'; info.textContent = '查看資訊'; info.onclick = function () { state.inspected = unit.key; state.commandOpen = false; render(); };
