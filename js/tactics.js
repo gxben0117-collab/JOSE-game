@@ -1683,6 +1683,19 @@
       return danger(b) - danger(a) || distance(unit, a) - distance(unit, b);
     })[0];
   }
+  function supportIsUrgent(unit, friend, skill, opponents) {
+    var missing = 1 - friend.hp / friend.maxHp;
+    var threatened = opponents.some(function (enemy) { return distance(enemy, friend) <= enemyAttackReach(enemy); });
+    /* 治療必須真的有傷；護盾／強化要等到前線受威脅、血線下降或守護塔危急。
+       這可避免 AUTO 在開場推進時把支援演出誤看成對友軍攻擊。 */
+    if (skill.effect === 'heal' || skill.effect === 'heal_all') return missing >= 0.08;
+    if (friend.guardian) return missing >= 0.08 || threatened;
+    if (skill.effect === 'shield' || skill.effect === 'buff_atk') {
+      if (friend === unit && !threatened && missing < 0.24) return false;
+      return threatened || missing >= 0.24 || tankRole(friend);
+    }
+    return threatened || missing >= 0.12;
+  }
   function tacticalTargetScore(unit, target, skill) {
     var score = 0, label = (target.eliteRole || target.p.roleLabel || '').toLowerCase();
     /* 祭司／治療型優先處理；遠程與脆皮再收割低血量目標。 */
@@ -1779,12 +1792,12 @@
         var virtual = { x: tile.x, y: tile.y, p: unit.p, team: unit.team };
         if (skill.attackStyle === 'support') {
           friends.forEach(function (friend) {
-            var needs = friend.hp < friend.maxHp * 0.92 || skill.effect === 'shield' || skill.effect === 'buff_atk';
+            var needs = supportIsUrgent(unit, friend, skill, opponents);
             if (!needs || distance(virtual, friend) > skillRange(unit, skill)) return;
             var missing = 1 - friend.hp / friend.maxHp;
-            var score = positionScore + (skill.effect === 'heal' || skill.effect === 'heal_all' ? 12 + missing * 80 : 16 + missing * 12) + (friend.boss ? 4 : 0) + (friend.guardian ? 56 + missing * 90 : 0);
+            var threatened = opponents.some(function (enemy) { return distance(enemy, friend) <= enemyAttackReach(enemy); });
+            var score = positionScore + (skill.effect === 'heal' || skill.effect === 'heal_all' ? 12 + missing * 80 : 16 + missing * 12) + (threatened ? 24 : 0) + (friend.boss ? 4 : 0) + (friend.guardian ? 56 + missing * 90 : 0);
             if (skill.effect === 'heal_all') score += friends.filter(function (entry) { return entry.hp < entry.maxHp; }).length * 8;
-            if (missing < 0.08 && skill.effect !== 'shield' && skill.effect !== 'buff_atk') return;
             if (!best || score > best.score) best = { tile: tile, skill: skill, index: index, target: friend, score: score };
           });
           return;
