@@ -113,7 +113,13 @@ try {
   const dexUi = await evaluate(`(() => { document.querySelector('#open-dex').click(); const search = document.querySelector('#dex-search'); search.value = '基本攻擊'; search.dispatchEvent(new Event('input')); const result = { cards: document.querySelectorAll('#dex-grid .dex-card').length, detail: document.querySelector('#dex-detail').innerText, layout: getComputedStyle(document.querySelector('.dex-layout')).display }; document.querySelector('[data-close="dex-modal"]').click(); return result; })()`);
   assert.ok(dexUi.cards > 0); assert.match(dexUi.detail, /技能資料|尚未發現/); assert.equal(dexUi.layout, 'grid');
 
+  const growthUi = await evaluate(`(() => { document.querySelector('#open-growth').click(); const result = { quick: document.querySelectorAll('#growth-quick-roster .growth-quick-card').length, preview: document.querySelector('.growth-stat-panel')?.innerText || '', next: document.querySelector('.growth-next-step')?.innerText || '' }; document.querySelector('[data-close="growth-modal"]').click(); return result; })()`);
+  assert.ok(growthUi.quick > 0); assert.match(growthUi.preview, /戰力預覽/); assert.match(growthUi.next, /下一個有效提升/);
+
   await evaluate(`document.querySelector('#enter-battle').click()`); await delay(500);
+  const briefing = await evaluate(`(() => ({ open: !document.querySelector('#battle-briefing-modal').hidden, title: document.querySelector('#battle-briefing-title').textContent, text: document.querySelector('#battle-briefing-content').innerText, presetButtons: document.querySelectorAll('#battle-briefing-content #briefing-recommend').length }))()`);
+  assert.ok(briefing.open && briefing.presetButtons === 1); assert.match(briefing.text, /敵軍編制/); assert.match(briefing.text, /推薦編隊/); assert.match(briefing.text, /地形重點/);
+  await evaluate(`document.querySelector('#battle-briefing-go').click()`); await delay(260);
   const deployed = await evaluate(`(() => ({
     battleVisible: !document.querySelector('#screen-battle').hidden,
     allies: document.querySelectorAll('.unit.ally').length,
@@ -144,8 +150,8 @@ try {
   assert.equal(deployed.terrainOpacity, '0.25');
   const formationPreset = await evaluate(`(() => { document.querySelector('#formation-save').click(); const save = JSON.parse(localStorage.getItem('jose-tactics-progression-v2')); return { party: save.formation.party.length, positions: save.formation.positions.length }; })()`);
   assert.deepEqual(formationPreset, { party: 25, positions: 25 });
-  const unitInspection = await evaluate(`(async () => { const enemy = document.querySelector('.unit.enemy'); enemy.click(); await new Promise(resolve => setTimeout(resolve, 80)); const enemyResult = { highlighted: !!document.querySelector('.unit.enemy.inspected'), tags: document.querySelectorAll('#unit-detail .detail-tags span').length, skills: document.querySelectorAll('#unit-detail .detail-skill-list li').length, text: document.querySelector('#unit-detail').innerText.length }; const ally = document.querySelector('.unit.ally'); ally.click(); await new Promise(resolve => setTimeout(resolve, 80)); return { enemy: enemyResult, allyHighlighted: !!document.querySelector('.unit.ally.inspected'), allyActions: document.querySelectorAll('#skill-buttons .skill').length, minimap: !!document.querySelector('#minimap') }; })()`);
-  assert.ok(unitInspection.enemy.highlighted && unitInspection.enemy.tags >= 3 && unitInspection.enemy.skills > 0 && unitInspection.enemy.text > 80); assert.ok(unitInspection.allyHighlighted && unitInspection.allyActions > 0); assert.equal(unitInspection.minimap, false);
+  const unitInspection = await evaluate(`(async () => { const enemy = document.querySelector('.unit.enemy'); enemy.click(); await new Promise(resolve => setTimeout(resolve, 80)); const enemyResult = { highlighted: !!document.querySelector('.unit.enemy.inspected'), tags: document.querySelectorAll('#unit-detail .detail-tags span').length, skills: document.querySelectorAll('#unit-detail .detail-skill-list li').length, text: document.querySelector('#unit-detail').innerText.length, forecast: document.querySelector('#unit-detail .combat-forecast')?.innerText || '' }; const ally = document.querySelector('.unit.ally'); ally.click(); await new Promise(resolve => setTimeout(resolve, 80)); return { enemy: enemyResult, allyHighlighted: !!document.querySelector('.unit.ally.inspected'), allyActions: document.querySelectorAll('#skill-buttons .skill').length, minimap: !!document.querySelector('#minimap') }; })()`);
+  assert.ok(unitInspection.enemy.highlighted && unitInspection.enemy.tags >= 3 && unitInspection.enemy.skills > 0 && unitInspection.enemy.text > 80); assert.match(unitInspection.enemy.forecast, /戰術預判/); assert.ok(unitInspection.allyHighlighted && unitInspection.allyActions > 0); assert.equal(unitInspection.minimap, false);
   await evaluate(`(() => { document.querySelector('#deploy-start').click(); if (window.__TACTICS_DEBUG__.getState().phase === 'deploy') window.__TACTICS_DEBUG__.beginBattlePhase(); })()`); await delay(120);
   await evaluate(`(() => { const modal = document.querySelector('#story-modal'); if (modal && !modal.hidden) document.querySelector('#story-next').click(); })()`);
   for (let attempt = 0; attempt < 30; attempt++) {
@@ -153,7 +159,7 @@ try {
     if (phase === 'player') break;
     await delay(100);
   }
-  const battleStartState = await evaluate(`(() => { const raw = window.__TACTICS_DEBUG__.getState(); return { state: { phase: raw.phase, battleStartInProgress: raw.battleStartInProgress }, button: { disabled: document.querySelector('#deploy-start').disabled, hidden: document.querySelector('#deploy-toolbar').hidden, handler: typeof document.querySelector('#deploy-start').onclick } }; })()`);
+  const battleStartState = await evaluate(`(() => { const raw = window.__TACTICS_DEBUG__.getState(); return { state: { phase: raw.phase, battleStartInProgress: raw.battleStartInProgress }, bossWarning: { visible: !document.querySelector('#boss-warning-panel').hidden, text: document.querySelector('#boss-warning-panel').innerText }, button: { disabled: document.querySelector('#deploy-start').disabled, hidden: document.querySelector('#deploy-toolbar').hidden, handler: typeof document.querySelector('#deploy-start').onclick } }; })()`);
   assert.equal(battleStartState.state.phase, 'player', '部署開始後必須進入我方行動階段：' + JSON.stringify(battleStartState));
   /* 開戰後先等鏡頭定位完成，驗證玩家下一次點選立刻能取得藍格。 */
   await delay(240);
@@ -164,16 +170,24 @@ try {
   const walkAnimation = await evaluate(`(() => { const portrait = document.querySelector('.unit.ally.walking .portrait'); return portrait ? getComputedStyle(portrait).animationName : ''; })()`);
   assert.match(walkAnimation, /motion-(4dir-)?(walk-(right|left|up|down)|row)/); await delay(840);
   await evaluate(`(() => { window.__attackAnimation = ''; window.__visualEvents = []; window.__lastCasterTeam = ''; window.__lastCasterSupport = false; new MutationObserver(records => { for (const record of records) { if (record.type === 'attributes') { const unit = record.target; if (unit.classList?.contains('unit') && (unit.classList.contains('cast') || unit.classList.contains('supporting'))) { const support = unit.classList.contains('supporting'); const portrait = unit.querySelector('.portrait'); if (!support) window.__attackAnimation = portrait ? getComputedStyle(portrait).animationName : ''; window.__lastCasterTeam = unit.classList.contains('ally') ? 'ally' : 'enemy'; window.__lastCasterSupport = support; window.__visualEvents.push({ type: support ? 'support' : 'cast', team: window.__lastCasterTeam, key: unit.dataset.key }); } } if (record.type === 'childList') for (const node of record.addedNodes) { if (!(node.classList?.contains('vfx') || node.classList?.contains('dodge-number'))) continue; const host = node.parentElement, target = host?.classList.contains('unit') ? host : host?.querySelector('.unit'); window.__visualEvents.push({ type: node.classList.contains('dodge-number') ? 'dodge' : 'hit', caster: window.__lastCasterTeam, target: target?.classList.contains('ally') ? 'ally' : target?.classList.contains('enemy') ? 'enemy' : 'none', support: node.classList.contains('support-vfx') && window.__lastCasterSupport, key: target?.dataset.key || '' }); } } }).observe(document.querySelector('#board'), { subtree: true, attributes: true, childList: true, attributeFilter: ['class'] }); window.__TACTICS_DEBUG__.setSpeed(8); window.__TACTICS_DEBUG__.startAuto(); })()`);
-  let attackAnimation = '';
-  for (let attempt = 0; attempt < 100 && !attackAnimation; attempt++) { await delay(100); attackAnimation = await evaluate(`window.__attackAnimation || ''`); }
+  let attackAnimation = '', alliedHitSeen = false;
+  /* 攻擊動作剛掛上 class 時不能立即停掉 AUTO；需等投射物／命中結算實際
+     寫入棋盤，否則完整演出模式會被測試本身截斷成「只有施放」。 */
+  for (let attempt = 0; attempt < 150 && !(attackAnimation && alliedHitSeen); attempt++) {
+    await delay(100);
+    const visualProgress = await evaluate(`({ attack: window.__attackAnimation || '', hit: window.__visualEvents.some(event => event.type === 'hit' && event.caster === 'ally' && event.target === 'enemy') })`);
+    attackAnimation = visualProgress.attack; alliedHitSeen = visualProgress.hit;
+  }
   await evaluate(`window.__TACTICS_DEBUG__.stopAuto()`); await delay(400);
   assert.match(attackAnimation, /motion-(4dir-)?(attack-(right|left|up|down)|row)/);
   const visualEvents = await evaluate(`window.__visualEvents`);
-  assert.ok(visualEvents.some(event => event.type === 'hit' && event.caster === 'ally' && event.target === 'enemy'), '我方攻擊應命中敵方：' + JSON.stringify(visualEvents));
+  assert.ok(alliedHitSeen && visualEvents.some(event => event.type === 'hit' && event.caster === 'ally' && event.target === 'enemy'), '我方攻擊應命中敵方：' + JSON.stringify(visualEvents));
   console.log('Battle visual events:', JSON.stringify(visualEvents));
   assert.ok(!visualEvents.some(event => event.type === 'hit' && event.caster === 'ally' && event.target === 'ally' && !event.support), '我方對我方只能顯示支援特效，不得顯示攻擊特效');
   const actionState = await evaluate(`(() => { const done = document.querySelector('.unit.ally.action-complete'), waiting = document.querySelector('.unit.ally:not(.action-complete)'), rosterDone = document.querySelector('.battle-roster-card.acted'); return { done: document.querySelectorAll('.unit.ally.action-complete').length, waiting: document.querySelectorAll('.unit.ally:not(.action-complete)').length, doneFilter: done ? getComputedStyle(done.querySelector('.portrait')).filter : '', waitingFilter: waiting ? getComputedStyle(waiting.querySelector('.portrait')).filter : '', rosterDone: !!rosterDone, rosterText: rosterDone?.innerText || '' }; })()`);
-  assert.ok(actionState.done > 0 && actionState.waiting > 0 && actionState.rosterDone); assert.notEqual(actionState.doneFilter, actionState.waitingFilter); assert.match(actionState.rosterText, /已行動/);
+  /* 戰術 AI 可能在等到第一個完整命中後已完成整隊本回合，不再假定一定
+     還存在未行動友軍；驗證已行動棋子與左側卡片同步即可。 */
+  assert.ok(actionState.done > 0 && actionState.rosterDone); assert.match(actionState.doneFilter, /grayscale|brightness|opacity|contrast/); assert.match(actionState.rosterText, /已行動/);
   const desktopBattleShot = await screenshot('jose-desktop-battle.png');
 
   await command('Emulation.setDeviceMetricsOverride', { width: 1024, height: 768, deviceScaleFactor: 1, mobile: false }); await delay(500);
@@ -207,12 +221,14 @@ try {
   assert.match(hardStage.map, /chapter-06-hard-3-21x10\.jpg/); assert.match(hardStage.kind, /-hard$/); assert.equal(hardStage.cells, 210);
   const bossStage = await reloadAtStage('c10-boss');
   assert.match(bossStage.map, /chapter-10-boss-21x10\.jpg/); assert.match(bossStage.kind, /-boss$/); assert.equal(bossStage.cells, 210);
+  const bossTelegraph = await evaluate(`(async () => { document.querySelector('#enter-battle').click(); await new Promise(resolve => setTimeout(resolve, 80)); document.querySelector('#battle-briefing-go').click(); await new Promise(resolve => setTimeout(resolve, 80)); document.querySelector('#deploy-start').click(); if (window.__TACTICS_DEBUG__.getState().phase === 'deploy') window.__TACTICS_DEBUG__.beginBattlePhase(); await new Promise(resolve => setTimeout(resolve, 120)); const story = document.querySelector('#story-modal'); if (story && !story.hidden) document.querySelector('#story-next').click(); await new Promise(resolve => setTimeout(resolve, 80)); return { phase: window.__TACTICS_DEBUG__.getState().phase, warning: document.querySelector('#boss-warning-panel').innerText, visible: !document.querySelector('#boss-warning-panel').hidden, tiles: document.querySelectorAll('.cell.boss-danger').length }; })()`);
+  assert.equal(bossTelegraph.phase, 'player'); assert.ok(bossTelegraph.visible); assert.match(bossTelegraph.warning, /Boss 技能預警/); assert.match(bossTelegraph.warning, /倒數|本回合可能施放/);
   const towerElite = await reloadAtTower(5), towerDemon = await reloadAtTower(20);
   assert.equal(towerElite.slows, 0); assert.ok(towerElite.size4 >= 0); assert.equal(towerElite.cells, 210);
   assert.equal(towerDemon.slows, 0); assert.ok(towerDemon.size5 >= 0); assert.equal(towerDemon.cells, 210);
 
   assert.deepEqual(errors, [], `Browser errors: ${errors.join(' | ')}`);
-  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, formationPreset, unitInspection, directControl, walkAnimation, attackAnimation, actionState, ipadLandscape, mobile, mobileDirectControl, hardStage, bossStage, towerElite, towerDemon, screenshots: [desktopShot, desktopBattleShot, ipadShot, mobileShot], errors }, null, 2));
+  console.log(JSON.stringify({ status: 'PASS', home, packingRoster, capacityRoster, deployed, formationPreset, unitInspection, directControl, walkAnimation, attackAnimation, actionState, ipadLandscape, mobile, mobileDirectControl, hardStage, bossStage, bossTelegraph, towerElite, towerDemon, screenshots: [desktopShot, desktopBattleShot, ipadShot, mobileShot], errors }, null, 2));
 } finally {
   try { socket?.close(); } catch {}
   browser.kill();
