@@ -1336,9 +1336,12 @@
   }
 
   function maybeAutoEndAfterMoves() {
-    if (state.autoEnding || state.phase !== 'player' || state.over || state.animating || !alive('ally').length || !alive('ally').every(function (unit) { return unit.moved; })) return;
-    state.autoEnding = true; note('我方全員已移動，準備交由敵方行動。'); render();
-    setTimeout(function () { state.autoEnding = false; if (!state.over && state.phase === 'player' && alive('ally').every(function (unit) { return unit.moved; })) endTurn(); }, duration(220));
+    /* 手動戰鬥中「移動」不是行動結束。舊邏輯以全隊都 moved 判斷，會讓
+       最後一隻剛移到紅框敵人旁的幻獸在尚未攻擊前被強制交回合。只有所有
+       可用幻獸都已實際 acted（攻擊、技能或待機）時才自動交給敵方。 */
+    if (state.autoEnding || state.phase !== 'player' || state.over || state.animating || !alive('ally').length || !alive('ally').every(function (unit) { return unit.acted; })) return;
+    state.autoEnding = true; note('我方全員已完成行動，準備交由敵方行動。'); render();
+    setTimeout(function () { state.autoEnding = false; if (!state.over && state.phase === 'player' && alive('ally').every(function (unit) { return unit.acted; })) endTurn(); }, duration(220));
   }
 
   function obstacleGlyph() {

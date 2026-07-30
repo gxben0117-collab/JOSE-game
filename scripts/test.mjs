@@ -554,7 +554,7 @@ test('水晶招喚以逐張立繪與台詞揭示，並可跳過演出', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const screens = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=9/); assert.match(html, /js\/tactics\.js\?v=86/); assert.match(html, /id="battle-tutorial"/); assert.match(html, /id="result-advice"/); assert.match(html, /id="story-archive-modal"/);
+  assert.match(html, /id="gacha-reveal"/); assert.match(html, /id="gacha-skip"[^>]*>SKIP/); assert.match(html, /tactical-pets\.js\?v=9/); assert.match(html, /js\/tactics\.js\?v=87/); assert.match(html, /id="battle-tutorial"/); assert.match(html, /id="result-advice"/); assert.match(html, /id="story-archive-modal"/);
   assert.match(source, /function startGachaCeremony/); assert.match(source, /function revealGachaCard/); assert.match(source, /function finishGachaCeremony/); assert.match(source, /GACHA_QUOTES/); assert.match(source, /document\.getElementById\('gacha-skip'\)\.onclick = finishGachaCeremony/);
   assert.match(source, /startGachaCeremony\(result\.results\)/); assert.match(screens, /\.gacha-reveal\{position:fixed/); assert.match(screens, /\.gacha-skip\{position:absolute/);
   assert.match(source, /entry\.pet\.summonQuote \|\| GACHA_QUOTES\[quality\]/); assert.doesNotMatch(source, /再次相逢/); assert.doesNotMatch(source, /吾主，請下令/);
@@ -691,7 +691,7 @@ test('新手／回鍋情境引導、強化目標與快速戰鬥模式可各自�
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   assert.match(source, /jose-battle-guide-v2/); assert.match(source, /key: 'boss'/); assert.match(source, /key: 'hard'/); assert.match(source, /key: 'route'/); assert.match(source, /key: 'skill'/);
   assert.match(source, /function growthNextStep\(pet\)/); assert.match(source, /growth-next-step/); assert.match(source, /jose-animation-mode-v1/); assert.match(source, /function cycleAnimationMode\(\)/);
-  assert.match(html, /js\/tactics\.js\?v=86/);
+  assert.match(html, /js\/tactics\.js\?v=87/);
 });
 test('強化工作台提供快速切換幻獸與即時戰力預覽', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8'); const source = readFileSync(join(root, 'js/tactics.js'), 'utf8'); const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
@@ -774,7 +774,7 @@ test('遠距攻擊從施術者本體出發，速度差可觸發閃避與未命�
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const battle = readFileSync(join(root, 'css/tactics-battle.css'), 'utf8');
-  assert.match(html, /tactics-battle\.css\?v=16/); assert.match(html, /js\/tactics\.js\?v=86/);
+  assert.match(html, /tactics-battle\.css\?v=16/); assert.match(html, /js\/tactics\.js\?v=87/);
   assert.match(source, /casterHost\.appendChild\(muzzle\)/); assert.match(source, /function dodgeChance\(attacker, target, skill\)/); assert.match(source, /function willDodge\(attacker, target, skill\)/);
   assert.match(source, /element\.style\.setProperty\('--motion-sheet'/); assert.match(source, /motion-sprite motion-4dir/); assert.match(source, /applyMotionVariables\(element, unit\);/);
   assert.match(source, /dodged: dodgePlan\[enemy\.key\]/); assert.match(source, /if \(effect\.dodged\) \{ addDodgeVisual\(unit, effect\.target\); return; \}/); assert.match(source, /projectile\.classList\.add\('projectile-miss'\)/);
@@ -796,6 +796,14 @@ test('戰術 AI 會依定位保護後排、優先處理祭司與首領，並避�
   assert.match(source, /return towerDefenseTarget\(unit\)/);
   assert.match(source, /strategicTarget\(unit, alive\('enemy'\)\)/);
   assert.match(source, /strategicTarget\(enemy, targets\)/);
+});
+test('手動移動後保留攻擊與技能選擇，不會因全隊已移動而提前結束回合', () => {
+  const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
+  const browser = readFileSync(join(root, 'scripts/browser-smoke.mjs'), 'utf8');
+  assert.match(source, /return unit\.acted; \}\)\) return;/);
+  assert.match(source, /我方全員已完成行動/);
+  assert.doesNotMatch(source, /alive\('ally'\)\.every\(function \(unit\) \{ return unit\.moved; \}\)\) endTurn\(\)/);
+  assert.match(browser, /postMoveManualState/); assert.match(browser, /手動移動後不得自動交給敵方回合/);
 });
 
 test('iPad 戰場維持 21×10 比例、中央棋盤優先且隊伍編輯可觸控開啟', () => {
