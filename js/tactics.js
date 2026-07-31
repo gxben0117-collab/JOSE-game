@@ -47,6 +47,7 @@
 
   var terrainAlwaysVisible = false, battleTutorialSeen = false, battleGuideSeen = {}, activeGuideKey = '', animationMode = 'full';
   try { terrainAlwaysVisible = localStorage.getItem('jose-terrain-visibility') === 'all'; battleTutorialSeen = localStorage.getItem('jose-battle-tutorial-v1') === 'seen'; battleGuideSeen = JSON.parse(localStorage.getItem('jose-battle-guide-v2') || '{}') || {}; animationMode = localStorage.getItem('jose-animation-mode-v1') === 'fast' ? 'fast' : 'full'; } catch (error) { terrainAlwaysVisible = false; battleTutorialSeen = false; battleGuideSeen = {}; animationMode = 'full'; }
+  document.body.classList.toggle('tutorial-seen', battleTutorialSeen);
   function syncAnimationMode() {
     document.body.classList.toggle('battle-fast', animationMode === 'fast');
     if (dom.animationMode) { dom.animationMode.textContent = animationMode === 'fast' ? '⏩ 快速' : '🎬 完整'; dom.animationMode.title = animationMode === 'fast' ? '快速模式：縮短戰鬥演出，適合重複挑戰' : '完整模式：保留技能、命中與 Boss 演出'; }
@@ -80,6 +81,10 @@
     dom.screenHome.hidden = view !== 'home';
     dom.screenBattle.hidden = view !== 'battle';
     dom.screenResult.hidden = view !== 'result';
+    if (view !== 'battle') {
+      if (dom.battleTutorial) dom.battleTutorial.hidden = true;
+      if (dom.battleCommand) dom.battleCommand.hidden = true;
+    }
     document.body.classList.remove('view-home', 'view-battle', 'view-result');
     document.body.classList.add('view-' + view);
     window.scrollTo(0, 0);
@@ -139,7 +144,7 @@
     hero.style.backgroundImage = "url('" + displayPortrait(pet) + "')";
     document.getElementById('home-hero-name').textContent = pet.name;
     document.getElementById('home-hero-kicker').textContent = progression.state.homeDisplay.mode === 'leader' ? '目前隊長展示' : '旗艦幻獸展示';
-    document.getElementById('home-hero-meta').textContent = (window.ELEMENT_CONFIG[pet.element] || {}).label + '屬性｜' + ({ normal:'普通', rare:'稀有', elite:'菁英', epic:'史詩', legendary:'傳說', mythical:'神話' }[pet.rarity] || pet.rarity) + '｜機庫同步中';
+    document.getElementById('home-hero-meta').textContent = (window.ELEMENT_CONFIG[pet.element] || {}).label + '屬性｜' + ({ normal:'普通', rare:'稀有', elite:'菁英', epic:'史詩', legendary:'傳說', mythical:'神話' }[pet.rarity] || pet.rarity);
     document.getElementById('home-hero-quote').textContent = '「' + displayQuote(pet) + '」';
     document.getElementById('home-command-title').textContent = '第 ' + currentStage.chapter + ' 章・' + map.name;
     document.getElementById('home-command-copy').textContent = homeReturnFeedback || ('下一站：' + currentStage.name + '。' + currentStage.objective);
@@ -828,10 +833,18 @@
   function openStoryArchive() {
     var host = document.getElementById('story-archive-list'); if (!host) return;
     var scenes = storyContent.scenes || {}, keys = Object.keys(scenes).sort(function (a, b) { return a.localeCompare(b, 'zh-Hant'); });
+    var lockedTotal = {};
+    keys.forEach(function (key) {
+      var scene = scenes[key], seen = progression.hasSeenStory(key), chapter = Number((key.match(/^c(\d+)/) || [])[1] || 0);
+      if (!seen && !progress.cleared['c' + chapter + '-boss']) lockedTotal[chapter] = (lockedTotal[chapter] || 0) + 1;
+    });
+    var lockedSeen = {};
     host.innerHTML = keys.map(function (key) {
       var scene = scenes[key], seen = progression.hasSeenStory(key), chapter = Number((key.match(/^c(\d+)/) || [])[1] || 0), bond = progression.bondOf(scene.portrait);
       var locked = !seen && !progress.cleared['c' + chapter + '-boss'];
-      return '<article class="story-archive-entry ' + (locked ? 'locked' : '') + '"><b>第 ' + chapter + ' 章｜' + (locked ? '未解鎖紀錄' : scene.title) + '</b><small>' + (locked ? '完成本章首領後可閱覽後續線索。' : (scene.speaker || '遠征紀錄') + '｜' + (seen ? '已閱讀｜共鳴 ' + bond + '/5（全能力 +' + bond + '%）' : '已解鎖')) + '</small>' + (locked ? '' : '<button type="button" data-story-key="' + key + '">閱讀</button>') + '</article>';
+      var lockedLabel = '未解鎖紀錄';
+      if (locked) { lockedSeen[chapter] = (lockedSeen[chapter] || 0) + 1; if (lockedTotal[chapter] > 1) lockedLabel += '・線索 ' + lockedSeen[chapter] + '/' + lockedTotal[chapter]; }
+      return '<article class="story-archive-entry ' + (locked ? 'locked' : '') + '"><b>第 ' + chapter + ' 章｜' + (locked ? lockedLabel : scene.title) + '</b><small>' + (locked ? '完成本章首領後可閱覽後續線索。' : (scene.speaker || '遠征紀錄') + '｜' + (seen ? '已閱讀｜共鳴 ' + bond + '/5（全能力 +' + bond + '%）' : '已解鎖')) + '</small>' + (locked ? '' : '<button type="button" data-story-key="' + key + '">閱讀</button>') + '</article>';
     }).join('');
     host.querySelectorAll('[data-story-key]').forEach(function (button) { button.onclick = function () { var key = button.dataset.storyKey, scene = scenes[key]; document.getElementById('story-archive-modal').hidden = true; showStory(scene, key, { replay:true }); }; });
     document.getElementById('story-archive-modal').hidden = false; audio.play('ui');
@@ -841,6 +854,7 @@
     if (activeGuideKey) battleGuideSeen[activeGuideKey] = true;
     try { localStorage.setItem('jose-battle-tutorial-v1', 'seen'); localStorage.setItem('jose-battle-guide-v2', JSON.stringify(battleGuideSeen)); } catch (error) { /* private storage may be unavailable */ }
     if (dom.battleTutorial) dom.battleTutorial.hidden = true;
+    document.body.classList.add('tutorial-seen');
   }
 
   function triggerBossPhase(boss) {
@@ -1474,7 +1488,7 @@
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
-    renderParty(); renderTrait(); renderBattleSides(); renderTowerBoonSummary(); renderDetail(); renderBattleCommand(); renderBattleTutorial(); renderBossBar(); renderBossTelegraph(telegraph);
+    renderParty(); renderTrait(); renderBattleSides(); renderTowerBoonSummary(); renderDetail(); renderTurnOrder(); renderBattleCommand(); renderBattleTutorial(); renderBossBar(); renderBossTelegraph(telegraph);
     dom.banner.textContent = state.over ? '戰鬥結束' : state.phase === 'tower-choice' ? '波間整備' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波｜' + (state.phase === 'player' ? '我方 AI 防守' : '魔物進攻') : state.phase === 'deploy' ? '部署階段' : '第 ' + state.round + ' 回合｜' + (state.phase === 'player' ? '我方行動' : '敵方行動');
     dom.roundStatus.textContent = state.over ? '結算完成' : state.phase === 'tower-choice' ? '選擇加護' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波' : state.phase === 'deploy' ? '自由部署' : state.phase === 'player' ? '我方回合' : '敵方回合';
     var remainingManual = state.units.filter(function (unit) { return unit.team === 'ally' && !unit.guardian && unit.hp > 0 && !unit.acted; });
@@ -1565,9 +1579,13 @@
     summary.hidden = false; summary.textContent = '｜' + state.tower.boons.map(function (id) { return labels[id] || id; }).join(' ');
   }
   function renderTrait() { var trait = traitFor('ally'); dom.teamTrait.innerHTML = '<b>✦ ' + trait.label + '</b><span>' + trait.copy + '</span>'; }
+  var TURN_ORDER_CAP = 14;
   function renderTurnOrder() {
-    var units = alive('ally').concat(alive('enemy')).sort(function (a, b) { return b.p.stats.speed - a.p.stats.speed; });
-    dom.turnOrder.innerHTML = '<b>速度行動序列</b><div class="order-chips">' + units.map(function (unit) {
+    if (!dom.turnOrder) return;
+    if (currentStage.tower || state.phase === 'deploy') { dom.turnOrder.innerHTML = ''; return; }
+    var all = alive('ally').concat(alive('enemy')).sort(function (a, b) { return b.p.stats.speed - a.p.stats.speed; });
+    var units = all.slice(0, TURN_ORDER_CAP), extra = all.length - units.length;
+    dom.turnOrder.innerHTML = '<b>速度行動序列' + (extra > 0 ? '（前 ' + TURN_ORDER_CAP + '，另 ' + extra + ' 隻）' : '') + '</b><div class="order-chips">' + units.map(function (unit) {
       return '<span class="order-chip ' + unit.team + (unit.acted ? ' done' : '') + (unit.boss ? ' boss' : '') + '" title="' + unit.p.name + '｜速度 ' + unit.p.stats.speed + '"><i style="background-image:url(\'' + portrait(unit) + '\')"></i><small>' + unit.p.stats.speed + '</small></span>';
     }).join('') + '</div>';
   }
@@ -2075,9 +2093,20 @@
     dom.resultIcon.textContent = win ? '🏆' : '🌙'; dom.resultStage.textContent = mapData().name + '｜' + currentStage.name; dom.resultTitle.textContent = win ? '遠征勝利' : '本次撤退';
     dom.resultCopy.textContent = win ? (reward.firstClear ? '首次通關完成，已解鎖下一個關卡。' : '重複挑戰完成，取得部分固定資源。') : '可先調整隊伍、融合階級與技能樹再挑戰。';
     dom.resultStats.innerHTML = '<span><b>' + state.round + '</b>回合</span><span><b>' + state.stats.damage + '</b>傷害</span><span><b>' + survivors + '/' + partyIds.length + '</b>存活</span>';
-    dom.resultRewards.textContent = win
-      ? '★'.repeat(reward.stars || 1) + (reward.commanderXp ? '　🎖️ 指揮官 EXP +' + reward.commanderXp : '') + (reward.medals ? '　🏅 +' + reward.medals : '') + (reward.essence ? '　🔷 +' + reward.essence : '') + (reward.fusionCore ? '　🧬 +' + reward.fusionCore : '') + (reward.coreLabel ? '　✦ ' + reward.coreLabel : '') + (reward.crystals ? '　💎 +' + reward.crystals : '') + (reward.gold ? '　🪙 +' + reward.gold : '') + (reward.summonShards ? '　🧩 +' + reward.summonShards + ' 召喚碎片' : '') + (reward.firstClearPet ? '　🎁 首通幻獸：' + profile(reward.firstClearPet).name : '') + (reward.storyPet ? '　🦌 新夥伴：' + profile(reward.storyPet).name : '')
-      : '本次沒有取得掉落物';
+    var rewardItems = win ? [
+      '★'.repeat(reward.stars || 1),
+      reward.commanderXp && '🎖️ 指揮官 EXP +' + reward.commanderXp,
+      reward.medals && '🏅 +' + reward.medals,
+      reward.essence && '🔷 +' + reward.essence,
+      reward.fusionCore && '🧬 +' + reward.fusionCore,
+      reward.coreLabel && '✦ ' + reward.coreLabel,
+      reward.crystals && '💎 +' + reward.crystals,
+      reward.gold && '🪙 +' + reward.gold,
+      reward.summonShards && '🧩 +' + reward.summonShards + ' 召喚碎片',
+      reward.firstClearPet && '🎁 首通幻獸：' + profile(reward.firstClearPet).name,
+      reward.storyPet && '🦌 新夥伴：' + profile(reward.storyPet).name
+    ].filter(Boolean) : ['本次沒有取得掉落物'];
+    dom.resultRewards.innerHTML = rewardItems.map(function (item) { return '<span>' + item + '</span>'; }).join('');
     if (dom.resultReport) {
       var top = function (table) { var pairs = Object.keys(table || {}).map(function (id) { return { id:id, value:table[id] }; }).sort(function (a,b) { return b.value-a.value; }); return pairs[0] ? (profile(pairs[0].id)?.name || pairs[0].id) + ' ' + pairs[0].value : '—'; };
       var fallen = state.units.filter(function (unit) { return unit.team === 'ally' && unit.hp <= 0; }).map(function (unit) { return unit.p.name; });
@@ -2269,10 +2298,12 @@
     var piece = dom.board.querySelector('[data-key="' + unit.key + '"]');
     if (!piece) { dom.battleCommand.style.left = '50%'; dom.battleCommand.style.top = 'auto'; dom.battleCommand.style.bottom = '16px'; dom.battleCommand.style.transform = 'translateX(-50%)'; return; }
     var rect = piece.getBoundingClientRect(), boxWidth = dom.battleCommand.offsetWidth, boxHeight = dom.battleCommand.offsetHeight, margin = 8;
+    var log = document.getElementById('combat-log'), floor = window.innerHeight - margin;
+    if (log) { var logRect = log.getBoundingClientRect(); if (logRect.top < floor) floor = logRect.top - margin; }
     var left = rect.left + rect.width / 2 - boxWidth / 2;
     left = Math.max(margin, Math.min(left, window.innerWidth - boxWidth - margin));
     var top = rect.bottom + margin;
-    if (top + boxHeight > window.innerHeight - margin) top = Math.max(margin, rect.top - boxHeight - margin);
+    if (top + boxHeight > floor) top = Math.max(margin, rect.top - boxHeight - margin);
     dom.battleCommand.style.left = Math.round(left) + 'px'; dom.battleCommand.style.top = Math.round(top) + 'px'; dom.battleCommand.style.bottom = 'auto'; dom.battleCommand.style.transform = 'none';
   }
   function renderBattleCommand() {
