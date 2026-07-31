@@ -68,6 +68,8 @@
 .battle-enemy-overview{display:grid;gap:5px;padding:8px;border:1px solid #78423b;border-radius:4px;background:#2b1718}
 .battle-enemy-overview small{color:#d5aaa2;font-size:.68rem;line-height:1.35}
 .battle-panel{position:sticky;top:10px;display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 90px);overflow-y:auto}
+/* 右欄只留選中單位卡與其可用行動；單位數量標題、Boss 預警、行動序列與教學提示改在別處呈現或移除。 */
+.battle-panel .battle-enemy-overview,.battle-panel #boss-warning-panel,.battle-panel #turn-order,.battle-panel .skill-help{display:none!important}
 .battle-controls{display:grid;gap:8px}
 
 /* 戰場鏡頭：實際 20×20，視窗保留較大的可讀格子並可拖曳平移。

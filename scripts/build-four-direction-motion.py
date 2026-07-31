@@ -15,7 +15,11 @@ from pathlib import Path
 from PIL import Image, ImageOps
 
 ROOT = Path(__file__).resolve().parent.parent
-SOURCE_DIR = ROOT / "assets" / "animations" / "directional" / "sources"
+ACTIVE_SOURCE_DIR = ROOT / "assets" / "animations" / "directional" / "sources"
+# 原圖不屬於執行期資產，整理後封存於專案內的非部署區；保留舊位置相容性，
+# 讓工作中的舊分支仍可直接重建圖集。
+ARCHIVE_SOURCE_DIR = ROOT / "不需要的檔案" / "assets" / "animations" / "directional" / "sources"
+SOURCE_DIR = ACTIVE_SOURCE_DIR if ACTIVE_SOURCE_DIR.exists() else ARCHIVE_SOURCE_DIR
 OUTPUT_DIR = ROOT / "assets" / "animations" / "directional"
 FRAME_DIR = OUTPUT_DIR / "frames"
 VIEW_DIR = OUTPUT_DIR / "views"
@@ -68,6 +72,8 @@ SWAPPED_SIDE_UNITS = {
     "fire_lion", "fire_fox", "leaf_ear_rabbit", "rotcap_rootling", "venom_mantis",
     "fog_wisp", "gloom_turtle", "ash_hound", "tsunami_dragon", "heavy_rail_guard",
     "surveillance_orb", "argus_guardian",
+    # 第 1、2 章魔王：玩家實測回報戰鬥中左右朝向相反。
+    "blightwood_sovereign", "thorn_hive_queen",
 }
 # AI grids occasionally let an adjacent cell's tail or attack trail cross the
 # cell boundary.  Remove only the verified intrusion, before scaling it into a

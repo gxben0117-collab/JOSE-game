@@ -499,12 +499,12 @@ test('2×2 幻獸全數優先採用原生四方向來源', () => {
     assert.match(entry.source, /four-direction-reference-v1-alpha\.png$/);
   }
 });
-test('第二、三章原生側面方向依實測映射，只有幽暗龜與霧中鬼火交換左右', () => {
+test('第一、二、三章原生側面方向依實測映射交換左右', () => {
   const directionalManifest = JSON.parse(readFileSync(join(root, 'assets/animations/directional/manifest.json'), 'utf8'));
-  for (const id of ['fog_wisp', 'gloom_turtle']) {
+  for (const id of ['fog_wisp', 'gloom_turtle', 'blightwood_sovereign', 'thorn_hive_queen']) {
     assert.deepEqual(Array.from(directionalManifest[id].sourceColumns), [0, 3, 2, 1]);
   }
-  for (const id of ['thorn_pollen_drone', 'mist_banshee', 'thorn_hive_queen', 'crown_cinderling', 'salamander_fiend', 'surtr_spawn', 'ember_imp', 'ash_crown_tyrant']) {
+  for (const id of ['thorn_pollen_drone', 'mist_banshee', 'crown_cinderling', 'salamander_fiend', 'surtr_spawn', 'ember_imp', 'ash_crown_tyrant']) {
     assert.deepEqual(Array.from(directionalManifest[id].sourceColumns), [0, 1, 2, 3]);
   }
 });
@@ -604,7 +604,7 @@ test('戰鬥框架使用左方戰隊、中央棋盤、右方敵情與指令三�
   assert.match(html, /class="board-wrap"/); assert.match(html, /class="side-panel battle-panel"/);
   assert.match(html, /id="battle-enemy-count"/); assert.match(html, /id="battle-enemy-summary"/);
   assert.match(source, /function renderBattleSides/); assert.match(source, /renderBattleSides\(\)/);
-  assert.match(screens, /grid-template-columns:160px minmax\(0,1fr\) 242px/);
+  assert.match(screens, /grid-template-columns:148px minmax\(0,1fr\) 220px/);
   assert.match(screens, /\.battle-main\{[^}]*flex:0 0 auto/);
   assert.match(screens, /\.screen-battle \.board\{margin-inline:auto\}/);
   assert.match(screens, /@media \(max-width:980px\)[\s\S]*\.battle-ally-panel\{display:none\}/);
@@ -818,7 +818,7 @@ test('iPad 戰場維持 21×10 比例、中央棋盤優先且隊伍編輯可觸�
   assert.match(screens, /@media \(min-width:700px\) and \(max-width:980px\)[\s\S]*width:max\(720px,100%\)[\s\S]*aspect-ratio:21 \/ 10/);
   assert.match(screens, /\.deploy-squad-console\{/);
   assert.match(source, /function renderDeploySquadConsole\(\)/);
-  assert.match(screens, /@media \(min-width:981px\) and \(max-width:1180px\)[\s\S]*grid-template-columns:132px minmax\(0,1fr\) 190px/);
+  assert.match(screens, /@media \(min-width:981px\) and \(max-width:1180px\)[\s\S]*grid-template-columns:124px minmax\(0,1fr\) 172px/);
   assert.match(source, /\['deploy', 'hub-party'\][\s\S]*addEventListener\('pointerup'/);
   assert.match(html, /id="deploy"[^>]*type="button"/);
 });

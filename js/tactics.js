@@ -1612,8 +1612,35 @@
       forecast = '<section class="combat-forecast"><b>⚔ ' + active.p.name + ' → ' + unit.p.name + '</b><span>預估傷害 <strong>-' + estimate + '</strong>｜命中 ' + hitRate + '%</span><span>' + (multiplier > 1 ? '元素克制 ×' + multiplier : multiplier < 1 ? '元素受制 ×' + multiplier : '元素中性') + (counter ? '｜預估反擊 -' + counter : '｜無法反擊') + '</span></section>';
     } else if (unit.team === 'enemy') forecast = '<section class="combat-forecast neutral"><b>⚔ 戰術預判</b><span>先選我方幻獸再點此敵人，可查看真實傷害、命中、反擊與元素關係。</span></section>';
     dom.detail.innerHTML = '<div class="detail-head"><span class="detail-face" style="background-image:url(\'' + portrait(unit) + '\')"></span><div class="detail-title"><strong>' + unit.p.name + '</strong><small>' + elementIcon + ' ' + teamLabel + '・' + unit.p.roleLabel + '</small><span class="detail-hp"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></div></div><div class="detail-tags"><span>' + (stage?.label || '戰鬥型態') + '</span><span>' + unitSize(unit) + '×' + unitSize(unit) + '</span><span>' + (unit.p.rarity || 'normal').toUpperCase() + '</span></div><p class="detail-passive">被動：' + passive + (statusText.length ? '<br>狀態：' + statusText.join('、') : '') + '</p>' + signature + forecast + '<div class="stat-grid"><span>力量 ' + Math.round(stat(unit, 'power')) + '</span><span>魔力 ' + Math.round(stat(unit, 'magic')) + '</span><span>防衛 ' + Math.round(stat(unit, 'defense')) + '</span><span>速度 ' + unit.p.stats.speed + '</span><span>血量 ' + unit.hp + '/' + unit.maxHp + '</span><span>移動 ' + moveRange(unit) + ' 格</span></div><h3 class="detail-skill-title">技能資訊</h3><ul class="detail-skill-list">' + skillInfo + '</ul>';
-    /* 可操作的攻擊／待機／取消移動指令改在幻獸下方的浮動小框（見 renderBattleCommand），
-       右側僅保留技能資訊參考，避免右欄擁擠。 */
+    if (unit.team !== 'ally') return;
+    unit.p.skills.forEach(function (skill, index) {
+      var button = document.createElement('button'), cooldown = unit.cooldowns[index] || 0;
+      button.className = 'skill' + (skill.kind === 'basic' ? ' basic-skill' : '') + (cooldown ? ' cooling' : ' ready') + (state.mode === 'skill' && state.skill === index ? ' active' : '');
+      button.disabled = unit.acted || cooldown > 0 || state.phase !== 'player' || state.over || state.animating;
+      var extras = (skill.status === 'freeze' ? '❄' : skill.status === 'poison' ? '☠' : skill.status === 'burn' ? '🔥' : '') + (skill.push ? '💨' : '') + (skill.pull ? '🪝' : '');
+      button.textContent = (skill.kind === 'basic' ? '⚔ 普攻．' : (index + 1) + '．') + skill.name + extras + '｜' + (skill.attackStyle === 'support' ? '輔助' : skill.attackStyle === 'area' ? '範圍' : '射程 ' + skillRange(unit, skill)) + (skill.kind === 'basic' ? '｜無冷卻' : cooldown ? '（冷卻 ' + cooldown + '）' : '');
+      button.onclick = function () { state.selected = unit.key; state.mode = 'skill'; state.skill = index; clearForecast(); audio.play('ui'); note('已選擇「' + skill.name + '」，點擊高亮的' + (skill.attackStyle === 'support' ? '我方' : '敵方') + '目標後立即施放。'); render(); }; dom.skills.appendChild(button);
+    });
+    if (state.phase === 'player' && !state.over && !unit.acted) {
+      var actions = document.createElement('div'); actions.className = 'unit-actions';
+      var move = document.createElement('button'); move.type = 'button'; move.className = 'secondary'; move.textContent = unit.moved ? '⚔ 顯示可攻擊目標' : '⌁ 直接操作'; move.disabled = state.animating;
+      move.onclick = function () { state.selected = unit.key; state.mode = 'move'; state.skill = 0; clearForecast(); audio.play('ui'); note(unit.moved ? '紅框敵人可直接點擊普攻。' : '已回到直覺操作：藍格可移動、紅框敵人可直接普攻。'); render(); };
+      actions.appendChild(move);
+      var wait = document.createElement('button'); wait.type = 'button'; wait.className = 'secondary'; wait.textContent = '🕒 待機';
+      wait.disabled = state.animating;
+      wait.onclick = function () { if (state.animating || unit.acted) return; unit.moved = true; unit.acted = true; clearForecast(); audio.play('ui'); note(unitName(unit) + ' 選擇待機。'); render(); maybeAutoEndAfterMoves(); };
+      actions.appendChild(wait);
+      if (unit.moved && unit.prevX !== undefined && !state.animating) {
+        var undo = document.createElement('button'); undo.type = 'button'; undo.className = 'secondary'; undo.textContent = '↩ 取消移動';
+        undo.onclick = function () {
+          if (state.animating || unit.acted || at(unit.prevX, unit.prevY)) return;
+          unit.x = unit.prevX; unit.y = unit.prevY; unit.moved = false; unit.prevX = undefined; unit.prevY = undefined;
+          clearForecast(); audio.play('ui'); note(unitName(unit) + ' 退回原位，可重新規劃。'); render(); focusUnit(unit, false);
+        };
+        actions.appendChild(undo);
+      }
+      dom.skills.appendChild(actions);
+    }
   }
 
   async function clickCell(x, y) {

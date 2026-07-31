@@ -1781,9 +1781,9 @@ window.TACTICAL_MOTION_MANIFEST = {
     },
     "sourceColumns": [
       0,
-      1,
+      3,
       2,
-      3
+      1
     ],
     "sourceType": "authored-four-direction",
     "source": "assets/animations/directional/sources/blightwood_sovereign-four-direction-reference-v1-alpha.png",
@@ -17117,9 +17117,9 @@ window.TACTICAL_MOTION_MANIFEST = {
     },
     "sourceColumns": [
       0,
-      1,
+      3,
       2,
-      3
+      1
     ],
     "sourceType": "authored-four-direction",
     "source": "assets/animations/directional/sources/thorn_hive_queen-four-direction-reference-v1-alpha.png",
