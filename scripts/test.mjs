@@ -533,7 +533,7 @@ test('SRPG 介面：點敵即施放、階段橫幅、威脅範圍、待機與取
 test('大地圖鏡頭：拖曳平移、點選置中與小地圖', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   assert.match(source, /function focusCamera/); assert.match(source, /function enableCameraDrag/); assert.doesNotMatch(source, /function renderMinimap/);
-  const unitClickSource = source.slice(source.indexOf("element.addEventListener('click', function (event)"), source.indexOf('var threatTileMap'));
+  const unitClickSource = source.slice(source.indexOf('async function handleUnitClick'), source.indexOf('var unitElementHit'));
   assert.match(unitClickSource, /focusUnit\(unit, false\)/);
   assert.match(source, /gridTemplateColumns = 'repeat\(' \+ COLS/);
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');

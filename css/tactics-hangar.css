@@ -26,4 +26,4 @@ html,body{min-width:720px;min-height:100%;background:#091225}.tactics-app,.scree
 /* 全站按壓／鍵盤焦點回饋：觸控裝置沒有 hover，需要明確的按下與 tab 導覽提示。 */
 button:not(:disabled):active,.link-button:active,a.hub-item:active{transform:scale(.96)}
 button,.link-button,a.hub-item{transition:transform .1s ease}
-button:focus-visible,.link-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #8fc8ff;outline-offset:2px}
+button:focus-visible,.link-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,.cell[tabindex]:focus-visible{outline:2px solid #8fc8ff;outline-offset:-2px;z-index:9}

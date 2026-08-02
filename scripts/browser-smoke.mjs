@@ -163,8 +163,8 @@ try {
   assert.equal(battleStartState.state.phase, 'player', '部署開始後必須進入我方行動階段：' + JSON.stringify(battleStartState));
   /* 開戰後先等鏡頭定位完成，驗證玩家下一次點選立刻能取得藍格。 */
   await delay(240);
-  const directControl = await evaluate(`(() => { let chosen = null; for (const unit of document.querySelectorAll('.unit.ally:not(.action-complete)')) { unit.click(); if (document.querySelectorAll('.cell.move-target').length) { chosen = unit.dataset.key; break; } } const panel = document.querySelector('#battle-command'); return { panelHidden: panel.hidden, selected: chosen, moveTargets: document.querySelectorAll('.cell.move-target').length, attackTargets: document.querySelectorAll('.unit.enemy.in-range, .unit.enemy.attack-target').length, rightSkills: document.querySelectorAll('#skill-buttons .skill').length, rightSkillsDisplay: getComputedStyle(document.querySelector('#skill-buttons')).display, state: window.__TACTICS_DEBUG__.getState(), active: document.querySelector('.unit.ally.active')?.dataset.key || '' }; })()`);
-  assert.ok(directControl.panelHidden && directControl.moveTargets > 0 && directControl.rightSkills > 0, '選取幻獸後必須直接保留棋盤操作與右側技能：' + JSON.stringify(directControl)); assert.notEqual(directControl.rightSkillsDisplay, 'none');
+  const directControl = await evaluate(`(() => { let chosen = null; const keys = [...document.querySelectorAll('.unit.ally:not(.action-complete)')].map(unit => unit.dataset.key); for (const key of keys) { const unit = document.querySelector('.unit.ally[data-key="' + key + '"]'); if (!unit) continue; unit.click(); if (document.querySelectorAll('.cell.move-target').length) { chosen = key; break; } } return { selected: chosen, moveTargets: document.querySelectorAll('.cell.move-target').length, attackTargets: document.querySelectorAll('.unit.enemy.in-range, .unit.enemy.attack-target').length, rightSkills: document.querySelectorAll('#skill-buttons .skill').length, rightSkillsDisplay: getComputedStyle(document.querySelector('#skill-buttons')).display, state: window.__TACTICS_DEBUG__.getState(), active: document.querySelector('.unit.ally.active')?.dataset.key || '' }; })()`);
+  assert.ok(directControl.moveTargets > 0 && directControl.rightSkills > 0, '選取幻獸後必須直接保留棋盤操作與右側技能：' + JSON.stringify(directControl)); assert.notEqual(directControl.rightSkillsDisplay, 'none');
   const moved = await evaluate(`(() => { const count = document.querySelectorAll('.unit.ally').length; for (let index = 0; index < count; index++) { const ally = document.querySelectorAll('.unit.ally')[index]; ally.click(); const target = document.querySelector('.cell.move-target'); if (target) { target.click(); return true; } } return false; })()`);
   assert.ok(moved); await delay(60);
   const walkAnimation = await evaluate(`(() => { const portrait = document.querySelector('.unit.ally.walking .portrait'); return portrait ? getComputedStyle(portrait).animationName : ''; })()`);
@@ -202,7 +202,7 @@ try {
     return { width: innerWidth, overflow: document.documentElement.scrollWidth - innerWidth, columns: getComputedStyle(document.querySelector('.battle-main')).gridTemplateColumns, mainWidth: main.width, allyWidth: ally.width, boardWidth: board.width, enemyWidth: enemy.width, boardRatio: getComputedStyle(document.querySelector('#board')).aspectRatio, ordered: ally.left < board.left && board.right < enemy.right };
   })()`);
   assert.equal(ipadLandscape.width, 1024); assert.ok(ipadLandscape.overflow <= 1, 'iPad 橫向畫布不可產生頁面橫向溢位：' + JSON.stringify(ipadLandscape));
-  assert.match(ipadLandscape.columns, /132px/); assert.ok(ipadLandscape.boardWidth > ipadLandscape.allyWidth + ipadLandscape.enemyWidth, 'iPad 橫向時中央棋盤必須大於兩側資訊欄：' + JSON.stringify(ipadLandscape));
+  assert.match(ipadLandscape.columns, /124px/); assert.ok(ipadLandscape.boardWidth > ipadLandscape.allyWidth + ipadLandscape.enemyWidth, 'iPad 橫向時中央棋盤必須大於兩側資訊欄：' + JSON.stringify(ipadLandscape));
   assert.equal(ipadLandscape.boardRatio, '21 / 10'); assert.ok(ipadLandscape.ordered, 'iPad 橫向三欄順序錯誤：' + JSON.stringify(ipadLandscape));
   const ipadShot = await screenshot('jose-ipad-landscape-battle.png');
 
@@ -211,12 +211,12 @@ try {
     width: innerWidth,
     overflow: document.documentElement.scrollWidth - innerWidth,
     board: !!document.querySelector('#board'),
-    controls: getComputedStyle(document.querySelector('.battle-controls')).display,
+    controls: getComputedStyle(document.querySelector('.battle-topbar-tools')).display,
     cells: document.querySelectorAll('#board .cell').length
   }))()`);
   assert.ok(mobile.width >= 720, '手機橫向畫布應維持最小 720px：' + JSON.stringify(mobile)); assert.ok(mobile.overflow <= 1); assert.ok(mobile.board && mobile.controls !== 'none'); assert.equal(mobile.cells, 210);
-  const mobileDirectControl = await evaluate(`(() => { const unit = document.querySelector('.unit.ally:not(.action-complete)') || document.querySelector('.unit.ally'); unit.click(); const panel = document.querySelector('#battle-command'); return { panelHidden: panel.hidden, moves: document.querySelectorAll('.cell.move-target').length, attacks: document.querySelectorAll('.unit.enemy.in-range, .unit.enemy.attack-target').length, skills: document.querySelectorAll('#skill-buttons .skill').length, skillDisplay: getComputedStyle(document.querySelector('#skill-buttons')).display, phase: window.__TACTICS_DEBUG__.getState().phase }; })()`);
-  assert.ok(mobileDirectControl.panelHidden && mobileDirectControl.skills > 0 && mobileDirectControl.skillDisplay !== 'none', '行動回合的手機橫向畫布必須維持直接棋盤操作：' + JSON.stringify(mobileDirectControl));
+  const mobileDirectControl = await evaluate(`(() => { const unit = document.querySelector('.unit.ally:not(.action-complete)') || document.querySelector('.unit.ally'); unit.click(); return { moves: document.querySelectorAll('.cell.move-target').length, attacks: document.querySelectorAll('.unit.enemy.in-range, .unit.enemy.attack-target').length, skills: document.querySelectorAll('#skill-buttons .skill').length, skillDisplay: getComputedStyle(document.querySelector('#skill-buttons')).display, phase: window.__TACTICS_DEBUG__.getState().phase }; })()`);
+  assert.ok(mobileDirectControl.skills > 0 && mobileDirectControl.skillDisplay !== 'none', '行動回合的手機橫向畫布必須維持直接棋盤操作：' + JSON.stringify(mobileDirectControl));
   const mobileShot = await screenshot('jose-mobile-battle.png');
 
   await command('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });

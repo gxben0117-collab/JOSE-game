@@ -371,7 +371,7 @@
       var guaranteed = featuredInfo && featuredInfo.pulls >= FEATURED_PITY - 1, roll = Math.random() * totalWeight, picked = guaranteed ? { pet: eligiblePets[Math.floor(Math.random() * eligiblePets.length)] } : pool[0];
       if (!guaranteed) for (var cursor = 0; cursor < pool.length; cursor++) { roll -= pool[cursor].weight; if (roll <= 0) { picked = pool[cursor]; break; } }
       var grant = this.grantPet(picked.pet.id);
-      results.push({ pet: picked.pet, isNew: grant.isNew, shards: grant.shards || 0, featuredGuaranteed: Boolean(guaranteed) });
+      results.push({ pet: picked.pet, isNew: grant.isNew, featuredGuaranteed: Boolean(guaranteed) });
       if (featuredInfo) { featuredInfo.pulls = guaranteed ? 0 : featuredInfo.pulls + 1; this.state.featuredPity = { date: featuredInfo.date, pulls: featuredInfo.pulls }; }
     }
     this.save();
@@ -379,7 +379,7 @@
   };
 
   TacticalProgression.prototype.bossRaidState = function (bossIds, fixedBossId) {
-    var key = new Date().toISOString().slice(0, 10), seed = key.replace(/-/g, '').split('').reduce(function (sum, digit) { return sum + Number(digit); }, 0);
+    var key = this.dateKey(), seed = key.replace(/-/g, '').split('').reduce(function (sum, digit) { return sum + Number(digit); }, 0);
     bossIds = Array.isArray(bossIds) && bossIds.length ? bossIds : [];
     var bossId = bossIds.indexOf(fixedBossId) >= 0 ? fixedBossId : (bossIds[seed % bossIds.length] || '');
     if (!this.state.bossRaid || this.state.bossRaid.key !== key || this.state.bossRaid.bossId !== bossId) {
@@ -433,7 +433,7 @@
   ];
   TacticalProgression.prototype.shopOffers = function () { return SHOP_OFFERS.slice(); };
   TacticalProgression.prototype.shopState = function () {
-    var key = new Date().toISOString().slice(0, 10);
+    var key = this.dateKey();
     if (!this.state.shop || this.state.shop.key !== key) { this.state.shop = { key: key, counts: {} }; this.save(); }
     return this.state.shop;
   };
@@ -488,12 +488,13 @@
     return { ok: true, yields: pending.yields, total: total };
   };
 
-  /* ── 每日任務（依本地日期重置） ── */
+  /* ── 每日任務（統一依 dateKey() 的台灣日期重置，避免每日/每週/商店/保底各自用不同時區基準） ── */
   TacticalProgression.prototype.dailyQuests = function () { return DAILY_QUESTS.slice(); };
   TacticalProgression.prototype.weekKey = function () {
-    var date = new Date(); date.setHours(0, 0, 0, 0);
-    date.setDate(date.getDate() - ((date.getDay() + 6) % 7));
-    return date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+    var parts = this.dateKey().split('-').map(Number);
+    var date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    date.setUTCDate(date.getUTCDate() - ((date.getUTCDay() + 6) % 7));
+    return date.getUTCFullYear() + '-' + String(date.getUTCMonth() + 1).padStart(2, '0') + '-' + String(date.getUTCDate()).padStart(2, '0');
   };
   TacticalProgression.prototype.weeklyQuests = function () { return WEEKLY_QUESTS.slice(); };
   TacticalProgression.prototype.weeklyState = function () {
@@ -523,7 +524,7 @@
     this.save(); return { ok: true, reward: quest.reward };
   };
   TacticalProgression.prototype.dailyState = function () {
-    var key = new Date().toISOString().slice(0, 10);
+    var key = this.dateKey();
     if (!this.state.daily || this.state.daily.key !== key) {
       this.state.daily = { key: key, battles: 0, wins: 0, controls: 0, claims: {} };
       this.save();

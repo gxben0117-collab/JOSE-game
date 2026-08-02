@@ -45,11 +45,40 @@
     battleTutorial: document.getElementById('battle-tutorial'), battleTutorialCopy: document.getElementById('battle-tutorial-copy'), battleTutorialDismiss: document.getElementById('battle-tutorial-dismiss'), animationMode: document.getElementById('animation-mode'), briefingModal: document.getElementById('battle-briefing-modal'), briefingContent: document.getElementById('battle-briefing-content')
   };
 
-  /* 棋盤格點擊改用單一委派監聽，取代過去每次 render() 對 210 格各自綁定監聽器；
-     單位按鈕自身的 click 已 stopPropagation，行為與逐格綁定時完全一致。 */
+  /* 棋盤格與單位按鈕點擊都改用單一委派監聽，取代過去每次 render() 對 210 格＋每個單位
+     各自綁定新的監聽器與閉包；長時間 AUTO 戰鬥密集重繪時可省下大量監聽器建立成本。 */
+  function unitByKey(key) { return state.units.find(function (item) { return item.key === key; }); }
+  async function handleUnitClick(unit) {
+    if (!unit || unit.guardian) return;
+    if (cameraSuppressed()) return;
+    state.inspected = unit.key;
+    focusUnit(unit, false);
+    if (state.mode === 'skill' && selected() && canTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
+    if (!currentStage.tower && unit.team === 'enemy' && selected() && selected().team === 'ally' && !selected().acted && state.phase === 'player' && !state.animating && state.mode !== 'skill' && canBasicTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
+    if (!currentStage.tower && unit.team === 'enemy' && selected() && selected().team === 'ally' && !selected().acted && state.phase === 'player' && !state.animating && state.mode !== 'skill') {
+      var approach = findAttackApproach(selected(), unit);
+      if (approach) { await moveThenAttack(selected(), approach, unit); return; }
+    }
+    if (state.phase === 'deploy' && unit.team === 'ally') { state.selected = unit.key; note('已選擇 ' + unitName(unit) + '，點選左側部署格調整站位。'); render(); return; }
+    if (unit.team === 'enemy' && unit.hp > 0 && (state.phase === 'player' || state.phase === 'deploy') && !state.animating) {
+      state.threatKey = state.threatKey === unit.key ? null : unit.key; clearForecast(); audio.play('ui');
+      note(state.threatKey ? unitName(unit) + ' 的威脅範圍：橘色＝可移動、紅色＝射程涵蓋。再點一次取消。' : '已關閉威脅範圍顯示。');
+      render(); return;
+    }
+    if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; clearForecast(); note(manualSelectionHint(unit)); render(); }
+  }
   if (dom.board) dom.board.addEventListener('click', function (event) {
+    var unitElementHit = event.target.closest('.unit');
+    if (unitElementHit) { handleUnitClick(unitByKey(unitElementHit.dataset.key)); return; }
     var cellElement = event.target.closest('.cell');
     if (cellElement) clickCell(Number(cellElement.dataset.x), Number(cellElement.dataset.y));
+  });
+  /* 空白可移動格補上鍵盤 Enter／Space 觸發，等同滑鼠點擊該格。 */
+  if (dom.board) dom.board.addEventListener('keydown', function (event) {
+    if (event.key !== 'Enter' && event.key !== ' ' && event.key !== 'Spacebar') return;
+    var cellElement = event.target.closest('.cell');
+    if (!cellElement || cellElement.tabIndex !== 0) return;
+    event.preventDefault(); cellElement.click();
   });
 
   var terrainAlwaysVisible = false, battleTutorialSeen = false, battleGuideSeen = {}, activeGuideKey = '', animationMode = 'full', skipClearedBriefing = false;
@@ -769,8 +798,8 @@
     if (!path || !path.length) return false;
     unit.prevX = unit.x; unit.prevY = unit.y; /* 供「取消移動」還原 */
     state.animating = true; note(unitName(unit) + ' 移動 ' + path.length + ' 格。');
-    await animateWaypoints(unit, path, 'walking', 115);
-    unit.moved = true; state.animating = false; note(unitName(unit) + ' 抵達 ' + (unit.x + 1) + '-' + (unit.y + 1) + '；紅框敵人可直接點擊普攻。'); render(); maybeAutoEndAfterMoves(); return true;
+    try { await animateWaypoints(unit, path, 'walking', 115); } finally { state.animating = false; }
+    unit.moved = true; note(unitName(unit) + ' 抵達 ' + (unit.x + 1) + '-' + (unit.y + 1) + '；紅框敵人可直接點擊普攻。'); render(); maybeAutoEndAfterMoves(); return true;
   }
   /* 智慧移動＋攻擊：點擊尚未入範圍的敵人時，自動走到 findAttackApproach() 算出的
      最近可攻擊格，再立即普攻，玩家不用先走一步、再回頭點敵人兩次操作。 */
@@ -1274,6 +1303,22 @@
     /* 無論是手動、AUTO、反擊或未來新增的呼叫端，都不能繞過技能的敵我目標規則。 */
     if (!unit || !target || unit.hp <= 0 || target.hp <= 0 || !canUseTarget(unit, target, skill)) return;
     if (!options.nested) state.animating = true;
+    try {
+      await actSequence(unit, target, skill, skillIndex, options);
+    } finally {
+      if (!options.nested) state.animating = false;
+    }
+    if (!options.nested) {
+      checkEnd();
+      if (!state.over) {
+        render();
+        if (unit.team === 'ally' && !options.counter) { maybeAutoEndAfterMoves(); selectNextAvailableUnit(); }
+      }
+    }
+  }
+  /* act() 的實際演出流程拆出來，讓外層能用 try/finally 確保無論中途是否拋出例外，
+     state.animating 都會被重置，不會讓戰鬥卡死在動畫狀態。 */
+  async function actSequence(unit, target, skill, skillIndex, options) {
     unit.acted = true;
     var actualIndex = skillIndex === undefined ? state.skill : skillIndex;
     if (skill.cooldown > 0) unit.cooldowns[actualIndex] = Math.max(1, skill.cooldown - (bonuses(unit).cooldown || 0));
@@ -1364,13 +1409,6 @@
       state.selected = target.key; note(unitName(target) + ' 準備反擊。'); render();
       await pause(300);
       if (target.hp > 0 && unit.hp > 0 && canCounter(target, unit) && !state.over) await act(target, unit, target.p.skills[0], 0, { counter: true, nested: true });
-    }
-    if (!options.nested) {
-      state.animating = false; checkEnd();
-      if (!state.over) {
-        render();
-        if (unit.team === 'ally' && !options.counter) { maybeAutoEndAfterMoves(); selectNextAvailableUnit(); }
-      }
     }
   }
 
@@ -1480,6 +1518,12 @@
       if (inMoveScope || inSkillScope || inBasicScope || (x === active.x && y === active.y)) element.classList.add('terrain-relevant');
     }
     element.dataset.x = x; element.dataset.y = y;
+    /* 可攻擊／可治療目標格一定覆蓋著單位，單位本身是原生 button，鍵盤 Tab／Enter 已可操作；
+       只有「空白可移動格」沒有任何可聚焦元素，鍵盤玩家選了移動模式後完全無法選擇落點，這裡補上鍵盤可達性。 */
+    if (element.classList.contains('move-target') && !unit) {
+      element.tabIndex = 0; element.setAttribute('role', 'button');
+      element.setAttribute('aria-label', (state.phase === 'deploy' ? '部署至第 ' : '移動至第 ') + (y + 1) + ' 排第 ' + (x + 1) + ' 格');
+    }
     if (unit && unit.x === x && unit.y === y) element.appendChild(unitElement(unit));
     else if (unit) element.classList.add('covered');
     return element;
@@ -1490,7 +1534,7 @@
     if (unit.guardian) {
       element.className += ' guardian-tower'; element.setAttribute('aria-label', '守護塔，生命 ' + unit.hp + ' / ' + unit.maxHp);
       element.innerHTML = '<span class="guardian-spire" aria-hidden="true"><span class="guardian-core">✦</span></span><span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
-      element.addEventListener('click', function (event) { event.stopPropagation(); }); return element;
+      return element;
     }
     applyMotionVariables(element, unit);
     element.setAttribute('aria-pressed', state.inspected === unit.key ? 'true' : 'false');
@@ -1499,25 +1543,7 @@
     element.title = unit.p.name + '（' + unit.p.roleLabel + '）';
     var facingLabel = { right: '右', left: '左', up: '上', down: '下' }[unit.facing] || '右';
     element.innerHTML = '<span class="portrait" role="img" aria-label="' + unit.p.name + '，朝向' + facingLabel + '" style="background-image:url(\'' + portrait(unit) + '\')"></span>' + (unit.boss ? '<span class="boss-phase-chip">P' + unit.bossPhase + '</span>' : '') + (statuses ? '<span class="status-icons">' + statuses + '</span>' : '') + '<span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
-    element.addEventListener('click', async function (event) {
-      event.stopPropagation();
-      if (cameraSuppressed()) return;
-      state.inspected = unit.key;
-      focusUnit(unit, false);
-      if (state.mode === 'skill' && selected() && canTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
-      if (!currentStage.tower && unit.team === 'enemy' && selected() && selected().team === 'ally' && !selected().acted && state.phase === 'player' && !state.animating && state.mode !== 'skill' && canBasicTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
-      if (!currentStage.tower && unit.team === 'enemy' && selected() && selected().team === 'ally' && !selected().acted && state.phase === 'player' && !state.animating && state.mode !== 'skill') {
-        var approach = findAttackApproach(selected(), unit);
-        if (approach) { await moveThenAttack(selected(), approach, unit); return; }
-      }
-      if (state.phase === 'deploy' && unit.team === 'ally') { state.selected = unit.key; note('已選擇 ' + unitName(unit) + '，點選左側部署格調整站位。'); render(); return; }
-      if (unit.team === 'enemy' && unit.hp > 0 && (state.phase === 'player' || state.phase === 'deploy') && !state.animating) {
-        state.threatKey = state.threatKey === unit.key ? null : unit.key; clearForecast(); audio.play('ui');
-        note(state.threatKey ? unitName(unit) + ' 的威脅範圍：橘色＝可移動、紅色＝射程涵蓋。再點一次取消。' : '已關閉威脅範圍顯示。');
-        render(); return;
-      }
-      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; clearForecast(); note(manualSelectionHint(unit)); render(); }
-    }); return element;
+    return element;
   }
 
   var threatTileMap = null;
@@ -2629,11 +2655,17 @@
       revealGachaCard();
     }, 1600);
   }
+  /* 演出播放中鎖定所有召喚按鈕，避免連續點擊讓上一批抽卡結果在還沒展示前就被下一批覆蓋掉。 */
+  function setGachaPullsDisabled(disabled) {
+    ['gacha-one', 'gacha-ten'].forEach(function (id) { var button = document.getElementById(id); if (button) button.disabled = disabled; });
+    document.querySelectorAll('[data-element-pull], [data-featured-pull]').forEach(function (button) { button.disabled = disabled; });
+  }
   function startGachaCeremony(results) {
     clearTimeout(gachaCeremony.timer);
     gachaCeremony = { results: results, index: 0, timer: null };
     document.getElementById('gacha-results').innerHTML = '';
     document.getElementById('gacha-reveal').hidden = false;
+    setGachaPullsDisabled(true);
     revealGachaCard();
   }
   function finishGachaCeremony() {
@@ -2641,8 +2673,10 @@
     if (gachaCeremony.results.length) renderGachaResults(gachaCeremony.results);
     gachaCeremony = { results: [], index: 0, timer: null };
     document.getElementById('gacha-reveal').hidden = true;
+    setGachaPullsDisabled(false);
   }
   function doPull(count, element, featured) {
+    if (gachaCeremony.results.length) return; /* 上一批演出還沒播完，忽略重複點擊 */
     var result = progression.pull(count, element, featured);
     if (!result.ok) { document.getElementById('gacha-info').innerHTML = '<b class="fc-warn">' + result.reason + '</b>'; audio.play('ui'); return; }
     audio.play('unlock'); renderProgress(); renderGacha(); renderParty(); renderTrait();
@@ -2770,7 +2804,9 @@
     partyIds = progress.party.slice(); dom.deployModal.hidden = true; reset(currentStage.id);
   }
 
-  document.addEventListener('pointerdown', function unlockOnce() { audio.unlock(); document.removeEventListener('pointerdown', unlockOnce); }, { once: true });
+  /* AudioContext 解鎖需要使用者手勢；只綁 pointerdown 的話，第一次互動若是鍵盤操作（Tab+Enter）
+     就永遠不會在有效手勢中解鎖，之後音效會靜默失敗且無任何提示。這裡改綁多種手勢類型。 */
+  ['pointerdown', 'keydown', 'touchstart'].forEach(function (type) { document.addEventListener(type, function unlockOnce() { audio.unlock(); }, { once: true }); });
   document.getElementById('restart').onclick = function () { reset(stageRef()); };
   dom.endTurn.onclick = endTurn; dom.auto.onclick = toggleAuto; dom.speed.onclick = cycleSpeed; if (dom.animationMode) dom.animationMode.onclick = cycleAnimationMode;
   if (dom.towerCommand) dom.towerCommand.onclick = towerCommand;
@@ -2839,7 +2875,48 @@
   };
   var towerButton = document.getElementById('open-tower');
   if (towerButton) towerButton.onclick = function () { audio.unlock(); enterTower(progress.tower.best + 1); };
-  document.addEventListener('keydown', function (event) { if (event.key === 'Escape') { closeGrowthConfirmation(); ['deploy-modal', 'battle-briefing-modal', 'campaign-modal', 'growth-modal', 'dex-modal', 'gacha-modal', 'daily-modal', 'home-modal', 'shop-modal', 'bag-modal', 'commander-modal', 'boss-raid-modal', 'home-display-modal', 'story-modal'].forEach(function (id) { var modal = document.getElementById(id); if (modal) modal.hidden = true; }); } });
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    closeGrowthConfirmation();
+    /* 動態查詢所有目前開啟的彈窗，取代固定清單，避免新增彈窗時漏掉 Escape 支援。 */
+    document.querySelectorAll('.deploy-modal:not([hidden])').forEach(function (modal) { modal.hidden = true; });
+    var reveal = document.getElementById('gacha-reveal'); if (reveal && !reveal.hidden) reveal.hidden = true;
+  });
+
+  /* 彈窗鍵盤焦點管理：開啟時把焦點移入對話框並記住觸發來源，關閉時歸還焦點；
+     Tab／Shift+Tab 在開啟中的彈窗內循環，避免鍵盤焦點跑到被遮住的背景內容。
+     只監看既有 .deploy-modal 元素的 hidden 屬性（非 subtree），不影響版面上其他頻繁切換 hidden 的一般 UI 元件。 */
+  (function setupModalFocusManagement() {
+    var lastFocused = null;
+    function focusableIn(container) {
+      return Array.prototype.slice.call(container.querySelectorAll('button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])')).filter(function (el) { return el.offsetParent !== null; });
+    }
+    var modalElements = Array.prototype.slice.call(document.querySelectorAll('.deploy-modal'));
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Tab') return;
+      var modal = modalElements.find(function (item) { return !item.hidden; });
+      if (!modal) return;
+      var focusables = focusableIn(modal);
+      if (!focusables.length) return;
+      var first = focusables[0], last = focusables[focusables.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
+    var observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        var modal = mutation.target;
+        if (!modal.hidden) {
+          lastFocused = document.activeElement;
+          var focusables = focusableIn(modal);
+          if (focusables.length) focusables[0].focus({ preventScroll: true });
+        } else if (lastFocused && document.body.contains(lastFocused) && lastFocused !== document.body) {
+          lastFocused.focus({ preventScroll: true });
+          lastFocused = null;
+        }
+      });
+    });
+    modalElements.forEach(function (modal) { observer.observe(modal, { attributes: true, attributeFilter: ['hidden'] }); });
+  }());
 
   window.__TACTICS_DEBUG__ = {
     getState: function () { return { stage: currentStage.id, view: currentView, round: state.round, phase: state.phase, mode: state.mode, selected: state.selected, animating: state.animating, cameraSuppressed: cameraSuppressed(), over: state.over, battleStartInProgress: battleStartInProgress, allies: alive('ally').length, enemies: alive('enemy').length, partyCost: state.partyCost, enemyScale: state.enemyScale, balanceLabel: state.balance.label, enemyReinforcements: state.balance.added, obstacles: state.obstacles.length, resources: JSON.parse(JSON.stringify(progress)) }; },
