@@ -633,7 +633,7 @@ test('戰鬥側欄只保留戰鬥資訊，不顯示進化解鎖按鈕', () => {
   const detailSource = source.slice(source.indexOf('function renderDetail'), source.indexOf('async function clickCell'));
   assert.doesNotMatch(html, /id="evolution-buttons"/); assert.doesNotMatch(source, /dom\.evolution/);
   assert.match(detailSource, /stage\?\.label/); assert.doesNotMatch(detailSource, /openGrowthConfirmation|unlockEvolution|growth-evolve/);
-  assert.match(html, /class="skill-help"/); assert.match(source, /dom\.battleCommandSkills\.appendChild\(button\)/);
+  assert.match(html, /class="skill-help"/); assert.match(source, /dom\.skills\.appendChild\(button\)/);
 });
 test('鏡頭只在玩家點選時置中，移動、攻擊與敵方行動不自動追鏡', () => {
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
@@ -658,16 +658,18 @@ test('部署藍格僅在部署階段顯示，戰鬥地形具有獨立辨識符�
 });
 test('內部遊玩 10 場均在硬回合上限內結束', () => { const result = spawnSync(process.execPath, ['scripts/simulate-tactics.mjs'], { cwd: root, encoding: 'utf8' }); assert.equal(result.status, 0, result.stderr || result.stdout); assert.match(result.stdout, /10 場完成/); assert.equal((result.stdout.match(/第 \d+ 場/g) || []).length, 10); });
 
-test('手動戰鬥點選我方會直接保留棋盤操作，技能／待機由幻獸下方指令小框選擇', () => {
+test('手動戰鬥：棋盤無彈窗遮擋，點尚未入範圍的敵人會自動移動後普攻，行動完自動選下一隻', () => {
   const html = readFileSync(join(root, 'tactics.html'), 'utf8');
   const source = readFileSync(join(root, 'js/tactics.js'), 'utf8');
   const css = readFileSync(join(root, 'css/tactics-screens.css'), 'utf8');
-  assert.match(html, /id="battle-command"/); assert.match(html, /id="skill-buttons"/);
+  assert.doesNotMatch(html, /id="battle-command"/); assert.match(html, /id="skill-buttons"/);
+  assert.doesNotMatch(source, /commandOpen/);
   assert.match(source, /function manualSelectionHint\(unit\)/);
-  assert.match(source, /state\.commandOpen = true; clearForecast\(\); note\(manualSelectionHint\(unit\)\)/);
+  assert.match(source, /function findAttackApproach\(unit, target\)/);
+  assert.match(source, /async function moveThenAttack\(unit, tile, target\)/);
+  assert.match(source, /function selectNextAvailableUnit\(\)/);
+  assert.match(source, /maybeAutoEndAfterMoves\(\); selectNextAvailableUnit\(\); \}/);
   assert.match(source, /目前被隊友或地形擋住/);
-  assert.match(source, /function positionBattleCommand\(unit\)/);
-  assert.match(source, /dom\.battleCommandActions\.append\(move, wait\)/);
   assert.doesNotMatch(css, /\.battle-panel #skill-buttons\{display:none!important/);
 });
 test('手動戰鬥輔助：無路徑提示、移動攻擊預判、快速結束與清楚技能目標', () => {

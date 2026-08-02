@@ -42,7 +42,7 @@
     battleAllyList: document.getElementById('battle-ally-list'), battleAllyCount: document.getElementById('battle-ally-count'), battleTeamTrait: document.getElementById('battle-team-trait'), battleObjective: document.getElementById('battle-objective'),
     battleEnemyCount: document.getElementById('battle-enemy-count'), battleEnemySummary: document.getElementById('battle-enemy-summary'), bossWarningPanel: document.getElementById('boss-warning-panel'),
     auto: document.getElementById('auto-turn'), towerCommand: document.getElementById('tower-command'), towerChoice: document.getElementById('tower-choice'), towerChoiceTitle: document.getElementById('tower-choice-title'), towerChoiceCopy: document.getElementById('tower-choice-copy'), towerChoiceOptions: document.getElementById('tower-choice-options'), speed: document.getElementById('battle-speed'), terrainToggle: document.getElementById('terrain-toggle'), endTurn: document.getElementById('end-turn'),
-    battleCommand: document.getElementById('battle-command'), battleCommandPortrait: document.getElementById('battle-command-portrait'), battleCommandName: document.getElementById('battle-command-name'), battleCommandStatus: document.getElementById('battle-command-status'), battleCommandSkills: document.getElementById('battle-command-skills'), battleCommandActions: document.getElementById('battle-command-actions'), battleTutorial: document.getElementById('battle-tutorial'), battleTutorialCopy: document.getElementById('battle-tutorial-copy'), battleTutorialDismiss: document.getElementById('battle-tutorial-dismiss'), animationMode: document.getElementById('animation-mode'), briefingModal: document.getElementById('battle-briefing-modal'), briefingContent: document.getElementById('battle-briefing-content')
+    battleTutorial: document.getElementById('battle-tutorial'), battleTutorialCopy: document.getElementById('battle-tutorial-copy'), battleTutorialDismiss: document.getElementById('battle-tutorial-dismiss'), animationMode: document.getElementById('animation-mode'), briefingModal: document.getElementById('battle-briefing-modal'), briefingContent: document.getElementById('battle-briefing-content')
   };
 
   var terrainAlwaysVisible = false, battleTutorialSeen = false, battleGuideSeen = {}, activeGuideKey = '', animationMode = 'full';
@@ -81,10 +81,7 @@
     dom.screenHome.hidden = view !== 'home';
     dom.screenBattle.hidden = view !== 'battle';
     dom.screenResult.hidden = view !== 'result';
-    if (view !== 'battle') {
-      if (dom.battleTutorial) dom.battleTutorial.hidden = true;
-      if (dom.battleCommand) dom.battleCommand.hidden = true;
-    }
+    if (view !== 'battle' && dom.battleTutorial) dom.battleTutorial.hidden = true;
     document.body.classList.remove('view-home', 'view-battle', 'view-result');
     document.body.classList.add('view-' + view);
     window.scrollTo(0, 0);
@@ -575,7 +572,7 @@
     else if (stageId) currentStage = content.stageById(stageId);
     if (!currentStage.tower && !isPreviewStage) { progress.currentStage = currentStage.id; progression.save(); }
     var scale = currentStage.power || (1 + (currentStage.order - 1) * 0.055), partyCost = progression.partyCost(partyIds), balance = balancedEnemyRoster(currentStage, partyCost);
-    state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, commandOpen: false, over: false, animating: false, autoEnding: false, resultRecorded: false,
+    state = { round: 1, phase: 'deploy', selected: null, inspected: null, mode: 'move', skill: 0, over: false, animating: false, autoEnding: false, resultRecorded: false,
       threatKey: null,
       enemyScale: Math.max(scale * balance.scale, balance.minimumScale), partyCost: partyCost, balance: balance, riftPower: 0, reward: null, stats: { damage: 0, healing: 0, skills: 0, damageByUnit: {}, healingByUnit: {}, takenByUnit: {}, bossTimeline: [] }, units: [], obstacles: [], obstacleMap: {}, tower: currentStage.tower ? { wave: 0, maxWaves: 10, commandUsed: false, awaitingChoice: false, attackBonus: 0, healBonus: 0, reviveRemaining: {}, reviveLastTick: 0, autoEnabled: false, boons: [], enemyBuffs: towerEnemyBuffs(currentStage.floor) } : null };
     state.obstacles = currentStage.tower ? [] : (content.obstaclesFor ? content.obstaclesFor(currentStage, COLS, ROWS) : []);
@@ -697,6 +694,19 @@
     return tiles;
   }
   function canMove(unit, x, y) { var path = pathTo(unit, x, y, moveRange(unit)); return Boolean(path && path.length); }
+  /* 智慧攻擊：幻獸目前打不到目標時，找出「移動後可以普攻到」的最近格子；
+     找不到就回傳 null，呼叫端會退回原本的威脅範圍顯示。 */
+  function findAttackApproach(unit, target) {
+    if (!unit || unit.moved || canBasicTarget(unit, target)) return null;
+    var originX = unit.x, originY = unit.y, best = null;
+    reachableTiles(unit).forEach(function (tile) {
+      if (tile.steps <= 0) return;
+      unit.x = tile.x; unit.y = tile.y;
+      if (canBasicTarget(unit, target) && (!best || tile.steps < best.steps)) best = tile;
+    });
+    unit.x = originX; unit.y = originY;
+    return best;
+  }
 
   /* 遠程視線：以格線采樣檢查兩點之間是否被障礙物遮蔽（不含端點）。 */
   function lineClear(fromX, fromY, toX, toY) {
@@ -724,8 +734,8 @@
   function manualSelectionHint(unit) {
     var canMoveNow = !unit.moved && reachableTiles(unit).some(function (tile) { return tile.steps > 0; });
     var canAttackNow = !unit.acted && alive('enemy').some(function (enemy) { return canBasicTarget(unit, enemy); });
-    if (canMoveNow) return '已選擇 ' + unitName(unit) + '：直接點藍格移動，紅框敵人可普攻；需要技能或待機時，從幻獸下方的指令小框選擇。';
-    if (canAttackNow) return '已選擇 ' + unitName(unit) + '：目前沒有可走的藍格，但紅框敵人可直接普攻；技能可從幻獸下方的指令小框選擇。';
+    if (canMoveNow) return '已選擇 ' + unitName(unit) + '：直接點藍格移動，紅框敵人可普攻；點其他敵人會自動走近後攻擊。需要技能或待機時，從右側欄位選擇。';
+    if (canAttackNow) return '已選擇 ' + unitName(unit) + '：目前沒有可走的藍格，但紅框敵人可直接普攻；技能可從右側欄位選擇。';
     return '已選擇 ' + unitName(unit) + '：目前被隊友或地形擋住，沒有可走或可攻擊目標；可改選有藍格的幻獸，或調整下一回合站位。';
   }
   function manualActionState(unit) {
@@ -746,6 +756,14 @@
     state.animating = true; note(unitName(unit) + ' 移動 ' + path.length + ' 格。');
     await animateWaypoints(unit, path, 'walking', 115);
     unit.moved = true; state.animating = false; note(unitName(unit) + ' 抵達 ' + (unit.x + 1) + '-' + (unit.y + 1) + '；紅框敵人可直接點擊普攻。'); render(); maybeAutoEndAfterMoves(); return true;
+  }
+  /* 智慧移動＋攻擊：點擊尚未入範圍的敵人時，自動走到 findAttackApproach() 算出的
+     最近可攻擊格，再立即普攻，玩家不用先走一步、再回頭點敵人兩次操作。 */
+  async function moveThenAttack(unit, tile, target) {
+    clearForecast();
+    var moved = await walkUnit(unit, tile.x, tile.y);
+    if (!moved || unit.acted || unit.hp <= 0 || target.hp <= 0) return;
+    if (canBasicTarget(unit, target)) await act(unit, target, basicSkill(unit), 0);
   }
   function guardianTower(floor) {
     var hp = Math.round(1500 + floor * 260);
@@ -1332,7 +1350,13 @@
       await pause(300);
       if (target.hp > 0 && unit.hp > 0 && canCounter(target, unit) && !state.over) await act(target, unit, target.p.skills[0], 0, { counter: true, nested: true });
     }
-    if (!options.nested) { state.animating = false; checkEnd(); if (!state.over) render(); }
+    if (!options.nested) {
+      state.animating = false; checkEnd();
+      if (!state.over) {
+        render();
+        if (unit.team === 'ally' && !options.counter) { maybeAutoEndAfterMoves(); selectNextAvailableUnit(); }
+      }
+    }
   }
 
   function processRoundEffects() {
@@ -1356,6 +1380,14 @@
     if (state.autoEnding || state.phase !== 'player' || state.over || state.animating || !alive('ally').length || !alive('ally').every(function (unit) { return unit.acted; })) return;
     state.autoEnding = true; note('我方全員已完成行動，準備交由敵方行動。'); render();
     setTimeout(function () { state.autoEnding = false; if (!state.over && state.phase === 'player' && alive('ally').every(function (unit) { return unit.acted; })) endTurn(); }, duration(220));
+  }
+  /* 一隻幻獸完成行動（攻擊、技能或待機）後，自動選下一隻還沒行動的幻獸，
+     玩家不用手動回左側名單再點一次；AUTO 模式或無可選對象時不介入。 */
+  function selectNextAvailableUnit() {
+    if (currentStage.tower || autoTimer || state.phase !== 'player' || state.over) return;
+    var next = alive('ally').find(function (unit) { return !unit.guardian && !unit.acted; });
+    if (next) { state.selected = next.key; state.inspected = next.key; state.mode = 'move'; state.skill = 0; note(manualSelectionHint(next)); render(); focusUnit(next, false); }
+    else { state.selected = null; render(); }
   }
 
   function obstacleGlyph() {
@@ -1451,20 +1483,24 @@
     element.title = unit.p.name + '（' + unit.p.roleLabel + '）';
     var facingLabel = { right: '右', left: '左', up: '上', down: '下' }[unit.facing] || '右';
     element.innerHTML = '<span class="portrait" role="img" aria-label="' + unit.p.name + '，朝向' + facingLabel + '" style="background-image:url(\'' + portrait(unit) + '\')"></span>' + (unit.boss ? '<span class="boss-phase-chip">P' + unit.bossPhase + '</span>' : '') + (statuses ? '<span class="status-icons">' + statuses + '</span>' : '') + '<span class="unit-info"><span class="unit-health"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></span></span>';
-    element.addEventListener('click', function (event) {
+    element.addEventListener('click', async function (event) {
       event.stopPropagation();
       if (cameraSuppressed()) return;
       state.inspected = unit.key;
       focusUnit(unit, false);
       if (state.mode === 'skill' && selected() && canTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
       if (!currentStage.tower && unit.team === 'enemy' && selected() && selected().team === 'ally' && !selected().acted && state.phase === 'player' && !state.animating && state.mode !== 'skill' && canBasicTarget(selected(), unit)) { clickCell(unit.x, unit.y); return; }
+      if (!currentStage.tower && unit.team === 'enemy' && selected() && selected().team === 'ally' && !selected().acted && state.phase === 'player' && !state.animating && state.mode !== 'skill') {
+        var approach = findAttackApproach(selected(), unit);
+        if (approach) { await moveThenAttack(selected(), approach, unit); return; }
+      }
       if (state.phase === 'deploy' && unit.team === 'ally') { state.selected = unit.key; note('已選擇 ' + unitName(unit) + '，點選左側部署格調整站位。'); render(); return; }
       if (unit.team === 'enemy' && unit.hp > 0 && (state.phase === 'player' || state.phase === 'deploy') && !state.animating) {
         state.threatKey = state.threatKey === unit.key ? null : unit.key; clearForecast(); audio.play('ui');
         note(state.threatKey ? unitName(unit) + ' 的威脅範圍：橘色＝可移動、紅色＝射程涵蓋。再點一次取消。' : '已關閉威脅範圍顯示。');
         render(); return;
       }
-      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = true; clearForecast(); note(manualSelectionHint(unit)); render(); }
+      if (!currentStage.tower && unit.team === 'ally' && unit.hp > 0 && state.phase === 'player' && !state.over && !state.animating && !state.autoEnding) { state.selected = unit.key; state.mode = 'move'; state.skill = 0; clearForecast(); note(manualSelectionHint(unit)); render(); }
     }); return element;
   }
 
@@ -1488,7 +1524,7 @@
     var fragment = document.createDocumentFragment();
     for (var y = 0; y < ROWS; y++) for (var x = 0; x < COLS; x++) fragment.appendChild(cell(x, y));
     dom.board.innerHTML = ''; dom.board.appendChild(fragment);
-    renderParty(); renderTrait(); renderBattleSides(); renderTowerBoonSummary(); renderDetail(); renderTurnOrder(); renderBattleCommand(); renderBattleTutorial(); renderBossBar(); renderBossTelegraph(telegraph);
+    renderParty(); renderTrait(); renderBattleSides(); renderTowerBoonSummary(); renderDetail(); renderTurnOrder(); renderBattleTutorial(); renderBossBar(); renderBossTelegraph(telegraph);
     dom.banner.textContent = state.over ? '戰鬥結束' : state.phase === 'tower-choice' ? '波間整備' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波｜' + (state.phase === 'player' ? '我方 AI 防守' : '魔物進攻') : state.phase === 'deploy' ? '部署階段' : '第 ' + state.round + ' 回合｜' + (state.phase === 'player' ? '我方行動' : '敵方行動');
     dom.roundStatus.textContent = state.over ? '結算完成' : state.phase === 'tower-choice' ? '選擇加護' : currentStage.tower ? '第 ' + state.tower.wave + '／10 波' : state.phase === 'deploy' ? '自由部署' : state.phase === 'player' ? '我方回合' : '敵方回合';
     var remainingManual = state.units.filter(function (unit) { return unit.team === 'ally' && !unit.guardian && unit.hp > 0 && !unit.acted; });
@@ -1528,7 +1564,7 @@
       var options = manualActionState(unit), noPath = state.phase === 'player' && !unit.acted && !unit.moved && !options.move;
       var card = document.createElement('button'); card.type = 'button'; card.className = 'party-card' + (state.selected === unit.key ? ' selected' : '') + (unit.hp <= 0 ? ' dead' : '') + (noPath ? ' no-path' : '') + (unit.acted ? ' acted' : ''); card.disabled = unit.hp <= 0;
       card.innerHTML = '<div class="party-name">' + unit.p.name + (unitSize(unit) > 1 ? ' ⬛2×2' : '') + (noPath ? '<em class="path-status">⛔ 無路徑</em>' : unit.acted ? '<em class="path-status done">✓ 已行動</em>' : '') + '</div><div class="party-meta">' + unit.p.roleLabel + '｜★' + progression.starOf(unit.id) + '｜融合 ' + (progress.fusion[unit.id] || 0) + '</div><div class="hpbar"><i style="width:' + (100 * unit.hp / unit.maxHp) + '%"></i></div>';
-      card.onclick = function () { if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; state.commandOpen = state.phase === 'player'; render(); focusUnit(unit, false); } }; dom.list.appendChild(card);
+      card.onclick = function () { if ((state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; render(); focusUnit(unit, false); } }; dom.list.appendChild(card);
     });
   }
   function renderBattleSides() {
@@ -1554,7 +1590,7 @@
       card.setAttribute('aria-label', unit.p.name + (unit.hp <= 0 && currentStage.tower ? '，復活倒數 ' + reviveCountdown(unit) + ' 秒' : '，生命 ' + unit.hp + ' / ' + unit.maxHp) + '，點擊置中');
       card.onclick = function () {
         if (cameraSuppressed() || unit.hp <= 0) return;
-        if (!currentStage.tower && (state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; state.skill = 0; state.commandOpen = state.phase === 'player'; render(); }
+        if (!currentStage.tower && (state.phase === 'player' || state.phase === 'deploy') && !state.over && !state.animating) { state.selected = unit.key; state.inspected = unit.key; state.mode = 'move'; state.skill = 0; render(); }
         focusUnit(unit, false);
       };
       dom.battleAllyList.appendChild(card);
@@ -1628,7 +1664,7 @@
       actions.appendChild(move);
       var wait = document.createElement('button'); wait.type = 'button'; wait.className = 'secondary'; wait.textContent = '🕒 待機';
       wait.disabled = state.animating;
-      wait.onclick = function () { if (state.animating || unit.acted) return; unit.moved = true; unit.acted = true; clearForecast(); audio.play('ui'); note(unitName(unit) + ' 選擇待機。'); render(); maybeAutoEndAfterMoves(); };
+      wait.onclick = function () { if (state.animating || unit.acted) return; unit.moved = true; unit.acted = true; clearForecast(); audio.play('ui'); note(unitName(unit) + ' 選擇待機。'); render(); maybeAutoEndAfterMoves(); selectNextAvailableUnit(); };
       actions.appendChild(wait);
       if (unit.moved && unit.prevX !== undefined && !state.animating) {
         var undo = document.createElement('button'); undo.type = 'button'; undo.className = 'secondary'; undo.textContent = '↩ 取消移動';
@@ -1892,7 +1928,7 @@
   }
   function startAuto() {
     if (autoTimer || state.over || state.phase === 'tower-choice') return;
-    clearForecast(); state.commandOpen = false; autoTimer = setTimeout(autoStep, 10);
+    clearForecast(); autoTimer = setTimeout(autoStep, 10);
     dom.auto.classList.add('active'); dom.auto.textContent = '🤖 AUTO ✓'; render();
   }
   function toggleAuto() {
@@ -1933,7 +1969,7 @@
       if (!squadActive(enemy, targets)) continue; /* 未進入警戒圈：駐守 */
       /* 敵方施法時必須將畫面焦點交給真正的施放者，避免保留上一隻我方
          幻獸的選取光圈，造成「我方在攻擊自己」的錯覺。 */
-      state.selected = enemy.key; state.commandOpen = false; clearForecast(); render();
+      state.selected = enemy.key; clearForecast(); render();
       if (enemy.freeze > 0) { enemy.freeze--; note(unitName(enemy) + ' 被冰凍，無法行動。'); statusLabel(enemy, '❄ 冰凍中'); render(); await pause(240); continue; }
       var plan = planFor(enemy);
       if (plan) await executePlan(enemy, plan);
@@ -2307,7 +2343,7 @@
   function renderBattleTutorial() {
     if (!dom.battleTutorial || !dom.battleTutorialCopy) return;
     var unit = selected(), guide = null;
-    if (!battleTutorialSeen) guide = { key: 'basic', copy: !unit ? '點選我方幻獸：藍格是可移動位置，紅框敵人可直接普攻。' : !unit.moved ? unit.p.name + '：先選藍格移動，或直接點紅框敵人普攻；技能在幻獸下方的指令小框。' : !unit.acted ? unit.p.name + ' 已移動：紅框敵人可直接攻擊，或改用指令小框選技能／待機。' : '已完成行動；選擇下一隻未行動的幻獸，或結束回合。' };
+    if (!battleTutorialSeen) guide = { key: 'basic', copy: !unit ? '點選我方幻獸：藍格是可移動位置，紅框敵人可直接普攻，點其他敵人會自動走近後攻擊。' : !unit.moved ? unit.p.name + '：先選藍格移動，或直接點敵人普攻（含自動走近）；技能在右側欄位選擇。' : !unit.acted ? unit.p.name + ' 已移動：敵人可直接攻擊，或在右側欄位選技能／待機。' : '已完成行動；已自動選下一隻未行動的幻獸，或結束回合。' };
     else if (currentStage.boss && !battleGuideSeen.boss) guide = { key: 'boss', copy: '大型 Boss 會在 HP 70%／35% 轉階。右側顯示下一招倒數；紅色預警格是預測範圍，請提早分散。' };
     else if (currentStage.hard && !battleGuideSeen.hard) guide = { key: 'hard', copy: 'HARD 關會改變敵軍配置、AI 與地形，不只是提高血量。先閱讀出擊前敵情簡報再部署。' };
     else if (unit && !unit.moved && !manualActionState(unit).move && !battleGuideSeen.route) guide = { key: 'route', copy: '這隻幻獸目前沒有路徑；左側卡片會顯示「無路徑」。先操作有藍格的幻獸，或用分散陣減少互相堵住。' };
@@ -2319,58 +2355,6 @@
     dom.battleTutorialCopy.textContent = guide.copy;
   }
 
-  /* 指令小框釘在幻獸棋子正下方（空間不足時自動翻到上方），
-     容器本身 pointer-events:none、只有按鈕可點，所以不會擋住底下棋盤的移動格或敵人點擊。 */
-  function positionBattleCommand(unit) {
-    var piece = dom.board.querySelector('[data-key="' + unit.key + '"]');
-    if (!piece) { dom.battleCommand.style.left = '50%'; dom.battleCommand.style.top = 'auto'; dom.battleCommand.style.bottom = '16px'; dom.battleCommand.style.transform = 'translateX(-50%)'; return; }
-    var rect = piece.getBoundingClientRect(), boxWidth = dom.battleCommand.offsetWidth, boxHeight = dom.battleCommand.offsetHeight, margin = 8;
-    var log = document.getElementById('combat-log'), floor = window.innerHeight - margin;
-    if (log) { var logRect = log.getBoundingClientRect(); if (logRect.top < floor) floor = logRect.top - margin; }
-    var left = rect.left + rect.width / 2 - boxWidth / 2;
-    left = Math.max(margin, Math.min(left, window.innerWidth - boxWidth - margin));
-    var top = rect.bottom + margin;
-    if (top + boxHeight > floor) top = Math.max(margin, rect.top - boxHeight - margin);
-    dom.battleCommand.style.left = Math.round(left) + 'px'; dom.battleCommand.style.top = Math.round(top) + 'px'; dom.battleCommand.style.bottom = 'auto'; dom.battleCommand.style.transform = 'none';
-  }
-  function renderBattleCommand() {
-    if (!dom.battleCommand) return;
-    var unit = selected();
-    var visible = Boolean(!currentStage.tower && unit && unit.team === 'ally' && unit.hp > 0 && !unit.acted && state.phase === 'player' && !state.over && !autoTimer && state.commandOpen);
-    dom.battleCommand.hidden = !visible;
-    if (!visible) return;
-    dom.battleCommandPortrait.style.backgroundImage = "url('" + portrait(unit) + "')";
-    dom.battleCommandName.textContent = unit.p.name;
-    dom.battleCommandStatus.textContent = '藍格＝移動｜紅框＝普攻｜直接點棋盤即可｜' + (unit.moved ? '已移動' : '可移動') + '｜' + (unit.acted ? '已行動' : '可使用技能');
-    dom.battleCommandSkills.innerHTML = '';
-    unit.p.skills.forEach(function (skill, index) {
-      var cooldown = unit.cooldowns[index] || 0, button = document.createElement('button');
-      button.type = 'button'; button.className = 'battle-command-skill ' + (cooldown ? 'cooling' : 'ready') + (state.mode === 'skill' && state.skill === index ? ' active' : '');
-      button.disabled = unit.acted || cooldown > 0 || state.animating;
-      var targetType = skill.attackStyle === 'support' ? '我方支援' : skill.attackStyle === 'area' ? '範圍攻擊' : skill.attackStyle === 'melee' ? '近戰攻擊' : '遠距攻擊';
-      button.innerHTML = '<b>' + skill.name + '</b><small>' + targetType + '｜射程 ' + skillRange(unit, skill) + (cooldown ? '｜冷卻 ' + cooldown : skill.kind === 'basic' ? '｜無冷卻' : '｜冷卻 ' + skill.cooldown) + '</small>';
-      button.onclick = function () { state.mode = 'skill'; state.skill = index; state.commandOpen = false; clearForecast(); audio.play('ui'); note('已選擇「' + skill.name + '」，請點選可作用的目標。'); render(); };
-      dom.battleCommandSkills.appendChild(button);
-    });
-    dom.battleCommandActions.innerHTML = '';
-    var move = document.createElement('button'); move.type = 'button'; move.className = 'secondary'; move.textContent = unit.moved ? '⚔ 顯示可攻擊目標' : '⌁ 直接操作'; move.disabled = unit.acted || state.animating;
-    move.onclick = function () { state.mode = 'move'; state.skill = 0; state.commandOpen = false; clearForecast(); audio.play('ui'); note(unit.moved ? '紅框敵人可直接點擊普攻。' : '已回到直覺操作：藍格可移動、紅框敵人可直接普攻。'); render(); };
-    var wait = document.createElement('button'); wait.type = 'button'; wait.className = 'secondary'; wait.textContent = '🕒 待機'; wait.disabled = unit.acted || state.animating;
-    wait.onclick = function () { unit.moved = true; unit.acted = true; state.commandOpen = false; clearForecast(); audio.play('ui'); note(unitName(unit) + ' 選擇待機。'); render(); maybeAutoEndAfterMoves(); };
-    dom.battleCommandActions.append(move, wait);
-    if (unit.moved && unit.prevX !== undefined && !state.animating) {
-      var undo = document.createElement('button'); undo.type = 'button'; undo.className = 'secondary'; undo.textContent = '↩ 取消移動';
-      undo.onclick = function () {
-        if (state.animating || unit.acted || at(unit.prevX, unit.prevY)) return;
-        unit.x = unit.prevX; unit.y = unit.prevY; unit.moved = false; unit.prevX = undefined; unit.prevY = undefined;
-        clearForecast(); audio.play('ui'); note(unitName(unit) + ' 退回原位，可重新規劃。'); render(); focusUnit(unit, false);
-      };
-      dom.battleCommandActions.appendChild(undo);
-    }
-    var info = document.createElement('button'); info.type = 'button'; info.className = 'secondary'; info.textContent = '查看資訊'; info.onclick = function () { state.inspected = unit.key; state.commandOpen = false; render(); };
-    dom.battleCommandActions.appendChild(info);
-    positionBattleCommand(unit);
-  }
   var pendingGrowthAction = null;
   function growthMaterialsHtml(items) {
     return items.map(function (item) {
@@ -2774,7 +2758,6 @@
   document.getElementById('restart').onclick = function () { reset(stageRef()); };
   dom.endTurn.onclick = endTurn; dom.auto.onclick = toggleAuto; dom.speed.onclick = cycleSpeed; if (dom.animationMode) dom.animationMode.onclick = cycleAnimationMode;
   if (dom.towerCommand) dom.towerCommand.onclick = towerCommand;
-  document.getElementById('battle-command-close').onclick = function () { state.commandOpen = false; render(); };
   if (dom.battleTutorialDismiss) dom.battleTutorialDismiss.onclick = dismissBattleTutorial;
   if (dom.terrainToggle) dom.terrainToggle.onclick = toggleTerrainVisibility;
   dom.sound.onclick = function () { var enabled = progression.toggleSound(); audio.setEnabled(enabled); renderProgress(); if (enabled) audio.play('ui'); };
