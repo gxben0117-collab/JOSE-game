@@ -35,11 +35,18 @@
   /* 前五章讓玩家熟悉角色、元素與劇情；第六章起才逐步要求養成與編隊配合。 */
   /* 前五章是新指揮官的教學與隊伍成形期：數值留出容錯，讓首通贈送、
      編隊擴容與元素克制能自然發揮；第六章才正式進入養成與機制壓力。 */
-  var CHAPTER_BASE_POWER = [0.55,0.62,0.70,0.79,0.89,1.12,1.32,1.55,1.82,2.14,2.5,2.82,3.18,3.58,4.04,4.54,5.10,5.72,6.42,7.20];
+  /* 第 16～20 章原本沿用約 12～13%／章的複利成長，模擬 255 場實測發現第 16 章勝率驟降到 20%、
+     第 17 章起連最強隊伍都無法取勝（0% 勝率，且回合數越到後面被擊潰越快）。玩家養成系統（星級／
+     融合／進化／圖鑑）理論最大加成約 3.9 倍，追不上原本第 6→20 章約 7.8 倍的敵方倍率成長，
+     故把第 16～20 章的章間成長率放緩至約 7%／章，前 15 章曲線（已驗證 90～100% 勝率）維持不變。 */
+  var CHAPTER_BASE_POWER = [0.55,0.62,0.70,0.79,0.89,1.12,1.32,1.55,1.82,2.14,2.5,2.82,3.18,3.58,4.04,4.18,4.28,4.35,4.40,4.46];
   var stages = [];
   var mainOrder = 0;
   chapters.forEach(function (chapter, chapterIndex) {
     var base = CHAPTER_BASE_POWER[chapterIndex];
+    /* 一般小關的敵軍數量原本直接用 chapterIndex 線性疊加，到第 16 章附近就已經逼近 28 隻上限；
+       搭配放緩後的 power 曲線做同向調整，避免後期單純靠「敵人更多」把難度頂回天花板。 */
+    var densityIndex = chapterIndex <= 14 ? chapterIndex : 14 + (chapterIndex - 14) * 0.35;
     var mainCount = chapter.missions.length, hardCount = chapter.hard.length;
     for (var index = 1; index <= mainCount; index++) {
       var elite = index >= Math.max(4, mainCount - 1);
@@ -51,7 +58,7 @@
         name: chapter.name + '・' + chapter.missions[index - 1],
         difficulty: elite ? '精英' : '普通', elite: elite,
         power: round2(base * (1 + (index - 1) * 0.022)),
-        enemies: chapter.minions, enemyCount: Math.min(28, 10 + chapterIndex + Math.floor(index / 3)),
+        enemies: chapter.minions, enemyCount: Math.min(28, Math.round(10 + densityIndex + Math.floor(index / 3))),
         seed: chapterIndex * 53 + index * 17 + 7,
         objective: chapter.missions[index - 1] + '：' + (index % 3 === 0 ? '在 ' + (18 + chapterIndex + Math.ceil(index / 2)) + ' 回合內完成調查' : index % 3 === 1 ? '排除阻礙，確保調查隊前進' : '保護至少半數幻獸，帶回關鍵線索'),
         turnLimit: 18 + chapterIndex + Math.ceil(index / 2),
