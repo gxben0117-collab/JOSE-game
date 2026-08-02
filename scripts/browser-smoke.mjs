@@ -76,7 +76,9 @@ try {
       events.push(message);
       if (message.method === 'Network.requestWillBeSent') requests.set(message.params.requestId, message.params.request.url);
       if (message.method === 'Runtime.exceptionThrown') errors.push(message.params.exceptionDetails.text || 'runtime exception');
-      if (message.method === 'Log.entryAdded' && message.params.entry.level === 'error') errors.push(`${message.params.entry.text} ${message.params.entry.url || ''}`.trim());
+      /* beforeunload 確認框在無真實使用者手勢的無頭測試環境下會被 Chrome 自動封鎖並記一則訊息；
+         這是自動化測試工具本身的已知限制，不代表頁面真的出錯，過濾掉避免誤判。 */
+      if (message.method === 'Log.entryAdded' && message.params.entry.level === 'error' && !/beforeunload/i.test(message.params.entry.text)) errors.push(`${message.params.entry.text} ${message.params.entry.url || ''}`.trim());
       if (message.method === 'Network.loadingFailed' && !message.params.canceled) errors.push(`${message.params.errorText} ${requests.get(message.params.requestId) || ''}`.trim());
     }
   };

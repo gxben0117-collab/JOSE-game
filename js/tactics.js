@@ -2875,6 +2875,11 @@
   };
   var towerButton = document.getElementById('open-tower');
   if (towerButton) towerButton.onclick = function () { audio.unlock(); enterTower(progress.tower.best + 1); };
+  /* Boss 來襲等付費關卡進場即扣費，戰鬥結果要到結算才寫回存檔；
+     中途離開頁面（重整/關閉分頁）目前無法補救，至少提醒玩家避免無預警損失。 */
+  window.addEventListener('beforeunload', function (event) {
+    if (currentView === 'battle' && state.phase !== 'deploy' && !state.over) { event.preventDefault(); event.returnValue = ''; }
+  });
   document.addEventListener('keydown', function (event) {
     if (event.key !== 'Escape') return;
     closeGrowthConfirmation();
@@ -2949,8 +2954,11 @@
   var openMatch = window.location.search.match(/[?&]open=(campaign|dex|gacha|daily|deploy|growth|home|shop|bag|story)/);
   if (openMatch) ({ campaign: openCampaign, dex: openDex, gacha: openGacha, daily: openDaily, deploy: openDeploy, growth: openGrowth, home: openHome, shop: openShop, bag: openBag, story: openStoryArchive })[openMatch[1]]();
 
-  /* 自動化煙霧測試：?autotest=1 會全速打完一場並把結果寫進網頁標題。 */
+  /* 自動化煙霧測試：?autotest=1 會全速打完一場並把結果寫進網頁標題。
+     測試用的全解鎖/滿融合進化只留在本次分頁的記憶體內——把 storage 換成無作用版本，
+     避免這組網址被分享出去變成「一鍵改真實存檔」的公開外掛連結。 */
   if (/[?&]autotest=1/.test(window.location.search)) {
+    progression.storage = { getItem: function () { return null; }, setItem: function () {}, removeItem: function () {} };
     battleSpeed = 2; document.documentElement.style.setProperty('--battle-rate', 1 / battleSpeed);
     var stageMatch = window.location.search.match(/[?&]stage=([a-z0-9-]+)/);
     if (stageMatch) {
