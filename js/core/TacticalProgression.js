@@ -191,7 +191,8 @@
   };
 
   TacticalProgression.prototype.save = function () {
-    this.storage.setItem(SAVE_KEY, JSON.stringify(this.state));
+    try { this.storage.setItem(SAVE_KEY, JSON.stringify(this.state)); this.saveFailed = false; }
+    catch (error) { this.saveFailed = true; /* 私密瀏覽或儲存空間已滿：保留記憶體中的進度，避免整個遊戲當掉 */ }
   };
 
   TacticalProgression.prototype.setParty = function (party) {
@@ -227,9 +228,11 @@
   };
   TacticalProgression.prototype.setFormation = function (party, positions) {
     if (!Array.isArray(party) || !Array.isArray(positions)) return false;
+    var presets = (this.state.formation && this.state.formation.presets) || {};
     this.state.formation = {
       party: party.slice(),
-      positions: positions.filter(function (spot) { return spot && typeof spot.id === 'string' && Number.isInteger(spot.x) && Number.isInteger(spot.y); }).map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; })
+      positions: positions.filter(function (spot) { return spot && typeof spot.id === 'string' && Number.isInteger(spot.x) && Number.isInteger(spot.y); }).map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; }),
+      presets: presets
     };
     this.save(); return true;
   };
@@ -250,7 +253,7 @@
     var saved = (this.state.formation.presets || {})[kind];
     return saved && Array.isArray(saved.party) && Array.isArray(saved.positions) ? { party: saved.party.slice(), positions: saved.positions.map(function (spot) { return { id: spot.id, x: spot.x, y: spot.y }; }) } : null;
   };
-  TacticalProgression.prototype.clearFormation = function () { this.state.formation = { party: [], positions: [] }; this.save(); };
+  TacticalProgression.prototype.clearFormation = function () { this.state.formation = { party: [], positions: [], presets: {} }; this.save(); };
 
   /* ── 首頁展示／劇情進度 ── */
   TacticalProgression.prototype.setHomeDisplay = function (petId, mode) {

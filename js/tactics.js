@@ -45,8 +45,15 @@
     battleTutorial: document.getElementById('battle-tutorial'), battleTutorialCopy: document.getElementById('battle-tutorial-copy'), battleTutorialDismiss: document.getElementById('battle-tutorial-dismiss'), animationMode: document.getElementById('animation-mode'), briefingModal: document.getElementById('battle-briefing-modal'), briefingContent: document.getElementById('battle-briefing-content')
   };
 
-  var terrainAlwaysVisible = false, battleTutorialSeen = false, battleGuideSeen = {}, activeGuideKey = '', animationMode = 'full';
-  try { terrainAlwaysVisible = localStorage.getItem('jose-terrain-visibility') === 'all'; battleTutorialSeen = localStorage.getItem('jose-battle-tutorial-v1') === 'seen'; battleGuideSeen = JSON.parse(localStorage.getItem('jose-battle-guide-v2') || '{}') || {}; animationMode = localStorage.getItem('jose-animation-mode-v1') === 'fast' ? 'fast' : 'full'; } catch (error) { terrainAlwaysVisible = false; battleTutorialSeen = false; battleGuideSeen = {}; animationMode = 'full'; }
+  /* 棋盤格點擊改用單一委派監聽，取代過去每次 render() 對 210 格各自綁定監聽器；
+     單位按鈕自身的 click 已 stopPropagation，行為與逐格綁定時完全一致。 */
+  if (dom.board) dom.board.addEventListener('click', function (event) {
+    var cellElement = event.target.closest('.cell');
+    if (cellElement) clickCell(Number(cellElement.dataset.x), Number(cellElement.dataset.y));
+  });
+
+  var terrainAlwaysVisible = false, battleTutorialSeen = false, battleGuideSeen = {}, activeGuideKey = '', animationMode = 'full', skipClearedBriefing = false;
+  try { terrainAlwaysVisible = localStorage.getItem('jose-terrain-visibility') === 'all'; battleTutorialSeen = localStorage.getItem('jose-battle-tutorial-v1') === 'seen'; battleGuideSeen = JSON.parse(localStorage.getItem('jose-battle-guide-v2') || '{}') || {}; animationMode = localStorage.getItem('jose-animation-mode-v1') === 'fast' ? 'fast' : 'full'; skipClearedBriefing = localStorage.getItem('jose-skip-cleared-briefing-v1') === 'yes'; } catch (error) { terrainAlwaysVisible = false; battleTutorialSeen = false; battleGuideSeen = {}; animationMode = 'full'; skipClearedBriefing = false; }
   document.body.classList.toggle('tutorial-seen', battleTutorialSeen);
   function syncAnimationMode() {
     document.body.classList.toggle('battle-fast', animationMode === 'fast');
@@ -169,10 +176,16 @@
     var boss = enemies.find(function (enemy) { return enemy.boss || enemy.size >= 4; });
     var elite = enemies.filter(function (enemy) { return enemy.size === 2; }), minions = enemies.filter(function (enemy) { return enemy.size === 1; });
     var bossCopy = boss ? '<article class="briefing-boss"><span style="background-image:url(\'' + displayPortrait(boss) + '\')"></span><div><b>👑 ' + boss.name + '</b><small>' + (boss.bossPhases || []).map(function (phase) { return 'P' + phase.phase + '：' + (phase.name || '型態變化'); }).join('／') + '</small><p>血量 70%／35% 時轉階，請預留控制與爆發技能。</p></div></article>' : '';
-    dom.briefingContent.innerHTML = '<section class="briefing-hero"><p class="eyebrow">第 ' + currentStage.chapter + ' 章・' + (currentStage.hard ? 'HARD 特別關' : currentStage.boss ? 'Boss 關' : '主線關卡') + '</p><h3>' + map.name + '｜' + currentStage.name + '</h3><p>' + currentStage.objective + '</p></section><div class="briefing-grid"><article><b>敵軍編制</b><span>👑 Boss：' + (boss ? boss.name : '無') + '</span><span>🛡 菁英：' + (elite.length ? elite.map(function (enemy) { return enemy.name; }).join('、') : '尚未出現') + '</span><span>⚔ 小兵：' + (minions.length ? minions.map(function (enemy) { return enemy.name; }).join('、') : '依戰況增援') + '</span></article><article><b>推薦編隊</b><span>' + recommendation.elements + '</span><span>' + recommendation.roles + '</span><button id="briefing-recommend" type="button">✨ 套用推薦編隊</button></article><article><b>地形重點</b><span>' + stageTerrainSummary() + '</span><span>減速格單次最多扣 1 行動力；大型幻獸可安全通行。</span></article></div>' + bossCopy;
+    dom.briefingContent.innerHTML = '<section class="briefing-hero"><p class="eyebrow">第 ' + currentStage.chapter + ' 章・' + (currentStage.hard ? 'HARD 特別關' : currentStage.boss ? 'Boss 關' : '主線關卡') + '</p><h3>' + map.name + '｜' + currentStage.name + '</h3><p>' + currentStage.objective + '</p></section><div class="briefing-grid"><article><b>敵軍編制</b><span>👑 Boss：' + (boss ? boss.name : '無') + '</span><span>🛡 菁英：' + (elite.length ? elite.map(function (enemy) { return enemy.name; }).join('、') : '尚未出現') + '</span><span>⚔ 小兵：' + (minions.length ? minions.map(function (enemy) { return enemy.name; }).join('、') : '依戰況增援') + '</span></article><article><b>推薦編隊</b><span>' + recommendation.elements + '</span><span>' + recommendation.roles + '</span><button id="briefing-recommend" type="button">✨ 套用推薦編隊</button></article><article><b>地形重點</b><span>' + stageTerrainSummary() + '</span><span>減速格單次最多扣 1 行動力；大型幻獸可安全通行。</span></article></div>' + bossCopy + '<label class="briefing-skip-toggle"><input type="checkbox" id="briefing-skip-cleared"' + (skipClearedBriefing ? ' checked' : '') + '> 已通關的一般關卡不再自動顯示這份簡報（Boss／HARD 關卡仍會顯示）</label>';
     var recommend = document.getElementById('briefing-recommend'); if (recommend) recommend.onclick = function () { dom.briefingModal.hidden = true; openDeploy(); setTimeout(function () { recommendParty(); }, 0); };
+    var skipToggle = document.getElementById('briefing-skip-cleared');
+    if (skipToggle) skipToggle.onchange = function () { skipClearedBriefing = skipToggle.checked; try { localStorage.setItem('jose-skip-cleared-briefing-v1', skipClearedBriefing ? 'yes' : 'no'); } catch (error) { /* private storage may be unavailable */ } };
   }
-  function openBattleBriefing() { if (state.over || state.phase !== 'deploy') reset(currentStage.id); renderBattleBriefing(); dom.briefingModal.hidden = false; audio.play('ui'); }
+  function openBattleBriefing() {
+    if (state.over || state.phase !== 'deploy') reset(currentStage.id);
+    if (skipClearedBriefing && progress.cleared[currentStage.id] && !currentStage.hard && !currentStage.boss) { enterBattleFromBriefing(); return; }
+    renderBattleBriefing(); dom.briefingModal.hidden = false; audio.play('ui');
+  }
   function enterBattleFromBriefing() { dom.briefingModal.hidden = true; setView('battle'); audio.play('ui'); render(); focusDeployZone(true); }
   function openHomeDisplay() {
     var grid = document.getElementById('home-display-grid'), follow = document.getElementById('home-display-follow');
@@ -681,8 +694,10 @@
     var tiles = [{ x: unit.x, y: unit.y, steps: 0 }], visited = {}, queue = [{ x: unit.x, y: unit.y, steps: 0 }], range = moveRange(unit);
     visited[unit.x + ',' + unit.y] = 0;
     while (queue.length) {
-      queue.sort(function (a, b) { return a.steps - b.steps; });
-      var current = queue.shift();
+      /* 線性掃描取最小步數，取代整佇列排序：範圍內節點數量小，O(n) 掃描比 O(n log n) 排序更省。 */
+      var minIndex = 0;
+      for (var i = 1; i < queue.length; i++) { if (queue[i].steps < queue[minIndex].steps) minIndex = i; }
+      var current = queue.splice(minIndex, 1)[0];
       if (current.steps >= range) continue;
       [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(function (delta) {
         var nx = current.x + delta[0], ny = current.y + delta[1], key = nx + ',' + ny, nextSteps = current.steps + movementCost(unit, nx, ny);
@@ -1444,6 +1459,7 @@
         }
         else if (state.mode === 'skill' && unit !== active) {
           element.classList.add('invalid-target'); element.title = '此目標不符合目前技能的陣營、距離或視線條件';
+          element.insertAdjacentHTML('beforeend', '<small class="invalid-target-chip" aria-hidden="true">✕</small>');
         }
         /* 基本操作模式同時顯示可移動藍格與普攻紅框，移動後會自動只留下紅框。 */
         else if (state.mode !== 'skill' && canBasicTarget(active, unit)) {
@@ -1463,7 +1479,7 @@
       var inBasicScope = state.mode !== 'skill' && gapX + gapY <= skillRange(active, basicSkill(active));
       if (inMoveScope || inSkillScope || inBasicScope || (x === active.x && y === active.y)) element.classList.add('terrain-relevant');
     }
-    element.addEventListener('click', function () { clickCell(x, y); });
+    element.dataset.x = x; element.dataset.y = y;
     if (unit && unit.x === x && unit.y === y) element.appendChild(unitElement(unit));
     else if (unit) element.classList.add('covered');
     return element;
